@@ -60,6 +60,28 @@
     "key_findings": "Validation-only result achieving 0.9588 BPB combining MLP 3x expansion, int6 QAT, and sliding window eval; notable as a very low score but not a proper full submission."
   },
   {
+    "number": 512,
+    "title": "Record: PROTEUS v7 \u2014 11L INT6 + LoRA TTT (mean val_bpb=0.9968)",
+    "user": "MatoTeziTanka",
+    "is_record_attempt": true,
+    "bpb_score": 0.9968,
+    "bpb_is_mean": true,
+    "num_seeds": 3,
+    "validated": null,
+    "uses_ttt": true,
+    "num_layers": 11,
+    "techniques": [
+      "Int6",
+      "LoRA",
+      "TTT",
+      "Depth-scaled residual"
+    ],
+    "technique_details": "INT6 uniform quantization on all weight matrices with quant gap 0.012-0.014. Depth-scaled residuals (1/sqrt(layer+1)) for stability. Backward-looking per-document per-chunk LoRA TTT with multi-epoch adaptation passes; LoRA reset between documents; standard eval for docs <512 tokens. Fresh model copy used for TTT to avoid torch.compile graph caching issues.",
+    "hardware_notes": "RunPod 8\u00d7H100 SXM, PyTorch 2.8.0+cu128",
+    "status": "open",
+    "key_findings": "Achieves a striking mean val_bpb of 0.9968 via aggressive multi-epoch LoRA TTT, though per-seed TTT BPB variance is very high (0.9516\u20131.0854), suggesting instability in the TTT procedure. The sub-1.0 BPB claim warrants close scrutiny of TTT rule compliance."
+  },
+  {
     "number": 168,
     "title": "SOTA Attempt: Paid prefix (val_bpb=1.0238)",
     "user": "spokane-way",
@@ -651,6 +673,40 @@
     "hardware_notes": null,
     "status": "open",
     "key_findings": "Achieves 1.1248 BPB (best seed) / 1.1250 mean over 3 seeds via Partial RoPE and LN Scale on top of PR #287 stack. Post-submission analysis revealed the Late QAT feature was silently no-op'd by torch.compile constant folding."
+  },
+  {
+    "number": 401,
+    "title": "Record: 11L + EMA + Tight SWA + QAT0.15 + VE128 + Partial RoPE + LN Scale (val_bpb: 1.1243)",
+    "user": "newjordan",
+    "is_record_attempt": true,
+    "bpb_score": 1.1248,
+    "bpb_is_mean": true,
+    "num_seeds": 3,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": 11,
+    "techniques": [
+      "EMA",
+      "SWA",
+      "QAT",
+      "Int6",
+      "Int8",
+      "Partial RoPE",
+      "SmearGate",
+      "BigramHash",
+      "GQA",
+      "SwiGLU",
+      "Value Residual",
+      "Zstd",
+      "FlashAttention",
+      "Muon optimizer",
+      "AdamW",
+      "warmdown"
+    ],
+    "technique_details": "EMA (decay=0.997) stacked with Tight SWA where SWA collects from EMA-averaged weights every 50 steps when LR scale<0.2 (14 checkpoints). Late QAT threshold raised to scale<0.15 (vs 0.1 prior), giving 50% more fake-quantization steps and reducing quant gap from 0.008 to 0.007. Warmdown extended to 3500 iters. Shared Value Embedding (dim=128) on layers 9,10. U-Net skip connections (5 encoder, 6 decoder). Logit softcap 30.0, relu-squared activation, 3x MLP expansion, FlashAttention 3 (Hopper). Int6 per-row for MLP+attention, Int8 per-row for embeddings, zstd level 22.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Achieves a mean sliding-window BPB of 1.1248 (best seed 1.1243), improving over PR #374's 1.1246 via EMA+SWA stacking and earlier Late QAT. The primary gains come from two orthogonal averaging signals and a tighter quant gap, though the margin over the previous record is very small (-0.0003)."
   },
   {
     "number": 64,
@@ -1594,6 +1650,28 @@
     "hardware_notes": "8x NVIDIA H100 80GB HBM3 SXM on RunPod",
     "status": "open",
     "key_findings": "Achieves mean val_bpb=1.1403 across 3 seeds via stride-32 sliding window eval and warmdown/Muon tuning, improving over SOTA by 0.017 nats (3.4x the 0.005 significance threshold) with no code changes to train_gpt.py."
+  },
+  {
+    "number": 511,
+    "title": "Record: Add PPM heuristic for test time learning",
+    "user": "AnirudhRahul",
+    "is_record_attempt": true,
+    "bpb_score": 1.1417373,
+    "bpb_is_mean": true,
+    "num_seeds": 3,
+    "validated": null,
+    "uses_ttt": true,
+    "num_layers": 10,
+    "techniques": [
+      "PPM",
+      "TTT",
+      "Int5",
+      "BigramHash"
+    ],
+    "technique_details": "Delayed outside-context-only PPM (Prediction by Partial Matching) applied as a test-time heuristic on top of the existing 10L Int5-MLP + BigramHash(10240) model. PPM trie implemented in C (trie_bench.c). Scores each chunk before training on it; resets between documents.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Applies a delayed PPM trie heuristic at test time to improve BPB from mean baseline 1.14299 to 1.14174 (delta -0.00126) across 3 seeds, demonstrating that classical compression heuristics can complement neural LM scoring without modifying model weights."
   },
   {
     "number": 469,
@@ -5070,6 +5148,26 @@
     "hardware_notes": null,
     "status": "open",
     "key_findings": "Combines sliding window evaluation with a more accurate 6-step Muon Newton-Schulz backend, achieving mean 1.1973 BPB across 3 seeds; a bot reviewer identified a potential double-counting bug at shard boundaries in the multi-GPU sliding eval implementation that may affect score validity."
+  },
+  {
+    "number": 510,
+    "title": "Non-record: MUD optimizer \u2014 triangular Gram preconditioning (arxiv:2603.17970)",
+    "user": "SelfAnush",
+    "is_record_attempt": false,
+    "bpb_score": 1.1989,
+    "bpb_is_mean": false,
+    "num_seeds": 1,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": null,
+    "techniques": [
+      "MUD optimizer",
+      "Int6"
+    ],
+    "technique_details": "Replaces Muon's 5-step Newton-Schulz iteration with MUD's triangular Gram preconditioning (Algorithm 2, arxiv:2603.17970). Only the optimizer is changed; all architecture and quantization settings are identical to thwu1's SOTA (PR #180). torch.linalg.solve_triangular on H100 CUDA is 4.5x slower per step than Muon's GEMM-based Newton-Schulz.",
+    "hardware_notes": "torch.linalg.solve_triangular is poorly optimized on H100 CUDA vs A100/MI250/GH200 where paper benchmarks were measured; step time 118ms vs ~26ms for Muon",
+    "status": "open",
+    "key_findings": "MUD optimizer achieves strong per-step convergence but is 4.5x slower than Muon on H100s, resulting in only 5,087 steps vs ~20,000 for Muon in the 10-minute budget and a final BPB of 1.1989 vs 1.1428. Extrapolated convergence suggests ~1.10 BPB if step time matched Muon."
   },
   {
     "number": 448,
@@ -10481,5 +10579,29 @@
     "hardware_notes": null,
     "status": "closed",
     "key_findings": "Documentation-only PR with minor README text corrections; not a model submission."
+  },
+  {
+    "number": 430,
+    "title": "Value Residual + Gated Attention + XSA + EMA + AdamW TTT \u2014 val_bpb pending H100",
+    "user": "sahiee-dev",
+    "is_record_attempt": false,
+    "bpb_score": null,
+    "bpb_is_mean": null,
+    "num_seeds": null,
+    "validated": null,
+    "uses_ttt": true,
+    "num_layers": 10,
+    "techniques": [
+      "TrigramHash",
+      "BigramHash",
+      "XSA",
+      "TTT",
+      "Int5",
+      "SWA"
+    ],
+    "technique_details": "TrigramHash(20480, dim=32) added alongside BigramHash reduced from 10240 to 4096 buckets. XSA applied to last 4 layers via orthogonal projection. TTT uses 3-epoch SGD (lr=0.002, momentum=0.9) with bottom 6 layers frozen, weights restored post-eval (~47s budget). QAT was evaluated and dropped as negative result.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Draft submission combining TrigramHash with XSA and TTT on top of thwu1's SOTA stack; validation is pending and no BPB score is reported yet. Notable for its explicit negative result on QAT and the budget-constrained trade-off between bigram and trigram embedding table sizes."
   }
 ]

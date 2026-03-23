@@ -26,12 +26,17 @@
         "pr": 327,
         "bpb": 1.145,
         "user": "Ananddna"
+      },
+      {
+        "pr": 430,
+        "bpb": null,
+        "user": "sahiee-dev"
       }
     ],
     "best_bpb": 1.1132,
     "worst_bpb": 1.2219,
     "avg_bpb": 1.1629,
-    "count": 5
+    "count": 6
   },
   "Value Residual": {
     "name": "Value Residual",
@@ -85,12 +90,17 @@
         "pr": 218,
         "bpb": null,
         "user": "bopmite"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
     "best_bpb": 1.0891,
     "worst_bpb": 1.4525,
-    "avg_bpb": 1.1742,
-    "count": 10
+    "avg_bpb": 1.168,
+    "count": 11
   },
   "GradQuant": {
     "name": "GradQuant",
@@ -417,12 +427,17 @@
         "pr": 21,
         "bpb": null,
         "user": "monroestephenson"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
     "best_bpb": 1.0891,
     "worst_bpb": 1.8338,
-    "avg_bpb": 1.1685,
-    "count": 54
+    "avg_bpb": 1.1676,
+    "count": 55
   },
   "sliding window eval": {
     "name": "sliding window eval",
@@ -1918,12 +1933,17 @@
         "pr": 302,
         "bpb": 1.152,
         "user": "JackYoung27"
+      },
+      {
+        "pr": 430,
+        "bpb": null,
+        "user": "sahiee-dev"
       }
     ],
     "best_bpb": 1.1216,
     "worst_bpb": 2.4402,
     "avg_bpb": 1.1814,
-    "count": 57
+    "count": 58
   },
   "Partial RoPE": {
     "name": "Partial RoPE",
@@ -2177,12 +2197,17 @@
         "pr": 59,
         "bpb": 1.216,
         "user": "notapplica"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
     "best_bpb": 1.1216,
     "worst_bpb": 2.962,
-    "avg_bpb": 1.2198,
-    "count": 50
+    "avg_bpb": 1.2177,
+    "count": 51
   },
   "SmearGate": {
     "name": "SmearGate",
@@ -2756,12 +2781,17 @@
         "pr": 135,
         "bpb": 1.1539,
         "user": "unnir"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
     "best_bpb": 1.05,
     "worst_bpb": 1.9011,
-    "avg_bpb": 1.163,
-    "count": 114
+    "avg_bpb": 1.1626,
+    "count": 115
   },
   "BigramHash": {
     "name": "BigramHash",
@@ -3410,12 +3440,27 @@
         "pr": 135,
         "bpb": 1.1539,
         "user": "unnir"
+      },
+      {
+        "pr": 430,
+        "bpb": null,
+        "user": "sahiee-dev"
+      },
+      {
+        "pr": 511,
+        "bpb": 1.1417373,
+        "user": "AnirudhRahul"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
     "best_bpb": 1.05,
     "worst_bpb": 2.4402,
-    "avg_bpb": 1.1861,
-    "count": 129
+    "avg_bpb": 1.1852,
+    "count": 132
   },
   "SWA": {
     "name": "SWA",
@@ -4014,12 +4059,22 @@
         "pr": 103,
         "bpb": null,
         "user": "MatthewHRockwell"
+      },
+      {
+        "pr": 430,
+        "bpb": null,
+        "user": "sahiee-dev"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
     "best_bpb": 1.05,
     "worst_bpb": 3.08435975,
-    "avg_bpb": 1.1854,
-    "count": 119
+    "avg_bpb": 1.1848,
+    "count": 121
   },
   "Muon optimizer": {
     "name": "Muon optimizer",
@@ -4403,12 +4458,17 @@
         "pr": 75,
         "bpb": 1.17675682,
         "user": "takhir-iota"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
     "best_bpb": 0.81,
     "worst_bpb": 1.9588,
-    "avg_bpb": 1.1874,
-    "count": 76
+    "avg_bpb": 1.1866,
+    "count": 77
   },
   "Zstd compression": {
     "name": "Zstd compression",
@@ -5231,12 +5291,17 @@
         "pr": 30,
         "bpb": 1.2663,
         "user": "JackYoung27"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
     "best_bpb": 1.03056634,
     "worst_bpb": 3.31983927,
-    "avg_bpb": 1.2779,
-    "count": 81
+    "avg_bpb": 1.2757,
+    "count": 82
   },
   "OrthoInit": {
     "name": "OrthoInit",
@@ -6357,12 +6422,17 @@
         "pr": 91,
         "bpb": 1.589,
         "user": "koushikkethamakka"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
     "best_bpb": 0.9588,
     "worst_bpb": 2.962,
-    "avg_bpb": 1.2417,
-    "count": 98
+    "avg_bpb": 1.2402,
+    "count": 99
   },
   "warmdown": {
     "name": "warmdown",
@@ -6666,12 +6736,17 @@
         "pr": 59,
         "bpb": 1.216,
         "user": "notapplica"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
     "best_bpb": 1.12311898,
     "worst_bpb": 1.4784,
-    "avg_bpb": 1.1933,
-    "count": 60
+    "avg_bpb": 1.192,
+    "count": 61
   },
   "TTT": {
     "name": "TTT",
@@ -7015,12 +7090,27 @@
         "pr": 44,
         "bpb": 1.1111,
         "user": "daniellawson9999"
+      },
+      {
+        "pr": 430,
+        "bpb": null,
+        "user": "sahiee-dev"
+      },
+      {
+        "pr": 511,
+        "bpb": 1.1417373,
+        "user": "AnirudhRahul"
+      },
+      {
+        "pr": 512,
+        "bpb": 0.9968,
+        "user": "MatoTeziTanka"
       }
     ],
-    "best_bpb": 1.0891,
+    "best_bpb": 0.9968,
     "worst_bpb": 1.5382,
-    "avg_bpb": 1.1833,
-    "count": 68
+    "avg_bpb": 1.1793,
+    "count": 71
   },
   "LoRA": {
     "name": "LoRA",
@@ -7139,12 +7229,17 @@
         "pr": 103,
         "bpb": null,
         "user": "MatthewHRockwell"
+      },
+      {
+        "pr": 512,
+        "bpb": 0.9968,
+        "user": "MatoTeziTanka"
       }
     ],
-    "best_bpb": 1.137,
+    "best_bpb": 0.9968,
     "worst_bpb": 2.962,
-    "avg_bpb": 1.4359,
-    "count": 23
+    "avg_bpb": 1.4128,
+    "count": 24
   },
   "FP16 tied embeddings": {
     "name": "FP16 tied embeddings",
@@ -8447,12 +8542,27 @@
         "pr": 110,
         "bpb": null,
         "user": "mr-ashish-panday"
+      },
+      {
+        "pr": 512,
+        "bpb": 0.9968,
+        "user": "MatoTeziTanka"
+      },
+      {
+        "pr": 510,
+        "bpb": 1.1989,
+        "user": "SelfAnush"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
-    "best_bpb": 1.05,
+    "best_bpb": 0.9968,
     "worst_bpb": 2.3517,
-    "avg_bpb": 1.1829,
-    "count": 126
+    "avg_bpb": 1.1808,
+    "count": 129
   },
   "Zstd": {
     "name": "Zstd",
@@ -9056,12 +9166,17 @@
         "pr": 59,
         "bpb": 1.216,
         "user": "notapplica"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
     "best_bpb": 1.03056634,
     "worst_bpb": 3.08435975,
-    "avg_bpb": 1.2426,
-    "count": 120
+    "avg_bpb": 1.2415,
+    "count": 121
   },
   "Meta-TTT": {
     "name": "Meta-TTT",
@@ -9374,12 +9489,17 @@
         "pr": 59,
         "bpb": 1.216,
         "user": "notapplica"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
     "best_bpb": 1.03056634,
     "worst_bpb": 2.4402,
-    "avg_bpb": 1.3575,
-    "count": 59
+    "avg_bpb": 1.3533,
+    "count": 60
   },
   "DenseFormer": {
     "name": "DenseFormer",
@@ -9600,12 +9720,22 @@
         "pr": 203,
         "bpb": null,
         "user": "LexHarie"
+      },
+      {
+        "pr": 430,
+        "bpb": null,
+        "user": "sahiee-dev"
+      },
+      {
+        "pr": 511,
+        "bpb": 1.1417373,
+        "user": "AnirudhRahul"
       }
     ],
     "best_bpb": 1.1365,
     "worst_bpb": 3.08435975,
-    "avg_bpb": 1.2445,
-    "count": 28
+    "avg_bpb": 1.2407,
+    "count": 30
   },
   "SwiGLU": {
     "name": "SwiGLU",
@@ -9719,12 +9849,17 @@
         "pr": 109,
         "bpb": null,
         "user": "eb1386"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
-    "best_bpb": 1.1364,
+    "best_bpb": 1.1248,
     "worst_bpb": 1.3281,
-    "avg_bpb": 1.2135,
-    "count": 22
+    "avg_bpb": 1.2047,
+    "count": 23
   },
   "U-Net": {
     "name": "U-Net",
@@ -10967,12 +11102,17 @@
         "pr": 164,
         "bpb": 1.1524,
         "user": "jfprincz"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
     "best_bpb": 1.1246,
     "worst_bpb": 1.4072,
-    "avg_bpb": 1.1729,
-    "count": 7
+    "avg_bpb": 1.1669,
+    "count": 8
   },
   "ALiBi": {
     "name": "ALiBi",
@@ -11106,12 +11246,17 @@
         "pr": 177,
         "bpb": null,
         "user": "magungh1"
+      },
+      {
+        "pr": 401,
+        "bpb": 1.1248,
+        "user": "newjordan"
       }
     ],
     "best_bpb": 1.1246,
     "worst_bpb": 1.1318,
-    "avg_bpb": 1.1282,
-    "count": 4
+    "avg_bpb": 1.1271,
+    "count": 5
   },
   "Int5 QAT": {
     "name": "Int5 QAT",
@@ -12380,12 +12525,17 @@
         "pr": 283,
         "bpb": null,
         "user": "Cwarren15-A"
+      },
+      {
+        "pr": 511,
+        "bpb": 1.1417373,
+        "user": "AnirudhRahul"
       }
     ],
-    "best_bpb": null,
-    "worst_bpb": null,
-    "avg_bpb": null,
-    "count": 1
+    "best_bpb": 1.1417373,
+    "worst_bpb": 1.1417373,
+    "avg_bpb": 1.1417,
+    "count": 2
   },
   "linear attention": {
     "name": "linear attention",
@@ -13168,6 +13318,34 @@
     "best_bpb": null,
     "worst_bpb": null,
     "avg_bpb": null,
+    "count": 1
+  },
+  "Depth-scaled residual": {
+    "name": "Depth-scaled residual",
+    "submissions": [
+      {
+        "pr": 512,
+        "bpb": 0.9968,
+        "user": "MatoTeziTanka"
+      }
+    ],
+    "best_bpb": 0.9968,
+    "worst_bpb": 0.9968,
+    "avg_bpb": 0.9968,
+    "count": 1
+  },
+  "MUD optimizer": {
+    "name": "MUD optimizer",
+    "submissions": [
+      {
+        "pr": 510,
+        "bpb": 1.1989,
+        "user": "SelfAnush"
+      }
+    ],
+    "best_bpb": 1.1989,
+    "worst_bpb": 1.1989,
+    "avg_bpb": 1.1989,
     "count": 1
   }
 }

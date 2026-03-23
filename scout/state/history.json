@@ -1,8 +1,8 @@
 [
   {
     "date": "2026-03-23",
-    "total_submissions": 456,
-    "submissions_with_score": 325,
+    "total_submissions": 461,
+    "submissions_with_score": 329,
     "best_bpb": 0.5,
     "top10": [
       {
@@ -30,6 +30,17 @@
           "Int6 quantization",
           "QAT",
           "sliding window eval"
+        ]
+      },
+      {
+        "number": 512,
+        "user": "MatoTeziTanka",
+        "bpb": 0.9968,
+        "techniques": [
+          "Int6",
+          "LoRA",
+          "TTT",
+          "Depth-scaled residual"
         ]
       },
       {
@@ -96,26 +107,6 @@
           "Zstd",
           "sliding window eval",
           "LZMA"
-        ]
-      },
-      {
-        "number": 262,
-        "user": "ibarrajo",
-        "bpb": 1.0539,
-        "techniques": [
-          "Int6",
-          "Zstd",
-          "SmearGate",
-          "BigramHash",
-          "SWA",
-          "FP16 tied embeddings",
-          "sliding window eval",
-          "paid prefix",
-          "LZMA compression",
-          "OrthoInit",
-          "muP",
-          "U-Net skip connections",
-          "Muon optimizer"
         ]
       }
     ]
