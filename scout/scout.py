@@ -19,7 +19,7 @@ import os
 # Ensure scout/ is on the path so imports work when run from any directory
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from fetch import fetch_all
+from fetch import fetch_all, fetch_diff
 from analyze import (
     analyze_all,
     generate_briefing,
@@ -33,7 +33,13 @@ def main():
     parser = argparse.ArgumentParser(description="Parameter Golf Scout")
     parser.add_argument("--fetch-only", action="store_true", help="Only fetch data, skip analysis")
     parser.add_argument("--brief-only", action="store_true", help="Regenerate briefing from existing state")
+    parser.add_argument("--diff", type=int, nargs="+", metavar="PR", help="Fetch diff for specific PR(s)")
     args = parser.parse_args()
+
+    if args.diff:
+        for pr_num in args.diff:
+            fetch_diff(pr_num)
+        return
 
     if args.brief_only:
         print("=== Parameter Golf Scout (briefing only) ===\n")

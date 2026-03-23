@@ -1,0 +1,38 @@
+[
+  {
+    "filename": "records/track_10min_16mb/2026-03-22_LegalTTT_ParallelMuon_1.1213/README.md",
+    "status": "added",
+    "additions": 91,
+    "deletions": 0
+  },
+  {
+    "filename": "records/track_10min_16mb/2026-03-22_LegalTTT_ParallelMuon_1.1213/submission.json",
+    "status": "added",
+    "additions": 10,
+    "deletions": 0
+  },
+  {
+    "filename": "records/track_10min_16mb/2026-03-22_LegalTTT_ParallelMuon_1.1213/train_gpt.py",
+    "status": "added",
+    "additions": 1898,
+    "deletions": 0
+  },
+  {
+    "filename": "records/track_10min_16mb/2026-03-22_LegalTTT_ParallelMuon_1.1213/train_seed1337.log",
+    "status": "added",
+    "additions": 275,
+    "deletions": 0
+  },
+  {
+    "filename": "records/track_10min_16mb/2026-03-22_LegalTTT_ParallelMuon_1.1213/train_seed2025.log",
+    "status": "added",
+    "additions": 275,
+    "deletions": 0
+  },
+  {
+    "filename": "records/track_10min_16mb/2026-03-22_LegalTTT_ParallelMuon_1.1213/train_seed42.log",
+    "status": "added",
+    "additions": 275,
+    "deletions": 0
+  }
+]

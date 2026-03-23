@@ -229,6 +229,47 @@ def fetch_all():
     }
 
 
+def fetch_diff(pr_number):
+    """Fetch the full diff for a specific PR and save it."""
+    url = f"{GITHUB_API}/repos/{GITHUB_REPO}/pulls/{pr_number}"
+    headers = _headers()
+    headers["Accept"] = "application/vnd.github.v3.diff"
+
+    print(f"Fetching diff for PR #{pr_number}...")
+    resp = requests.get(url, headers=headers)
+    resp.raise_for_status()
+    diff_text = resp.text
+
+    # Also fetch file list for summary
+    headers["Accept"] = "application/vnd.github.v3+json"
+    files_resp = requests.get(f"{url}/files", headers=headers, params={"per_page": 100})
+    files_resp.raise_for_status()
+    files = [
+        {"filename": f["filename"], "status": f["status"],
+         "additions": f["additions"], "deletions": f["deletions"]}
+        for f in files_resp.json()
+    ]
+
+    diff_dir = os.path.join(os.path.dirname(RAW_PRS_DIR), "diffs")
+    os.makedirs(diff_dir, exist_ok=True)
+
+    # Save raw diff
+    diff_path = os.path.join(diff_dir, f"{pr_number}.diff")
+    with open(diff_path, "w") as f:
+        f.write(diff_text)
+
+    # Save file summary
+    summary_path = os.path.join(diff_dir, f"{pr_number}_files.json")
+    with open(summary_path, "w") as f:
+        json.dump(files, f, indent=2)
+
+    total_add = sum(f["additions"] for f in files)
+    total_del = sum(f["deletions"] for f in files)
+    print(f"  {len(files)} files changed (+{total_add} -{total_del})")
+    print(f"  Saved to {diff_path}")
+    return {"diff": diff_text, "files": files}
+
+
 if __name__ == "__main__":
     result = fetch_all()
     print(f"\nDone. {len(result['prs'])} PRs, {len(result['issues'])} issues processed.")
