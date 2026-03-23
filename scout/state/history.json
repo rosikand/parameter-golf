@@ -1,0 +1,123 @@
+[
+  {
+    "date": "2026-03-23",
+    "total_submissions": 456,
+    "submissions_with_score": 325,
+    "best_bpb": 0.5,
+    "top10": [
+      {
+        "number": 475,
+        "user": "abrahaw123-cell",
+        "bpb": 0.5,
+        "techniques": []
+      },
+      {
+        "number": 216,
+        "user": "alons23",
+        "bpb": 0.81,
+        "techniques": [
+          "Muon optimizer",
+          "RoPE",
+          "QK-Norm"
+        ]
+      },
+      {
+        "number": 120,
+        "user": "andrewgcodes",
+        "bpb": 0.9588,
+        "techniques": [
+          "MLP expansion",
+          "Int6 quantization",
+          "QAT",
+          "sliding window eval"
+        ]
+      },
+      {
+        "number": 168,
+        "user": "spokane-way",
+        "bpb": 1.02384,
+        "techniques": []
+      },
+      {
+        "number": 144,
+        "user": "DJLougen",
+        "bpb": 1.03056634,
+        "techniques": [
+          "Int8",
+          "Zstd",
+          "GQA",
+          "MPK strides"
+        ]
+      },
+      {
+        "number": 278,
+        "user": "nicolasdickenmann",
+        "bpb": 1.03647005,
+        "techniques": [
+          "sliding window eval",
+          "sparse prefix cache"
+        ]
+      },
+      {
+        "number": 232,
+        "user": "kellyvv",
+        "bpb": 1.05,
+        "techniques": [
+          "Int6",
+          "QAT",
+          "MLP expansion",
+          "SmearGate",
+          "BigramHash",
+          "SWA",
+          "Zstd compression"
+        ]
+      },
+      {
+        "number": 108,
+        "user": "kellyvv",
+        "bpb": 1.05,
+        "techniques": [
+          "Int6",
+          "QAT",
+          "MLP expansion",
+          "SmearGate",
+          "BigramHash",
+          "SWA",
+          "Zstd compression"
+        ]
+      },
+      {
+        "number": 275,
+        "user": "ibarrajo",
+        "bpb": 1.0539,
+        "techniques": [
+          "SmearGate",
+          "Int6",
+          "Zstd",
+          "sliding window eval",
+          "LZMA"
+        ]
+      },
+      {
+        "number": 262,
+        "user": "ibarrajo",
+        "bpb": 1.0539,
+        "techniques": [
+          "Int6",
+          "Zstd",
+          "SmearGate",
+          "BigramHash",
+          "SWA",
+          "FP16 tied embeddings",
+          "sliding window eval",
+          "paid prefix",
+          "LZMA compression",
+          "OrthoInit",
+          "muP",
+          "U-Net skip connections",
+          "Muon optimizer"
+        ]
+      }
+    ]
+  }
+]
