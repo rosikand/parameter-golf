@@ -35,7 +35,7 @@ def _get_paginated(url, params=None, max_pages=50):
         if resp.status_code == 403 and "rate limit" in resp.text.lower():
             reset = int(resp.headers.get("X-RateLimit-Reset", time.time() + 60))
             wait = max(reset - int(time.time()), 1) + 1
-            print(f"  Rate limited. Waiting {wait}s...")
+            print(f"  Rate limited. Waiting {wait}s...", flush=True)
             time.sleep(wait)
             resp = requests.get(url, headers=_headers(), params=params)
         resp.raise_for_status()
@@ -137,9 +137,9 @@ def fetch_prs(since=None):
     url = f"{GITHUB_API}/repos/{GITHUB_REPO}/pulls"
     params = {"state": "all", "sort": "updated", "direction": "desc"}
 
-    print(f"Fetching PRs from {GITHUB_REPO}...")
+    print(f"Fetching PRs from {GITHUB_REPO}...", flush=True)
     all_prs = _get_paginated(url, params)
-    print(f"  Fetched {len(all_prs)} total PRs from API")
+    print(f"  Fetched {len(all_prs)} total PRs from API", flush=True)
 
     # Filter to only those updated since last fetch
     if since:
