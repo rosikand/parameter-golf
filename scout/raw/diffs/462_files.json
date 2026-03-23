@@ -1,0 +1,14 @@
+[
+  {
+    "filename": "records/track_10min_16mb/2026-03-22_JoeProAI_SwiGLU_XSA4_AdamW_TTT/README.md",
+    "status": "added",
+    "additions": 71,
+    "deletions": 0
+  },
+  {
+    "filename": "records/track_10min_16mb/2026-03-22_JoeProAI_SwiGLU_XSA4_AdamW_TTT/train_gpt.py",
+    "status": "added",
+    "additions": 1500,
+    "deletions": 0
+  }
+]

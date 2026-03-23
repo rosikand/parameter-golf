@@ -26,4 +26,4 @@ H100_COST_PER_HOUR = 3.95
 INFRA_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(INFRA_DIR)
 LEADERBOARD_CSV = os.path.join(INFRA_DIR, "leaderboard.csv")
-LEADERBOARD_MD = os.path.join(PROJECT_ROOT, "LEADERBOARD.md")
+LEADERBOARD_MD = os.path.join(INFRA_DIR, "LEADERBOARD.md")

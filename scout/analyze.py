@@ -1,10 +1,15 @@
 """Analyze PRs and issues using Claude API to extract structured data and generate briefings."""
 
+import builtins
 import json
 import os
 from datetime import datetime, timezone
+from functools import partial
 
 import anthropic
+
+# Force flush on all prints so progress is visible when output is piped
+print = partial(builtins.print, flush=True)
 
 from config import (
     CLAUDE_MODEL,
@@ -88,40 +93,78 @@ def _format_pr_for_analysis(p):
     return text
 
 
+def _parse_json_response(text):
+    """Parse JSON from Claude response, handling code fences."""
+    text = text.strip()
+    if text.startswith("```"):
+        text = text.split("\n", 1)[1]
+    if text.endswith("```"):
+        text = text[:-3].strip()
+    return json.loads(text)
+
+
+def _extract_batch(prompt, batch_text, batch_label, max_tokens=8192):
+    """Send a batch to Claude and parse the JSON response. Retry once with higher max_tokens on failure."""
+    resp = client.messages.create(
+        model=CLAUDE_MODEL,
+        max_tokens=max_tokens,
+        messages=[
+            {"role": "user", "content": f"{prompt}\n\nHere are the PRs:\n\n{batch_text}"}
+        ],
+    )
+    text = resp.content[0].text.strip()
+    try:
+        return _parse_json_response(text)
+    except json.JSONDecodeError:
+        # Retry with higher max_tokens in case response was truncated
+        if max_tokens < 16384:
+            print(f"    Retrying {batch_label} with max_tokens=16384...")
+            resp = client.messages.create(
+                model=CLAUDE_MODEL,
+                max_tokens=16384,
+                messages=[
+                    {"role": "user", "content": f"{prompt}\n\nHere are the PRs:\n\n{batch_text}"}
+                ],
+            )
+            text = resp.content[0].text.strip()
+            try:
+                return _parse_json_response(text)
+            except json.JSONDecodeError:
+                pass
+        print(f"    WARNING: Failed to parse {batch_label} after retry")
+        print(f"    Response tail (last 200 chars): ...{text[-200:]}")
+        return None
+
+
 def extract_pr_data(prs):
     """Send PRs to Claude in batches and extract structured records."""
     if not prs:
         return []
 
     all_records = []
+    total_batches = (len(prs) + PR_BATCH_SIZE - 1) // PR_BATCH_SIZE
     for i in range(0, len(prs), PR_BATCH_SIZE):
         batch = prs[i:i + PR_BATCH_SIZE]
+        batch_num = i // PR_BATCH_SIZE + 1
         batch_text = "\n\n---\n\n".join(
             _format_pr_for_analysis(p) for p in batch
         )
 
-        print(f"  Extracting batch {i // PR_BATCH_SIZE + 1} ({len(batch)} PRs)...")
-        resp = client.messages.create(
-            model=CLAUDE_MODEL,
-            max_tokens=4096,
-            messages=[
-                {"role": "user", "content": f"{EXTRACTION_PROMPT}\n\nHere are the PRs:\n\n{batch_text}"}
-            ],
-        )
+        print(f"  Extracting batch {batch_num}/{total_batches} ({len(batch)} PRs)...")
+        records = _extract_batch(EXTRACTION_PROMPT, batch_text, f"batch {batch_num}")
 
-        text = resp.content[0].text.strip()
-        # Handle potential markdown code fences
-        if text.startswith("```"):
-            text = text.split("\n", 1)[1]
-            if text.endswith("```"):
-                text = text[:-3].strip()
-
-        try:
-            records = json.loads(text)
+        if records is not None:
             all_records.extend(records)
-        except json.JSONDecodeError as e:
-            print(f"  WARNING: Failed to parse Claude response for batch {i // PR_BATCH_SIZE + 1}: {e}")
-            print(f"  Raw response (first 500 chars): {text[:500]}")
+        else:
+            # Fall back to processing PRs individually
+            print(f"    Falling back to individual extraction for batch {batch_num}...")
+            for p in batch:
+                single_text = _format_pr_for_analysis(p)
+                single_records = _extract_batch(EXTRACTION_PROMPT, single_text, f"PR #{p['number']}")
+                if single_records is not None:
+                    all_records.extend(single_records)
+                else:
+                    print(f"    SKIPPED PR #{p['number']} — could not extract")
 
     return all_records
 
@@ -180,32 +223,29 @@ def extract_issue_data(issues):
         return []
 
     all_records = []
+    total_batches = (len(issues) + PR_BATCH_SIZE - 1) // PR_BATCH_SIZE
     for i in range(0, len(issues), PR_BATCH_SIZE):
         batch = issues[i:i + PR_BATCH_SIZE]
+        batch_num = i // PR_BATCH_SIZE + 1
         batch_text = "\n\n---\n\n".join(
             _format_issue_for_analysis(iss) for iss in batch
         )
 
-        print(f"  Extracting issue batch {i // PR_BATCH_SIZE + 1} ({len(batch)} issues)...")
+        print(f"  Extracting issue batch {batch_num}/{total_batches} ({len(batch)} issues)...")
         resp = client.messages.create(
             model=CLAUDE_MODEL,
-            max_tokens=4096,
+            max_tokens=8192,
             messages=[
                 {"role": "user", "content": f"{ISSUE_EXTRACTION_PROMPT}\n\nHere are the issues:\n\n{batch_text}"}
             ],
         )
 
         text = resp.content[0].text.strip()
-        if text.startswith("```"):
-            text = text.split("\n", 1)[1]
-            if text.endswith("```"):
-                text = text[:-3].strip()
-
         try:
-            records = json.loads(text)
+            records = _parse_json_response(text)
             all_records.extend(records)
         except json.JSONDecodeError as e:
-            print(f"  WARNING: Failed to parse issue batch {i // PR_BATCH_SIZE + 1}: {e}")
+            print(f"  WARNING: Failed to parse issue batch {batch_num}: {e}")
 
     return all_records
 

@@ -13,8 +13,13 @@ Environment variables:
 """
 
 import argparse
+import builtins
 import sys
 import os
+from functools import partial
+
+# Force flush on all prints so progress is visible when output is piped
+print = partial(builtins.print, flush=True)
 
 # Ensure scout/ is on the path so imports work when run from any directory
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
