@@ -1,0 +1,310 @@
+[
+  {
+    "number": 140,
+    "title": "Parameter Golf Live AI Commentary + Analysis / Ideas | every 10 minutes",
+    "user": "notapplica",
+    "category": "analysis",
+    "techniques_mentioned": [
+      "GEPA",
+      "AdamW TTT",
+      "test-time training",
+      "sliding window eval",
+      "Int5 MLP",
+      "Int6 MLP",
+      "BigramHash",
+      "SWA",
+      "SmearGate",
+      "OrthoInit",
+      "MuonWD",
+      "FA3",
+      "backward-looking TTT",
+      "seq curriculum",
+      "EMA",
+      "Partial RoPE",
+      "LN Scale",
+      "Late QAT"
+    ],
+    "key_insights": "Comprehensive live tracker documenting BPB progress from 1.2244 baseline to 1.0672 (pending) over ~5 days, with technique lineage and impact analysis. Key finding: seq curriculum breaks SWA, EMA causes 0.14 BPB quant gap on SWA-stacks, and MLP 2.75x is the sweet spot at 11L+SmearGate. Backward-looking TTT (adapting only on already-scored tokens) is the only permitted form of test-time training.",
+    "relevance": "high"
+  },
+  {
+    "number": 402,
+    "title": "Invalid submissions due to information leakage during TTT",
+    "user": "leloykun",
+    "category": "bug_report",
+    "techniques_mentioned": [
+      "test-time training",
+      "TTT",
+      "backward-looking TTT",
+      "DDP parallel TTT"
+    ],
+    "key_insights": "Many submissions implement TTT incorrectly by training on all eval tokens before scoring, which is equivalent to appending eval tokens to training data and constitutes information leakage. Proper TTT must score token t before adapting on tokens up to t. At least 9 PRs are potentially invalid due to this issue.",
+    "relevance": "high"
+  },
+  {
+    "number": 83,
+    "title": "Unofficial Leaderboard",
+    "user": "jordankzf",
+    "category": "analysis",
+    "techniques_mentioned": [
+      "sliding window eval",
+      "MLP 3x expansion",
+      "int6 per-row quantization",
+      "fp16 tied embedding",
+      "long-context training seq4096",
+      "Muon momentum",
+      "NorMuon",
+      "LoRA TTT",
+      "mixed precision",
+      "val-only training",
+      "zstd-22"
+    ],
+    "key_insights": "Early leaderboard snapshot quantifying technique impacts: sliding window eval (~-0.034 BPB), MLP 3x expansion (~-0.019 BPB), int6 quantization (saves ~4MB enabling larger models), fp16 tied embedding (~-0.007 BPB), and seq4096 training (~-0.01 BPB). LoRA TTT with rank-8 adapters per document provides ~-0.004 BPB using only ~1/10 of eval budget.",
+    "relevance": "high"
+  },
+  {
+    "number": 82,
+    "title": "[Tips] for newbies like myself",
+    "user": "jordankzf",
+    "category": "other",
+    "techniques_mentioned": [
+      "torch.compile",
+      "int6 quantization",
+      "sliding window",
+      "SP-4096",
+      "SP-8192"
+    ],
+    "key_insights": "Practical infrastructure guide for RunPod: torch.compile takes 3-4 minutes but doesn't count against the 600s training budget, network volumes must match datacenter, and Blackwell GPUs (RTX Pro 6000) may have torch.compile issues. Pre-tokenized SP-4096 and SP-8192 data is publicly available on HuggingFace, saving significant setup time.",
+    "relevance": "medium"
+  },
+  {
+    "number": 280,
+    "title": "flash_attn_interface (FA3) missing from runpod/parameter-golf:latest image",
+    "user": "ibarrajo",
+    "category": "bug_report",
+    "techniques_mentioned": [
+      "Flash Attention 3",
+      "FA3",
+      "SDPA",
+      "flash_attn"
+    ],
+    "key_insights": "The official RunPod template is missing flash_attn_interface (FA3) and flash_attn (FA2), yet multiple top submissions depend on FA3 without fallbacks. Submissions should include a try/except fallback to PyTorch SDPA, which is ~10% slower than FA3 on H100 but ensures compatibility with the evaluation environment.",
+    "relevance": "high"
+  },
+  {
+    "number": 87,
+    "title": "Live Leaderboard for Parameter Golf",
+    "user": "stpcoder",
+    "category": "competition_meta",
+    "techniques_mentioned": [],
+    "key_insights": "Community-built unofficial leaderboard at parameter-golf.github.io auto-updating every 30 minutes with rankings, scores, and PR links. Val-only submissions are excluded by default to surface legitimate competitive entries.",
+    "relevance": "low"
+  },
+  {
+    "number": 202,
+    "title": "Proposal: share weights by default",
+    "user": "mihaibujanca",
+    "category": "competition_meta",
+    "techniques_mentioned": [
+      "post-training quantization",
+      "distillation",
+      "model merging"
+    ],
+    "key_insights": "Proposal to publish trained weights to a shared HuggingFace repo alongside code submissions, reducing redundant H100 compute for reproduction and enabling downstream research like interpretability and distillation. Compressed artifacts are already under 20MB, making hosting trivial.",
+    "relevance": "low"
+  },
+  {
+    "number": 210,
+    "title": "[QUESTION] Can we use zstandard instead of zlib?",
+    "user": "davidpuertolas",
+    "category": "question",
+    "techniques_mentioned": [
+      "zstandard",
+      "zstd level 22",
+      "zlib"
+    ],
+    "key_insights": "Confirmed by organizer (@0hq) that zstandard (zstd) compression is allowed as a replacement for zlib in artifact compression, as all imports and methods are permitted provided compute, time, and eval limits are respected.",
+    "relevance": "medium"
+  },
+  {
+    "number": 270,
+    "title": "Record submission: FarnsworthEngine v1 \u2014 val_bpb=1.1303 (mean 1.1313, 3 seeds)",
+    "user": "timowhite88",
+    "category": "competition_meta",
+    "techniques_mentioned": [
+      "TTT",
+      "Int6 MLP3x",
+      "SmearGate",
+      "BigramHash",
+      "OrthoInit",
+      "Muon WD",
+      "SWA",
+      "FA3",
+      "sliding window"
+    ],
+    "key_insights": "Leaderboard addition request for PR #254 combining TTT with a full stack of techniques achieving mean 1.1313 BPB across 3 seeds. Notably this submission was later flagged in issue #402 as potentially invalid due to improper TTT implementation (training on eval tokens before scoring).",
+    "relevance": "medium"
+  },
+  {
+    "number": 253,
+    "title": "sdf",
+    "user": "Hanosuko",
+    "category": "other",
+    "techniques_mentioned": [],
+    "key_insights": "Empty issue with no content.",
+    "relevance": "low"
+  },
+  {
+    "number": 43,
+    "title": "[Question] Tokenizer is not counted in submission size",
+    "user": "DouglasOrr",
+    "category": "competition_meta",
+    "techniques_mentioned": [
+      "large vocabulary models",
+      "BPE tokenizer",
+      "n-gram tokenizers"
+    ],
+    "key_insights": "The tokenizer is not counted in the 16MB submission size limit, which could give large-vocabulary models an artificial advantage by sneaking in information via tokenizer strings. The organizer ruled that exploiting this side-channel is 'not in the spirit of the competition' and will be evaluated case-by-case. Large vocab still incurs cost via the embedding table, partially mitigating the concern.",
+    "relevance": "medium"
+  },
+  {
+    "number": 158,
+    "title": "Community Tool: Parameter Golf Leaderboard Monitor (CLI + Claude Code Skill)",
+    "user": "dexhunter",
+    "category": "other",
+    "techniques_mentioned": [
+      "OrthoInit",
+      "Int6 quantization",
+      "BigramHash",
+      "SmearGate",
+      "NorMuon",
+      "SWA",
+      "Sliding Window Attention"
+    ],
+    "key_insights": "A community-built CLI tool that fetches PRs and extracts val_bpb scores to display a ranked leaderboard with no dependencies. Provides a useful snapshot of competitive scores (top scores around 1.154 BPB at time of posting). Added heuristics to flag suspect submissions training on the validation set.",
+    "relevance": "low"
+  },
+  {
+    "number": 67,
+    "title": "[Discussion] On the use of training on validation set",
+    "user": "jojo23333",
+    "category": "technique_discussion",
+    "techniques_mentioned": [
+      "test-time adaptation",
+      "validation set fine-tuning",
+      "int8 quantization",
+      "online learning"
+    ],
+    "key_insights": "Training on validation tokens before evaluating them is permitted only in a causal/online sense: you may train on tokens [0:N-1] before predicting token N, but not train on the validation set multiple times then re-evaluate. The author demonstrated that full validation-set fine-tuning can reduce BPB from ~1.23 to ~1.07, showing the evaluation budget is generous enough to enable near-overfitting if abused. The clarification closes the loophole of multi-pass validation fine-tuning.",
+    "relevance": "high"
+  },
+  {
+    "number": 138,
+    "title": "Pausing on the competition until grant comes in",
+    "user": "notapplica",
+    "category": "other",
+    "techniques_mentioned": [],
+    "key_insights": "A participant noted spending $550 in Modal compute credits in two days of sequential training jobs and had to pause. Highlights that GPU costs can escalate quickly with iterative experimentation.",
+    "relevance": "low"
+  },
+  {
+    "number": 101,
+    "title": "Is PyTorch a hard requirement, or just the assumed default?",
+    "user": "pszemraj",
+    "category": "question",
+    "techniques_mentioned": [
+      "MEGALODON",
+      "complex-valued ops",
+      "JAX JIT compilation",
+      "state-space models",
+      "non-standard scan patterns"
+    ],
+    "key_insights": "PyTorch is not a hard requirement \u2014 JAX submissions are allowed as long as the record is independently reproducible from the code in the /records folder. The author demonstrates that PyTorch's poor support for complex ops creates a ~2.6x wallclock penalty for non-Transformer architectures like MEGALODON, potentially biasing the competition toward Llama-style designs rather than genuinely parameter-efficient alternatives.",
+    "relevance": "high"
+  },
+  {
+    "number": 129,
+    "title": "Proposals for new rules to handle flood of submissions",
+    "user": "leloykun",
+    "category": "competition_meta",
+    "techniques_mentioned": [
+      "autoresearch",
+      "automated submission tooling"
+    ],
+    "key_insights": "Proposes limiting each participant to one open record attempt at a time, merging sufficiently similar concurrent submissions with shared credit, and enforcing stricter code quality to combat LLM-generated reward hacking. Motivated by the rapid flood of submissions and risk of cherry-picked or low-quality entries degrading scientific rigor.",
+    "relevance": "medium"
+  },
+  {
+    "number": 17,
+    "title": "Environment Clarifications (pytorch, CUDA, H100)",
+    "user": "mikeapedia",
+    "category": "question",
+    "techniques_mentioned": [
+      "Flash Attention 2"
+    ],
+    "key_insights": "The evaluation environment uses SXM H100s with the pre-installed packages from the RunPod template (no pip install needed). The requirements.txt torch version discrepancy was resolved by pinning to the template's installed version.",
+    "relevance": "medium"
+  },
+  {
+    "number": 12,
+    "title": "10 min Submission requirements",
+    "user": "AleFestante",
+    "category": "question",
+    "techniques_mentioned": [
+      "test-time compute"
+    ],
+    "key_insights": "The 10-minute limit applies separately to training and evaluation \u2014 10 minutes each, not 10 minutes total. This was clarified in the README after community confusion.",
+    "relevance": "medium"
+  },
+  {
+    "number": 27,
+    "title": "Experiment runner: harness, result logging, research_log.md",
+    "user": "tayeva",
+    "category": "other",
+    "techniques_mentioned": [],
+    "key_insights": "Proposes building experiment infrastructure including a CLI-driven runner with config overrides, structured result logging, and config snapshots for reproducibility. Intended to streamline iterative experimentation for competition participants.",
+    "relevance": "low"
+  },
+  {
+    "number": 26,
+    "title": "Modular package: break train_gpt_cpu.py into pgolf/ modules",
+    "user": "tayeva",
+    "category": "other",
+    "techniques_mentioned": [
+      "Muon optimizer",
+      "int8 quantization",
+      "zlib compression",
+      "RMSNorm",
+      "Rotary embeddings"
+    ],
+    "key_insights": "Proposes refactoring the monolithic training script into importable, testable modules covering config, data, model, optimizer, quantization, and evaluation. Aims to improve code quality, testability, and accessibility for contributors building on the baseline.",
+    "relevance": "low"
+  },
+  {
+    "number": 25,
+    "title": "Project tooling: pyproject.toml, ruff, mypy, pytest",
+    "user": "tayeva",
+    "category": "competition_meta",
+    "techniques_mentioned": [],
+    "key_insights": "Sets up project infrastructure with ruff, mypy, and pytest via uv-based dependency management. Purely tooling/CI setup with no direct ML technique relevance.",
+    "relevance": "low"
+  },
+  {
+    "number": 28,
+    "title": "docs: research plan and hypotheses",
+    "user": "tayeva",
+    "category": "competition_meta",
+    "techniques_mentioned": [],
+    "key_insights": "Establishes documentation structure including a competition plan and research log template for tracking experiments. No technical content visible in the issue itself.",
+    "relevance": "low"
+  },
+  {
+    "number": 3,
+    "title": "Lets fkin goooooooooooooooo",
+    "user": "daniel7an",
+    "category": "other",
+    "techniques_mentioned": [],
+    "key_insights": "Enthusiasm post with no technical content or competition insights.",
+    "relevance": "low"
+  }
+]
