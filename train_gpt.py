@@ -28,6 +28,17 @@ from torch import Tensor, nn
 from torch.nn.parallel import DistributedDataParallel as DDP
 
 # -----------------------------
+# OPTIONAL WANDB
+# -----------------------------
+try:
+    import wandb
+    HAS_WANDB = True
+except ImportError:
+    HAS_WANDB = False
+
+USE_WANDB = HAS_WANDB and bool(int(os.environ.get("USE_WANDB", "0")))
+
+# -----------------------------
 # HYPERPARAMETERS
 # -----------------------------
 # Default Simple Baseline run:
@@ -892,8 +903,20 @@ def main() -> None:
         )
         optimizers.insert(1, optimizer_head)
 
+    # -----------------------------
+    # PROFILING SETUP
+    # -----------------------------
     n_params = sum(p.numel() for p in base_model.parameters())
-    log0(f"model_params:{n_params}")
+    n_emb_params = base_model.tok_emb.weight.numel()
+    if base_model.lm_head is not None:
+        n_emb_params += base_model.lm_head.weight.numel()
+    n_nonemb_params = n_params - n_emb_params
+    flops_per_step = 6.0 * n_nonemb_params * args.train_batch_tokens
+    H100_PEAK_FLOPS = float(os.environ.get("GPU_PEAK_TFLOPS", 989.4)) * 1e12 * world_size
+    total_eval_time_ms = 0.0
+
+    log0(f"model_params:{n_params} (non_emb:{n_nonemb_params} emb:{n_emb_params})")
+    log0(f"est_flops_per_step:{flops_per_step:.2e} gpu_peak_flops:{H100_PEAK_FLOPS:.2e}")
     log0(f"world_size:{world_size} grad_accum_steps:{grad_accum_steps}")
     log0("sdp_backends:cudnn=False flash=True mem_efficient=False math=False")
     log0(f"attention_mode:gqa num_heads:{args.num_heads} num_kv_heads:{args.num_kv_heads}")
@@ -908,6 +931,46 @@ def main() -> None:
         f"max_wallclock_seconds:{args.max_wallclock_seconds:.3f}"
     )
     log0(f"seed:{args.seed}")
+    log0(f"wandb:{USE_WANDB}")
+
+    # -----------------------------
+    # WANDB INIT
+    # -----------------------------
+    if USE_WANDB and master_process:
+        wandb_project = os.environ.get("WANDB_PROJECT", "parameter-golf")
+        wandb.init(
+            project=wandb_project,
+            name=args.run_id,
+            config={
+                "vocab_size": args.vocab_size,
+                "num_layers": args.num_layers,
+                "model_dim": args.model_dim,
+                "num_heads": args.num_heads,
+                "num_kv_heads": args.num_kv_heads,
+                "mlp_mult": args.mlp_mult,
+                "tie_embeddings": args.tie_embeddings,
+                "train_batch_tokens": args.train_batch_tokens,
+                "train_seq_len": args.train_seq_len,
+                "iterations": args.iterations,
+                "max_wallclock_seconds": args.max_wallclock_seconds,
+                "matrix_lr": args.matrix_lr,
+                "scalar_lr": args.scalar_lr,
+                "tied_embed_lr": args.tied_embed_lr,
+                "muon_momentum": args.muon_momentum,
+                "muon_backend_steps": args.muon_backend_steps,
+                "warmup_steps": args.warmup_steps,
+                "warmdown_iters": args.warmdown_iters,
+                "seed": args.seed,
+                "n_params": n_params,
+                "n_nonemb_params": n_nonemb_params,
+                "world_size": world_size,
+                "grad_accum_steps": grad_accum_steps,
+            },
+        )
+
+    def wandb_log(data: dict, step: int) -> None:
+        if USE_WANDB and master_process:
+            wandb.log(data, step=step)
 
     # -----------------------------
     # DATA LOADER & MODEL WARMUP
@@ -977,6 +1040,7 @@ def main() -> None:
         if should_validate:
             torch.cuda.synchronize()
             training_time_ms += 1000.0 * (time.perf_counter() - t0)
+            t_eval_start = time.perf_counter()
             val_loss, val_bpb = eval_val(
                 args,
                 model,
@@ -989,10 +1053,24 @@ def main() -> None:
                 has_leading_space_lut,
                 is_boundary_token_lut,
             )
+            torch.cuda.synchronize()
+            eval_elapsed_ms = 1000.0 * (time.perf_counter() - t_eval_start)
+            total_eval_time_ms += eval_elapsed_ms
+            mem_alloc = torch.cuda.memory_allocated() // 1024 // 1024
+            mem_peak = torch.cuda.max_memory_allocated() // 1024 // 1024
             log0(
                 f"step:{step}/{args.iterations} val_loss:{val_loss:.4f} val_bpb:{val_bpb:.4f} "
-                f"train_time:{training_time_ms:.0f}ms step_avg:{training_time_ms / max(step, 1):.2f}ms"
+                f"train_time:{training_time_ms:.0f}ms eval_time:{eval_elapsed_ms:.0f}ms "
+                f"step_avg:{training_time_ms / max(step, 1):.2f}ms "
+                f"mem:{mem_alloc}MiB peak:{mem_peak}MiB"
             )
+            wandb_log({
+                "val/loss": val_loss,
+                "val/bpb": val_bpb,
+                "val/eval_time_ms": eval_elapsed_ms,
+                "perf/mem_alloc_mib": mem_alloc,
+                "perf/mem_peak_mib": mem_peak,
+            }, step=step)
             torch.cuda.synchronize()
             t0 = time.perf_counter()
 
@@ -1040,10 +1118,30 @@ def main() -> None:
             and (step <= 10 or step % args.train_log_every == 0 or stop_after_step is not None)
         )
         if should_log_train:
+            step_time_s = (approx_training_time_ms / step) / 1000.0
+            tokens_per_sec = args.train_batch_tokens / step_time_s if step_time_s > 0 else 0
+            mfu = flops_per_step / (step_time_s * H100_PEAK_FLOPS) * 100.0 if step_time_s > 0 else 0
+            mem_alloc = torch.cuda.memory_allocated() // 1024 // 1024
+            mem_peak = torch.cuda.max_memory_allocated() // 1024 // 1024
+            total_tokens_seen = step * args.train_batch_tokens
             log0(
                 f"step:{step}/{args.iterations} train_loss:{train_loss.item():.4f} "
-                f"train_time:{approx_training_time_ms:.0f}ms step_avg:{approx_training_time_ms / step:.2f}ms"
+                f"train_time:{approx_training_time_ms:.0f}ms step_avg:{approx_training_time_ms / step:.2f}ms "
+                f"tok/s:{tokens_per_sec:.0f} mfu:{mfu:.1f}% "
+                f"mem:{mem_alloc}MiB peak:{mem_peak}MiB "
+                f"tokens_seen:{total_tokens_seen:.2e} lr_scale:{scale:.4f}"
             )
+            wandb_log({
+                "train/loss": train_loss.item(),
+                "train/tokens_seen": total_tokens_seen,
+                "perf/step_avg_ms": approx_training_time_ms / step,
+                "perf/tokens_per_sec": tokens_per_sec,
+                "perf/mfu_pct": mfu,
+                "perf/mem_alloc_mib": mem_alloc,
+                "perf/mem_peak_mib": mem_peak,
+                "lr/scale": scale,
+                "lr/muon_momentum": muon_momentum,
+            }, step=step)
 
         # Needed to sync whether we've reached the wallclock cap.
         reached_cap = max_wallclock_ms is not None and approx_training_time_ms >= max_wallclock_ms
@@ -1054,10 +1152,27 @@ def main() -> None:
         if stop_after_step is None and reached_cap:
             stop_after_step = step
 
-    log0(
-        f"peak memory allocated: {torch.cuda.max_memory_allocated() // 1024 // 1024} MiB "
-        f"reserved: {torch.cuda.max_memory_reserved() // 1024 // 1024} MiB"
-    )
+    # -----------------------------
+    # TRAINING SUMMARY
+    # -----------------------------
+    total_tokens = step * args.train_batch_tokens
+    avg_step_ms = training_time_ms / max(step, 1)
+    avg_tokens_per_sec = args.train_batch_tokens / (avg_step_ms / 1000.0) if avg_step_ms > 0 else 0
+    avg_mfu = flops_per_step / ((avg_step_ms / 1000.0) * H100_PEAK_FLOPS) * 100.0 if avg_step_ms > 0 else 0
+    log0("=" * 80)
+    log0("TRAINING SUMMARY")
+    log0("=" * 80)
+    log0(f"  steps completed:     {step}/{args.iterations}")
+    log0(f"  total tokens seen:   {total_tokens:,} ({total_tokens/1e9:.2f}B)")
+    log0(f"  training time:       {training_time_ms/1000:.1f}s")
+    log0(f"  total eval time:     {total_eval_time_ms/1000:.1f}s")
+    log0(f"  avg step time:       {avg_step_ms:.2f}ms")
+    log0(f"  avg tokens/sec:      {avg_tokens_per_sec:,.0f}")
+    log0(f"  avg MFU:             {avg_mfu:.1f}%")
+    log0(f"  peak mem allocated:  {torch.cuda.max_memory_allocated() // 1024 // 1024} MiB")
+    log0(f"  peak mem reserved:   {torch.cuda.max_memory_reserved() // 1024 // 1024} MiB")
+    log0(f"  current mem alloc:   {torch.cuda.memory_allocated() // 1024 // 1024} MiB")
+    log0("=" * 80)
 
     # -----------------------------
     # SERIALIZATION + ROUNDTRIP VALIDATION
@@ -1112,11 +1227,22 @@ def main() -> None:
         is_boundary_token_lut,
     )
     torch.cuda.synchronize()
+    roundtrip_eval_ms = 1000.0 * (time.perf_counter() - t_qeval)
     log0(
         f"final_int8_zlib_roundtrip val_loss:{q_val_loss:.4f} val_bpb:{q_val_bpb:.4f} "
-        f"eval_time:{1000.0 * (time.perf_counter() - t_qeval):.0f}ms"
+        f"eval_time:{roundtrip_eval_ms:.0f}ms"
     )
     log0(f"final_int8_zlib_roundtrip_exact val_loss:{q_val_loss:.8f} val_bpb:{q_val_bpb:.8f}")
+
+    wandb_log({
+        "final/val_loss": q_val_loss,
+        "final/val_bpb": q_val_bpb,
+        "final/artifact_bytes": quant_file_bytes + code_bytes if master_process else 0,
+        "final/quant_loss_delta": q_val_bpb - val_bpb,
+    }, step=step)
+
+    if USE_WANDB and master_process:
+        wandb.finish()
 
     if distributed:
         dist.destroy_process_group()
