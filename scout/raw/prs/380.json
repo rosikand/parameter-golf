@@ -1,0 +1,13 @@
+{
+  "number": 380,
+  "title": "WIP: Triton-based quantization systems (non-record)",
+  "state": "open",
+  "user": "turbo-indubitable",
+  "created_at": "2026-03-22T00:22:49Z",
+  "updated_at": "2026-03-22T00:24:09Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\n- WIP non-record submission: custom Triton kernels for aggressive sub-int8 quantization\r\n- Targeting higher effective parameter density within the 16MB artifact limit\r\n- Mixed-bitwidth fused matmuls, fused operator chains, per-layer bitwidth selection\r\n- Adopting proven community techniques (SWA, sliding window eval, Muon)\r\n\r\n## Status\r\n\r\nDraft / work-in-progress. measurements and train logs forthcoming.\r\n\r\n## Hardware\r\n\r\n- Local iteration: RTX 3090 Ti (24GB)\r\n- Final runs: 8xH100 (RunPod)\r\n\r\n## Test plan\r\n\r\n- [ ] Implement custom Triton quantized matmul kernels\r\n- [ ] Benchmark kernel throughput vs baseline int8\r\n- [ ] Full training run on 8xH100, measure val_bpb\r\n- [ ] Add train_gpt.py and train logs to submission folder\r\n- [ ] Verify artifact fits in 16MB",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/380",
+  "draft": true
+}

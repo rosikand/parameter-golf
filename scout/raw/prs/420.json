@@ -1,0 +1,13 @@
+{
+  "number": 420,
+  "title": "WIP: Shared-transformer + warmdown-aligned training (not final submis\u2026",
+  "state": "open",
+  "user": "leofeasby",
+  "created_at": "2026-03-22T12:34:37Z",
+  "updated_at": "2026-03-22T22:09:18Z",
+  "merged_at": null,
+  "body": "Shared-transformer architecture with MLP\u00d75 expansion, bigram hash embedding\r\n  (4096),\r\n  weight decay tuning, SWA, and warmdown-aligned training schedule.\r\n\r\n  Key finding: performance is dominated by a late-stage phase transition driven\r\n  by LR\r\n  warmdown. Aligning WARMDOWN_ITERS with the wallclock budget moves this\r\n  transition\r\n  earlier and converts wasted steps into usable convergence.\r\n\r\n  Results on 8\u00d7H100 (within 10-min budget):\r\n  - ~1.26 bpb int8 roundtrip\r\n  - ~1.30 bpb TTT LoRA\r\n\r\n  Work in progress \u2014 not a final submission.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/420",
+  "draft": false
+}

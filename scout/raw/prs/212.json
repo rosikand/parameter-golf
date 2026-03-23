@@ -1,0 +1,13 @@
+{
+  "number": 212,
+  "title": "Non-record: Negative findings on codebook quantization, magnitude pruning, multi-token prediction, embedding factorization",
+  "state": "open",
+  "user": "mrdavtan",
+  "created_at": "2026-03-20T13:06:35Z",
+  "updated_at": "2026-03-22T19:06:15Z",
+  "merged_at": null,
+  "body": "Non-record submission. val_bpb=1.1329 (3-seed mean, std=0.0006). 11L 512d int6+zstd-22, 15.3 MB, 8xH100 SXM. 25 experiments in FINDINGS.md.\n\n## Findings not tested elsewhere\n\n**Codebook quantization (#24)**: K-means K=256 gives 87% lower reconstruction MSE than int6 per-row, but 25% larger artifact under zstd-22. Higher byte entropy in codebook indices compresses less efficiently than clamped int6 values. Other K values and codecs not tested.\n\n**Magnitude pruning (#23)**: Zeroing smallest 3% of weights increased our artifact by 728KB under zstd-22. 1% and 5% were neutral. Non-monotonic on our checkpoint; other weight distributions may differ.\n\n**Multi-token prediction (#14)**: Auxiliary t+2 head at 0.5\u00d7 loss weight: +0.0018 BPP, 3% slower. Other weightings and scales not tested.\n\n**Embedding SVD (#25)**: Rank-64 explains 41.9% of variance on tok_emb (1024\u00d7512). Linear low-rank factorization not viable at this vocabulary size. Nonlinear methods not tested.\n\n**Also documented**: Depth recurrence failure (#13), QAT under torch.compile (#2b, credit @152334H), int5 gap (#15), curriculum learning (#11), optimizer coverage (#16), and 14 others.\n\n## Reproduction\n\n```bash\ngit clone https://github.com/mrdavtan/parameter-golf.git && cd parameter-golf && git checkout int6-3xMLP-pr\npip install flash-attn --no-cache-dir --no-build-isolation && pip install zstandard sentencepiece huggingface_hub\npython3 data/cached_challenge_fineweb.py --variant sp1024\nSEED=7 QAT=0 TTT_MAX_STEPS=500 TTT_FREEZE_BLOCKS=1 TRAIN_SEQ_LEN=2048 EVAL_SEQ_LEN=2048 \\\nUNET_SKIPS=1 ROPE_DIMS=16 LN_SCALE=1 ROPE_BASE=10000 EVAL_STRIDE=32 DOC_ISOLATED_EVAL=0 \\\nLATE_K_FP16=0 FP16_EMBED_EXPORT=0 \\\ntorchrun --standalone --nproc_per_node=8 records/track_10min_16mb/2026-03-21_11L_XSA_EMA_TTT/train_gpt.py\n```\n\nBuilds on PRs #162, #77, #180 and modded-nanogpt.\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/212",
+  "draft": false
+}

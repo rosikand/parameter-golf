@@ -1,0 +1,15 @@
+{
+  "number": 50,
+  "title": "Record: Sliding Window Eval (stride=64), val_bpb=1.1925",
+  "state": "closed",
+  "user": "mattqlf",
+  "created_at": "2026-03-19T05:36:48Z",
+  "updated_at": "2026-03-19T19:40:59Z",
+  "merged_at": "2026-03-19T17:28:13Z",
+  "body": "## Summary\n\n- Sliding window evaluation with stride=64 on the baseline 9x512 SP-1024 architecture\n- **val_bpb: 1.1925** (post-quant int8+zlib), improving on the Naive Baseline's 1.2244 by **0.032**\n- Training is identical to the baseline; the improvement comes entirely from the evaluation strategy\n- Each token is scored with 960+ tokens of context instead of 0-1023\n- Eval takes 70s on 8xH100 (well within the 10-minute eval budget)\n- Total artifact size: 15,874,829 bytes (under 16MB cap)\n\n## Test plan\n\n- [x] Trained and evaluated on 8xH100 SXM (RunPod)\n- [x] `final_int8_zlib_roundtrip_exact val_bpb:1.19250007`\n- [x] Artifact size verified under 16,000,000 bytes\n- [x] `train_gpt.py` compiles and runs within the records folder",
+  "labels": [
+    "record submission ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/50",
+  "draft": false
+}

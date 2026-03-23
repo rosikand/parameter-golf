@@ -1,0 +1,13 @@
+{
+  "number": 200,
+  "title": "Record: SP4096 + Int6 QAT + NorMuon (val_bpb=1.2012)",
+  "state": "open",
+  "user": "khasinski",
+  "created_at": "2026-03-20T10:10:56Z",
+  "updated_at": "2026-03-20T10:10:56Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- SP4096 tokenizer (26% better text compression than sp1024)\n- Int6 STE QAT + zstd-22 compression (14.3MB artifact)\n- NorMuon optimizer + tuned learning rates\n\n## Result\n\n**val_bpb = 1.2012** on 8xH100 SXM, 600s training, 14.3MB artifact.\n\nBeats baseline (1.2244) by 0.023 BPB.\n\n## Key Metrics\n\n| Metric | Value |\n|--------|-------|\n| val_bpb (post-quant) | 1.2012 |\n| Artifact size | 14,342,773 bytes |\n| Steps | 11,497 |\n| Hardware | 8xH100 SXM 80GB |\n\n## Test plan\n\n- [x] Train sp4096 tokenizer and verify compression ratio\n- [x] Local MLX smoke test\n- [x] RTX 5090 10-min comparison (16 configs tested)\n- [x] 8xH100 RunPod validation (600s)\n- [x] Artifact under 16,000,000 bytes\n- [x] train.log attached",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/200",
+  "draft": false
+}

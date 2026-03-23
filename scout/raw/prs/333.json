@@ -1,0 +1,13 @@
+{
+  "number": 333,
+  "title": "11L XSA4 + SmearGate + BigramHash + SWA + RoPE50K (mean val_bpb=1.1565, 3 seeds)",
+  "state": "open",
+  "user": "mahsumaktas",
+  "created_at": "2026-03-21T10:39:47Z",
+  "updated_at": "2026-03-21T10:39:47Z",
+  "merged_at": null,
+  "body": "## Summary\n\n**Mean val_bpb: 1.1565 (3 seeds)** | Best: 1.1538 (seed 1337) | Artifact: ~15.9 MB\n\n23 GPU runs on 8xH100 SXM5. Systematic exploration of XSA, EMA vs SWA, depth recurrence, seq curriculum, LR/WD sweep, and MLP scaling.\n\n## Techniques\n\n- **11 transformer layers** + XSA on last 4 layers\n- **SmearGate + BigramHash(2048)** + OrthoInit\n- **INT6 per-row quantization + zstd-22** + FP16 tied embedding + Late-K FP16\n- **SWA every 50 steps (fp32 accumulation)** \u2014 bf16 causes catastrophic loss\n- **Muon WD=0.04** + grad clip 0.3 + **RoPE base 50K**\n- **Overtone SVD init** + Phase-transition residual mixing\n- **MLP 2.75x** \u2014 sweet spot (3x exceeds 16MB with SmearGate at 11L)\n\n## Results (3 seeds)\n\n| Seed | Sliding BPB | Post-quant BPB | Artifact |\n|------|-------------|----------------|----------|\n| 1337 | **1.1538** | 1.1766 | 15.99 MB |\n| 42 | 1.1565 | 1.1790 | 15.87 MB |\n| 7 | 1.1593 | 1.1820 | 15.93 MB |\n| **Mean** | **1.1565** | | |\n\n## Key Findings from 23 Runs\n\n- **EMA(0.997) causes 0.14 BPB quant gap** \u2014 SWA far better for our stack\n- **11L MLP 3x exceeds 16MB** with SmearGate+BigramHash\n- **SmearGate removal loses more than MLP 3x gains** \u2014 bigram context matters\n- **XSA needs GQA-compatible v expansion** (repeat_interleave, bug found and fixed)\n- **Seq curriculum doesn't work** \u2014 SWA checkpoint incompatibility across seq lengths\n- **Depth recurrence works** but dim=640 too narrow; dim=768+ exceeds 16MB\n- **Higher LR (0.03) improves BPB** but worsens compression (larger weights)\n- **Late QAT (75%) reduces quant gap** (0.023 -> 0.006) but fewer steps\n\n## Run command\n\n```bash\nNUM_LAYERS=11 XSA_LAST_N=4 BIGRAM_VOCAB_SIZE=2048 \\\nTRAIN_SEQ_LEN=2048 TRAIN_BATCH_TOKENS=524288 MLP_MULT=2.75 \\\nMATRIX_LR=0.025 SCALAR_LR=0.025 TIED_EMBED_LR=0.035 \\\nMUON_MOMENTUM=0.99 MUON_WEIGHT_DECAY=0.04 WARMDOWN_ITERS=3000 \\\nSWA_ENABLED=1 SWA_EVERY=50 ROPE_BASE=50000 EVAL_STRIDE=64 \\\npython3 -m torch.distributed.run --standalone --nproc_per_node=8 train_gpt.py\n```\n\n## Test plan\n\n- [x] Runs reproducibly on 8xH100 SXM in under 10 minutes\n- [x] Artifact under 16 MB (15.87-15.99 MB)\n- [x] 3-seed validation (mean 1.1565, std 0.0028)\n- [x] Sliding window eval completes within 10 minutes\n\nBuilt with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/333",
+  "draft": false
+}

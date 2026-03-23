@@ -1,0 +1,13 @@
+{
+  "number": 363,
+  "title": "Non-record: Depth Recurrence + Quantization Error Amplification Finding",
+  "state": "open",
+  "user": "evangelinehelsinki",
+  "created_at": "2026-03-21T20:02:36Z",
+  "updated_at": "2026-03-21T20:02:36Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **Architecture:** 4 unique transformer blocks \u00d7 3 cycles = 12 effective depth (768d, 3\u00d7 MLP, BigramHash, XSA, LoRA)\n- **Post-quant val_bpb:** 2.4402 (3-seed mean) | **Pre-quant:** 2.0711\n- **Artifact:** ~1.5 MB (int8+zstd-22)\n\n## Key Finding: Quantization Error Amplifies Through Recurrence\n\nRecurrence amplifies quantization error by approximately **900\u00d7** over 3 cycles. This explains why PR #212's Huginn approach got catastrophic 4.34 bpb \u2014 they likely used standard int6 quantization without accounting for error amplification.\n\n- Int6 quantization gap: **1.14 bpb** (unusable)\n- Int8 quantization gap: **0.37 bpb** (workable but significant)\n- The remaining gap is the fundamental tradeoff: recurrence saves parameters but requires higher-precision quantization\n\nThis interaction between recurrence and quantization has not been documented in the competition or (to my knowledge) in published literature.\n\n## Test plan\n\n- [x] 3-seed validation on 8\u00d7H100 SXM (seeds 1337, 42, 7)\n- [x] Pre-quant bpb consistent across seeds (std = 0.0054)\n- [x] Quantization error amplification measured and documented\n- [x] Full pipeline: train \u2192 quantize \u2192 compress \u2192 decompress \u2192 dequantize \u2192 eval",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/363",
+  "draft": false
+}

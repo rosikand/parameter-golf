@@ -1,0 +1,13 @@
+{
+  "number": 384,
+  "title": "Non-record: Meta-TTT + Cache/OGD Eval Stacking + Tokenizer Ablation",
+  "state": "open",
+  "user": "anantdgoel",
+  "created_at": "2026-03-22T01:26:16Z",
+  "updated_at": "2026-03-22T01:26:16Z",
+  "merged_at": null,
+  "body": "## Non-record: Meta-TTT + Cache/OGD Eval Stacking + Tokenizer Ablation\n\n**val_bpb: 1.2882** (sliding window) | **13.2 MB** | 1xA40 Secure, 2000 steps, 524K batch\n\nThree novel research directions with controlled ablations, each exploring techniques no other submissions have investigated.\n\n### Contributions\n\n**1. MAML-style Meta-TTT (negative result)**\nFirst-order MAML during training to optimize initialization for TTT adaptation. Controlled A/B test (same 524K batch, same arch):\n- Control: 1.2882 BPB sliding window\n- Meta-TTT: 1.3733 BPB (+0.085 worse)\n- Root cause: meta-loss weight (0.5) too aggressive, competing with LM loss. PR #296's Reptile (lighter touch, last 20% only) is the right approach.\n\n**2. Eval-time technique stacking (positive result)**\nUnigram cache mixture + online gradient descent on vocab bias, stacked on SGD TTT:\n- TTT alone: 1.3563 BPB\n- TTT + cache + OGD: **1.3529 BPB (-0.003 additive)**\n- Zero artifact cost, backward-looking compliant\n\n**3. Tokenizer optimization (null result)**\nFirst submission to modify the tokenizer. BPE with `split_digits=False, max_len=64` gives -5.7% fewer tokens/byte at v8192, but **no BPB improvement** (+0.0006 worse). Longer merged tokens are harder to predict per-token, offsetting compression gains. Explains why community converged on stock v1024.\n\n### Files\n- `README.md` \u2014 Full writeup with ablation tables\n- `submission.json` \u2014 Metadata\n- `train_gpt.py` \u2014 Modified script with cache mixture, OGD, Meta-TTT\n- `train.log` \u2014 Training log from A40 control run",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/384",
+  "draft": false
+}

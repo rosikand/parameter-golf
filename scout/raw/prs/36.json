@@ -1,0 +1,15 @@
+{
+  "number": 36,
+  "title": "docs: increase MLX smoke validation batch size",
+  "state": "closed",
+  "user": "brendanboyle87",
+  "created_at": "2026-03-18T23:53:33Z",
+  "updated_at": "2026-03-20T19:13:46Z",
+  "merged_at": null,
+  "body": "## Summary\n- update the README MLX smoke command to use `VAL_BATCH_SIZE=524288`\n- keep the rest of the local trial-run example unchanged\n\n## Why\nThe default validation batch size setting in the README trial run takes a very long time on a local Mac run for an M4 Max Mac Studio with 128GB, so this raises the documented MLX smoke-test value to a more practical local setting.",
+  "labels": [
+    "enhancement"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/36",
+  "draft": false
+}

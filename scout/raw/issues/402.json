@@ -1,0 +1,11 @@
+{
+  "number": 402,
+  "title": "Invalid submissions due to information leakage during TTT",
+  "state": "open",
+  "user": "leloykun",
+  "created_at": "2026-03-22T05:21:50Z",
+  "updated_at": "2026-03-23T01:18:40Z",
+  "body": "Don't train on eval tokens your model hasn't scored yet!\n\n---\n\n\"Proper\" TTT goes like this:\n\n1. For each `1 <= t <= T`:\n    1.1. Score on eval token `t`\n    1.2. Adapt weights based on eval token `<= t`\n---\n\nWhat y'all are doing is something like this:\n1. For each `1 <= t <= T`:\n    1.1. Adapt weights based on eval token `<= t`\n2. For each `1 <= t <= T`:\n    2.1. Score on eval token `t`\n\nBut this is equivalent to appending the eval tokens to the training tokens and switching training strategies before eval! Also see: https://github.com/openai/parameter-golf/pull/152#issuecomment-4101741099\n\n---\n\nPotentially invalid submissions:\n| PR  | comment | status |\n| --- | --- | --- |\n| https://github.com/openai/parameter-golf/pull/136 | TTT on half of the batch; eval on full batch | [ ] open |\n| https://github.com/openai/parameter-golf/pull/152 | TTT on all eval tokens before evaluation | [x] closed |\n| https://github.com/openai/parameter-golf/pull/254 | TTT on multiple parts of eval sequence for multiple epochs | [ ] open |\n| https://github.com/openai/parameter-golf/pull/264 | TTT before eval | [ ] open |\n| https://github.com/openai/parameter-golf/pull/338 | TTT on multiple parts of eval sequence for multiple epochs | [ ] open |\n| https://github.com/openai/parameter-golf/pull/398 | TTT on all eval tokens before evaluation | [ ] Open |\n| https://github.com/openai/parameter-golf/pull/421 | TTT before evals | [ ] open |\n| https://github.com/openai/parameter-golf/pull/417 | TTT for multiple epochs before evals | [ ] open |\n| https://github.com/openai/parameter-golf/pull/442 | TTT before evals | [ ] open |\n\ncc @0hq \n\n---\n\nPlease feel free to correct me if I'm wrong.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/issues/402"
+}

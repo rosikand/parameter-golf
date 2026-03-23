@@ -1,0 +1,13 @@
+{
+  "number": 362,
+  "title": "Record: 11L Int6+Zstd MLP3x SmearGate BigramHash OrthoInit MuonWD EMA (mean val_bpb=1.1497)",
+  "state": "open",
+  "user": "mkenney2",
+  "created_at": "2026-03-21T19:47:18Z",
+  "updated_at": "2026-03-21T19:47:18Z",
+  "merged_at": null,
+  "body": "## Summary\r\n  - 11L 512d MLP3x with int6+zstd-22, SmearGate, BigramHash, OrthoInit, Muon WD=0.02, EMA(0.997)\r\n  - FP16 tied embeddings, seq2048, sliding window eval stride=256\r\n  - **Mean val_bpb: 1.1497 \u00b1 0.0004 (3 seeds: 1337, 42, 7)**\r\n  - Artifact: ~14.8MB\r\n\r\n  ## Test plan\r\n  - [x] 3-seed validation on 8xH100 SXM (all under 16MB, all under 600s)\r\n  - [x] train.log included (seed 7, val_bpb=1.1495)\r\n  - [x] Extensive ablation documented in README (AttnRes, depth recurrence, seq-len curriculum, TTT)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/362",
+  "draft": false
+}

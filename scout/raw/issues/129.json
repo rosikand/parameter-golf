@@ -1,0 +1,11 @@
+{
+  "number": 129,
+  "title": "Proposals for new rules to handle flood of submissions",
+  "state": "open",
+  "user": "leloykun",
+  "created_at": "2026-03-19T20:46:32Z",
+  "updated_at": "2026-03-19T21:58:26Z",
+  "body": "Hi all! It's only been ~a day and we're already getting flooded with submissions, and this is just gonna get worse the more people use `autoresearch`-like tools. While I think it's cool to keep the barrier to entry low so more people can have fun with us, I think it's also worthwhile to enforce scientific rigor and shift the 'burden of proof' back to the participants.\n\nThat said, I propose setting up these rules to guard against the slop:\n\n1. ~~Each submission (record or non-record) must have at least 3-6 log files in the PR so we can run the t-test ourselves to verify. I think only requiring 1 log file encourages sloppiness. E.g., a participant can just cherry-pick the best one or submit one and pretend they ran more. If repo cleanliness is a concern, we can also set up an automation to remove all but one before merging to `main`.~~ [Pardon, it seems this is already in the submission process; I got confused] [Fix: https://github.com/openai/parameter-golf/pull/132]\n2. Each participant can only make **one** \"open\" record attempt at a time. They can make as many non-record or draft attempts as they want, but only one has to be open (maintainers can mark older ones as duplicate or stale). To make a new record attempt, participants can either (1A) update the old one and request for another review before being 'accepted' or (1B) close the old one and raise a new PR.\n3. Merge sufficiently similar concurrent submissions into a single attempt. If accepted, we credit all contributors in the README. But we also require comments in `train_gpt.py` clarifying who contributed what (and also so it'd be easier for newbies to tell who to ask for help on a section of the code).\n4. Enforce stricter code quality controls. This is so it'd be easier for us to spot (LLM-generated) reward hacking/malicious code. This would also help newbies (or agents) to build on top of each others work.\n\nwdyt?",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/issues/129"
+}

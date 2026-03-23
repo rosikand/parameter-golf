@@ -1,0 +1,13 @@
+{
+  "number": 407,
+  "title": "Add non-record 1xH200 fp16-embed baseline sweep submission",
+  "state": "open",
+  "user": "itu-itis24-buyukhelvacigilm24",
+  "created_at": "2026-03-22T06:09:07Z",
+  "updated_at": "2026-03-22T06:09:07Z",
+  "merged_at": null,
+  "body": "## Summary\n\nThis PR adds a non-record submission that captures the best completed result from a controlled `1xH200`, 10-minute screening sweep on the Parameter Golf baseline family.\n\nThe submitted run keeps the published SP-1024 baseline layout and only changes export behavior by preserving `tok_emb.weight` in fp16 during int8 export. In our H200 sweep, this was the strongest completed branch under the `16,000,000` byte cap.\n\n## What is included\n\n- exact `train_gpt.py` snapshot used for the run\n- exact `train.log`\n- `submission.json`\n- `README.md` with configuration, metrics, and sweep context\n\n## Why non-record\n\n- this run was screened on `1xH200`, not yet verified on `8xH100`\n- it does not claim a new leaderboard record\n- it is intended as a reproducible, baseline-adjacent result and an honest report of ablations that did and did not help\n\n## Key result\n\n- `final_int8_zlib_roundtrip_exact val_bpb: 1.32078403`\n- total artifact size: `14,327,135` bytes\n\n## Sweep context\n\n| Variant | Exact final val_bpb |\n|---|---:|\n| Clean baseline | `1.32171904` |\n| FP16 embed passthrough | `1.32078403` |\n| Sink4 | `1.32107101` |\n| MTP1 fixed | `1.33126842` |\n| MTP2 fixed | `1.32792538` |\n| FP16 embed + MTP2 fixed | `1.32718519` |\n\n## Takeaway\n\nIn this budget, a small exporter-side precision change beat the more ambitious objective-side changes we tested. Our next step is to validate this baseline-adjacent fp16 embedding path on official `8xH100` hardware rather than continuing to add training complexity.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/407",
+  "draft": false
+}

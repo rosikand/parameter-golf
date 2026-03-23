@@ -1,0 +1,13 @@
+{
+  "number": 503,
+  "title": "Record: 11L XSA11 + Legal Score-First AdamW TTT (3-seed mean val_bpb=1.1218)",
+  "state": "open",
+  "user": "EthanYangTW",
+  "created_at": "2026-03-23T04:47:47Z",
+  "updated_at": "2026-03-23T04:53:10Z",
+  "merged_at": null,
+  "body": "## Summary\n\n11-layer GPT with XSA on all layers, legal score-first TTT using AdamW optimizer.\n\n**3-seed results (seeds 1337, 42, 7):**\n\n| Seed | Base BPB | TTT BPB | Artifact Size |\n|------|----------|---------|---------------|\n| 1337 | 1.1235 | **1.1212** | 15.88 MB |\n| 42 | 1.1248 | **1.1222** | 15.82 MB |\n| 7 | 1.1241 | **1.1219** | 15.54 MB |\n| **Mean** | 1.1241 | **1.1218** | |\n| **Std** | | 0.0005 | |\n\n## Architecture\n- 11 layers, model_dim=512, 8 heads / 4 KV heads (GQA)\n- **XSA (Exclusive Self-Attention) on all 11 layers** (novel \u2014 others use last 4)\n- Partial RoPE 16/64, LN Scale (1/sqrt(layer+1))\n- SmearGate + OrthoInit, BigramHash 2048, Shared VE128\n- Tight SWA (every 50 steps) + EMA 0.9985\n- Muon optimizer (lr=0.025, WD=0.04)\n- Flash Attention 3 (Hopper), 89ms/step, ~6737 steps in 600s\n- int6 quantization + zstd-22, 2% magnitude pruning\n\n## Legal Score-First TTT\nCompliant with all organizer rulings on TTT (issues #67, #44, #152, #168):\n\n1. Val data split into sequential 65536-token chunks\n2. For each chunk: **score first** (sliding window stride=32, inference_mode)\n3. Then **adapt** on already-scored tokens (AdamW lr=0.0001, 3 epochs)\n4. Last chunk is never trained on\n5. Every token is evaluated BEFORE any gradient update that uses it\n\nTTT config: AdamW (lr=0.0001, wd=0.0), cosine LR across chunks, last 2 blocks + norms + lm_head unfrozen (4.7M / 27M params), manual grad all_reduce across ranks.\n\n## Training\n- 8xH100 SXM 80GB, 600s wallclock\n- Data: fineweb10B_sp1024, 80 train shards\n- Eval: sliding window stride=32 + score-first TTT, ~630s total\n\n## Key Differences from Base (#374)\n- XSA on all 11 layers (vs 4)\n- Legal score-first TTT with AdamW (vs no TTT)\n- 2% magnitude pruning for artifact size compliance",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/503",
+  "draft": false
+}

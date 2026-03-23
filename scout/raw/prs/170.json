@@ -1,0 +1,13 @@
+{
+  "number": 170,
+  "title": "Record: Int6 QAT + SmearGate + Muon WD (val_bpb=1.1669)",
+  "state": "open",
+  "user": "baudrillardsgh0st",
+  "created_at": "2026-03-20T04:59:14Z",
+  "updated_at": "2026-03-20T07:55:28Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **val_bpb: 1.1669** \u2014 beats current SOTA (1.1748) by 0.0079\n- **Artifact: 14.77 MB** \u2014 well under 16MB cap\n- 9L/512dim/8H/4KV, 21.8M params, trained 9706 steps @ 61.8ms/step on 8\u00d7H100 SXM\n\n## Key Techniques\n\n1. **Int6 QAT (Quantization-Aware Training)**: STE fake int6 quantization during forward pass with per-row symmetric scaling. Eliminates post-quant degradation without needing fp16 late-K layer passthrough.\n\n2. **Int6-in-Int8 zstd22 compression**: Store int6 values (-32 to 31) in int8 containers \u2014 zstd-22 compresses the restricted value range ~35%. Achieves 14.77MB from 21.8M params. (Bit-packing int6 values destroys byte alignment and defeats compressors.)\n\n3. **SmearGate**: ~513-param learned gate blending current + previous token embedding. Zero-initialized, very low LR. Provides cheap bigram context at the embedding layer.\n\n4. **Decoupled Muon weight decay** (0.01): Applied in the Muon optimizer step for improved generalization and quantization robustness.\n\n5. **Sliding window evaluation** (stride=64, batch=32 seqs): Full-context scoring at every token position.\n\n6. **FP16 tied embedding passthrough**: Avoids compounding int6 errors through both input/output paths.\n\n## Results\n\n| Seed | val_loss | val_bpb | Steps | ms/step |\n|------|----------|---------|-------|---------|\n| 1337 | 1.9703 | 1.1669 | 9706 | 61.80 |\n\n## Artifact Size\n\n| Component | Bytes |\n|-----------|-------|\n| Model (int6+zstd22) | 14,696,046 |\n| Code | 71,909 |\n| **Total** | **14,767,955** |\n\n## Test plan\n\n- [x] Trained on 8\u00d7H100 SXM in under 10 minutes (600s wallclock)\n- [x] Artifact under 16MB (14.77MB)\n- [x] val_bpb improvement over SOTA exceeds 0.005 threshold (0.0079)\n- [x] train.log included with full training output\n- [x] train_gpt.py runs standalone within the records folder",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/170",
+  "draft": false
+}

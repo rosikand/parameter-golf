@@ -1,0 +1,13 @@
+{
+  "number": 343,
+  "title": "Submission: val_bpb=1.2459 (autoresearch-optimized)",
+  "state": "open",
+  "user": "joeynyc",
+  "created_at": "2026-03-21T14:54:28Z",
+  "updated_at": "2026-03-21T14:54:28Z",
+  "merged_at": null,
+  "body": "Score: 1.2459 val_bpb | Size: 15.9MB | 16,562 steps in 600s on 8xH100 SXM. 97 autonomous experiments on RTX 4080, validated on H100.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/343",
+  "draft": false
+}

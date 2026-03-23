@@ -1,0 +1,13 @@
+{
+  "number": 464,
+  "title": "Add optional sliding-window validation to baseline eval",
+  "state": "open",
+  "user": "javaxhaskell",
+  "created_at": "2026-03-22T21:59:54Z",
+  "updated_at": "2026-03-22T21:59:54Z",
+  "merged_at": null,
+  "body": "",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/464",
+  "draft": true
+}

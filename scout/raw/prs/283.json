@@ -1,0 +1,13 @@
+{
+  "number": 283,
+  "title": "Tier 6: PPM-C eval-time context mixer (standalone + neural mixing)",
+  "state": "open",
+  "user": "Cwarren15-A",
+  "created_at": "2026-03-20T22:56:30Z",
+  "updated_at": "2026-03-20T22:59:21Z",
+  "merged_at": null,
+  "body": "## Summary\nClassical Prediction by Partial Matching (PPM-C) context mixer for\neval-time probability blending with the neural model.\n\n- Standalone PPM-C order-2 achieves 3.41 BPB per-doc on FineWeb val\n- Fixed-alpha mixture (95% neural / 5% PPM) yields ~0.015 BPB improvement\n- Confidence-gated variant explored for per-token adaptive blending\n- Zero learned parameters, zero artifact size cost, ~60 LOC\n\n## Files\n- experiments/tier6/stage1_context_mixer.py \u2014 standalone PPM evaluator\n- experiments/tier6/stage2a_mixture_sweep.py \u2014 fixed-alpha mixture sweep\n- experiments/tier6/stage2b_confidence_gate.py \u2014 confidence-gated mixture\n- experiments/tier6/dump_neural_logprobs.py \u2014 utility to extract per-token neural log-probs\n\n## Results (2K sequence subset on L40S)\n| Config | BPB |\n|--------|-----|\n| Neural only | 1.2244 |\n| PPM per-doc (standalone) | 3.41 |\n| PPM cumulative (standalone) | 2.24 |\n| Neural + PPM per-doc alpha=0.95 | ~1.209 |\n| Neural + PPM cumulative alpha=0.85 | ~1.155 |\n\n## Test plan\n- [ ] stage1_context_mixer.py runs end-to-end on val set\n- [ ] stage2a sweep reproduces ~0.015 BPB gain at alpha=0.95 per-doc\n- [ ] Per-doc mode only for submission (rules-safe, no cross-document leakage)\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/283",
+  "draft": false
+}

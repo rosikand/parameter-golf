@@ -1,0 +1,15 @@
+{
+  "number": 54,
+  "title": "RQZ-Golf v1: Depth recurrence for parameter efficiency",
+  "state": "open",
+  "user": "TheCause",
+  "created_at": "2026-03-19T06:31:46Z",
+  "updated_at": "2026-03-19T17:04:20Z",
+  "merged_at": null,
+  "body": "## Non-record experimental submission\n\n**Approach:** Replace some unique layers with a single shared recurrent layer applied K times, saving parameters while increasing effective depth.\n\n### Architecture\n- 7 unique layers (encoder/decoder with U-Net skip connections)\n- 1 recurrent layer applied K=3 times with learned iteration embeddings\n- Effective depth: 10 layers (7 unique + 3 recurrent) vs baseline 9\n- Residual scaling by 1/sqrt(K) for stability\n\n### Key ideas\n1. **Depth recurrence**: shared weights across K passes saves ~20% parameters\n2. **Iteration embeddings**: per-pass learned vector (psi_k) for pass-awareness\n3. **Test-time compute**: increase K at inference (K'>K) for better BPB without changing model size\n\n### Status\n- Preliminary baseline: 1.5283 BPB (1 shard, 1xA100)\n- RQZ-Golf architecture implemented, not yet benchmarked on full dataset\n- Requesting compute credits for full evaluation\n\n### Theoretical basis\nInspired by Universal Transformers (Dehghani 2019) and Deep Equilibrium Models (Bai 2019).",
+  "labels": [
+    "not ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/54",
+  "draft": false
+}

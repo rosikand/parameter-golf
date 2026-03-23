@@ -1,0 +1,13 @@
+{
+  "number": 252,
+  "title": "Add PR114 RunPod H100 SXM non-record submission",
+  "state": "open",
+  "user": "greqone",
+  "created_at": "2026-03-20T19:02:49Z",
+  "updated_at": "2026-03-21T00:29:48Z",
+  "merged_at": null,
+  "body": "This PR now submits a **non-record** RunPod-verified package for the PR114 long-context selective-precision recipe.\n\nWhy this changed:\n- the earlier qscale draft was not clean enough to take out of draft status\n- after that, the public leaderboard moved again; as of March 21, 2026 the live README shows `1.1428` as the top score\n- the new package is therefore intentionally framed as a non-record submission\n\nWhat is included:\n- one new folder under `records/track_non_record_16mb/2026-03-21_PR114_RunPod_H100SXM_TripleRerun`\n- self-contained `train_gpt.py`\n- `train.log` for the strongest same-provider RunPod rerun\n- two additional same-provider rerun logs\n- `submission.json` and `significance_runs.tsv`\n\nBest packaged run:\n- `val_bpb = 1.15536852`\n- `val_loss = 1.95079135`\n- `bytes_total = 15963195`\n- `bytes_model_int8_zlib = 15909623`\n- `bytes_code = 53572`\n\nSame-provider reruns on RunPod `8x H100 SXM`:\n- `seed=1337` -> `1.15862019`\n- `seed=1338` -> `1.15536852`\n- `seed=1339` -> `1.15563461`\n\nThese three reruns are all under the decimal `16,000,000` byte cap and give one-sided `p = 0.00306` against the older `1.1698` threshold, but this PR is **not** claiming a live SOTA record because the leaderboard moved past it.\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/252",
+  "draft": false
+}

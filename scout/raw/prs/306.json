@@ -1,0 +1,13 @@
+{
+  "number": 306,
+  "title": "Non-record: QAT Int5/Int6 on #1 architecture (1.14476 BPB)",
+  "state": "open",
+  "user": "xuafeng",
+  "created_at": "2026-03-21T03:37:30Z",
+  "updated_at": "2026-03-21T03:37:30Z",
+  "merged_at": null,
+  "body": "## Summary\n\nNon-record submission exploring QAT (Quantization-Aware Training) with STE fake-quantization on top of thwu1's #1 entry.\n\n**Best result: val_bpb = 1.14476** (seed 1337, 8xH100 SXM, 600s)\n\n## Key Finding\n\nPost-training quantization + SWA **outperforms** QAT by ~0.002 BPB. The quantization noise from int5/int6 post-training quantization acts as beneficial regularization that QAT removes.\n\n## Files\n\n- `records/track_non_record_16mb/2026-03-21_QAT_Int5_TTT_LoRA_8xH100/`\n  - `README.md` \u2014 Detailed writeup with ablations\n  - `submission.json` \u2014 Metadata\n  - `train_gpt.py` \u2014 Reproducible script\n\n## Reproducibility\n\n```bash\nSEED=1337 TRIGRAM_VOCAB_SIZE=0 torchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/306",
+  "draft": false
+}

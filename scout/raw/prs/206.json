@@ -1,0 +1,13 @@
+{
+  "number": 206,
+  "title": "Record: Int6 STE + SmearGate + Seq2048 + OrthoInit + RoPE50K + SWA/100 (mean val_bpb=1.1507)",
+  "state": "open",
+  "user": "dexhunter",
+  "created_at": "2026-03-20T11:56:13Z",
+  "updated_at": "2026-03-20T14:58:05Z",
+  "merged_at": null,
+  "body": "  ## Summary\r\n\r\n  **Mean val_bpb = 1.1507** (3-seed verified, p<0.001), beating merged SOTA (1.1748) by **0.024**.\r\n\r\n  Evolved over 31 AIDE2 optimization steps from baseline 1.1607 on 8xH100.\r\n\r\n  | Seed | val_bpb | Steps | ms/step | Artifact |\r\n  |------|---------|-------|---------|----------|\r\n  | 1337 | 1.15022 | 10613 | 56.53 | 14,555,057 |\r\n  | 42 | 1.15095 | 10610 | 56.53 | 14,791,593 |\r\n  | 7 | 1.15099 | 10610 | 56.53 | 14,562,412 |\r\n  | **Mean** | **1.15072** | | | |\r\n\r\n  ## Technique Stack\r\n\r\n  1. **Int6 STE** \u2014 Fake int6 quantization every forward pass with STE gradient bypass\r\n  2. **NorMuon + WD=0.02** \u2014 Row-normalized Newton-Schulz with decoupled weight decay\r\n  3. **3x MLP (1536 hidden)** \u2014 Wider MLP enabled by int6 compression\r\n  4. **SmearGate** \u2014 Learned gate blending token embeddings with predecessors (~512 params)\r\n  5. **Orthogonal Init** \u2014 OrthoInit on all non-zero-init linear layers\r\n  6. **Seq2048 + RoPE Base 50K** \u2014 2x training context with adjusted RoPE\r\n  7. **SWA every 100 steps** \u2014 More frequent checkpoint averaging during warmdown\r\n  8. **FP16 tied embedding** \u2014 Embedding never quantized\r\n  9. **Sliding window eval (stride=64)** \u2014 Every token scored with ~1984 tokens context\r\n  10. **Zstd-22** \u2014 Better compression than zlib\r\n  11. **U-Net skip connections** \u2014 Encoder-decoder with learnable skip weights\r\n\r\n  ## Architecture\r\n\r\n  - 9 layers, 512 dim, 8 heads, 4 KV heads (GQA)\r\n  - Vocab 1024 (SentencePiece BPE), seq len 2048, tied embeddings\r\n  - relu\u00b2 activation, RoPE, logit softcapping (30.0)\r\n\r\n  ## Submission checklist\r\n\r\n  - [x] 3-seed verification (mean val_bpb=1.1507)\r\n  - [x] All artifacts < 16MB (max 14.79MB, 1.2MB headroom)\r\n  - [x] Wallclock < 600s on 8xH100\r\n  - [x] Train logs included (3 seeds)\r\n  - [x] Reproducible train_gpt.py included\r\n  - [x] submission.json with metadata",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/206",
+  "draft": false
+}

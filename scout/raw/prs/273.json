@@ -1,0 +1,13 @@
+{
+  "number": 273,
+  "title": "Non-record: 10L Int6 QAT + SmearGate + SWA (val_bpb=1.1575)",
+  "state": "open",
+  "user": "dentity007",
+  "created_at": "2026-03-20T21:38:53Z",
+  "updated_at": "2026-03-20T21:38:53Z",
+  "merged_at": null,
+  "body": "## Summary\n\n**val_bpb = 1.1575** (single seed 1337, self-verified)\n\nBuilds on @baudrillardsgh0st's technique stack (PR #194). Contribution: 10-layer configuration that trades one layer for improved step throughput (9,156 steps vs 7,472 at 11L), informed by systematic analysis across 17 experiments.\n\n- 10 layers, 512 dim, 8 heads, 4 KV heads, 3x MLP\n- Int6 QAT (STE), per-dim SmearGate, SWA/50, Muon WD=0.038\n- Sliding window eval stride=64, zstd-22\n- **14.73MB** artifact (1.27MB headroom)\n- 9,156 steps at 65ms/step on 8\u00d7H100\n\n## Key finding\n\n10L outperforms 11L under the 10-minute wall-clock constraint. The faster step time (65ms vs 80ms) yields 22% more training steps, more than compensating for the reduced model capacity.\n\n## Submission checklist\n\n- [x] val_bpb and submission.json included\n- [x] Artifact under 16MB (14.73MB)\n- [x] Wallclock < 600s on 8\u00d7H100\n- [x] Train log included\n- [x] Reproducible train_gpt.py included\n- [x] README with detailed explanation",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/273",
+  "draft": false
+}

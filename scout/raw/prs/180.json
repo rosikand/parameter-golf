@@ -1,0 +1,15 @@
+{
+  "number": 180,
+  "title": "Record: 10L Int5-MLP + BigramHash(10240) + SWA(0.4) + WD=0.04 (val_bpb=1.1428, mean 3 seeds)",
+  "state": "closed",
+  "user": "thwu1",
+  "created_at": "2026-03-20T06:55:17Z",
+  "updated_at": "2026-03-20T18:51:12Z",
+  "merged_at": "2026-03-20T18:51:11Z",
+  "body": "## 10L Int5-MLP + MuonWD=0.04 + SWA/50 + SmearGate + BigramHash\n\n**val_bpb: 1.14526** (sliding window stride=64, post int6+zstd roundtrip)\n\n### Key Innovation: Mixed Int5/Int6 Quantization\n\nUse **int5 [-16,15]** for MLP weights and **int6 [-32,31]** for attention. Int5 has 3 zero high bits per byte \u2014 zstd-22 compresses at **1.88x** vs int6's 1.51x, saving **1.86MB**. This funds a **10th transformer layer** while staying under 16MB.\n\n### Technique Stack\n1. **Mixed int5 MLP / int6 attention** \u2014 1.86MB artifact savings\n2. **10 layers** (vs 9 baseline) \u2014 extra depth funded by int5 savings\n3. **MuonWD = 0.04** (swept 0.01\u20130.05) \u2014 improves quant friendliness\n4. **SWA every 50 steps** (~29 checkpoint average, swept 25\u2013200)\n5. SmearGate + BigramHash + OrthoInit (from PR #162)\n6. zstd-22 compression, fp16 tied embedding passthrough\n\n### Metrics\n| Metric | Value |\n|--------|-------|\n| val_bpb (sliding window) | **1.14526** |\n| Artifact | 15,521,020 bytes (15.52MB) |\n| Model params | 24,730,705 |\n| Steps | 6,694 in 600s (89.5 ms/step) |\n| SWA checkpoints | 29 |\n\n### Run Command\n```bash\nNUM_LAYERS=10 bash eval/eval.sh\n```\n\n### Ablation\n| Config | BPB | Delta |\n|--------|-----|-------|\n| 9L int6 (PR162) | 1.14847 | baseline |\n| + int5 MLP (9L) | 1.15663 | +0.008 (quant cost) |\n| + 10th layer | 1.14803 | -0.0005 |\n| + WD=0.04 + SWA/50 | **1.14526** | **-0.003** |\n\nBuilt on PR #162 by @unnir.",
+  "labels": [
+    "record submission ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/180",
+  "draft": false
+}

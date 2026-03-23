@@ -1,0 +1,13 @@
+{
+  "number": 477,
+  "title": "Record: 10L CountInitBigram + XSA + PartialRoPE (val_bpb=1.1522)",
+  "state": "closed",
+  "user": "harsha-gouru",
+  "created_at": "2026-03-23T00:15:45Z",
+  "updated_at": "2026-03-23T00:20:22Z",
+  "merged_at": null,
+  "body": "## Summary\n- **val_bpb: 1.1522** (sliding window stride=64, post int5/int6+zstd quantization roundtrip)\n- 10 layers, 512 dim, 8 heads / 4 KV heads, tied embeddings\n- Artifact: 15,384,232 bytes (15.38 MB)\n\n## Novel Contributions\n\n### Count-Initialized Exact Bigram Logit Head\nA 1024x1024 lookup table initialized from corpus bigram transition probabilities (`B[a,b] = log p(b|a) - log p(b)`) before training. Provides a strong Markov prior from step 0 \u2014 the neural network only needs to refine it. Applied BEFORE logit softcap. No other submission uses this approach.\n\n### Int4 Nibble Packing\nCustom `pack_i4`/`unpack_i4` functions pack signed int4 values into uint8 bytes (two values per byte). Applied to the bigram logit table, halving its storage from ~1MB to ~524KB.\n\n## Adopted Techniques (from published papers/PRs)\n- XSA on last 4 layers (arxiv:2603.09078)\n- Partial RoPE (16/64 dims, from PR #315)\n- LN Scale 1/sqrt(layer+1) (from PR #315)\n- Higher LR (0.025, from multiple top PRs)\n- SmearGate, OrthoInit, U-Net skips (from baseline)\n- SWA, int5 MLP / int6 attention, zstd-22 (from baseline)\n\n## Results\n```\nSteps: 6267 at 95.75 ms/step (8xH100 SXM, 600s wallclock)\nPre-SWA val_bpb: 1.1563\nPost-SWA+quant val_bpb: 1.1522\nArtifact: 15.38 MB (0.62 MB headroom)\n```\n\n## Test plan\n- [x] Verified artifact under 16MB limit\n- [x] Verified post-quant roundtrip bpb matches\n- [x] Ran on 8xH100 SXM within 600s wallclock\n\nBuilt on SOTA baseline by @thwu1 (PR #180).\n\nGenerated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/477",
+  "draft": false
+}

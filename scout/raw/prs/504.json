@@ -1,0 +1,13 @@
+{
+  "number": 504,
+  "title": "Non-record: TrigramHash \u2014 iso-parametric bigram(96)+trigram(32), val_bpb=1.5275 (1xH100)",
+  "state": "open",
+  "user": "fleeb83",
+  "created_at": "2026-03-23T05:00:45Z",
+  "updated_at": "2026-03-23T05:00:45Z",
+  "merged_at": null,
+  "body": "## Summary\n\nNon-record submission exploring whether 3-token co-occurrence patterns add signal beyond the current BigramHash.\n\n**Tested on**: 1\u00d7H100 (not competition-standard 8\u00d7H100)\n\n## Approach\n\nIso-parametric split of SOTA `BigramHash(10240, dim=128)` into:\n\n| Component | Params |\n|-----------|--------|\n| BigramHash(10240, dim=96) | 983,040 |\n| TrigramHash(10240, dim=32) | 327,680 |\n| **Total** | **1,310,720** (identical to SOTA) |\n\nHash function: `(36313*t[i] XOR 27191*t[i-1] XOR 18731*t[i-2]) % (vocab_size - 1)`\n\nThree independent prime multipliers ensure each token position contributes orthogonal bit patterns. Positions 0 and 1 fall back to a padding bucket (same convention as bigram for position 0).\n\n## Result\n\n- **val_bpb**: 1.5275 (1\u00d7H100, 871 steps, 600s wallclock)\n- **Artifact**: 15,421,256 bytes with zstd-22 \u2713\n- **Base**: `2026-03-20_10L_Int5MLP_MuonWD04_SWA50` (1.14276 BPB)\n\nThe 1\u00d7H100 result uses ~8\u00d7 fewer training steps than an 8\u00d7H100 run in the same wallclock budget, so the score is not directly comparable to SOTA. Architecture is novel, artifact-compliant, and runs cleanly.\n\n## Notes\n\nThe iso-parametric constraint is exact: total embedding parameters unchanged vs SOTA. Artifact size with zstd-22 compression is 15.4MB, within the 16MB limit. All other hyperparameters identical to the SOTA baseline.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/504",
+  "draft": false
+}

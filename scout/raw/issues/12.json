@@ -1,0 +1,11 @@
+{
+  "number": 12,
+  "title": "10 min Submission requirements",
+  "state": "closed",
+  "user": "AleFestante",
+  "created_at": "2026-03-18T19:51:32Z",
+  "updated_at": "2026-03-18T23:33:21Z",
+  "body": "From what I see on the readMe submissions are limited to 10 min for reproducibility.\nAt first I understood it as 10 min for training and 10 for inferencing but after reading carefullt it seems it is 10 min in total to reproduce.\n\nIt would be great to just clarify that on the ReadMe to avoid confusion",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/issues/12"
+}

@@ -1,0 +1,13 @@
+{
+  "number": 209,
+  "title": "Add non-record 11L int6 challenger 8xH100 attempt",
+  "state": "open",
+  "user": "JWLBOYCE",
+  "created_at": "2026-03-20T12:11:02Z",
+  "updated_at": "2026-03-20T12:16:03Z",
+  "merged_at": null,
+  "body": "## Summary\n- add a non-record `/records` folder for an 11-layer int6 challenger attempt\n- include the exact challenger code snapshot used for the strongest 8xH100 run and the copied remote `train.log`\n- document the best measured result: `1.1624` pre-roundtrip BPB at the `600s` cap on `8xH100`, with the provider terminating the pod during export before a final roundtrip score could be recorded\n\n## Why non-record\nThis is not claiming a leaderboard score. The strongest run reached the training-phase validation point and logged `val_bpb:1.1624`, but RunPod terminated the pod during export before the post-roundtrip metric was printed. I am submitting it as a candid non-record / in-progress attempt rather than a record claim.\n\n## Validation\n- `python3 -m py_compile records/track_non_record_16mb/2026-03-20_11LInt6Challenger_8xH100_Preroundtrip/train_gpt.py records/track_non_record_16mb/2026-03-20_11LInt6Challenger_8xH100_Preroundtrip/root_train_gpt_vendor.py records/track_non_record_16mb/2026-03-20_11LInt6Challenger_8xH100_Preroundtrip/lowbit_utils.py records/track_non_record_16mb/2026-03-20_11LInt6Challenger_8xH100_Preroundtrip/optimizer_variants.py records/track_non_record_16mb/2026-03-20_11LInt6Challenger_8xH100_Preroundtrip/validation_utils.py records/track_non_record_16mb/2026-03-20_11LInt6Challenger_8xH100_Preroundtrip/mlp_variants.py`\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/209",
+  "draft": false
+}

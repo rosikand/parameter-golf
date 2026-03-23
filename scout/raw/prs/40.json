@@ -1,0 +1,13 @@
+{
+  "number": 40,
+  "title": "PhiDelay Shared-Recurrent LM (3.23 bpb, 6.84MB)",
+  "state": "closed",
+  "user": "bahman2017",
+  "created_at": "2026-03-19T01:01:22Z",
+  "updated_at": "2026-03-19T21:19:53Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **Track:** Non-record, unlimited compute, 16 MB artifact cap\n- **val_bpb:** 3.2306 (int8+zlib roundtrip: 3.2306)\n- **Artifact size:** 6.84 MB (43% of 16 MB budget)\n- **Author:** Bahman Masarrat (@bahman2017)\n\n## Key Idea\n\nReplaces self-attention with a lightweight multi-head delay mixer (PhiDelayLayer) and introduces **recurrent weight sharing**: 3 physical transformer blocks applied 4 times each (effective depth 12). Learned per-block recurrence gates stabilize repeated application.\n\nThis work is conceptually inspired by PhiDelayNet ([DOI: 10.5281/zenodo.16790526](https://doi.org/10.5281/zenodo.16790526)), which explores adaptive delay operators for time-series forecasting. Here, those ideas are adapted for parameter-efficient language modeling under strict artifact constraints.\n\n## Architecture\n\n| Parameter | Value |\n|---|---|\n| Model dimension | 1024 |\n| Physical blocks | 3 (shared) |\n| Repeats | 4 |\n| Effective depth | 12 |\n| Total parameters | 16.8M |\n| Mixer | PhiDelayLayer (multi-head, gated) |\n| MLP | relu-squared, mult=2 |\n| Vocab | 1024 (SentencePiece) |\n| Embeddings | Tied |\n\n## Results\n\n| Metric | Value |\n|---|---|\n| val_bpb | **3.2306** |\n| int8+zlib roundtrip val_bpb | **3.2306** |\n| Artifact size | **6.84 MB** |\n| Compression ratio | 3.86x |\n\n## Key Findings\n\n1. Training duration was the dominant bottleneck \u2014 the largest BPB gain came from more steps, not architecture changes.\n2. Parameter reuse via recurrence outperformed aggressive quantized training (BitLinear: 6.09 bpb vs shared-recurrent: 3.23 bpb).\n3. The int8+zlib roundtrip is essentially lossless (0.0000 bpb degradation).\n\n## Submission Files\n\n- `records/track_non_record_16mb/2026-03-18_PhiDelay_Shared_Recurrent_SP1024/README.md`\n- `records/track_non_record_16mb/2026-03-18_PhiDelay_Shared_Recurrent_SP1024/submission.json`\n- `train_gpt_mlx.py` (modified training script)\n- `bitlinear.py` (present but disabled)\n\nMade with [Cursor](https://cursor.com)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/40",
+  "draft": false
+}

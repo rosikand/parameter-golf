@@ -1,0 +1,13 @@
+{
+  "number": 305,
+  "title": "12L Full-INT4 (MLP + Attn) + BigramHash(4096) \u2014 val_bpb 1.1672",
+  "state": "open",
+  "user": "Naazimsnh02",
+  "created_at": "2026-03-21T03:21:14Z",
+  "updated_at": "2026-03-22T15:51:44Z",
+  "merged_at": null,
+  "body": "Summary\r\n\r\n- Novel group INT4 nibble-packing applied to both MLP and attention weights: 2 values per byte, per-group (gs=64) fp16 scales \u2014 0.5 bytes/param vs 0.75 for INT6\r\n- Freed space enables 12 transformer layers (vs 10 in prior art) with U-Net skip connections\r\n- 10% magnitude pruning before quantisation creates zero runs that zstd-22 compresses efficiently\r\n- Final size: 14.4 MB (1.6 MB under budget)\r\n- val_bpb: 1.1672 (post-quant roundtrip, sliding window stride=64, 8\u00d7H100 10 min)\r\n\r\nStatus: Valid\r\n### Results\r\n\r\n| Run                                              | val_bpb | Size   | Valid              |\r\n|--------------------------------------------------|--------:|--------|--------------------|\r\n| Intermediate (INT4 MLP + INT6 Attn + bigram 10240) | 1.1462  | 17.5 MB | No \u2014 over budget   |\r\n| This submission (full INT4 + bigram 4096)         | 1.1672  | 14.4 MB | Yes                |\r\n\r\n\r\nNovel Contribution\r\n\r\nStandard INT5-in-int8 stores one value per byte, wasting 3 bits. Our group INT4 scheme packs two values per byte with localised per-group scaling:\r\n\r\n1. Divide weight matrix rows into groups of 64 columns\r\n2. Per-group scale: max(|group|) / 7.0 stored as fp16\r\n3. Quantise to symmetric [\u22128, 7], pack 2 values per byte (low nibble = even index, high nibble = odd index)\r\n\r\n~417 KB per MLP weight vs 789 KB (INT5) \u2014 47% smaller per matrix\r\n\r\nExtending the same scheme to attention projections (Q/K/V/O, all shapes divisible by gs=64) costs ~0.021 bpb relative to INT6 but frees enough budget to run 12 layers instead of 10. Roundtrip MSE on attention weights is ~4\u20136 \u00d7 10\u207b\u2076, confirming the precision loss is negligible.\r\n\r\nTest Plan\r\n\r\n- INT4 pack/unpack roundtrip verified exact\r\n- Full quantise\u2192dequantise MSE: ~4.6 \u00d7 10\u207b\u2076\r\n- Training completes on 8\u00d7H100 in 10 min (5,476 steps)\r\n- Fits under 16 MB budget (14.4 MB)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/305",
+  "draft": false
+}

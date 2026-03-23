@@ -1,0 +1,11 @@
+{
+  "number": 87,
+  "title": "Live Leaderboard for Parameter Golf",
+  "state": "open",
+  "user": "stpcoder",
+  "created_at": "2026-03-19T14:51:29Z",
+  "updated_at": "2026-03-22T06:01:05Z",
+  "body": "**Built a live unofficial leaderboard** for Parameter Golf that auto-updates every 30 minutes. \nYou can check rankings, scores, and linked PRs/records here. \nIf there\u2019s a feature you\u2019d want, leave a comment.\n\nhttps://parameter-golf.github.io/\n\n<img width=\"2988\" height=\"2036\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/3548062c-3655-4b7a-ab85-8dc455a78525\" />\n\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/issues/87"
+}

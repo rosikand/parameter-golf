@@ -1,0 +1,13 @@
+{
+  "number": 118,
+  "title": "Non-record: 1x RTX 4090 compat smoke (50 steps)",
+  "state": "open",
+  "user": "stukenov",
+  "created_at": "2026-03-19T19:06:44Z",
+  "updated_at": "2026-03-19T19:57:19Z",
+  "merged_at": null,
+  "body": "This PR adds a finished non-record submission under `records/track_non_record_16mb/2026-03-20_CUDA4090_CompatSmoke_SP1024/`.\n\nSummary:\n- hardware: 1x RTX 4090 on Vast.ai\n- dataset/tokenizer: `sp1024`, full fixed `fineweb_val_*`, 1 training shard\n- training: 50 steps, `TRAIN_BATCH_TOKENS=8192`, `TRAIN_SEQ_LEN=1024`\n- final post-quant metric: `val_bpb=3.38410431`\n- final artifact size: `5,169,053` bytes total\n\nWhy the copied script differs slightly from root:\n- the CUDA image used for this run shipped with a PyTorch build that does not accept `enable_gqa=` on `scaled_dot_product_attention`\n- the copied `train_gpt.py` expands KV heads manually before SDPA so the run remains reproducible on that image\n\nIncluded files:\n- `train_gpt.py`\n- `train.log`\n- `submission.json`\n- `README.md`\n\nThis is not intended for the main 10-minute leaderboard. It is a finished non-record smoke submission with complete logs, final metrics, and a <16MB int8+zlib artifact.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/118",
+  "draft": false
+}

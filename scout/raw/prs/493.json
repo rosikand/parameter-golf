@@ -1,0 +1,13 @@
+{
+  "number": 493,
+  "title": "Record: 11L EMA + Int6 + XSA + LeakyReLU\u00b2 + Partial RoPE (val_bpb: 1.1309)",
+  "state": "open",
+  "user": "parinzee",
+  "created_at": "2026-03-23T02:34:50Z",
+  "updated_at": "2026-03-23T02:34:50Z",
+  "merged_at": null,
+  "body": "## Summary\n- **val_bpb: 1.1309** (mean of 3 seeds, std: 0.00017)\n- 11 layers, 512 dim, 8H/4KV GQA\n- Artifact: ~15.8 MB (all seeds under 16 MB)\n\n## 3-Seed Results\n\n| Seed | val_bpb | artifact_bytes |\n|------|---------|----------------|\n| 42   | 1.13109 | 15,764,564     |\n| 1337 | 1.13085 | 15,626,741     |\n| 2024 | 1.13067 | 15,923,256     |\n| **Mean** | **1.13087** | |\n| Std  | 0.00017 | |\n\n## Key Changes from Baseline\n\n1. **11 layers** (up from 10), 512 dim, 8 heads / 4 KV heads (GQA)\n2. **XSA (Exclusive Self Attention)** on last 4 layers for better representation\n3. **LeakyReLU(0.5)\u00b2** activation \u2014 squared leaky ReLU with 0.5 negative slope\n4. **Partial RoPE** \u2014 only 16/64 dims use rotary embeddings\n5. **EMA weight averaging** (decay=0.997) for smoother final weights\n6. **Int6 quantization** for all large weight matrices + zstd-22 compression\n7. **Scale clamping fix** \u2014 clamp_min(1/clip_range) improves quantization quality\n8. **Smaller batch size** (524288 tokens) to fit more training steps (~8200 steps in 600s)\n9. **BigramHash(2048, dim=128)** token embeddings\n10. **warmdown_iters=4500** for learning rate schedule\n11. **Higher learning rates** (matrix_lr=0.025, scalar_lr=0.025)\n\n## Run Command\n\n```bash\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\nBuilt on SOTA baseline by @thwu1 (PR #180).",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/493",
+  "draft": false
+}

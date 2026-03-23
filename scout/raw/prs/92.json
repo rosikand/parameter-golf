@@ -1,0 +1,15 @@
+{
+  "number": 92,
+  "title": "Record: 8192 Vocab, Sliding Window Eval, Selective Quantization; 1.194 val_bpb",
+  "state": "open",
+  "user": "saikrishnarallabandi",
+  "created_at": "2026-03-19T15:33:09Z",
+  "updated_at": "2026-03-21T16:37:14Z",
+  "merged_at": null,
+  "body": "## Submission: 8192 Vocab + Sliding Window Eval + Selective Quantization\n\n**Track:** 10min / 16MB  \n**Post-quant val_bpb:** 1.1938 (pre-quant: 1.1791)  \n**Model size (w6e8+zlib):** 14,715,057 bytes (14.7 MB)  \n\n### Approach\n- **SP-8192 tokenizer** for better token compression\n- **NorMuon optimizer** with improved convergence\n- **Sliding window evaluation** (stride=256) for more accurate val_bpb\n- **Selective quantization (w6e8):** INT6 weights, INT8 embeddings + zlib\n- 8-layer model, TRAIN_SEQ_LEN=4096, WARMDOWN_ITERS=3000\n\n### Key Metrics\n- Steps: 5467/20000 (wallclock capped at 600s)\n- Step avg: 109.76ms\n- Hardware: 8\u00d7H100 SXM (Vast.ai)\n\n### vs Baseline\n| | Baseline | This submission |\n|---|---|---|\n| val_bpb | 1.2244 | **1.1938** |\n| Size | 15.9 MB | **14.7 MB** |\n| Vocab | 1024 | 8192 |\n\nImproves on the baseline by ~0.031 bpb while using ~1.2 MB less space.",
+  "labels": [
+    "does not beat SOTA"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/92",
+  "draft": false
+}

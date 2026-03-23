@@ -1,0 +1,13 @@
+{
+  "number": 171,
+  "title": "Add MLX knobs for record config parity",
+  "state": "open",
+  "user": "FlorinelTudor",
+  "created_at": "2026-03-20T04:59:43Z",
+  "updated_at": "2026-03-20T05:00:14Z",
+  "merged_at": null,
+  "body": "## Summary\n- add explicit MLP_HIDDEN support to train_gpt_mlx.py\n- allow opting specific large tensors into float passthrough during int8 serialization via INT8_KEEP_FLOAT_LARGE_NAME_PATTERNS\n- add focused MLX tests covering both behaviors\n\n## Why\nThis brings the MLX trainer closer to the public record configs, which makes local Apple Silicon experiments more faithful when validating artifact-budget tradeoffs like fp16 tied embeddings plus a slightly smaller MLP.\n\n## Testing\n- .venv/bin/python -m unittest tests.test_train_gpt_mlx_quantization tests.test_train_gpt_mlx_model_config",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/171",
+  "draft": false
+}

@@ -1,0 +1,13 @@
+{
+  "number": 474,
+  "title": "Non-record: 6-Technique Stack \u2014 Catalytic Residuals + Value Residual + Gated Attention + BigramHash(10240) + 12L (val_bpb=1.1690)",
+  "state": "open",
+  "user": "joshuaswarren",
+  "created_at": "2026-03-22T23:49:28Z",
+  "updated_at": "2026-03-23T00:23:20Z",
+  "merged_at": null,
+  "body": "## Non-record: 6-Technique Stack (val_bpb=1.1690, 8xH100 SXM)\n\nFirst submission combining 6 independently-proven architecture improvements never stacked together:\n\n| Technique | Source | Impact |\n|-----------|--------|--------|\n| Catalytic Residuals | PR #450 | -0.024 bpb |\n| Value Residual (ResFormer) | PR #413, arXiv:2410.17897 | -0.015 bpb |\n| Gated Attention | PR #413, arXiv:2505.06708 | -0.003 bpb |\n| BigramHash(10240) | PR #450 | -0.070 bpb vs 2048 |\n| 12 Layers | PR #450 | -0.023 bpb vs 11L |\n| 3x MLP | Merged SOTA | Standard |\n\n### Results\n\n- **Sliding window val_bpb: 1.1690** (stride 64)\n- Post-quant roundtrip: 1.2043\n- Pre-quant: 1.1911\n- 6,981 steps at 85.78 ms/step\n- Artifact: 15.3 MB (int6+zstd, under 16MB)\n- Training: 598.8s on 8xH100 SXM\n\n### Additional techniques\nOrthoInit, Muon WD=0.04, SWA (last 20%), Late QAT (threshold 0.25), logit softcap 30.0\n\n### Run\n```bash\npip install sentencepiece zstandard\npython3 data/cached_challenge_fineweb.py --variant sp1024 --train-shards 80\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\nAll hyperparameters set as defaults.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/474",
+  "draft": false
+}

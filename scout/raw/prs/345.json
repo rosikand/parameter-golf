@@ -1,0 +1,13 @@
+{
+  "number": 345,
+  "title": "Non-record: DART - Differential Attention Recurrent Transformer (Student submission, Kerala)",
+  "state": "open",
+  "user": "anandks2006",
+  "created_at": "2026-03-21T15:10:26Z",
+  "updated_at": "2026-03-21T15:10:26Z",
+  "merged_at": null,
+  "body": "Non-record submission for the unlimited compute track.\r\n\r\nDART is a shared-weight recurrent transformer combining Differential Attention V2 (ICLR 2025) with per-loop specialisation mechanisms including low-rank Q deltas, memory tokens, deep supervision, and U-Net skip connections.\r\n\r\n- Model: 3.92M params, 3.55MB int8+zlib (22.5% of 16MB budget)\r\n- Score: val_bpb = 1.85221128\r\n- Hardware: Google Colab T4 free tier\r\n- Training: 2000 steps, ~65M tokens\r\n- Author: BCA 2nd year undergraduate, Kerala, India\r\n\r\nFull details in README including honest documentation of limitations, compute constraints, and AI tool usage.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/345",
+  "draft": false
+}

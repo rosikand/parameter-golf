@@ -1,0 +1,13 @@
+{
+  "number": 494,
+  "title": "Non-record: Phase 1 Legal Score-First TTT + Meta-TTT (FOMAML) \u2014 awaiting compute",
+  "state": "open",
+  "user": "george11642",
+  "created_at": "2026-03-23T02:46:53Z",
+  "updated_at": "2026-03-23T02:46:53Z",
+  "merged_at": null,
+  "body": "## Summary\n\nNon-record submission building on PR #462's architecture (Star-ReLU + U-Net + XSA + AdamW TTT).\n\n**Awaiting compute credits for validation.** BPB not yet measured.\n\n### Techniques\n\n**Phase 1 (implemented):**\n- XSA on all 11 layers (extended from XSA-4 in PR #462)\n- Cosine TTT 30 epochs with per-layer LR groups (3x output, 0.5x input)\n- GPTQ-lite optimal clip percentile search (6 candidates per row)\n- Legal score-first TTT protocol (evaluate before training, per issue #402)\n\n**Phase 2 (in development):**\n- Meta-TTT (FOMAML): Train model to be maximally TTT-adaptable via first-order MAML inner loops during training. Novel technique \u2014 no existing submission uses meta-learning for TTT optimization.\n\n### Architecture\n- 11 layers (5 encoder + 6 decoder, U-Net gated skips)\n- dim=512, heads=8/8, MLP hidden=1792, Star-ReLU\n- BigramHash (8192, 128d), SmearGate, Partial RoPE (16/64)\n- Int6 QAT + GPTQ-lite, zstd-22\n\n### Expected Results\nBased on ablations from community PRs:\n- Phase 1 over PR #462 baseline: ~-0.012 BPB\n- Meta-TTT (if successful): ~-0.015 BPB additional\n\nWill validate with 3 seeds on 8xH100 once compute is available.\n\n## Test plan\n- [ ] Reproduce PR #462 baseline (1.0672 BPB) on 8xH100\n- [ ] Validate each Phase 1 technique independently\n- [ ] Stack all Phase 1 techniques, measure combined BPB\n- [ ] Implement and test Meta-TTT\n- [ ] 3-seed validation run\n\nGenerated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/494",
+  "draft": false
+}

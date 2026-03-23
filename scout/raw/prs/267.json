@@ -1,0 +1,13 @@
+{
+  "number": 267,
+  "title": "Record: val_bpb: 1.14020 [tested 3x on 8xh100]",
+  "state": "open",
+  "user": "andrewgcodes",
+  "created_at": "2026-03-20T21:14:38Z",
+  "updated_at": "2026-03-22T14:25:53Z",
+  "merged_at": null,
+  "body": "Flagging that this is doing TTT during Val but compliantly. @0hq \r\n\r\nI believe these make it allowed:\r\n1. **No training before evaluation**: Each chunk is evaluated first, loss is recorded, then training occurs\r\n2. **No re-evaluation**: Tokens are scored exactly once; training on chunk N cannot affect scores for chunks 0..N\r\n3. **No multiple passes**: The validation set is processed in a single sequential pass (32 chunks)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/267",
+  "draft": false
+}

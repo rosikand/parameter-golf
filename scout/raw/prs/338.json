@@ -1,0 +1,13 @@
+{
+  "number": 338,
+  "title": "Record: 11L XSA+EMA+TTT, sliding val_bpb=1.1254 (3-seed mean 1.1256)",
+  "state": "open",
+  "user": "alertcat",
+  "created_at": "2026-03-21T11:07:02Z",
+  "updated_at": "2026-03-21T11:07:02Z",
+  "merged_at": null,
+  "body": "## 11L XSA + EMA + TTT + Int6 MLP3x\n\n**val_bpb = 1.1254** (sliding window stride=64, best seed 42) | **15.55 MB** artifact | 8xH100 SXM, 600s\n\n### Key Innovation: TTT on XSA+EMA baseline\n\nFirst submission combining **XSA (Exclusive Self Attention)** + **EMA** + **Test-Time Training**. After training and quantization, TTT performs 3 epochs of SGD fine-tuning on the validation token stream, adapting the model to the test distribution.\n\n### Results (3-seed, 8xH100 SXM)\n\n| Seed | Steps | Sliding BPB (s64) | Artifact |\n|------|-------|-------------------|----------|\n| 1337 | 7,070 | 1.1258 | 15.55 MB |\n| **42** | **7,068** | **1.1254** | **15.55 MB** |\n| 2024 | 7,069 | 1.1256 | 15.55 MB |\n\n**Mean: 1.1256 | Std: 0.0002**\n\n### TTT Details\n\n- 3 epochs SGD on validation tokens (lr=0.002, momentum=0.9)\n- First 2 transformer blocks frozen for stability\n- ~47 seconds on 8xH100 (well under 600s eval limit)\n- Improves post-quant BPB by ~0.002\n\n### Architecture (from PR #315)\n\n- 11L, 512d, 8H/4KV, MLP 3x, relu-squared\n- XSA on last 4 layers, EMA (decay=0.997)\n- SmearGate + BigramHash(2048) + OrthoInit\n- Int6 QAT + Late QAT + zstd-22\n- FlashAttention 3, Muon WD=0.04\n\n### Eval Timing\n\nTraining: 600s | TTT: 47s | Sliding eval: 73s | Total eval: ~120s\n\n### Reproduction\n\nDefaulting to user installation because normal site-packages is not writeable\nRequirement already satisfied: zstandard in e:\u0007naconda\\lib\\site-packages (0.23.0)\n\nBuilt on PR #315 (XSA, EMA, SmearGate, BigramHash, OrthoInit, sliding window eval).",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/338",
+  "draft": false
+}

@@ -1,0 +1,13 @@
+{
+  "number": 278,
+  "title": "Record: 8L Paid Prefix + Sparse Hard Blocks (1.0365)",
+  "state": "closed",
+  "user": "nicolasdickenmann",
+  "created_at": "2026-03-20T22:23:06Z",
+  "updated_at": "2026-03-20T22:26:31Z",
+  "merged_at": null,
+  "body": "## Summary\nAdds a new 10min/16MB record submission built directly on PR #262, replacing the contiguous paid prefix with an inline-built sparse hard-block cache.\n\n## Result\n- val_bpb: 1.03647005\n- total bytes: 16,525,754\n- stride: 64 sliding-window eval\n\n## Notes\n- sparse prefix format: `sparse_blocks_v1`\n- block size: 256\n- selected blocks: 20,681\n- covered tokens: 5,294,336 (8.54%)\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/278",
+  "draft": false
+}

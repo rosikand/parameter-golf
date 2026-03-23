@@ -1,0 +1,15 @@
+{
+  "number": 71,
+  "title": "Add Parameter Golf submission: Depth12 Dim416 KV4",
+  "state": "closed",
+  "user": "AntDX316",
+  "created_at": "2026-03-19T09:35:07Z",
+  "updated_at": "2026-03-20T10:42:02Z",
+  "merged_at": null,
+  "body": "Adds a 10-minute 8xH100 submission for the 16MB track.\r\n\r\nSummary:\r\n- Layout: `VOCAB_SIZE=1024 NUM_LAYERS=12 MODEL_DIM=416 NUM_HEADS=8 NUM_KV_HEADS=4 MLP_MULT=2`\r\n- Tied embeddings: `TIE_EMBEDDINGS=1`\r\n- Global batch: `TRAIN_BATCH_TOKENS=524288`\r\n- Stop condition: `MAX_WALLCLOCK_SECONDS=600`\r\n\r\nResults:\r\n- `final_int8_zlib_roundtrip_exact val_loss: 2.28096783`\r\n- `final_int8_zlib_roundtrip_exact val_bpb: 1.35091763`\r\n- `Total submission size int8+zlib: 14301562 bytes`\r\n- Timed training stopped at `9067/20000` due to the wallclock cap\r\n\r\nIncluded in record folder:\r\n- `README.md`\r\n- `submission.json`\r\n- `train.log`\r\n- `train_gpt.py`",
+  "labels": [
+    "record submission ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/71",
+  "draft": false
+}

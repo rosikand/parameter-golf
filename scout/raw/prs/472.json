@@ -1,0 +1,13 @@
+{
+  "number": 472,
+  "title": "Add final local MLX NovelStack stack",
+  "state": "open",
+  "user": "pgxcare",
+  "created_at": "2026-03-22T22:51:15Z",
+  "updated_at": "2026-03-22T22:51:15Z",
+  "merged_at": null,
+  "body": "## Summary\n- add finalized local MLX NovelStack overlay trainer\n- add one-command run script for the final stack\n- add concise final-stack doc with current observed local metrics\n\n## Included files\n- `code/train_gpt_mlx_novelstack.py`\n- `code/run_best_novelstack.sh`\n- `docs/novelstack/FINAL_STACK.md`\n\n## Notes\n- this PR intentionally contains only the final stack files\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/472",
+  "draft": true
+}

@@ -1,0 +1,13 @@
+{
+  "number": 301,
+  "title": "Non-record: Int6 QAT + MLP1472 + SlidingWindow + TTT (val_bpb=1.1807)",
+  "state": "open",
+  "user": "lookin-zz",
+  "created_at": "2026-03-21T02:52:19Z",
+  "updated_at": "2026-03-21T18:53:24Z",
+  "merged_at": null,
+  "body": "## Submission (Updated)\n\n- **Track:** track_non_record_16mb\n- **val_bpb:** 1.1807 (with TTT) / 1.1991 (post-quant without TTT)\n- **Artifact size:** 15,781,354 / 16,000,000 bytes\n- **Approach:** 9L 512d GPT with int6 STE QAT (0.0017 quant gap), MLP hidden=1472, aggressive warmdown, FP16 tied embeddings, batched sliding window eval (stride=64), and full-weight test-time training (3 epochs SGD, freeze first 2 blocks, -0.018 BPB).\n\n## Update from v1\n- Added test-time training: full-weight SGD on validation data during eval\n- BPB improved from 1.1958 \u2192 **1.1807**\n\nSee `records/track_non_record_16mb/2026-03-21_Int6_QAT_MLP1472_SlidingWindow/README.md` for details.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/301",
+  "draft": false
+}

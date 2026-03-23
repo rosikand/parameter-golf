@@ -1,0 +1,13 @@
+{
+  "number": 223,
+  "title": "Draft: SOTA+ TTT + RoPE50K + EMA + Curriculum (pending H100 run)",
+  "state": "open",
+  "user": "0xjaishy",
+  "created_at": "2026-03-20T15:36:03Z",
+  "updated_at": "2026-03-20T17:02:55Z",
+  "merged_at": null,
+  "body": "## SOTA+ submission: PR #198 base + 4 untried improvements\n\n**Target: sub-1.13 BPB** (pending 8xH100 run)\n\n### Base: PR #198 Stack (current #1 at 1.1326 BPB)\n- 11L, 512d, MLP 3x, SmearGate + BigramHash + OrthoInit\n- Mixed int6/int8 quantization + zstd-22\n- WD=0.04, Muon (momentum 0.99), sliding window eval (s64)\n- FA3 with PyTorch SDPA fallback\n\n### New techniques (none tried on the #198 stack before)\n\n1. **RoPE base 50K** \u2014 smoother position interpolation at seq2048 (free, ~-0.002)\n2. **LAWA-EMA** \u2014 exponential moving average (decay=0.995) replaces periodic SWA (~-0.002)\n3. **Context-length curriculum** \u2014 seq1024 for first 60% of wallclock (60% more steps), then seq2048 (~-0.003)\n4. **Full-model SGD TTT** \u2014 1 epoch SGD (lr=3e-4) on val data before scoring (~-0.001 to -0.033)\n\n### Architecture\n- 26.8M params, ~15.7MB artifact\n- All hyperparameters baked in \u2014 just `torchrun --standalone --nproc_per_node=8 train_gpt.py`\n\n### Expected outcome\n| Scenario | BPB | Note |\n|----------|-----|------|\n| Conservative | ~1.125 | TTT gain ~0.001 (overlaps SmearGate) |\n| Moderate | ~1.116 | TTT gain ~0.010 |\n| Aggressive | <1.10 | TTT gain ~0.033 (full effect) |\n\n### Status\n- [x] Local CPU smoke test (syntax, forward pass, quant roundtrip)\n- [ ] 8xH100 SXM training run\n- [ ] 3-seed verification",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/223",
+  "draft": true
+}

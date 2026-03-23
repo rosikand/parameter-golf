@@ -1,0 +1,13 @@
+{
+  "number": 322,
+  "title": "11L SmearGate + BigramHash(10240) + Causal TTT + Mixed Int5/Int6 + SWA",
+  "state": "open",
+  "user": "romainsantoli-web",
+  "created_at": "2026-03-21T07:15:27Z",
+  "updated_at": "2026-03-21T07:15:27Z",
+  "merged_at": null,
+  "body": "## 11L SmearGate + BigramHash(10240) + Causal TTT + Mixed Int5/Int6 + SWA\n\n**val_bpb: pending** - awaiting RunPod credits for 8xH100 validation runs.\n\n### Approach\nCombines the strongest proven techniques from top submissions into a unified architecture targeting sub-1.135 val_bpb:\n\n- **11-layer GPT** with U-Net skip connections, GQA (8h/4kv), RoPE\n- **SmearGate** (PR #162): learned sigmoid gate for local context\n- **BigramHash(10240)** (PR #162, #180): explicit bigram statistics\n- **Causal TTT** (PR #267, #281): test-time adaptation, each token scored before model sees it\n- **Mixed int5/int6 quantization** (PR #180): int5 for MLP, int6 for attn\n- **3% magnitude pruning** + zlib-9 compression\n- **SWA** (frac=0.4, every=50 steps)\n- **Z-loss** regularization (1e-4)\n- **Tuned HPs**: WD=0.042, matrix_lr=0.025, grad_clip=0.3, warmdown=3000\n\n### Status\nCode complete and syntax-validated. Requesting compute credits to run 3-seed validation on 8xH100.\n\n### Expected Results\nBased on ablation data from PRs #162, #180, #267, #281 - target ~1.133-1.137 val_bpb.\n\nBuilt on PR #162 by @unnir and PR #180 by @thwu1.\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/322",
+  "draft": true
+}

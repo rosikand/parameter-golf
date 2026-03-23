@@ -1,0 +1,13 @@
+{
+  "number": 468,
+  "title": "[track_10min_16mb] utkuaydiin 10L Muon \u2014 15.46 MB",
+  "state": "open",
+  "user": "utkuaydiin",
+  "created_at": "2026-03-22T22:19:50Z",
+  "updated_at": "2026-03-22T22:47:54Z",
+  "merged_at": null,
+  "body": "Pure modeling track submission.\r\n\r\n- 10 layers, 448 dim, BigramHash(8192) + SmearGate\r\n- Muon optimizer + SWA + 5.5% global prune + mixed Int5/Int6 PTQ\r\n- Trained 10 min on 8\u00d7H100 with real FineWeb data\r\n- Final artifact: 15.46 MB after zstd-22",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/468",
+  "draft": false
+}

@@ -1,0 +1,13 @@
+{
+  "number": 382,
+  "title": "Test2",
+  "state": "closed",
+  "user": "HugoOchoaLP",
+  "created_at": "2026-03-22T00:47:11Z",
+  "updated_at": "2026-03-22T00:47:27Z",
+  "merged_at": null,
+  "body": "",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/382",
+  "draft": false
+}

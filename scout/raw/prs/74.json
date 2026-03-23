@@ -1,0 +1,15 @@
+{
+  "number": 74,
+  "title": "Add seq4096 fp16 tok coarsen record",
+  "state": "open",
+  "user": "takhir-iota",
+  "created_at": "2026-03-19T09:41:19Z",
+  "updated_at": "2026-03-20T18:43:09Z",
+  "merged_at": null,
+  "body": "Adds a new 10-minute 8xH100 record under `records/track_10min_16mb/2026-03-19_Seq4096Fp16TokCoarsen`.\n\nSummary:\n- canonical exact score: `1.18838751` val_bpb\n- canonical total size: `15,937,608` bytes\n- training recipe: `seq_len=4096`, `TRAIN_BATCH_TOKENS=393216`, tuned Muon schedule\n- export recipe: keep `tok_emb.weight` in fp16 and coarsen only `blocks.5.`\n\nRepro reruns included in the record folder:\n- `seed=1338`: `1.18896209` val_bpb, `15,942,078` bytes\n- `seed=1339`: `1.19055214` val_bpb, `15,942,841` bytes\n\nFiles included:\n- canonical `train.log`\n- exact `train_gpt.py` snapshot used for the run\n- `submission.json`\n- both rerun logs for reference",
+  "labels": [
+    "does not beat SOTA"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/74",
+  "draft": false
+}

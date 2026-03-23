@@ -1,0 +1,13 @@
+{
+  "number": 230,
+  "title": "Record: Int6 + MLP 3x + NorMuon + SmearGate + BigramHash + OrthoInit + Sliding Window, val_bpb=1.1541",
+  "state": "open",
+  "user": "MatthewHRockwell",
+  "created_at": "2026-03-20T16:40:39Z",
+  "updated_at": "2026-03-20T21:40:43Z",
+  "merged_at": null,
+  "body": "## Summary\n\n**val_bpb: 1.1541** (sliding window stride=256) | **Artifact: 15,992,610 bytes**\n\nSeven improvements stacked on the baseline:\n\n1. **Int6 per-row quantization** \u2014 [-31,31] with fp16 scales, fp16 tied embedding. Quant gap: 0.011 BPB\n2. **MLP 3x expansion** \u2014 hidden=1536, enabled by int6 space savings\n3. **NorMuon + decoupled weight decay** (0.02) \u2014 per-row normalized Newton-Schulz\n4. **SmearGate** \u2014 learned gate blending with previous token (~512 params)\n5. **BigramHash** \u2014 4096-bucket hash embedding for token pairs (dim=64)\n6. **Orthogonal + muP init** \u2014 orthogonal init + 1/sqrt(2L) scaling on output projections\n7. **Sliding window eval** \u2014 stride=256, 2048-token windows, distributed\n\n### Key Metrics\n\n| Metric | Value |\n|--------|-------|\n| Pre-quant val_bpb | 1.1644 |\n| Int6 roundtrip val_bpb | 1.1752 |\n| **Sliding window val_bpb** | **1.1541** |\n| Steps | 7,332 @ 81.84ms/step |\n| Tokens | ~5.77B |\n| Artifact | 15,992,610 bytes |\n\nTraining: `TRAIN_SEQ_LEN=2048 TRAIN_BATCH_TOKENS=786432 MATRIX_LR=0.02 MUON_MOMENTUM=0.99 WARMDOWN_ITERS=3000 GRAD_CLIP_NORM=1.0`\n\n```bash\nNCCL_IB_DISABLE=1 torchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\n8xH100 SXM (RunPod). Full log included.\n\n## Test plan\n\n- [x] Full pipeline: train \u2192 eval \u2192 int6 export \u2192 roundtrip \u2192 sliding window eval\n- [x] Artifact under 16MB (15.99MB)\n- [x] 8xH100 SXM verified\n- [x] Runs within 10-min wallclock + 10-min eval budget",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/230",
+  "draft": false
+}

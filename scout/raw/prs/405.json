@@ -1,0 +1,13 @@
+{
+  "number": 405,
+  "title": "Non-record: 1x RTX 3090 baseline run (sp1024, 1 shard)",
+  "state": "open",
+  "user": "meett07",
+  "created_at": "2026-03-22T05:57:30Z",
+  "updated_at": "2026-03-22T05:57:30Z",
+  "merged_at": null,
+  "body": "This PR adds a non-record baseline run under:\r\n\r\nrecords/track_non_record_16mb/2026-03-21_3090_Baseline_Run1/\r\n\r\nHighlights:\r\n- hardware: 1x RTX 3090 on RunPod\r\n- dataset/tokenizer: fineweb10B_sp1024 / fineweb_1024_bpe.model\r\n- train shards: 1\r\n- in-run val_bpb: 1.5516\r\n- final int8+zlib roundtrip val_bpb: 1.57290593\r\n- compressed submission size: 9,283,646 bytes\r\n\r\nThis is a documented non-record baseline, not an official 8xH100 leaderboard-equivalent submission.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/405",
+  "draft": true
+}

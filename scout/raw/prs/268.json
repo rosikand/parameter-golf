@@ -1,0 +1,13 @@
+{
+  "number": 268,
+  "title": "Record: 11L Int6 + SmearGate + BigramHash + Depth Recurrence",
+  "state": "open",
+  "user": "brn-mwai",
+  "created_at": "2026-03-20T21:15:20Z",
+  "updated_at": "2026-03-21T06:23:12Z",
+  "merged_at": null,
+  "body": "## Summary\n\nCompetitive recipe with a novel depth recurrence option for the 10-min 16MB track.\n\n### Architecture\n- 11 layers, 512 dim, 3x MLP expansion (hidden=1536)\n- 8 attention heads, 4 KV heads (GQA)\n- ~27M parameters, quantized to int6 + zstd-22\n\n### Techniques\n\n| Technique | Source |\n|---|---|\n| Int6 per-row quantization + zstd-22 | Competition meta |\n| 11 layers with 3x MLP | Funded by int6 byte savings |\n| SmearGate (learned token blending) | PR #135 |\n| BigramHash (4096x128 hash table) | PR #162 |\n| Muon optimizer with weight decay (0.03) | PR #179 |\n| Stochastic Weight Averaging (last 50%) | PR #162 |\n| Sliding window eval (stride=64) | PR #56 |\n| FP16 embedding passthrough | PR #42 |\n| Orthogonal initialization | PR #135 |\n| Depth recurrence (optional mode) | **Novel** |\n\n### Novel: Depth Recurrence\nOptional mode that shares transformer blocks across multiple loops:\n- 2 prelude + 1 shared (looped 7x) + 2 coda = 5 unique blocks, 11 effective depth\n- Per-iteration embeddings tell the shared block which pass it's on\n- Freed parameter budget can go to wider model (640+ dim)\n- Motivated by MDL theory: lower L(model) frees bits for L(data|model)\n\n### Vectorized Int6 Packing\nRewrote the int6 bit-packing from Python loops to vectorized NumPy ops. 27M params pack in ~90ms instead of minutes.\n\n## Validation\n\n- **BPB:** Pending 8xH100 validation (applying for compute grant)\n- Code has been syntax-verified and int6 roundtrip tested locally\n\n## Checklist\n- [x] Submission folder in `records/track_10min_16mb/`\n- [x] `README.md` with approach description\n- [x] `submission.json` with metadata\n- [x] `train_gpt.py` (single file, self-contained)\n- [ ] Training log (pending compute)\n- [ ] BPB score (pending compute)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/268",
+  "draft": false
+}

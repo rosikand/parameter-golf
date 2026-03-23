@@ -1,0 +1,13 @@
+{
+  "number": 244,
+  "title": "Non-record: leader-core valid-eval parity run + 1xH100 proxy screens",
+  "state": "open",
+  "user": "simon-marcus",
+  "created_at": "2026-03-20T18:11:03Z",
+  "updated_at": "2026-03-20T18:11:03Z",
+  "merged_at": null,
+  "body": "## Summary\nThis PR adds a non-record submission directory for a leader-core-derived `track_10min_16mb` attempt.\n\nThe main artifact is a validity-safe merge rooted in the official `2026-03-19_SlidingWindow_FP16Emb_10L_MuonWD_OvertoneInit` training core, with:\n- non-overlapping final eval\n- stronger int8 export search\n- temperature-only post-quant search\n- saved RunPod local-disk parity run logs\n- saved 1xH100 proxy-screen logs\n\n## Saved 8xH100 result\nDirectory: `records/track_10min_16mb/2026-03-20_LeaderCore10L_ValidEval_TempOnly_Int8Search`\n\nMain valid parity run:\n- `final_int8_zlib_roundtrip_exact val_bpb: 1.20639536`\n- `Total submission size int8+zlib: 15294320 bytes`\n- `step_avg: 49.31ms`\n- validity-safe eval path\n\nThis is not a leaderboard attempt. It is a saved non-record artifact and ablation base.\n\n## Saved 1xH100 proxy findings\nShort-horizon proxy screens on the same line:\n- `base`: `val_bpb 1.7975`\n- `gradclip03`: `val_bpb 1.7464`\n- `matrixlr006`: `val_bpb 1.6751`\n- `muon099`: `val_bpb 1.6582`\n- `warmdown800`: `val_bpb 1.5984`\n- `warmdown800_matrixlr006`: `val_bpb 1.4874`\n- `embedlr08`: `val_bpb 1.8000`\n\nThe strongest proxy signal here is `warmdown800 + matrixlr006`.\n\nI'm pleased with the progress, but it's clear there's more juice to squeeze -- and I think I've got better directional information for my next PR.\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/244",
+  "draft": false
+}

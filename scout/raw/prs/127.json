@@ -1,0 +1,13 @@
+{
+  "number": 127,
+  "title": "Non-record: Depth recurrence + widening + QAT + sliding window eval",
+  "state": "open",
+  "user": "matt-wright86",
+  "created_at": "2026-03-19T20:24:22Z",
+  "updated_at": "2026-03-21T03:54:56Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- 3 physical transformer blocks looped 3x (9 effective layers) with per-loop rank-4 LoRA adapters on Q/K/V/O\n- Model widened to dim 768, 12 query heads, 4 KV heads (GQA 3:1)\n- Factorized embedding (ALBERT-style: 4096x128 + 128x768) for SP4096 vocabulary\n- Int6-range quantization (values clamped to [-31,31]) with zlib compression\n- QAT with STE throughout training (amax-based, compile-time constant)\n- Sliding window evaluation (stride 64) following the pattern from merged PR #50\n- NTK-aware RoPE scaling for eval-time length extension\n- Configurable export: `QUANT_BITS=6|8`, `COMPRESSOR=zlib|zstd`\n\n## Status\n\n**Non-record submission \u2014 not yet validated on H100.** Submitting to enable compute grant application. Step time, artifact size, and BPB will be updated after hardware validation.\n\n## Test plan\n\n- [ ] Validate step time on 1xH100 (target: <110ms at dim=768 seq=2048)\n- [ ] Full 8xH100 run with 10-minute cap\n- [ ] Measure trained artifact size (target: <16MB)\n- [ ] Multi-seed BPB validation (3+ seeds, p<0.01)\n- [ ] Compare sliding window vs standard eval BPB\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/127",
+  "draft": false
+}

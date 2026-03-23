@@ -1,0 +1,13 @@
+{
+  "number": 159,
+  "title": "Record:Add TTT-LoRA 512d submission (val_bpb=1.1957)",
+  "state": "closed",
+  "user": "santosh5541",
+  "created_at": "2026-03-20T02:45:01Z",
+  "updated_at": "2026-03-20T03:20:10Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\nTTT-LoRA 512d 8h 4kv warmdown-3000 submission for track_10min_16mb.\r\n\r\n- Hardware: 8x H100 SXM\r\n- Final val_bpb: 1.1957 (TTT-LoRA evaluation)\r\n- Submission size: 15,880,385 bytes (int8 + zlib)\r\n- Training capped at 10 minutes\r\n\r\n## Notes\r\n\r\n- Best score comes from test-time LoRA adaptation\r\n- Includes training log and reproducible config\r\n- Artifact meets 16MB constraint",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/159",
+  "draft": false
+}

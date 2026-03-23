@@ -1,0 +1,13 @@
+{
+  "number": 229,
+  "title": "[Non-Record] Zeno: 10-Layer Muon with Full CastedLinear Capacity (18.5M params)",
+  "state": "open",
+  "user": "hooiv",
+  "created_at": "2026-03-20T16:37:41Z",
+  "updated_at": "2026-03-20T16:37:41Z",
+  "merged_at": null,
+  "body": "## Status (Out of Credits)\r\nThe provided `train_gpt.py` script successfully compiles Triton kernels on an 8xH100 pod and correctly handles hyperparameter loading. However, because I ran out of compute credits exactly 4 to 6 minutes into the runs, I was unable to complete the full 10-minute evaluation to capture the required 3 random seeds for a record standard. \r\nI'm submitting this to the `track_non_record_16mb` directory to share the architectural and optimizer adjustments with the community.\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/229",
+  "draft": true
+}

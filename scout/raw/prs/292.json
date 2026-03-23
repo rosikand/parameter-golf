@@ -1,0 +1,13 @@
+{
+  "number": 292,
+  "title": "Add baseline H100 training report and process docs",
+  "state": "closed",
+  "user": "xuafeng",
+  "created_at": "2026-03-21T00:13:56Z",
+  "updated_at": "2026-03-21T03:25:32Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **Training report**: Baseline run on 1x H100 SXM \u2014 **1.3274 BPB** (1404 steps in 600s wallclock cap)\n- **Process guide**: End-to-end RunPod + runpodctl setup, training, and evaluation playbook\n- **Next ideas**: Proposed experiments to close the gap toward SOTA (~1.14 BPB), including QAT int6/int5, 3x MLP, SwiGLU gating, and bigram hash\n\n## Files\n\nAll files are in `records/xuafeng_baseline/`:\n\n| File | Description |\n|------|-------------|\n| `report.md` | Full training metrics, model config, and observations |\n| `process.md` | Repeatable step-by-step guide for future runs |\n| `next_ideas.md` | 8 proposed improvements with expected impact estimates |\n\n## Key Results\n\n| Metric | Value |\n|--------|-------|\n| val_bpb (int8+zlib roundtrip) | 1.3274 |\n| val_loss | 2.2412 |\n| Steps completed | 1404 / 20000 |\n| Training wall time | 600.3s |\n| Compressed model size | 13.8 MB (under 16 MB) |\n| GPU | 1x NVIDIA H100 80GB SXM |\n\n## Test plan\n\n- [x] Training completed successfully on RunPod H100\n- [x] Results verified via int8+zlib roundtrip evaluation\n- [x] All docs reviewed for accuracy\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/292",
+  "draft": false
+}

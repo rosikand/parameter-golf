@@ -1,0 +1,13 @@
+{
+  "number": 499,
+  "title": "The Frugendorff: Recursive Weight Sharing + MLP 4x (1.1478 BPB, 15.19MB)",
+  "state": "open",
+  "user": "newjordan",
+  "created_at": "2026-03-23T04:19:20Z",
+  "updated_at": "2026-03-23T04:48:40Z",
+  "merged_at": null,
+  "body": "![frugendorff](https://github.com/user-attachments/assets/b99f0186-994a-43f3-9ba4-c7d1a5c055f7)\r\n\r\n\r\n## The Frugendorff\r\n\r\n6 unique transformer blocks, each applied twice in sequence, yielding 12 effective layers from 6 stored parameter sets. The parameter savings are redirected to a 4x MLP expansion.\r\n\r\n**val_bpb: 1.1478** | 15.19 MB | 8xH100 SXM, 600s, seed 1337\r\n\r\n## Architecture\r\n\r\n| | |\r\n|---|---|\r\n| Unique blocks | 6 |\r\n| Loops per block | 2 |\r\n| Effective depth | 12 |\r\n| Dimension | 640 |\r\n| Heads / KV heads | 10 / 5 (GQA) |\r\n| MLP expansion | 4x (hidden 2560) |\r\n| Activation | relu-squared |\r\n| Parameters | 28.2M |\r\n\r\nOrthogonal loop position embeddings (QR-initialized). U-Net skip connections within each loop iteration. SmearGate, BigramHash, shared value embeddings, XSA on last 2 blocks. Tied embeddings, logit softcap 30.\r\n\r\n## Training Pipeline\r\n\r\nMuon (matrices) + AdamW (embeddings, scalars) \u00b7 SWA \u00b7 Late QAT (int6, scale < 0.15) \u00b7 Training data replay (2 epochs, last 100 batches) \u00b7 Self-distillation (EMA teacher, 50 steps) \u00b7 EMA application \u00b7 int6 + zstd export\r\n\r\n## Results\r\n\r\n| Metric | Value |\r\n|--------|-------|\r\n| Sliding window BPB (stride 64) | 1.1478 |\r\n| Pre-quant BPB (post-EMA) | 1.1572 |\r\n| Post-quant roundtrip BPB | 1.1716 |\r\n| Artifact size | 15,192,793 bytes |\r\n| Training steps | 4,396 |\r\n| Step time | 136.5 ms |\r\n\r\n## Observations\r\n\r\nA few properties of this approach that may warrant further investigation:\r\n\r\n- The shared weights can be evaluated with fewer loops at inference time, trading quality for speed without retraining\r\n- The parameter efficiency leaves ~0.8 MB of headroom in the artifact budget, which could accommodate additional capacity\r\n- Alternating between full-depth and reduced-depth forward passes during training appeared to act as a form of regularization, though we have not yet isolated the effect\r\n- The recursive structure may compose well as a component within conventional architectures, applied selectively to a subset of layers\r\n\r\n## Compliance\r\n\r\nNo test-time training on validation data. Training replay and self-distillation operate on training data only.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/499",
+  "draft": false
+}

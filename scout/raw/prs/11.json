@@ -1,0 +1,15 @@
+{
+  "number": 11,
+  "title": "[WIP] Looped transformer with LoRA adapters",
+  "state": "closed",
+  "user": "adityawrk",
+  "created_at": "2026-03-18T19:43:16Z",
+  "updated_at": "2026-03-19T21:19:46Z",
+  "merged_at": null,
+  "body": "## Summary\n- 3 physical transformer layers looped 5 times for 15 effective depth\n- Rank-32 LoRA adapters on Q/K/V/O for per-loop specialization\n- SwiGLU MLP (hidden=1664), GQA 10:5, dim=640\n- U-Net skip connections at the loop level\n- Multi-token prediction auxiliary heads (training only, excluded from artifact)\n- Int8 quantized with per-row scales, zlib compressed\n\n## Changes\n- `records/track_10min_16mb/track_a/train_gpt.py`\n\n## Status\nWIP -- hyperparameter tuning in progress, no validated score yet.",
+  "labels": [
+    "not ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/11",
+  "draft": false
+}

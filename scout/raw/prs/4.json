@@ -1,0 +1,15 @@
+{
+  "number": 4,
+  "title": "[WIP] Optimized Muon/Architecture research by @NOPIMPOSSSIBLEWHY",
+  "state": "closed",
+  "user": "NOPIMPOSSSIBLEWHY",
+  "created_at": "2026-03-18T18:07:54Z",
+  "updated_at": "2026-03-19T21:19:44Z",
+  "merged_at": null,
+  "body": "Research starting on local MLX (Mac M3). Benchmarking architectures for the 16MB limit using Muon and muP.",
+  "labels": [
+    "not ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/4",
+  "draft": true
+}

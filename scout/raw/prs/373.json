@@ -1,0 +1,13 @@
+{
+  "number": 373,
+  "title": "Record: SwiGLU + BigramHash + SWA, val_bpb=1.1634 (8xH100 verified)",
+  "state": "closed",
+  "user": "JoeProAI",
+  "created_at": "2026-03-21T21:34:45Z",
+  "updated_at": "2026-03-21T23:47:03Z",
+  "merged_at": null,
+  "body": "## Result\n- **val_bpb: 1.1634** (int6+zstd-22 roundtrip)\n- Verified on 8xH100 80GB, 10-minute wall-clock budget\n- 9,937 steps in 600s (~60ms/step)\n- Model size: 14,772,576 bytes (14.1 MB)\n\n## Key Techniques\n- **SwiGLU FFN activation** (replacing relu(x).square() \u2014 discovered via automated search)\n- BigramHash embeddings (4096 buckets, 128 dim)\n- Stochastic Weight Averaging (SWA) every 50 steps from 50%\n- Int6 quantization + zstd-22 compression\n- Muon optimizer with weight decay 0.02\n- 10 transformer layers, dim=512, 8 heads / 4 KV heads\n\n## Hardware\n- 8x NVIDIA H100 80GB HBM3 (Modal)\n- Peak memory: 12,817 MiB per GPU\n\n## Discovery\nSwiGLU activation improvement was discovered via GEPA, an automated evolutionary search that proposed and validated 26 training optimizations on single-GPU before verifying at 8xH100 scale.\n\nSupersedes #113 (old unverified submission).",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/373",
+  "draft": false
+}

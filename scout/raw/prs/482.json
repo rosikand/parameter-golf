@@ -1,0 +1,13 @@
+{
+  "number": 482,
+  "title": "Record: 10L CountInitBigram + XSA + PartialRoPE (val_bpb=1.1522)",
+  "state": "closed",
+  "user": "harsha-gouru",
+  "created_at": "2026-03-23T00:28:43Z",
+  "updated_at": "2026-03-23T00:56:20Z",
+  "merged_at": null,
+  "body": "## Summary\n- **val_bpb: 1.1522** (sliding window stride=64, post int5/int6+zstd quantization roundtrip)\n- 10 layers, 512 dim, 8 heads / 4 KV heads, tied embeddings\n- Artifact: 15,384,232 bytes (15.38 MB)\n\n## Novel Contributions\n\n### Count-Initialized Exact Bigram Logit Head\nA 1024x1024 lookup table initialized from corpus bigram transition probabilities (B[a,b] = log p(b|a) - log p(b)) before training begins. Provides a strong Markov prior from step 0 \u2014 the neural network only needs to refine it. Applied BEFORE logit softcap.\n\n### Int4 Nibble Packing\nCustom pack_i4/unpack_i4 functions pack signed int4 values into uint8 bytes (two values per byte). Applied to the bigram logit table, halving its storage from ~1MB to ~524KB.\n\n## Adopted Techniques\n- XSA on last 4 layers (arxiv:2603.09078)\n- Partial RoPE 16/64 dims\n- LN Scale 1/sqrt(layer+1)\n- Higher LR (0.025)\n- SmearGate, OrthoInit, U-Net skips, SWA, int5/int6 + zstd-22\n\n## Results\nSteps: 6267 at 95.75 ms/step (8xH100 SXM, 600s wallclock)\nPre-SWA val_bpb: 1.1563\nPost-SWA+quant val_bpb: 1.1522\nArtifact: 15.38 MB (0.62 MB headroom)\n\n## Test plan\n- [x] Verified artifact under 16MB limit\n- [x] Post-quant roundtrip bpb verified\n- [x] 8xH100 SXM, 600s wallclock\n\nBuilt on baseline by @thwu1 (PR #180).",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/482",
+  "draft": true
+}

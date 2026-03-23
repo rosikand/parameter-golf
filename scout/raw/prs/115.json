@@ -1,0 +1,13 @@
+{
+  "number": 115,
+  "title": "felix_v1: int6+zstd, fp16 embed, MLP 3x, seq4096, sliding window eval",
+  "state": "open",
+  "user": "felix-ab",
+  "created_at": "2026-03-19T18:33:20Z",
+  "updated_at": "2026-03-19T18:33:20Z",
+  "merged_at": null,
+  "body": "## Summary\n\nStacking complementary techniques to maximize parameter efficiency within the 16MB artifact limit.\n\n## Changes from baseline\n\n### int6 quantization + zstd-22\n- `QUANT_MAX=31` (6-bit range) stored in int8 containers \u2014 same memory layout, ~25% smaller values \u2192 better compression\n- zlib level-9 replaced with zstd level-22 (~10-15% additional savings)\n- Net effect: body weights compress to ~14.1MB instead of ~15.8MB for baseline\n\n### fp16 embedding passthrough\n- `tok_emb.weight` skips quantization and is stored as fp16 directly\n- Embeddings are the most quantization-sensitive tensor (directly maps to logit quality)\n- Cost: ~0.5MB at dim=512; worth it for quality insurance\n\n### MLP 3x (default)\n- `MLP_MULT=3` instead of 2\n- Space freed by int6+zstd enables wider hidden layers within budget\n- Adds ~4M parameters vs baseline at same artifact size\n\n### seq4096 training (default)\n- `TRAIN_SEQ_LEN=4096` instead of 1024\n- Longer context enables model to learn longer-range dependencies\n- Required for sliding window eval to show meaningful gains\n\n### Sliding window eval\n- `eval_val_sliding_window()` added: scores tokens with maximum left context\n- Stride=512: each token scored with up to `seq_len` context tokens\n- `forward_logits()` added to GPT class for logit access without loss reduction\n- Runs after quantized roundtrip eval and logs bpb improvement delta\n- Free gain at eval time \u2014 no artifact cost\n\n## Artifact budget\n```\nBody: 21.4M params @ int6+zstd \u2192 ~14.1MB\nEmbedding: 512\u00d71024 fp16 \u2192 0.5MB  \nTotal: ~14.6MB (under 16MB)\n```\n\n## Local validation\n- Baseline reproduces on Apple Silicon (M4 Pro)\n- int6 quant gap confirmed <0.01 bpb on smoke test\n- Script is syntax-clean, 1263 lines (under 1500 limit)\n- `zstandard` falls back to `zlib` gracefully if not installed\n\n## Status\nDraft \u2014 awaiting H100 training run to report final val_bpb.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/115",
+  "draft": true
+}

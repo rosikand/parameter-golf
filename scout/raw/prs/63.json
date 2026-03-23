@@ -1,0 +1,15 @@
+{
+  "number": 63,
+  "title": "Record: 10L Int6 QAT + Zstd MLP2.6x Muon0.99 Sliding Window (val_bpb 1.1598)",
+  "state": "closed",
+  "user": "yahya010",
+  "created_at": "2026-03-19T07:19:15Z",
+  "updated_at": "2026-03-20T18:26:38Z",
+  "merged_at": "2026-03-20T18:26:37Z",
+  "body": "## Summary\r\n\r\n11 techniques stacked on the Naive Baseline, achieving **mean val_bpb 1.1598** (3 seeds):\r\n\r\n1. **10 transformer layers** (from 9)\r\n2. **STE int6 QAT** \u2014 fake quantization during training eliminates quant gap entirely (pre-quant = post-quant)\r\n3. **Full int6 quantization** [-31,31] + **zstd-22** compression\r\n4. **MLP hidden 1344** (2.625x model_dim) \u2014 enabled by int6+zstd savings\r\n5. **FP16 tied embedding passthrough**\r\n6. **Sequence length 2048**\r\n7. **Muon momentum 0.99** (warmup from 0.92 over 1500 steps)\r\n8. **Lower LRs**: MATRIX_LR=0.02, SCALAR_LR=0.02\r\n9. **Gradient clipping** 0.3\r\n10. **Warmdown 3600**\r\n11. **Sliding window evaluation** stride=64\r\n\r\n## Results\r\n\r\n| Seed | Steps | val_bpb (standard) | val_bpb (sliding) | Artifact size |\r\n|------|-------|--------------------|--------------------|---------------|\r\n| 1337 | 8,319 | 1.1821 | 1.1610 | 15,558,319 |\r\n| 42 | ~8,300 | ~1.1815 | 1.1598 | ~15,558,000 |\r\n| 3 | ~8,300 | ~1.1810 | 1.1586 | ~15,558,000 |\r\n\r\n**Mean val_bpb (sliding): 1.1598** (std: 0.00120)\r\n**Quant gap: 0.0000** \u2014 STE QAT completely eliminated quantization loss.\r\n\r\nStatistical significance vs baseline (2.0727 val_loss):\r\n- Improvement: 0.1144 nats, t=-93.6, p << 0.01\r\n\r\nHardware: 8xH100 80GB HBM3, PyTorch 2.8.0+cu128, ~72ms/step.\r\nRequires: `pip install zstandard`\r\n\r\n## Test plan\r\n- [x] 3 seeds on 8xH100, all under 600s wallclock\r\n- [x] All artifacts under 16MB (15.56MB)\r\n- [x] Sliding window eval under 600s (~370s)\r\n- [x] Statistical significance p << 0.01\r\n- [x] Post-quant roundtrip validation matches\r\n",
+  "labels": [
+    "record submission ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/63",
+  "draft": false
+}

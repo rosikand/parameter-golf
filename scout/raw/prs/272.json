@@ -1,0 +1,13 @@
+{
+  "number": 272,
+  "title": "Non-record: 10L mixed int5/int6 export reaches ~10.4MB with strong throughput",
+  "state": "open",
+  "user": "simon-marcus",
+  "created_at": "2026-03-20T21:32:33Z",
+  "updated_at": "2026-03-21T14:14:58Z",
+  "merged_at": null,
+  "body": "## Summary\n\nThis PR adds a non-record `track_10min_16mb` submission exploring a QLoRA-style compression direction on the strongest valid `10L` leader-core line:\n\n- mixed export precision by subsystem\n- tiny eval-time adaptation on a small control-parameter subset\n\nSaved directory:\n`records/track_10min_16mb/2026-03-20_LeaderCore10L_MixedQuant_MicroTTT`\n\n## Main Result\n\nSingle-seed `8xH100` run (`1337`):\n\n- `final_int8_zlib_roundtrip_exact val_bpb: 1.24271554`\n- `Total submission size int8+zlib: 10401310 bytes`\n- `step: 12348`\n- `step_avg: 48.59ms`\n- `eval_time: 1548ms`\n\nThis run is valid on both size and eval time, while pushing artifact size far below the `16MB` cap.\n\n## What Changed\n\n- `int5` export for MLP matrices\n- `int6` export for attention matrices\n- `int8` elsewhere\n- tiny eval-time SGD on `q_gain`, `attn_scale`, `mlp_scale`, `resid_mix`, and `skip_weights`\n- same validity-safe non-overlapping final eval and temperature search path as the valid `10L` base\n\n## Why It Seems Worth Saving\n\nThis submission maps out an interesting point on the size/quality frontier:\n\n- artifact size drops to about `10.4MB`\n- throughput remains very strong on the valid `10L` core\n- the compression mechanism works mechanically and creates substantial byte headroom\n- the current `int5/int6` recipe is still too destructive after roundtrip\n- micro-TTT recovers only a small fraction of that loss\n\nSo while this is not a leaderboard result, it does show a concrete and potentially useful direction: aggressive mixed quantization can open up a large amount of artifact budget, but this particular export recipe needs more work to translate that byte savings into competitive BPB.\n\n## Included Files\n\n- `README.md`\n- `submission.json`\n- `train.log`\n- `train_gpt.py`\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/272",
+  "draft": false
+}

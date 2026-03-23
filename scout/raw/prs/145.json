@@ -1,0 +1,13 @@
+{
+  "number": 145,
+  "title": "Non-record: QAT ablation \u2014 int8 QAT overhead exceeds quantization gap recovery",
+  "state": "open",
+  "user": "mrdavtan",
+  "created_at": "2026-03-20T01:07:51Z",
+  "updated_at": "2026-03-20T01:07:51Z",
+  "merged_at": null,
+  "body": "## Summary\n\nClean ablation of per-row int8 quantization-aware training (QAT) on the baseline 9L\u00d7512d architecture with default hyperparameters. **Finding: the overhead costs more than it recovers.**\n\n- QAT uses a straight-through estimator matching `quantize_float_tensor` exactly (same `INT8_CLIP_Q = 0.9999984` percentile, same per-row scale)\n- `torch.quantile` adds **~20% per-step overhead** (64ms \u2192 77ms), costing ~2,000 training steps in the 600s budget\n- Post-roundtrip val_bpb: **1.2052** (vs SlidingWindowEval's 1.1925 without QAT)\n- The lost training tokens hurt more than the ~0.007 BPB quantization gap recovery helps\n\n### Key takeaways for other participants\n\n1. **Int8 QAT with exact percentile matching is not worth it** under the 10-minute wallclock cap \u2014 aggressive warmdown (WD=20000) achieves similar quant gap reduction at zero training cost\n2. **Int6 QAT likely does pay off** \u2014 the quantization gap is larger (~0.01+ BPB), making the overhead worthwhile. PRs #128 and #137 confirm this.\n3. **`torch.compile` graph priming pitfall**: pre-compiling both QAT and non-QAT graphs during warmup causes the compiler to use a slower path for the non-QAT forward pass. Don't do this \u2014 accept the one-time recompile instead.\n\n### Results\n\n| Metric | SlidingWindowEval (no QAT) | This run (QAT) |\n|--------|---------------------------|----------------|\n| Steps | 13,450 | 8,011 |\n| step_avg | 44.6ms | 75.2ms |\n| Post-quant val_bpb (sliding window) | **1.1925** | **1.2052** |\n\n## Test plan\n\n- [x] Runs on 8\u00d7H100 SXM within 10-minute wallclock cap\n- [x] Artifact under 16,000,000 bytes (15,868,103)\n- [x] QAT activates at step 6,000 and runs for 2,011 steps\n- [x] Training log included\n\nBuilt with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/145",
+  "draft": false
+}

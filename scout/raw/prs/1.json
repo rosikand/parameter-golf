@@ -1,0 +1,13 @@
+{
+  "number": 1,
+  "title": "Update README.md little things",
+  "state": "closed",
+  "user": "TNELLI-OAI",
+  "created_at": "2026-03-12T01:16:37Z",
+  "updated_at": "2026-03-16T20:45:24Z",
+  "merged_at": "2026-03-12T01:16:51Z",
+  "body": "- space between modelcraft\r\n- revising kinda awk language about unusual ability",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/1",
+  "draft": false
+}

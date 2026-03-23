@@ -1,0 +1,13 @@
+{
+  "number": 239,
+  "title": "[Non-record] Golomb-Rice Optimal Encoding for Error Correction Tables",
+  "state": "closed",
+  "user": "kellyvv",
+  "created_at": "2026-03-20T17:55:20Z",
+  "updated_at": "2026-03-20T18:13:11Z",
+  "merged_at": null,
+  "body": "## Information-theoretically optimal encoding for correction tables\n\nReplaces varint-delta encoding (PR #108) with Golomb-Rice coding \u2014 the optimal code for geometric distributions.\n\n### Benchmark Results (verified, no GPU needed)\n| Corrections | Varint (v2) | Golomb-Rice (v3) | Savings |\n|---|---|---|---|\n| 500K | 3.36 B/entry | 3.06 B/entry | 8.8% |\n| 900K | 3.16 B/entry | 2.96 B/entry | 6.3% |\n| 2.5M | 3.01 B/entry | 2.76 B/entry | 8.0% |\n\nAchieves near-Shannon-optimal compression. Run `python build_correction_table_v3.py` to reproduce.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/239",
+  "draft": false
+}

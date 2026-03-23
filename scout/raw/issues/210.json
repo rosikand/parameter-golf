@@ -1,0 +1,11 @@
+{
+  "number": 210,
+  "title": "[QUESTION] Can we use zstandard instead of zlib?",
+  "state": "closed",
+  "user": "davidpuertolas",
+  "created_at": "2026-03-20T12:31:54Z",
+  "updated_at": "2026-03-21T00:00:17Z",
+  "body": "Hi team! Quick clarification question about allowed dependencies/compression.\n\nIs it acceptable for a submission `train_gpt.py` to use `zstandard` (zstd, e.g. level 22) instead of `zlib` when writing the final compressed model artifact, as long as:\n\n1. The run is fully reproducible in the official RunPod evaluation environment,\n2. No network calls/external downloads are made during evaluation,\n3. Total artifact size (code + compressed model) is <= 16,000,000 bytes.\n\nI want to confirm this is within the spirit/rules before submitting. Thanks!\n\nPS: If allowed should I mention that we need to install it before execution or will you update the requirements.txt \u00bf?",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/issues/210"
+}

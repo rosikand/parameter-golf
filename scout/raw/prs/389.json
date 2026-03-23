@@ -1,0 +1,13 @@
+{
+  "number": 389,
+  "title": "Record: 11L Int5-All + XSA5 + EMA + 10% Pruning (val_bpb=1.1466)",
+  "state": "open",
+  "user": "trasnake87",
+  "created_at": "2026-03-22T02:05:15Z",
+  "updated_at": "2026-03-22T02:14:16Z",
+  "merged_at": null,
+  "body": "## 11L Int5-All + XSA5 + EMA + 10% Pruning\n\n**val_bpb = 1.1466** (sliding window stride=64) | **14.8 MB** artifact | 8xH100 SXM, 600s\n\n### What's new\n\nTwo novel modifications on top of the XSA+EMA stack (PR #315):\n\n1. **Uniform int5 quantization** for both MLP and attention weights. Prior SOTA uses int5 for MLP and int6 for attention. Through systematic post-training quantization search, we found attention weights tolerate int5 as well as MLP weights. Saves ~1MB compressed.\n\n2. **10% magnitude pruning** after EMA averaging, before quantization. Zeroes the smallest weights, which compress to nearly nothing under zstd. Saves ~500KB.\n\nCombined: artifact drops from ~15.6MB to 14.8MB with minimal quality impact.\n\n### Results (seed 42, 8xH100 SXM)\n\n| Metric | Value |\n|---|---|\n| Steps | 5,987 |\n| Pre-quant val_bpb | 1.1504 |\n| Post-quant standard | 1.1703 |\n| **Post-quant sliding s64** | **1.1466** |\n| Artifact | 14,811,335 bytes |\n\n### Run\n\n```bash\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\nAll defaults baked into the script. No env vars needed.\n\nBuilt on PR #315 by @alertcat.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/389",
+  "draft": false
+}

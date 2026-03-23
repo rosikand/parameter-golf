@@ -1,0 +1,15 @@
+{
+  "number": 69,
+  "title": "SubSixteen v2: Int6 QAT + MLP 3x + SWA + Sliding Window (val_bpb 1.1708)",
+  "state": "open",
+  "user": "TevBenji",
+  "created_at": "2026-03-19T08:52:18Z",
+  "updated_at": "2026-03-22T05:24:38Z",
+  "merged_at": null,
+  "body": "# SubSixteen v2: Int6 QAT + MLP 3x + SWA + Sliding Window\r\n\r\n**val_bpb: 1.1708** | Artifact: 14,603,588 bytes (under 16MB)\r\n\r\n## Results\r\n\r\n| Metric | Value |\r\n|---|---|\r\n| Post-quant val_bpb (sliding window) | **1.1708** |\r\n| Pre-quant val_bpb (step 9722) | 1.1732 |\r\n| Quantization penalty | +0.002 BPB |\r\n| Artifact size | 14,603,588 bytes |\r\n| Training steps | 9,722 (wallclock-limited) |\r\n| Step avg | 61.72ms |\r\n| Peak memory | 10,138 MiB |\r\n\r\n## Architecture\r\n\r\n- 9-layer GPT, 512-dim, GQA (8 heads, 4 KV heads), U-Net skip connections\r\n- MLP 3x expansion (hidden=1536), relu\u00b2 activation\r\n- 1024 vocab SentencePiece BPE, tied embeddings\r\n- Overtone SVD init, phase-transition resid_mix, NTK-aware RoPE\r\n- Logit soft-capping (tanh, cap=30)\r\n\r\n## Key Techniques (v2)\r\n\r\n1. **STE fake-int6 QAT**: CastedLinear weights fake-quantized to [-31,31] during forward via Straight-Through Estimator. Model learns distributions that survive 6-bit post-training quantization.\r\n2. **MLP 3x expansion**: Hidden dim 1536 (up from 1024). Enabled by int6 saving ~4MB artifact space. 9 layers (down from 10) to fit under 16MB.\r\n3. **SWA (Stochastic Weight Averaging)**: 16 checkpoints collected every 200 steps during warmdown, averaged for export.\r\n4. **zstd-22 compression**: Better compression ratio than zlib-9 for the quantized artifact.\r\n5. **Sliding window eval**: stride=64, seq_len=4096 for near-full-context scoring.\r\n\r\n## Optimizer\r\n\r\n- Muon (momentum=0.99, lr=0.02) for matrix params with Newton-Schulz orthogonalization\r\n- AdamW for embeddings (lr=0.03) and scalars (lr=0.02)\r\n- Warmdown: 3000 iters, wallclock-aware schedule\r\n- Momentum warmup: 0.92 \u2192 0.99 over 1500 steps\r\n\r\n## Run command\r\n\r\n```bash\r\npip install zstandard\r\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\r\n```\r\n\r\nTrained on 8xH100 SXM, 600s wallclock cap.\r\n",
+  "labels": [
+    "not ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/69",
+  "draft": false
+}

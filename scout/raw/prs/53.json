@@ -1,0 +1,16 @@
+{
+  "number": 53,
+  "title": "1.1888 BPB via SP-4096 compression + stride-64 sliding window",
+  "state": "closed",
+  "user": "kshitizz36",
+  "created_at": "2026-03-19T06:26:03Z",
+  "updated_at": "2026-03-20T19:01:55Z",
+  "merged_at": null,
+  "body": "## Summary\r\n- **val_bpb: 1.1888** (post-quant, sliding window eval stride=64)\r\n- SP-4096 tokenizer (0.30 tokens/byte vs 0.41) + stride-64 sliding window eval \u2014 two independent improvements that stack multiplicatively via BPB formula\r\n- 8-layer 512-dim GQA encoder-decoder with skip connections, Muon optimizer\r\n- Artifact: 15.68MB (under 16MB), 14,006 steps in 600s on 8xH100\r\n\r\n## Key innovations\r\n1. **SP-4096 tokenizer**: 26.6% better compression ratio (3.32 bytes/token vs 2.44), directly reduces the tokens/byte multiplier in BPB\r\n2. **Sliding window evaluation**: Overlapping stride-64 windows give each token ~960 context tokens instead of ~512 average, lowering cross-entropy\r\n\r\n## Results\r\n| Metric | Value |\r\n|--------|-------|\r\n| val_bpb (post-quant, sliding) | **1.1888** |\r\n| val_bpb (pre-quant) | 1.2067 |\r\n| val_loss (nats) | 2.7351 |\r\n| Steps | 14,006 |\r\n| Wallclock | 600s |\r\n| Artifact size | 15.68MB |\r\n\r\n## Test plan\r\n- [x] Post-quant val_bpb verified via int8+zlib roundtrip\r\n- [x] Artifact under 16MB\r\n- [x] Runs within 600s wallclock on 8xH100\r\n- [x] train_gpt.py compiles and runs from records folder",
+  "labels": [
+    "record submission ready for review",
+    "does not beat SOTA"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/53",
+  "draft": false
+}

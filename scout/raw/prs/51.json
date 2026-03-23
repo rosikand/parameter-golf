@@ -1,0 +1,15 @@
+{
+  "number": 51,
+  "title": "[WIP] Depth-recurrent QAT: 3x4 loops, 768d, 15.6MB artifact",
+  "state": "closed",
+  "user": "hacksurvivor",
+  "created_at": "2026-03-19T05:48:43Z",
+  "updated_at": "2026-03-19T21:19:55Z",
+  "merged_at": null,
+  "body": "## Summary\n\nDepth-recurrent transformer with quantization-aware training.\n\n### Key optimizations\n- **Depth recurrence:** 3 shared blocks looped 4x = 12 effective layers (vs baseline 9)\n- **Wider model:** dim 768, 12 heads, 6 KV heads\n- **Per-loop LoRA:** rank-4 adapters on Q/V for loop specialization\n- **QAT:** STE fake-quantize in CastedLinear \u2014 minimal post-quant degradation\n- **LAWA:** Weight averaging during warmdown\n- **fp16 tied embedding** export\n\n### A10G validation (200 iterations, 1 shard)\n| Metric | Value |\n|--------|-------|\n| val_bpb | 2.0799 |\n| Post-quant val_bpb | 2.0485 |\n| Artifact size | 15.6 MB |\n\nFull 8xH100 multi-seed results pending compute grant.\n\n## Test plan\n- [x] CPU forward/backward pass\n- [x] Int8+zlib roundtrip under 16MB\n- [x] A10G CUDA training (200 steps)\n- [ ] Full 8xH100 10-min training run\n- [ ] Multi-seed validation (p < 0.01)",
+  "labels": [
+    "not ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/51",
+  "draft": false
+}

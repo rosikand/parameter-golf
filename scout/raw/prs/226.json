@@ -1,0 +1,13 @@
+{
+  "number": 226,
+  "title": "Submission: Low-Rank All-Attention (1.3446 bpb)",
+  "state": "open",
+  "user": "CRouvroy",
+  "created_at": "2026-03-20T16:19:02Z",
+  "updated_at": "2026-03-20T16:19:02Z",
+  "merged_at": null,
+  "body": "This is a first submission to see if there is things to do with this architecture, it needs more tuning to be useful (especially on the trade-off betwen size and quantization).\r\n(Persistent Memory)\r\nWe replace the feed-forward NN from the trasnformer blocks.\r\nThis is based on the paper \"Augmenting Self-attention with Persistent Memory\".\r\n\r\n(Quantization)\r\nWe forced a quantization into INT8 for tensors with size $> 16,384$ (others are kept into FP16).\r\n\r\n(LoRA Routing)\r\n\r\nWe factorize matrices in low-rank ($W = W_d W_u$), because for $r <<d$, $d \\times d >> d \\times r + r \\times d$.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/226",
+  "draft": false
+}

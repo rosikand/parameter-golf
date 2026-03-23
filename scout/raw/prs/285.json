@@ -1,0 +1,13 @@
+{
+  "number": 285,
+  "title": "Add non-record local A100 TTT eval-stride0 submission",
+  "state": "open",
+  "user": "DanishjeetSingh",
+  "created_at": "2026-03-20T23:08:11Z",
+  "updated_at": "2026-03-20T23:08:11Z",
+  "merged_at": null,
+  "body": "Adds a non-record 16MB submission folder for a local 1xA100 run focused on the TTT metric.\r\n\r\n  Key result: final_int8_ttt_lora val_bpb = 1.3510\r\n  Size: 11,876,675 bytes (int8+zlib total)\r\n  Train cap: 600s (step 856)\r\n\r\n  Included:\r\n  - README.md\r\n  - submission.json\r\n  - train.log\r\n  - train_gpt.py (exact snapshot used)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/285",
+  "draft": false
+}

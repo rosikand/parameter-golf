@@ -1,0 +1,13 @@
+{
+  "number": 59,
+  "title": "NTK Eval + Overtone Init (val_bpb=1.2160)",
+  "state": "closed",
+  "user": "notapplica",
+  "created_at": "2026-03-19T06:49:52Z",
+  "updated_at": "2026-03-19T06:51:32Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **Overtone embedding init**: SVD-based spectral shaping of tied embeddings to power-law decay\n- **Phase-transition residual mixing**: sigmoid-scheduled `resid_mix` init across layers\n- **NTK-aware RoPE scaling**: train@1024, eval@2048 with dynamic base frequency adjustment\n- AdamW weight decay 0.01, warmdown 2500 steps, tied embedding LR 0.10\n\n## Multi-seed results (3 seeds, p = 0.0012)\n\n| Seed | Steps | ms/step | Pre-quant BPB | Post-quant BPB | val_loss (nats) | Artifact |\n|------|-------|---------|--------------|----------------|-----------------|----------|\n| 1337 | 13024 | 46.07 | 1.2210 | 1.2166 | 2.0542 | 15.78MB |\n| 42 | 13239 | 45.32 | 1.2211 | 1.2163 | 2.0537 | 15.79MB |\n| 7 | 13230 | 45.35 | 1.2188 | 1.2152 | 2.0519 | 15.80MB |\n| **Mean** | | | **1.2203** | **1.2160** | **2.0533** | |\n\n- **Improvement over baseline: 0.0194 nats** (3.9x the 0.005 threshold)\n- **t-statistic: 20.67**, df=2, **p = 0.0012**\n- All 3 runs individually beat SOTA by >0.005 nats\n- All 3 artifacts under 16MB\n\n## Note on hardware\n\nRuns were done on Modal 8xH100 SXM (NVLink). Python 3.12, PyTorch <3.\n\n## Test plan\n\n- [x] Post-quant val_bpb verified via int8+zlib roundtrip\n- [x] Artifact under 16MB (all 3 seeds)\n- [x] Runs within 600s wallclock\n- [x] train_gpt.py compiles and runs from records folder\n- [x] Multiple seed runs: p = 0.0012 (3 seeds, t=20.67)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/59",
+  "draft": false
+}

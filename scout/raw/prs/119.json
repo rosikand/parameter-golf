@@ -1,0 +1,13 @@
+{
+  "number": 119,
+  "title": "Add Psionic non-record runtime replay submission",
+  "state": "closed",
+  "user": "AtlantisPleb",
+  "created_at": "2026-03-19T19:28:08Z",
+  "updated_at": "2026-03-19T19:47:52Z",
+  "merged_at": null,
+  "body": "This PR adds one non-record submission folder generated from Psionic's canonical export path:\n\n- `records/track_non_record_16mb/2026-03-18_psionic_local_reference_runtime_replay_v2`\n\nClaim posture:\n- non-record only\n- no claim of record-track readiness\n- no claim of true `8xH100` success\n\nLocal verification before opening this PR:\n- `scripts/check-parameter-golf-record-folder-compatibility.sh --parameter-golf-root ~/code/parameter-golf --submission-dir ...` -> `compatible`\n- `scripts/check-parameter-golf-record-folder-replay.sh --submission-dir ...` -> `verified`\n- folder-local `python3 train_gpt.py` dry-run exit code `0`\n\nThe shipped folder includes the submission surface plus the replay-verification, run-evidence, and promotion-receipt artifacts produced by Psionic's current non-record path.\n\nMaintainer-facing note:\n- this submission uses a shipped Rust runtime payload launched by the root-local `train_gpt.py` wrapper\n- the current Psionic repo still treats counted-runtime and build-dependency interpretation for record-track posture as an open question, so this PR is intentionally non-record and bounded\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/119",
+  "draft": false
+}

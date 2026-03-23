@@ -1,0 +1,13 @@
+{
+  "number": 487,
+  "title": "Non-record: Value Residual (-0.015 BPB) + Gated Attention (-0.003 BPB) on 11L Production Stack",
+  "state": "open",
+  "user": "anantdgoel",
+  "created_at": "2026-03-23T01:13:29Z",
+  "updated_at": "2026-03-23T01:13:29Z",
+  "merged_at": null,
+  "body": "**val_bpb: 1.1720** | **19.4 MB** (unlimited compute) | 1xA6000, 9500 steps, 14.5hr\n\n## Summary\n\n- **Value Residual** (ResFormer, arXiv:2410.17897): caches layer-0 V vectors, mixes into subsequent layers via learnable scalars. **-0.015 BPB**, 22 params added.\n- **Gated Attention** (arXiv:2505.06708): per-head sigmoid gate after SDPA, eliminates attention sinks. **-0.003 BPB**, ~37K params added.\n- Techniques stack **additively** (-0.0172 combined), validated via controlled ablation on 9L baseline.\n- Full community meta-stack: 11L MLP3x + SmearGate + BigramHash(2048) + OrthoInit + WD0.04 + XSA(4) + EMA(0.997) + Partial RoPE + LN Scale + Logit Softcap.\n- Both techniques independently adopted by 5+ community submissions, including a record-tier entry (1.1101 BPB).\n\n## Ablation (9L v1024, 1000 steps, 131K batch, 1x3090)\n\n| Config | val_bpb | Delta |\n|--------|---------|-------|\n| Control | 1.4697 | \u2014 |\n| + Gated Attention | 1.4665 | -0.0032 |\n| + Value Residual | 1.4546 | -0.0151 |\n| + Both | 1.4525 | **-0.0172** |\n\n## Production Results\n\n| Metric | Value |\n|--------|-------|\n| Pre-quant val_bpb | 1.1710 |\n| Post-quant val_bpb | **1.1720** |\n| Quant gap | 0.0010 |\n| Artifact | 19.4 MB |\n\n## Files\n\n- `README.md` \u2014 full writeup with ablations and reproducibility command\n- `submission.json` \u2014 metadata\n- `train_gpt.py` \u2014 training script\n- `train.log` \u2014 complete training log",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/487",
+  "draft": false
+}

@@ -1,0 +1,13 @@
+{
+  "number": 447,
+  "title": "Bigram-Aware Context Modeling with Mixed-Precision Quantization (val_bpb: 1.1431)",
+  "state": "open",
+  "user": "CREVIOS",
+  "created_at": "2026-03-22T17:39:18Z",
+  "updated_at": "2026-03-22T17:39:18Z",
+  "merged_at": null,
+  "body": "## Summary\n\nNon-record submission demonstrating bigram-aware context modeling with mixed-precision quantization.\n\n- **val_bpb: 1.1431** (post int5/int6 + zstd-22 roundtrip, sliding window stride=64)\n- **Artifact: 15.97 MB** (under 16MB cap)\n- **Training: 600s** on 8xH100 SXM (6,658 steps at ~90ms/step)\n- **Evaluation: 175s** sliding window (stride=64, seq_len=2048)\n\n## Key Techniques\n\n| Technique | Details |\n|-----------|---------|\n| BigramHash embedding | 10,240-bucket XOR hash table capturing token-pair identity |\n| SmearGate | Learned per-dim gate blending adjacent token embeddings |\n| Mixed quantization | Int5 for MLP (smooth distributions), Int6 for attention (precision-sensitive) |\n| 3x MLP expansion | Exploits MLP compressibility to fund wider hidden layers |\n| 10 layers | Extra layer funded by int5 MLP savings (~1.86MB recovered) |\n| SWA | 24 checkpoints averaged over last 40% of warmdown |\n| Orthogonal init | Gain=1.0 with muP output scaling |\n| Muon + WD=0.04 | Decoupled weight decay for quantization-friendly weight distributions |\n| Sliding window eval | Stride=64, every token scored with 1984+ context tokens |\n| zstd-22 | ~5% better compression than zlib-9 |\n\n## Detailed Writeup\n\nSee [README.md](records/track_10min_16mb/2026-03-22_BigramContext_MixedQuant_SWA/README.md) for full technical description of design choices and rationale.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/447",
+  "draft": false
+}

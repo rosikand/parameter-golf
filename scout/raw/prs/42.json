@@ -1,0 +1,15 @@
+{
+  "number": 42,
+  "title": "fp16 tied embedding + warmdown/LR tuning (val_bpb 1.2197)",
+  "state": "closed",
+  "user": "chonchiog",
+  "created_at": "2026-03-19T01:14:05Z",
+  "updated_at": "2026-03-19T17:16:51Z",
+  "merged_at": "2026-03-19T17:16:50Z",
+  "body": "Hey! Noticed the tied embedding takes a huge hit from int8 quantization since it doubles as the output head. Keeping it in fp16 during export basically kills the quant gap (~0.007 down to ~0.0005 BPB) for just ~500KB extra.\n\nTo fit under 16MB I trimmed the MLP hidden from 1024 to 992 \u2014 barely noticeable quality-wise but frees up the space. Also bumped warmdown to 3600 and matrix LR to 0.06 since the default schedule doesn't really line up with the actual step count you get in 10 min.\n\n**8xH100 SXM results (RunPod secure):**\n\n| seed | steps | val_loss | val_bpb | size |\n|------|-------|----------|---------|------|\n| 1337 | 13,692 | 2.0595 | 1.2197 | 15.90MB |\n| 42 | 13,722 | 2.0600 | 1.2201 | 15.90MB |\n\nAlso ran 3 seeds on 8xH200 \u2014 all land in the 1.216\u20131.218 range.\n\nImprovement over baseline: ~0.013 nats across runs.\n\nLogs for both seeds included. Happy to answer any questions.",
+  "labels": [
+    "record submission ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/42",
+  "draft": false
+}

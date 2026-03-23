@@ -1,0 +1,11 @@
+{
+  "number": 43,
+  "title": "[Question] Tokenizer is not counted in submission size",
+  "state": "open",
+  "user": "DouglasOrr",
+  "created_at": "2026-03-19T01:18:19Z",
+  "updated_at": "2026-03-20T13:57:04Z",
+  "body": "The submission size calculation doesn't count persisting the tokenizer itself - is this right? Two challenges to this: first, the size includes everything necessary (modulo generic Python requirements) to fully specify and inference the model, so it seems a shame to lose this property by omitting the tokenizer. Second, not counting this allows large-vocabulary models an artificial advantage, since they get the strings \"for free\".\n\n(However, I appreciate this may be a pragmatic decision, as although the `fineweb_1024_bpe.vocab` file is small, `fineweb_1024_bpe.model` is large, e.g. 150 kB compressed & is presumably larger than it needs to be. I presume the model isn't uniquely reconstructable from the vocab(?))\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/issues/43"
+}

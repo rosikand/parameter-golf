@@ -1,0 +1,13 @@
+{
+  "number": 360,
+  "title": "Non-record: QAT & EMA negative results on SOTA stack (val_bpb=1.1426)",
+  "state": "open",
+  "user": "MultiFe22",
+  "created_at": "2026-03-21T19:13:47Z",
+  "updated_at": "2026-03-21T19:13:47Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **val_bpb: 1.1426** (baseline reproduction of PR #180)\n- Documents that adding QAT (STE fake-quantization) and EMA to the SOTA stack **hurts performance** due to throughput loss\n- QAT costs 8% of training steps, EMA costs 32% \u2014 within the 10-minute budget, lost steps outweigh compression/averaging benefits\n\n## Results (8xH100 SXM, 600s)\n\n| Config | Steps | val_bpb | Artifact | Delta |\n|--------|-------|---------|----------|-------|\n| Baseline (PR #180 repro) | 6,684 | **1.1426** | 15.99 MB | \u2014 |\n| + QAT (warmup=500) | 6,143 | 1.1473 | 15.69 MB | +0.005 (worse) |\n| + QAT + EMA | 4,546 | 1.1606 | 16.89 MB | +0.018 (worse) |\n\n## Key findings\n\n- **QAT**: Better compression (15.69 vs 15.99 MB) but 8% fewer steps - net negative\n- **EMA**: `.cpu().clone()` every step causes 32% throughput loss - catastrophic\n- **Implication**: Techniques trading steps for inference quality are counterproductive under the 10-min budget\n\n## Test plan\n\n- [x] Baseline reproduction matches published SOTA (1.1426 vs 1.1428)\n- [x] QAT ablation on 8xH100\n- [x] QAT+EMA ablation on 8xH100\n- [x] All logs included",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/360",
+  "draft": false
+}

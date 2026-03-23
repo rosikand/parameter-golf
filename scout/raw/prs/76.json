@@ -1,0 +1,15 @@
+{
+  "number": 76,
+  "title": "12L Int5-MLP + SmearGate + BigramHash + SWA (val_bpb 1.1433)",
+  "state": "open",
+  "user": "unixmadtoonslab",
+  "created_at": "2026-03-19T10:51:00Z",
+  "updated_at": "2026-03-21T16:34:18Z",
+  "merged_at": null,
+  "body": "## Summary\n\n12-layer transformer (dim=512, 8H/4KV GQA) achieving **1.14327 BPB** (3-seed mean: 1.14375 / 1.14316 / 1.14289).\n\n### Key techniques\n- **Mixed int5/int6 quantization**: int5 per-row for MLP weights (3 zero high bits -> better zstd-22 compression ~3.8x), int6 per-row for attention weights, fp16 embedding passthrough\n- **12 layers** (funded by ~1MB saved from int5 compression)\n- **SmearGate**: per-dim sigmoid gate blending token with previous token embedding\n- **BigramHash**: hash embedding for token-pair context (2048 buckets, dim=96)\n- **U-Net skip connections**: encoder-decoder split with learned per-dim skip weights\n- **Orthogonal init** with 1/sqrt(2*num_layers) output projection scaling\n- **SWA**: checkpoint averaging every 50 steps during warmdown\n- **Muon optimizer**: LR=0.025, momentum=0.98, WD=0.04\n- **Warmdown timing fix**: ignores torch.compile overhead in step-time estimation\n- **PyTorch 2.8 SDPA**: ~66ms/step at seq1024 (12 layers)\n\n### Results\n| Seed | val_bpb | Artifact Size |\n|------|---------|---------------|\n| 1337 | 1.14375 | 15.80 MB |\n| 42   | 1.14316 | 15.77 MB |\n| 7    | 1.14289 | 16.01 MB |\n| **Mean** | **1.14327** | |\n\n### Config\n```\nNUM_LAYERS=12, MODEL_DIM=512, NUM_HEADS=8, NUM_KV_HEADS=4, MLP_MULT=3\nTRAIN_SEQ_LEN=1024, EVAL_SEQ_LEN=1024, TRAIN_BATCH_TOKENS=524288\nMATRIX_LR=0.025, SCALAR_LR=0.025, TIED_EMBED_LR=0.035\nMUON_MOMENTUM=0.98, MUON_WD=0.04, ADAM_WD=0.0\nWARMDOWN_ITERS=2000, SWA_INTERVAL=50\nBIGRAM_VOCAB_SIZE=2048, BIGRAM_DIM=96\nMIXED_INT5_ENABLED=1\n```\n\n## Test plan\n- [x] 3-seed validation (seeds 1337, 42, 7)\n- [x] All artifacts under 16MB (16 MiB)\n- [x] Quantized roundtrip validation\n\nSubmission by Will DePue",
+  "labels": [
+    "record submission ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/76",
+  "draft": false
+}

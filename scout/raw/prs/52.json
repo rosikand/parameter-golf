@@ -1,0 +1,15 @@
+{
+  "number": 52,
+  "title": "New SOTA attempt (val_bpb=1.2014)",
+  "state": "closed",
+  "user": "spokane-way",
+  "created_at": "2026-03-19T05:53:41Z",
+  "updated_at": "2026-03-19T21:04:16Z",
+  "merged_at": "2026-03-19T21:04:16Z",
+  "body": "Across three seeds: 1.2014, 1.1995, 1.2032\r\n\r\nBetter Muon momentum, LR, warmdown",
+  "labels": [
+    "record submission ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/52",
+  "draft": false
+}

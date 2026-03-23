@@ -1,0 +1,13 @@
+{
+  "number": 235,
+  "title": "Draft: 6-bit QAT + SP4096 + Layer Recurrence 5\u00d72, requesting compute",
+  "state": "open",
+  "user": "zeyuchenphd",
+  "created_at": "2026-03-20T17:39:54Z",
+  "updated_at": "2026-03-20T17:39:54Z",
+  "merged_at": null,
+  "body": "  ## Summary\r\n\r\n  Quantization-Aware Training (QAT) submission targeting sub-16MB artifact with 6-bit weight quantization.\r\n\r\n  ### Approach\r\n  - **6-bit QAT with STE**: Fake-quantizes 2D weight matrices during training using straight-through estimator, so the model learns to tolerate quantization noise. N-bit export packs values into int8 with limited range that compresses well under zlib.\r\n  - **SP4096 BPE tokenizer**: Larger vocab (4096 vs baseline 1024) trained on FineWeb docs via SentencePiece \u2014 better token efficiency at modest embedding cost.\r\n  - **Layer recurrence (5 unique \u00d7 2 passes = 10 effective layers)**: Shares weights across layer pairs (U-Net style skip connections preserved), doubling effective depth without doubling\r\n  parameters.\r\n  - **Architecture**: 768d, 12 heads, 4 KV heads, 2\u00d7 MLP expansion, tied embeddings.\r\n  - **Optimizer**: Muon for 2D matrices + Adam for embeddings/scalars, 524K batch tokens, 1200-step warmdown.\r\n\r\n  ### Target config\r\n  NUM_LAYERS=10, NUM_UNIQUE_LAYERS=5, MODEL_DIM=768, NUM_HEADS=12, NUM_KV_HEADS=4\r\n  MLP_MULT=2, VOCAB_SIZE=4096, QAT_BITS=6, QAT_START_FRAC=0.0\r\n\r\n  ### Status\r\n  - `train_gpt_qat.py` \u2014 complete (1239 lines), supports configurable N-bit QAT + both int8 and N-bit export with zlib + roundtrip validation\r\n  - SP4096 tokenizer trained and 144 tokenized shards (27GB) ready locally\r\n  - **Awaiting 8\u00d7H100 compute to produce training logs and final BPB numbers**\r\n\r\n  ### Compute grant request\r\n  Requesting RunPod credits for 8\u00d7H100 SXM. Expected single training run is ~10 minutes; need a few runs for hyperparameter validation and final submission. Previous pod ran out of credit mid-data-preparation.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/235",
+  "draft": false
+}

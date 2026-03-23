@@ -1,0 +1,13 @@
+{
+  "number": 144,
+  "title": "Add MPK 8x384 10-minute submission record",
+  "state": "closed",
+  "user": "DJLougen",
+  "created_at": "2026-03-20T01:07:01Z",
+  "updated_at": "2026-03-20T11:17:25Z",
+  "merged_at": null,
+  "body": "Add MPK 8x384 10-minute submission record\n\nThis PR adds a new 10-minute / 16 MB submission record:\n- records/track_10min_16mb/2026-03-20_MPK_8x384\n\nHighlights:\n- model_family: mpk\n- 8 layers, width 384\n- 8 heads / 4 KV heads\n- MPK strides k=2, m=4\n- 80 FineWeb SP-1024 train shards\n- wallclock stop at 599.527s\n- final int8+zlib roundtrip val_bpb: 1.01558307\n- total submission size int8+zlib: 14578273 bytes\n\nIncluded files:\n- README.md\n- submission.json\n- train.log\n- train_gpt.py\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/144",
+  "draft": false
+}

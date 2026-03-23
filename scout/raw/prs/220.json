@@ -1,0 +1,13 @@
+{
+  "number": 220,
+  "title": "[WIP] SSM LRU Baseline \u2014 First State Space Model Submission",
+  "state": "open",
+  "user": "timothywangdev",
+  "created_at": "2026-03-20T15:09:53Z",
+  "updated_at": "2026-03-20T15:40:30Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- First **non-transformer submission** to parameter golf \u2014 uses a Linear Recurrent Unit (LRU) state space model\n- SSM blocks are **36% smaller** than attention blocks at equivalent dimension, enabling 12-15 layers where transformers fit 9-10 in 16MB\n- Complex diagonal recurrence with parallel scan (cumsum trick), gated projection, ReLU^2 MLP\n- MuonAdamW optimizer with SSM-aware parameter groups\n\n## Status: WIP\n\nApplying for compute credits to validate on H100. Current results on RTX 3090 (5 min budget):\n- val_bpb: 1.848 (bottlenecked by pure PyTorch scan speed, 2.8% MFU)\n- With `mamba_ssm` CUDA kernels on H100, expect 10-50x speedup \u2192 competitive results\n\n## Why SSMs Could Win\n- **Parameter efficiency**: SSM-specific params are <0.2% of total; projections dominate\n- **No KV cache**: Native sliding window eval without recomputation\n- **Linear complexity**: More tokens processed in fixed time budget\n- **Compressibility**: Research shows 50% of SSM weights can be pruned with zero accuracy loss (SparseSSM)\n\n## Research Backing\n- 6 deep-dive research documents (LinOSS, Mamba-3, SSM taxonomy, compression frontiers)\n- Autonomous experiment loop with brainstorming, arxiv paper reading, self-reflection\n- Concrete 16MB configs identified from parameter analysis\n\n## Test plan\n- [ ] Validate on H100 with mamba_ssm CUDA kernels\n- [ ] Establish competitive val_bpb baseline\n- [ ] Optimize architecture (depth, width, d_state) for 16MB budget\n- [ ] Add int8+zlib quantization pipeline\n- [ ] Statistical significance testing (3+ seeds, p < 0.01)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/220",
+  "draft": true
+}

@@ -1,0 +1,15 @@
+{
+  "number": 62,
+  "title": "WIP: Add adaptive eval-time context non-record MLX submission",
+  "state": "open",
+  "user": "stpcoder",
+  "created_at": "2026-03-19T06:57:25Z",
+  "updated_at": "2026-03-19T16:57:40Z",
+  "merged_at": null,
+  "body": "## Summary\n\nThis PR adds a non-record MLX submission under `records/track_non_record_16mb/` for adaptive eval-time context.\n\nThe setup is a local Apple Silicon run, not a leaderboard claim. The main change in this snapshot is the final evaluation path: instead of using one fixed policy over the whole validation stream, it does a coarse pass first and then rescoring with a finer stride on the harder windows from that pass.\n\n## Included files\n\n- `README.md`\n- `submission.json`\n- `train.log`\n- `compare_standard.log`\n- `train_gpt.py`\n\n## Run details\n\n- hardware: Apple M4 Pro, 48 GB unified memory\n- model: SP-1024, `9x512`, `KV4`, tied embeddings\n- train data: first FineWeb train shard\n- validation: first `32768` validation tokens\n- training length: `200` iterations\n- adaptive eval settings: `coarse_stride=256`, `fine_stride=64`, `hard_fraction=0.25`\n\n## Result in `train.log`\n\n- pre-quant eval at stop: `val_bpb=2.4070`\n- final int8+zlib roundtrip: `val_bpb=2.40284524`\n- total submission size: `11297911` bytes\n\n## Same-setup reference\n\n`compare_standard.log` uses the same setup with standard final evaluation:\n\n- standard final roundtrip: `val_bpb=2.41303630`\n- adaptive final roundtrip: `val_bpb=2.40284524`\n\nSo in this local fixed-step proxy, the adaptive pass improves the final roundtrip score by about `0.01019 bpb`, but it also makes the final eval pass slower. That tradeoff is the reason this is being submitted as a WIP non-record result rather than as a performance claim.\n\n## Validation\n\n- `python -m py_compile records/track_non_record_16mb/2026-03-19_AdaptiveEvalContext_MLX_M4Pro_sp1024_200it/train_gpt.py`\n- included local MLX run logs for both adaptive and standard final eval under the same setup\n",
+  "labels": [
+    "not ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/62",
+  "draft": true
+}

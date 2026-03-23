@@ -1,0 +1,13 @@
+{
+  "number": 467,
+  "title": "[track_10min_16mb] LoRA TTT + SOTA Int5/Int6 (10L, BigramHash, SWA) \u2014 Atharva Date (ADIITJ)",
+  "state": "open",
+  "user": "ADIITJ",
+  "created_at": "2026-03-22T22:09:26Z",
+  "updated_at": "2026-03-22T22:13:23Z",
+  "merged_at": null,
+  "body": "## Summary\n\nDocument-isolated **LoRA Test-Time Training** at evaluation on top of the SOTA training stack (thwu1, 1.1428 bpb). Zero artifact cost: LoRA adapters are initialized fresh at eval time and discarded after each document \u2014 no weights stored in the 16MB artifact.\n\n- **Author:** Atharva Date (ADIITJ)\n- **Status:** Non-record (pending 3-seed H100 validation)\n- **Expected bpb:** 1.137 \u2013 1.140 (projected)\n- **Base:** SOTA thwu1 (1.1428 bpb)\n\n## Key changes from SOTA\n\n| Component | This submission | SOTA (thwu1) |\n|---|---|---|\n| Training | identical | \u2014 |\n| Quantization | Int5-MLP + Int6-Attn + zstd-22 | same |\n| `swa_start_frac` | **0.35** | 0.40 |\n| `warmdown_iters` | **3500** | 3000 |\n| Final eval | **Document-isolated LoRA TTT** | Sliding window |\n\n## LoRA TTT design\n\n- Rank-8 adapters on Q and V projections in all 10 attention layers\n- Chunk-level TTT: **score chunk first, then train LoRA on it** (no leakage)\n- Adam optimizer (\u03b2\u2081=0.9, \u03b2\u2082=0.95, \u03b5=1e-10), lr=0.01\n- Adapters reset between documents; optimizer state reset between batches\n- 2048-token context window, 256-token chunks, batch of 32 documents\n\n## Artifact budget\n\nSame quantization as SOTA: ~14.3MB (LoRA adds 0 bytes).\n\n## Compliance\n\n- [x] Artifact \u2264 16,000,000 bytes (~14.3MB estimated)\n- [x] No network calls during evaluation\n- [x] No training data access during evaluation\n- [x] TTT uses only already-scored validation tokens\n- [x] Training \u2264 10 minutes on 8xH100\n- [x] Evaluation \u2264 10 minutes on 8xH100\n- [ ] Statistical significance (3 seeds not yet run \u2014 **non-record**)\n\n## Attribution\n\nTraining architecture from thwu1 (2026-03-20) building on Raahil Shah's PR #162. LoRA TTT design adapted from samacqua (2026-03-17).\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/467",
+  "draft": false
+}

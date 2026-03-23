@@ -1,0 +1,13 @@
+{
+  "number": 347,
+  "title": "LongContext 4096 + Full SOTA Stack & QAT Int4 \u2192 16 Layers",
+  "state": "open",
+  "user": "FlashyFlash3011",
+  "created_at": "2026-03-21T15:22:07Z",
+  "updated_at": "2026-03-22T08:56:24Z",
+  "merged_at": null,
+  "body": "## Submissions\n\nTwo experiments targeting sub-1.1698 BPB. Scripts are complete and smoke-tested. Full 3-seed H100 runs are in progress (compute grant pending) \u2014 results and train logs will be added before final review.\n\n---\n\n### 1. LongContext 4096 + Full SOTA Stack\n\n**Folder:** `records/track_10min_16mb/2026-03-21_LongContext4096_FullStack/`\n\nThe 4096-seq training record (1.2014 BPB) was submitted before sliding window eval, FP16 embeddings, Muon WD, or Overtone init existed. This combines all of those with long-context training:\n\n- Train at `seq_len=4096`, eval with sliding window `stride=256`\n- Each eval token sees **3,840 tokens of context** vs 960 in SOTA\n- Zero extra eval cost: `64 seqs \u00d7 4096 = 256 seqs \u00d7 1024` tokens per batch\n- NTK-aware RoPE `base=40000` (= 10000 \u00d7 4096/1024)\n- Re-tuned LRs (`matrix=0.025`) and Muon momentum (`0.98`) for 4096 context\n- All SOTA techniques: 10L, Muon WD=0.02, FP16 tied embed, Overtone spectral init, U-Net skips\n\n**Expected: ~1.14\u20131.16 BPB**\n\n---\n\n### 2. QAT Int4 \u2192 16 Layers\n\n**Folder:** `records/track_10min_16mb/2026-03-21_QAT_Int4_16L/`\n\nInt4 nibble-packing (2 weights/byte) fits **16 transformer layers** in the same 16MB budget as SOTA's 10 \u2014 a 60% parameter increase.\n\n- Quantization-Aware Training with straight-through estimator (STE) activates at 15% of training iterations\n- Weights gradually cluster near int4 grid points before export, minimising accuracy loss\n- Int4 roundtrip assertion before export verifies zero packing error\n- All SOTA techniques carried forward with stability adjustments: `matrix_lr=0.030`, Muon momentum `0.97`, `grad_clip=1.0`\n\n**Expected: ~1.14\u20131.16 BPB**\n\n---\n\n## Status\n\n- [x] Scripts complete and syntax-verified\n- [x] Smoke-tested locally (ROCm, 1 GPU)\n- [ ] Full H100 runs (3 seeds each) \u2014 pending compute\n- [ ] Results tables and train logs \u2014 to be added",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/347",
+  "draft": true
+}

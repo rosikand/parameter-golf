@@ -1,0 +1,15 @@
+{
+  "number": 98,
+  "title": "Experiment and [WIP] record attempt: Weight decay reduces quantization gap and artifact size",
+  "state": "open",
+  "user": "leloykun",
+  "created_at": "2026-03-19T16:29:19Z",
+  "updated_at": "2026-03-19T22:25:50Z",
+  "merged_at": null,
+  "body": "<img width=\"2000\" height=\"800\" alt=\"image\" src=\"https://github.com/user-attachments/assets/6e487eda-f705-42e5-a62f-6cfcc46cc739\" />\r\n\r\nThis PR includes:\r\n\r\n1. Experimental evidence that weight decay (statistically) significantly reduces (1a) the pre- vs. post-quantization validation loss/bpb gap; and (1b) the quantized artifact size. I used paired one-sided t-tests (on 6 seeds) to validate these claims, but (1b) is obvious from the plot above. A neat consequence of (1b) is that it allows us to use larger models. And hence:\r\n2. WIP record attempt using aggressive weight decay and a deeper model. Preliminary results on A100s shows promising results. But sadly, I haven't been able to access 8xH100s yet as no GPU providers have capacity at the moment.\r\n\r\nI'm currently writing a write-up explaining this phenomenon. I'll update this PR as soon as it's ready.",
+  "labels": [
+    "not ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/98",
+  "draft": true
+}

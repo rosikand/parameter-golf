@@ -1,0 +1,13 @@
+{
+  "number": 156,
+  "title": "feat(record): Int6 STE + NorMuon + SWA + Sliding Window (val_bpb=1.16019)",
+  "state": "open",
+  "user": "dexhunter",
+  "created_at": "2026-03-20T02:07:58Z",
+  "updated_at": "2026-03-20T14:59:24Z",
+  "merged_at": null,
+  "body": "  ## Summary\r\n\r\n  New SOTA submission: **mean val_bpb = 1.16019** across 3 seeds, beating current merged SOTA (1.17475) by **0.01456**.\r\n\r\n  | Seed | val_bpb | Steps | ms/step | Artifact |\r\n  |------|---------|-------|---------|----------|\r\n  | 1337 | 1.16146 | 12357 | 48.55 | 15,045,740 |\r\n  | 42 | 1.15935 | 12351 | 48.58 | 15,053,489 |\r\n  | 7 | 1.15976 | 12336 | 48.69 | 15,157,415 |\r\n  | **Mean** | **1.16019** | | | |\r\n\r\n  ## Key Techniques\r\n\r\n  1. **Int6 STE** \u2014 Fake int6 per-row quantization ([-31,31]) on every forward pass with straight-through gradient bypass. Model learns to cope with quantization noise, yielding only ~+0.002 bpb gap.\r\n  2. **NorMuon optimizer** \u2014 Row-normalized Newton-Schulz updates on top of Muon with adaptive step sizes.\r\n  3. **3x MLP width (1536)** \u2014 Enabled by int6 compression savings within 16MB budget.\r\n  4. **FP16 tied embedding** \u2014 Embedding tensor stored in fp16, never quantized.\r\n  5. **Sliding window eval (stride=64)** \u2014 Every token gets 960 tokens context (~0.033 bpb improvement).\r\n  6. **SWA** \u2014 7 checkpoint average during warmdown phase.\r\n  7. **Zstd-22 compression** \u2014 Better ratio than zlib for quantized weights.\r\n  8. **U-Net skip connections** \u2014 Encoder-decoder structure with learnable skip weights.\r\n\r\n  ## Architecture\r\n\r\n  - 9 layers, 512 dim, 8 heads, 4 KV heads (GQA)\r\n  - Vocab 1024 (SentencePiece BPE), seq len 1024\r\n  - relu\u00b2 activation, RoPE, logit softcapping (30.0)\r\n\r\n  ## Submission checklist\r\n\r\n  - [x] 3-seed verification with mean val_bpb\r\n  - [x] All artifacts < 16MB\r\n  - [x] Wallclock < 600s on 8xH100\r\n  - [x] Train logs included\r\n  - [x] Reproducible train_gpt.py included\r\n  - [x] submission.json with metadata",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/156",
+  "draft": false
+}

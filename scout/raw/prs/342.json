@@ -1,0 +1,13 @@
+{
+  "number": 342,
+  "title": "Non-record: MLX-Optimized 12L 416d with SmearGate + BigramHash (val_bpb=1.9011, Mac)",
+  "state": "open",
+  "user": "adhyaay-karnwal",
+  "created_at": "2026-03-21T14:11:26Z",
+  "updated_at": "2026-03-21T16:35:08Z",
+  "merged_at": null,
+  "body": "## Summary\r\n- Non-record submission for Parameter Golf challenge\r\n- 12-layer model (6 encoder + 6 decoder) with SmearGate, BigramHash(4096), FP16 embeddings\r\n- MLP 3x expansion, Muon optimizer with weight decay\r\n- Trained on MacBook Apple Silicon M4 Pro using MLX framework\r\n- **Result: val_bpb = 1.9011** (500 iterations)\r\n\r\n## Key Techniques\r\n1. **SmearGate**: Learned gating mechanism blending each token with previous token's embedding\r\n2. **BigramHash**: Hash consecutive token pairs into 4096-bucket embedding table\r\n3. **FP16 Embeddings**: Near-zero quantization gap with Muon WD\r\n4. **MLP 3x Expansion**: relu^2 activation\r\n5. **U-Net Skip Connections**: Decoder layers receive skip connections from encoder layers\r\n\r\n## Architecture\r\n- 12 layers (6 encoder + 6 decoder)\r\n- 416 dim, 8 heads, 4 KV heads (GQA)\r\n- MLP 3x expansion (hidden=1248)\r\n- Tied embeddings\r\n\r\n## Training Details\r\n- Device: Apple Silicon M4 Pro (24GB unified memory)\r\n- Framework: MLX 0.31.1\r\n- Training tokens: ~16M (500 iters \u00d7 32K batch)\r\n- Tokens/sec: ~20,000-24,000\r\n\r\n## Notes\r\nThis is an **undertrained model** on MacBook. The same architecture with 3000+ iterations on H100s should achieve significantly better BPB (potentially 1.5-1.6 BPB based on findings and research completed). This submission demonstrates effective MLX optimization techniques and serves as a foundation for further H100 training.\r\n\r\n## Files\r\n- `records/track_non_record_16mb/2026-03-21_MLX_Optimized_12L_416d_SmearGate_BigramHash/README.md` - Detailed explanation\r\n- `records/track_non_record_16mb/2026-03-21_MLX_Optimized_12L_416d_SmearGate_BigramHash/submission.json` - Metadata\r\n- `records/track_non_record_16mb/2026-03-21_MLX_Optimized_12L_416d_SmearGate_BigramHash/train_gpt_mlx.py` - MLX training script\r\n- `records/track_non_record_16mb/2026-03-21_MLX_Optimized_12L_416d_SmearGate_BigramHash/train.log` - Training log",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/342",
+  "draft": false
+}

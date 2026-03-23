@@ -1,0 +1,13 @@
+{
+  "number": 175,
+  "title": "Record: TTT LoRA + SOTA Training (10L MuonWD FP16Emb OvertoneInit)",
+  "state": "open",
+  "user": "anthony-maio",
+  "created_at": "2026-03-20T05:38:49Z",
+  "updated_at": "2026-03-20T05:45:58Z",
+  "merged_at": null,
+  "body": "## Summary\n\nStacks LoRA test-time training evaluation onto the current SOTA training recipe. These two improvements are orthogonal and have not been combined in any prior submission:\n\n- **Training**: 10L, Muon WD (0.02), FP16 tied embed, overtone spectral SVD init, phase-transition resid_mix, sliding window eval stride=64 (from `2026-03-19_SlidingWindow_FP16Emb_10L_MuonWD_OvertoneInit`, val_bpb=1.1748)\n- **Evaluation**: Per-document LoRA adaptation (rank=8 on Q/V + LM head), document-isolated chunked evaluation with Adam optimizer (from `2026-03-17_LoRA_TTT`, val_bpb=1.1928 on baseline)\n\nThe TTT ablation showed ~0.037 bpb improvement from eval-time adaptations applied to the weaker baseline model. Applying the same technique to the SOTA-trained model is expected to yield ~1.14 val_bpb.\n\n## Changes\n\n- Added TTT hyperparameters to `Hyperparameters` class\n- Modified `CausalSelfAttention.forward`, `Block.forward`, `GPT.forward` to accept optional LoRA delta parameters (no-op when not provided, preserving training behavior)\n- Added `BatchedLinearLoRA`, `BatchedTTTLoRA` classes for batched per-document LoRA adaptation\n- Added `eval_val_ttt_lora` function for document-isolated chunked LoRA evaluation\n- After standard sliding window eval, runs TTT LoRA eval and reports both scores\n\n## Test plan\n\n- [ ] Verify training reproduces ~1.1748 val_bpb on standard sliding window eval (identical training path)\n- [ ] Verify TTT LoRA eval produces improvement over standard eval\n- [ ] Verify total eval time (sliding window + TTT) stays under 10 minutes\n- [ ] Run 3 seeds for statistical significance (p < 0.01)\n- [ ] Verify compressed artifact stays under 16MB\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/175",
+  "draft": false
+}

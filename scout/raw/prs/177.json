@@ -1,0 +1,13 @@
+{
+  "number": 177,
+  "title": "Record: WD + FP16 Embed + Warmdown (val_bpb=TBD)",
+  "state": "open",
+  "user": "magungh1",
+  "created_at": "2026-03-20T06:02:51Z",
+  "updated_at": "2026-03-20T15:06:39Z",
+  "merged_at": null,
+  "body": "## Summary\n\nThree small, low-risk improvements to the baseline (no architectural changes):\n\n- **Weight decay (0.01)** on token embedding and scalar optimizers (Adam \u2192 AdamW) \u2014 regularizes weights, improves quantization robustness\n- **FP16 embedding passthrough** in int8 quantization \u2014 keeps the tied embedding in FP16 instead of int8, avoiding compounding errors through dual-use input/output path\n- **Warmdown 1200 \u2192 2500** \u2014 smoother weight distributions reduce post-quantization BPB penalty\n\n## Expected impact\n\n| Change | Estimated BPB improvement |\n|--------|--------------------------|\n| Weight decay 0.01 | ~0.002-0.005 |\n| FP16 embedding passthrough | ~0.005-0.007 |\n| Warmdown 1200\u21922500 | ~0.001-0.003 |\n| **Combined** | **~0.008-0.015** |\n\n## Test plan\n\n- [ ] Train on 8xH100 (RunPod) and collect val_bpb scores\n- [ ] Verify model_int8_zlib.pt < 16MB\n- [ ] Update PR title with actual val_bpb score\n- [ ] Include training logs\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/177",
+  "draft": false
+}

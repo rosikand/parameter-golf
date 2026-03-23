@@ -1,0 +1,13 @@
+{
+  "number": 189,
+  "title": "Harden TTT doc splitting for missing/trailing BOS edge cases",
+  "state": "open",
+  "user": "shuofengzhang",
+  "created_at": "2026-03-20T07:36:51Z",
+  "updated_at": "2026-03-20T07:36:51Z",
+  "merged_at": null,
+  "body": "## What changed\n- Hardened `_find_docs` in `train_gpt.py` for tokenizer/export edge cases:\n  - If no BOS tokens are present, it now falls back to a single document covering the full validation token stream (when length >= 2).\n  - It now skips degenerate BOS-only fragments (`doc_len < 2`) instead of asserting.\n  - It now raises explicit `ValueError`s when there are no valid validation docs.\n- Added focused regression tests in `tests/test_find_docs.py` for:\n  - no-BOS fallback behavior,\n  - trailing BOS-only fragment handling,\n  - invalid too-short sequence error path.\n\n## Why\n- The script is intended to be tokenizer-agnostic, but `_find_docs` previously assumed BOS boundaries always exist and all BOS-delimited docs have at least two tokens.\n- In edge cases (custom tokenizers, export quirks, trailing BOS-only shard tails), this could trigger assertion failures or downstream divide-by-zero-style failures in TTT validation.\n\n## Insight / Why this matters\n- **Root cause:** document segmentation relied on strict BOS invariants that are true for the common path but not guaranteed for all tokenizer/export variants.\n- **Why this is easy to miss:** normal challenge datasets typically include BOS and non-degenerate docs, so failures appear only in less common validation inputs.\n- **Tradeoff:** the fallback/skip logic favors robust evaluation continuity over strict hard-fail behavior for every malformed boundary.\n- **Impact:** evaluation becomes more resilient and fails with clearer messages when data is truly invalid, reducing wasted long training runs that otherwise crash at validation time.\n\n## Practical gain / Why this matters\n- Users running custom tokenizers or modified preprocessing pipelines get a robust TTT validation path instead of brittle assertion crashes.\n- Maintainers get deterministic regression coverage for boundary conditions that were previously untested.\n\n## Testing\n- \u2705 `pytest -q tests/test_find_docs.py`\n- \u2705 `pytest -q`\n\n## Risk analysis\n- Scope is intentionally narrow: only document-boundary parsing and new targeted tests.\n- No changes to model architecture, optimizer math, or training loop scheduling.\n- Behavior for standard BOS-formatted datasets remains unchanged.\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/189",
+  "draft": false
+}

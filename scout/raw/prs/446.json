@@ -1,0 +1,13 @@
+{
+  "number": 446,
+  "title": "Record: 7L MLP3x 4kSeq LR-Tuned (val_bpb=1.1933)",
+  "state": "open",
+  "user": "sofiabod",
+  "created_at": "2026-03-22T17:39:04Z",
+  "updated_at": "2026-03-22T17:39:04Z",
+  "merged_at": null,
+  "body": "See   records/track_10min_16mb/2026-03-22_7L_MLP3x_4kSeq_LRTuned/README.md for details.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/446",
+  "draft": false
+}

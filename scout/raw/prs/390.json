@@ -1,0 +1,13 @@
+{
+  "number": 390,
+  "title": "Record: Sponge Bath \u2014 TTT 8ep eval-only improvement (val_bpb: 1.1295)",
+  "state": "closed",
+  "user": "newjordan",
+  "created_at": "2026-03-22T02:35:08Z",
+  "updated_at": "2026-03-23T00:57:50Z",
+  "merged_at": null,
+  "body": "## Sponge Bath \u2014 TTT 8 Epochs + Stride 32\n\n**val_bpb: 1.1295** (seed 1337) | 15.74 MB artifact | 8xH100 SXM\n\nPure eval-time improvement on the SOTA254 base (PR #254). No model architecture or training changes \u2014 same trained artifact, only TTT adaptation and eval stride are modified.\n\n## Changes from baseline\n\n| Parameter     | Baseline (SOTA254) | Sponge Bath |\n|---------------|-------------------|-------------|\n| TTT epochs    | 3                 | 8           |\n| Eval stride   | 64                | 32          |\n\n## 2-seed verification\n\n| Seed | val_bpb | Artifact | Status |\n|------|---------|----------|--------|\n| 1337 | 1.1295  | 15.74 MB | Pass   |\n| 42   | 1.1307  | 15.69 MB | Pass   |\n\nBaseline: **1.1303 BPB** (SOTA254, TTT 3 epochs)\n\n## Why it works\n\nMore TTT epochs allow the model to better adapt to the validation distribution at test time. The additional epochs cost ~115s of the 600s budget. Finer eval stride (32 vs 64) reduces boundary effects in sliding window evaluation. Both are effectively free \u2014 zero artifact cost, well within wallclock limits.\n\n## Eval budget\n\n- TTT adaptation (8 epochs): ~115s\n- Sliding window eval (stride 32): ~170s\n- Total eval: ~285s of 600s\n\n## Architecture (unchanged from SOTA254)\n\n- 11 transformer layers, 512-dim, 8 heads (4 KV heads, GQA)\n- 3x MLP expansion, SmearGate + BigramHash (2048 buckets)\n- Int6 QAT + zstd compression\n- Muon: lr=0.025, WD=0.04, momentum=0.99\n- FlashAttention 3, NTK-RoPE, orthogonal init, tied embeddings\n\n## Submission checklist\n\n- [x] 2-seed verification (1.1295, 1.1307)\n- [x] All artifacts < 16 MB\n- [x] Wallclock < 600s on 8xH100\n- [x] Reproducible scripts included\n- [x] Records with submission.json and README\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/390",
+  "draft": false
+}

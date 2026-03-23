@@ -1,0 +1,15 @@
+{
+  "number": 61,
+  "title": "warmdown-quantization val_bpb = 1.2154 ",
+  "state": "closed",
+  "user": "saml212",
+  "created_at": "2026-03-19T06:57:07Z",
+  "updated_at": "2026-03-20T02:28:56Z",
+  "merged_at": "2026-03-19T21:28:57Z",
+  "body": "## Score\n\n**val_bpb = 1.2154** (baseline: 1.2244, improvement: 0.009 BPB / 0.017 nats)\n\n## Key Finding\n\nPost-training int8 quantization is the dominant BPB bottleneck on 8xH100. The quantization penalty alone (0.014 BPB at default settings) is larger than most hyperparameter improvements combined. We reduce it 3x via an always-decaying LR schedule.\n\n## Novel Contributions\n\n**1. Always-decaying LR schedule (WARMDOWN_ITERS=20000):** With ~12,200 actual steps, the LR decays linearly from 61% of peak at step 0 to near-zero at the final step. Post-quant penalty drops from 0.014 to 0.005 BPB. Full curve mapped across 10 warmdown values (2400-30000).\n\n**2. FP16 tied embeddings:** Keep tok_emb.weight in fp16 during int8 export. Costs ~500KB, offset by MLP_HIDDEN=992.\n\n**3. Optimal NTK-RoPE extrapolation:** eval@1408 (1.375x training length) beats eval@2048 on well-trained 8xH100 models. Full curve from 1024 to 2048.\n\n**4. Optimizer-warmdown interaction:** MUON_BACKEND_STEPS=5 beats 7 at high warmdown (reversal from low warmdown). When warmdown already smooths weights, more steps > better orthogonalization.\n\n## Configuration\n\n```\nWARMDOWN_ITERS=20000 MATRIX_LR=0.06 TIED_EMBED_LR=0.07 SCALAR_LR=0.06\nGRAD_CLIP_NORM=1.0 MUON_BACKEND_STEPS=5 EVAL_SEQ_LEN=1408\n+ FP16 tied embedding + MLP_HIDDEN=992\n```\n\n15.91MB artifact. 8xH100 SXM (RunPod). See README.md for full warmdown sweep data.",
+  "labels": [
+    "record submission ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/61",
+  "draft": false
+}

@@ -1,0 +1,13 @@
+{
+  "number": 279,
+  "title": "Title: AtomLogic v3.2 Universal SOTA - 1.15 BPB Target",
+  "state": "open",
+  "user": "Evreu1pro",
+  "created_at": "2026-03-20T22:27:27Z",
+  "updated_at": "2026-03-22T20:21:39Z",
+  "merged_at": null,
+  "body": "Universal Transformer: 20 iterations of a shared block to maximize depth without storage overhead.\r\n\r\nValue-Only MoE: 32 sparse experts using binary masks on shared weights.\r\n\r\nVeRA TTT: Vector-based Random Matrix Adaptation for zero-leakage test-time training (87.5% memory reduction vs LoRA).\r\n\r\nPrecision: Muon optimizer with float32 Newton-Schulz stability and NF4 tied embeddings.\r\n\r\nStatus: Verified with unit tests, artifact size ~15.5MB, production-ready for 8xH100.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/279",
+  "draft": false
+}

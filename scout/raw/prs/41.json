@@ -1,0 +1,13 @@
+{
+  "number": 41,
+  "title": "Add Modal 8xH100 timed validation non-record submission",
+  "state": "closed",
+  "user": "kiankyars",
+  "created_at": "2026-03-19T01:08:07Z",
+  "updated_at": "2026-03-19T21:19:53Z",
+  "merged_at": null,
+  "body": "## Summary\n- add a non-record submission folder for the 2026-03-19 Modal 8xH100 timed validation run\n- include the exact `train_gpt.py` snapshot, `train.log`, and `submission.json` used for the run\n- document the 600-second 8xH100 Modal setup and why this result is being submitted on the non-record track\n\n## Key metrics\n- final int8+zlib roundtrip: `val_bpb=1.22964598`, `val_loss=2.07620573`\n- total submission size: `15,853,604` bytes\n- timed stop: `13262/20000` steps in `599.942s`\n- pre-quant eval at stop: `val_bpb=1.2214`, `val_loss=2.0622`\n\n## Verification\n- `python3 -m py_compile records/track_non_record_16mb/2026-03-19_modal_8xh100_timed_validation/train_gpt.py`\n- `python3 -m json.tool records/track_non_record_16mb/2026-03-19_modal_8xh100_timed_validation/submission.json >/dev/null`",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/41",
+  "draft": false
+}

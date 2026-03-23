@@ -1,0 +1,13 @@
+{
+  "number": 378,
+  "title": "Add automated record-chase training and submission pipeline",
+  "state": "open",
+  "user": "benogeorge",
+  "created_at": "2026-03-21T23:23:33Z",
+  "updated_at": "2026-03-21T23:27:52Z",
+  "merged_at": null,
+  "body": "This PR adds end-to-end automation scripts for Parameter Golf:\\n\\n- run_remote_fast.sh: parallel multi-candidate sweep\\n- run_remote_record_chase.sh: staged record-chase search (screen + finals)\\n- submit_remote_fast.sh: auto-build submission folder + commit/push/PR\\n- runpod_bootstrap_fast.sh: one-shot bootstrap on CUDA hosts\\n\\nGoal: speed up reproducible SOTA chasing and submission workflow on RunPod/H100.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/378",
+  "draft": false
+}

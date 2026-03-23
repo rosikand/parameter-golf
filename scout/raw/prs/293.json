@@ -1,0 +1,13 @@
+{
+  "number": 293,
+  "title": "Non-record: Custom sp4096 BPE Tokenizer (1.2827 BPB on 1\u00d7H100)",
+  "state": "open",
+  "user": "Nishu2000-hub",
+  "created_at": "2026-03-21T00:16:03Z",
+  "updated_at": "2026-03-21T00:19:46Z",
+  "merged_at": null,
+  "body": "## Custom 4096-Vocab BPE Tokenizer\r\n\r\nNon-record submission introducing a custom sp4096 tokenizer trained on \r\n2M FineWeb documents.\r\n\r\n**Key contribution:** 4096-vocab BPE tokenizer achieving 2.75 bytes/token \r\nvs baseline 2.00 bytes/token (+37.5%). First custom tokenizer submission.\r\n\r\n**Score:** val_bpb = 1.28265211 (1\u00d7H100, 10 min)\r\n**Baseline:** 1.2244 (8\u00d7H100, 10 min)\r\n\r\nNote: Score does not beat baseline due to compute difference \r\n(1\u00d7H100 vs 8\u00d7H100). Estimated ~1.18-1.20 on 8\u00d7H100.\r\n\r\nFiles added:\r\n- records/track_non_record_16mb/2026-03-20_sp4096_custom_tokenizer/",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/293",
+  "draft": false
+}

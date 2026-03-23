@@ -1,0 +1,15 @@
+{
+  "number": 60,
+  "title": "Record: Sliding Window + FP16 Embed + 10L + Muon WD + Overtone Init (val_bpb=1.1748)",
+  "state": "closed",
+  "user": "notapplica",
+  "created_at": "2026-03-19T06:52:24Z",
+  "updated_at": "2026-03-20T03:15:00Z",
+  "merged_at": "2026-03-19T21:13:10Z",
+  "body": "## Summary\n\n**Mean val_bpb: 1.1748** (3 seeds, p<0.001)\n\nStacks 6 orthogonal improvements over the baseline:\n\n1. **Sliding window evaluation** (stride=64, seq_len=1024) \u2014 every token scored with 960+ context\n2. **FP16 tied embedding export** \u2014 skip int8 quantization for tok_emb (errors compound in both input/output paths)\n3. **10 transformer layers** (up from 9) \u2014 Muon weight decay compresses enough to fit the extra layer\n4. **Decoupled weight decay for Muon optimizer** (0.02) \u2014 Muon has no built-in regularization; adding p.mul_(1 - wd * lr) improves generalization + quantization\n5. **Overtone spectral embedding init** \u2014 SVD power-law spectrum shaping\n6. **Phase-transition residual mixing** \u2014 sigmoid-scheduled resid_mix initialization\n\n| Seed | val_loss | val_bpb | Steps | ms/step |\n|------|----------|---------|-------|---------|\n| 1337 | 1.9849 | 1.1756 | 10424 | 57.55 |\n| 42 | 1.9827 | 1.1742 | 10710 | 56.06 |\n| 7 | 1.9830 | 1.1744 | 10498 | 57.18 |\n| **Mean** | **1.9835** | **1.1748** | | |\n\nArtifact: ~14.7 MB (under 16 MB limit)",
+  "labels": [
+    "record submission ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/60",
+  "draft": false
+}

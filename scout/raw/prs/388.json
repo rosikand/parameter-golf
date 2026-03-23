@@ -1,0 +1,13 @@
+{
+  "number": 388,
+  "title": "Record: 11L + Tight SWA + VE128 + Partial RoPE + LN Scale + TTT (val_bpb: 1.1231)",
+  "state": "closed",
+  "user": "ElliotSlusky",
+  "created_at": "2026-03-22T01:58:34Z",
+  "updated_at": "2026-03-22T02:21:26Z",
+  "merged_at": null,
+  "body": "New SOTA beating previous record of 1.1246.\r\n\r\nKey techniques:\r\n- Tight SWA (scale<0.2, every 50 steps, 16 checkpoints)\r\n- Shared Value Embeddings (dim=128, layers 9,10)\r\n- Partial RoPE (16/64 dims) + LN Scale\r\n- Test-Time Training (25-epoch full-weight SGD, lr=0.008)\r\n- cuDNN SDPA (1.18x faster than FA2 for GQA)\r\n- Int6+zstd quantization\r\n\r\nResults: val_bpb=1.1231, 6839 steps, 87.7ms/step, 15.43MB artifact",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/388",
+  "draft": false
+}

@@ -1,0 +1,13 @@
+{
+  "number": 394,
+  "title": "Non-record: 11L PR315 Backout + Native FA3 RunPod (val_bpb=1.1247)",
+  "state": "open",
+  "user": "greqone",
+  "created_at": "2026-03-22T03:45:25Z",
+  "updated_at": "2026-03-22T03:48:56Z",
+  "merged_at": null,
+  "body": "\ufeff## Summary\n- add a non-record 10-minute-track submission folder for a faithful RunPod `8xH100 SXM` PR315-style run plus Backout\n- include the exact training log, self-contained `train_gpt.py`, `requirements.txt`, `submission.json`, and README\n- package this as a non-record entry because the current live public frontier is already slightly below this score and this submission does not include a significance set for a new record claim\n\n## Result\n- exact sliding-window metric: `val_bpb = 1.12467423`\n- exact sliding-window loss: `1.89896029`\n- total artifact bytes in this packaged folder: `15,545,662`\n- hardware: `8xH100 SXM` on RunPod with native Hopper FlashAttention and `torch.compile`\n\n## Notes\n- the original experiment used a sibling `flash_attn_interface.py`; for this submission folder that helper is inlined into `train_gpt.py` so the package is self-contained and closer to the repo guidance that counted code should live in `train_gpt.py`\n- this is intentionally filed under `records/track_non_record_16mb/...`\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/394",
+  "draft": false
+}

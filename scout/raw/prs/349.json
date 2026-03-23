@@ -1,0 +1,13 @@
+{
+  "number": 349,
+  "title": "Record: 11L XSA + EMA + Int5-MLP (val_bpb=1.1399)",
+  "state": "open",
+  "user": "Mapika",
+  "created_at": "2026-03-21T16:14:09Z",
+  "updated_at": "2026-03-21T16:14:09Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- 11 layers with XSA (Exclusive Self-Attention) on last 4 layers\n- Continuous GPU float32 EMA (decay=0.997) \u2014 every step, no CPU transfers\n- Mixed int5 MLP / int6 attention / int8 embedding quantization\n- 8% magnitude pruning + zstd-22 compression\n\n## 3-Seed Results (8xH100)\n\n| Seed | val_bpb | artifact_bytes | valid |\n|------|---------|---------------|-------|\n| 42 | 1.14005 | 15,919,150 | yes |\n| 1337 | 1.13874 | 15,999,808 | yes |\n| 7 | 1.14080 | 15,882,678 | yes |\n| **Mean** | **1.1399** | | |\n| **Std** | **0.0009** | | |\n\nAll seeds trained in <600s, all under 16MB.\n\n## Architecture\n- 26.8M params, 512 dim, 8 heads, 4 KV heads (GQA)\n- SmearGate + BigramHash(2048) + U-Net skip connections\n- Muon optimizer (WD=0.04), cosine warmdown (3000 iters)\n- ~5,850 steps at ~102ms/step",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/349",
+  "draft": false
+}

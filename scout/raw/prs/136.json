@@ -1,0 +1,13 @@
+{
+  "number": 136,
+  "title": "Record: Seq2048 training + eval (val_bpb=1.2101)",
+  "state": "open",
+  "user": "ibarrajo",
+  "created_at": "2026-03-19T22:23:29Z",
+  "updated_at": "2026-03-20T22:07:52Z",
+  "merged_at": null,
+  "body": "## Seq2048 Training + Eval (val_bpb: 1.2101)\n\n**val_bpb: 1.2101** (post-quant int8+zlib roundtrip) | 15.87 MB | 8xH100 SXM, 11,417 steps in 600s\n\n### Approach\n\nOne change to the baseline: training and evaluating at sequence length 2048 instead of 1024. The model learns real long-range dependencies during training rather than relying on RoPE position extrapolation at eval time.\n\n### Why This Works\n\nAt seq1024, the model only sees 1024-token windows during training. At eval time with longer context, the model extrapolates RoPE positions it never trained on \u2014 the attention patterns are untested. Training at seq2048 means the model has practiced using 2048 tokens of context, so eval at 2048 is interpolation, not extrapolation.\n\nEach training step still processes the same total tokens (524K) \u2014 just in 256 sequences of 2048 instead of 512 sequences of 1024. Step time is identical.\n\n### Results\n\n| Metric | Value |\n|--------|-------|\n| **Post-quant val_bpb** | **1.2101** |\n| Pre-quant val_bpb | 1.2033 |\n| Improvement vs baseline | **-0.0143 BPB** |\n| Quantization gap | 0.0068 BPB |\n| Training steps | 11,417 (wallclock capped at 600s) |\n| Step avg | 52.56ms |\n| Artifact size | 15,869,065 bytes |\n\n### Development Context\n\nThis was validated through systematic experimentation:\n- 20+ configs tested on 1xH100 (SwiGLU, recurrence, MTP, QAT, TTT, batch sizes, seq lengths)\n- seq2048 was the single biggest win (-0.023 BPB on 1xH100), larger than SwiGLU (-0.017) or QAT\n- SwiGLU showed negligible improvement on 8xH100 (1.2130 vs 1.2101) because the larger model gets fewer steps\n- Full experiment log: 26+ runs documented in [ops/FINDINGS.md](../../ops/FINDINGS.md)\n\n### Command\n\n```bash\nNCCL_IB_DISABLE=1 RUN_ID=sub_8x_relu2_seq2048 \\\nTRAIN_SEQ_LEN=2048 EVAL_SEQ_LEN=2048 \\\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/136",
+  "draft": false
+}

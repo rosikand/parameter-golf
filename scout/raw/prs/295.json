@@ -1,0 +1,13 @@
+{
+  "number": 295,
+  "title": "[Record Submission] QAT Int5/Int6 + Backout + U-Net Skips + BigramHash(10240) + SWA50 \u2014 val_bpb=1.1477",
+  "state": "open",
+  "user": "gowtham0992",
+  "created_at": "2026-03-21T00:25:33Z",
+  "updated_at": "2026-03-21T05:30:16Z",
+  "merged_at": null,
+  "body": "## Summary\r\nval_bpb: **1.1477** (sliding window, stride=64, post int5/int6 quantization roundtrip)\r\nArtifact size: 15.94 MB\r\n\r\n## Novel Contributions\r\n- **Quantization-Aware Training (QAT)**: STE with int5 MLP / int6 attention during training \u2014 reduces quant gap from ~0.016 to ~0.005 BPB\r\n- **Backout**: Learned residual subtraction (\u03bb\u00b7x_mid) from final output\r\n- **U-Net Skip Connections**: 5+5 encoder-decoder with learned per-dim skip weights\r\n- **SVD Embedding Init**: Spectral decay 1/\u221ak for tied embeddings\r\n\r\n## Shared Techniques\r\nBigramHash(10240), SmearGate, Simple Muon + compiled NS5, SWA every 50 steps, orthogonal init, 8% magnitude pruning, zstd-22\r\n\r\n## Run Details\r\n- 6457 steps in 10 min, 92.9ms/step avg\r\n- 8xH100 SXM (RunPod)\r\n- seed=42, single run\r\n\r\nSee README.md for full details.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/295",
+  "draft": false
+}

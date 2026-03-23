@@ -1,0 +1,13 @@
+{
+  "number": 246,
+  "title": "non-record: int6 3xMLP + cosine warmdown (1.1704 bpb)",
+  "state": "closed",
+  "user": "kvmukilan",
+  "created_at": "2026-03-20T18:25:35Z",
+  "updated_at": "2026-03-20T18:33:59Z",
+  "merged_at": null,
+  "body": "wider MLP (3x) enabled by int6 quantization, cosine warmdown schedule, ortho init.\nbuilt on top of the merged SOTA. single seed, 8xH100 SXM.\n\n- val_bpb: 1.1704\n- artifact: 13.5MB\n- steps: 7630\n- training: 10min wallclock cap\n\nonly one seed so putting in non-record track. happy to run more seeds if needed.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/246",
+  "draft": false
+}

@@ -1,0 +1,13 @@
+{
+  "number": 325,
+  "title": "Add Looped Transformer Design non-record submission (non tuned)",
+  "state": "open",
+  "user": "Aum08Desai",
+  "created_at": "2026-03-21T08:09:25Z",
+  "updated_at": "2026-03-21T08:09:25Z",
+  "merged_at": null,
+  "body": "Adds a notable non-record 10-minute submission under `records/track_non_record_16mb/`.\n\nSummary:\n- PR315-derived looped transformer with a shared recurrent core\n- Partial RoPE, LN scaling, late QAT, XSA4, and bigram features\n- Under the `16,000,000` byte artifact cap\n- `final_int6_sliding_window_exact val_bpb = 1.14620421`\n\nNotes:\n- This run is far from optimized.\n- It is being submitted mainly as an architectural reference point for recurrent-depth / looped-transformer design under the Parameter Golf constraints.\n- There is still clear room for sweeps on loop geometry, shared-vs-untied allocation, attention cadence, optimizer settings, and batch/schedule choices.\n- If anyone wants to push this direction further, I would strongly encourage running proper sweeps on top of this baseline rather than treating this result as tuned.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/325",
+  "draft": false
+}

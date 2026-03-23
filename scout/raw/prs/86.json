@@ -1,0 +1,15 @@
+{
+  "number": 86,
+  "title": "Update: 11L MLP3x + WD=0.04 + zstd-22 (val_bpb 1.1502)",
+  "state": "closed",
+  "user": "aruniyer",
+  "created_at": "2026-03-19T14:15:44Z",
+  "updated_at": "2026-03-20T18:44:49Z",
+  "merged_at": "2026-03-20T18:44:49Z",
+  "body": " The README content covers everything: 5-seed results, t-stat, methodology",
+  "labels": [
+    "record submission ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/86",
+  "draft": false
+}

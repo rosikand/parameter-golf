@@ -1,0 +1,13 @@
+{
+  "number": 314,
+  "title": "11L Int4 MLP QAT + BigramHash(10240) + SWA",
+  "state": "open",
+  "user": "aravhawk",
+  "created_at": "2026-03-21T06:04:26Z",
+  "updated_at": "2026-03-21T06:04:26Z",
+  "merged_at": null,
+  "body": "## Summary\n\n11 layer transformer using int4 quantization aware training (QAT) for MLP weights, building on @thwu1's SOTA (10L int5 MLP, 1.14276 bpb). Switching MLP weights from int5 to int4 with STE fake quantization saves ~2MB of compressed artifact space, funding an 11th layer within the 16MB budget.\n\n**Core changes from SOTA (7 targeted modifications):**\n\n1. `num_layers` 10 to 11\n2. MLP quantization clip range 15 to 7 (int5 to int4)\n3. QAT via STE fake quantization in `CastedLinear.forward()` for MLP layers only\n4. FP16 keep pattern adjusted for 11 layers (`blocks.9` instead of `blocks.8`)\n5. `warmdown_iters` 3000 to 2500 (fewer total steps with deeper model)\n6. Differentiated magnitude pruning: 5% for MLP (int4 benefits more from zeros), 3% for attention\n7. New `fake_quantize_per_row` function for STE QAT\n\nAll SOTA innovations preserved: SmearGate, BigramHash(10240), orthogonal init, U-Net skip connections, SWA (start_frac=0.4), sliding window eval (stride=64), zstd 22 compression.\n\n## Architecture\n\n| | SOTA (thwu1) | This submission |\n|---|---|---|\n| Layers | 10 | **11** |\n| MLP quant | int5 (clip 15) | **int4 (clip 7) + QAT** |\n| Attn quant | int6 (clip 31) | int6 (clip 31) |\n| MLP pruning | 3% | **5%** |\n| Warmdown | 3000 | **2500** |\n| Est. artifact | ~15.9MB | ~15.6MB |\n\n## Expected outcome\n\nConservative: 1.135 to 1.139 bpb (vs SOTA 1.1428). The extra layer adds ~0.004 to 0.008 bpb, while QAT minimizes int4 degradation. Pending 3 seed eval on 8xH100.\n\n## Notes\n\nQAT pattern validated against existing submission in PR #162 (MLP3x QAT Int6 SlidingWindow), confirming `torch.compile(fullgraph=True)` compatibility. Script is 1252 lines (under 1500 limit), syntax verified.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/314",
+  "draft": false
+}

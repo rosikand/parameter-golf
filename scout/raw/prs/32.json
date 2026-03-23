@@ -1,0 +1,13 @@
+{
+  "number": 32,
+  "title": "Fix MLX multi-batch validation memory growth",
+  "state": "closed",
+  "user": "yhn112",
+  "created_at": "2026-03-18T22:56:56Z",
+  "updated_at": "2026-03-19T10:39:28Z",
+  "merged_at": "2026-03-18T23:30:23Z",
+  "body": "## Summary\n- materialize each MLX validation batch loss before accumulating it, instead of building one lazy graph across the entire validation split\n- keep lightweight validation progress logging so long validation passes do not look hung\n\n## Why this happens\nThis only shows up when validation spans multiple batches. In `eval_val()`, `total_loss` was accumulated as an `mx.array`, so MLX kept extending a lazy graph until the final `mx.eval(...)`. Memory usage then grew steadily during validation, and the script looked like it hung.\n\nThis is especially easy to hit in the MLX smoke flow because validation always runs over the full `fineweb_val_*` split, while the README example uses a small `VAL_BATCH_SIZE`. In practice the first visible symptom is often after the final training step, which makes it look like a post-training hang.\n\nSingle-batch validation does not exhibit the problem.\n\n## Logging\nThe progress logging is intentional here: once validation is split across many batches, a long final validation pass can otherwise look indistinguishable from a freeze.\n\n## Validation\n- `python -m py_compile train_gpt_mlx.py`\n- reproduced locally with a short MLX run where memory growth started only once final validation began, then verified the fix stopped the growth",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/32",
+  "draft": false
+}

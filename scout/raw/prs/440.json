@@ -1,0 +1,13 @@
+{
+  "number": 440,
+  "title": "[10min/16MB] TrigramHash + EMA-SWA + Int4 QAT \u2014 val_bpb 1.2219",
+  "state": "open",
+  "user": "Ashutosh3142857",
+  "created_at": "2026-03-22T16:54:44Z",
+  "updated_at": "2026-03-22T16:54:44Z",
+  "merged_at": null,
+  "body": "Submission: TrigramHash + EMA-SWA + Int4 QAT (11 layers)\r\n\r\nval_bpb: 1.221853 | total_bytes: 15,892,490 | budget_ok: True\r\n\r\nThree orthogonal innovations over the SOTA:\r\n1. TrigramHash(2048, dim=48) \u2014 extends BigramHash to 3-token context windows\r\n2. EMA-SWA (\u03b1=0.9) \u2014 exponential weighting of late-warmdown checkpoints  \r\n3. Int4 QAT on MLP \u2014 STE fake-quantization frees budget for an 11th layer\r\n\r\nHardware: 8\u00d7A100 SXM 80GB | Seed: 42",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/440",
+  "draft": false
+}

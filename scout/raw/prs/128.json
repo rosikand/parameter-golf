@@ -1,0 +1,13 @@
+{
+  "number": 128,
+  "title": "Record: Int6 MLP3x + STE QAT + Sliding Window (val_bpb=1.1594)",
+  "state": "open",
+  "user": "rsavitt",
+  "created_at": "2026-03-19T20:45:01Z",
+  "updated_at": "2026-03-20T00:18:25Z",
+  "merged_at": null,
+  "body": "## Summary\n\n**val_bpb=1.1594** (post int6+zstd quantization roundtrip, sliding window eval stride=64 on 8xH100 SXM).\n\nSix-technique stack:\n1. **Int6 per-row quantization + zstd-22** \u2014 saves ~4MB vs int8+zlib\n2. **3x MLP expansion** (hidden=1536) \u2014 enabled by int6 savings\n3. **STE fake int6 QAT** \u2014 trains weights to survive 6-bit quantization\n4. **fp16 tied embedding passthrough** \u2014 no embedding quantization penalty\n5. **Sliding window eval** (stride=64, seq_len=4096) \u2014 full context scoring\n6. **Tuned training dynamics** \u2014 matrix_lr=0.02, muon_momentum=0.99, warmdown=3000\n\n### Key Metrics (seed 1337)\n\n| Metric | Value |\n|--------|-------|\n| **val_bpb (sliding window)** | **1.15935818** |\n| Pre-quant val_bpb | 1.1727 |\n| Artifact size | 15,162,777 bytes |\n| Training steps | 10,535 (wallclock-limited) |\n| Step avg | 56.95ms |\n| Eval time | 207s |\n\n### Configuration\n\n```\nVOCAB_SIZE=1024 NUM_LAYERS=9 MODEL_DIM=512 NUM_HEADS=8 NUM_KV_HEADS=4\nMLP_MULT=3.0 TIE_EMBEDDINGS=1\nMATRIX_LR=0.02 SCALAR_LR=0.02 TIED_EMBED_LR=0.03\nMUON_MOMENTUM=0.99 WARMDOWN_ITERS=3000\nTRAIN_BATCH_TOKENS=393216 TRAIN_SEQ_LEN=4096\nEVAL_STRIDE=64 MAX_WALLCLOCK_SECONDS=600\n```\n\n### Command\n\n```bash\npip install zstandard\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\n### Acknowledgments\n\nComposes techniques from community PRs #42, #50, #52, #65, #70. Built with Claude Code as an autonomous research agent.\n\n## Test plan\n- [x] Runs in under 10 min on 8xH100 SXM\n- [x] Artifact under 16,000,000 bytes (15,162,777)\n- [x] train_gpt.py under 1500 lines (1354)\n- [x] val_bpb computed after int6+zstd roundtrip\n- [ ] Additional seed runs for statistical significance\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/128",
+  "draft": false
+}

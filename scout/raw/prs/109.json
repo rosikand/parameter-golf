@@ -1,0 +1,13 @@
+{
+  "number": 109,
+  "title": "Depth Recurrence 5x3 d672 SwiGLU",
+  "state": "closed",
+  "user": "eb1386",
+  "created_at": "2026-03-19T18:11:06Z",
+  "updated_at": "2026-03-19T18:19:52Z",
+  "merged_at": null,
+  "body": "## Summary\n- 5 unique transformer blocks reused 3x for 15 effective layers at width 672\n- SwiGLU MLP replacing relu-squared at matched param count (~16.5M)\n- Eval at seqlen 2048 for longer context (rules allow any eval seqlen)\n- Warmdown, momentum warmup, and grad clip tuned for shorter step budget\n- int8+zlib artifact well under 16MB cap\n\n## Approach\nDepth recurrence trades training steps for effective compute per token. With the baseline massively over-trained (420 tokens/param vs Chinchilla-optimal ~20), this is a favorable trade. The model sees ~2.5B tokens instead of 7.2B but processes each through 15 layers at d=672 instead of 9 layers at d=512. Total training FLOPs are comparable.\n\n## Status\nPending H100 run for final val_bpb and train.log. Requesting compute to verify.\n\n## Test plan\n- [ ] Run on 8xH100 within 10-minute wallclock\n- [ ] Verify int8+zlib artifact < 16,000,000 bytes\n- [ ] Report final_int8_zlib_roundtrip val_bpb\n- [ ] Add train.log to submission\n- [ ] Update submission.json with real values",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/109",
+  "draft": false
+}

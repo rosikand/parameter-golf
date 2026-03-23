@@ -1,0 +1,13 @@
+{
+  "number": 107,
+  "title": "Int6+zstd MLP1488 + Sliding Window + QAT + Tuned LR (val_bpb=1.1648)",
+  "state": "open",
+  "user": "m0at",
+  "created_at": "2026-03-19T17:43:02Z",
+  "updated_at": "2026-03-20T00:04:11Z",
+  "merged_at": null,
+  "body": "## Summary\n\nStacked improvements on the NaiveBaseline (1.2244 BPB) -> **1.1648 BPB**:\n\n1. **Int6 mixed quantization + zstd**: MLP/Q/V/proj weights in 6-bit, zstd level 22. 21.3M params in 15.93MB.\n2. **MLP hidden=1488 (2.91x)**: Wider MLP enabled by int6 savings.\n3. **Sliding window eval (stride=64, seq_len=2048)**: ~960 context tokens per scored position.\n4. **Post-training QAT (30s)**: STE reduces quantization penalty.\n5. **Tuned LRs**: scalar_lr=0.02, tied_embed_lr=0.03, matrix_lr=0.02 (from PR #99).\n6. **FA3 fallback**: Graceful fallback to SDPA when FA3 unavailable.\n\n## Results (8xH100 SXM, RunPod)\n\n| Metric | Baseline | This submission |\n|---|---|---|\n| **post-quant BPB** | **1.2244** | **1.1648** |\n| improvement | -- | **-0.0596** |\n| params | 17.1M | 21.3M |\n| compressed | 15.86MB | 15.93MB |\n| steps | 13,780 | 9,918 |\n| ms/step | 43.5 | 57.5 |\n\n## Configuration\n\n```\nMLP_HIDDEN=1488 TRAIN_SEQ_LEN=2048 LOWBIT_BITS=6\nLOWBIT_NAME_PATTERNS=.mlp.,.attn.c_q.,.attn.c_v.,.attn.proj.\nSERIAL_COMPRESSOR=zstd EVAL_STRIDE=64\nMATRIX_LR=0.02 SCALAR_LR=0.02 TIED_EMBED_LR=0.03\nMUON_MOMENTUM=0.99 MUON_MOMENTUM_WARMUP_START=0.92\nMUON_MOMENTUM_WARMUP_STEPS=1500 WARMDOWN_ITERS=3000\nQK_GAIN_INIT=1.7 GRAD_CLIP_NORM=0.3 POST_QAT_SECONDS=30\n```\n\n## Test plan\n\n- [x] 8xH100 SXM run: 1.1648 BPB\n- [x] Compressed artifact 15.93MB < 16.00MB budget\n- [x] train_gpt.py under 1500 lines (1492)\n- [x] No network calls during training\n- [x] Full train.log included",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/107",
+  "draft": false
+}

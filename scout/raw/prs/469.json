@@ -1,0 +1,13 @@
+{
+  "number": 469,
+  "title": "Non-record: 27M params at Int5 QAT / train larger, quantize harder (val_bpb=1.1418)",
+  "state": "open",
+  "user": "cmcdnd",
+  "created_at": "2026-03-22T22:22:46Z",
+  "updated_at": "2026-03-23T00:23:03Z",
+  "merged_at": null,
+  "body": "## Non-record: 27M params at Int5 QAT / train larger, quantize harder\r\n\r\n  **val_bpb: 1.1418** (sliding window, stride=64) | **15.7 MB** artifact | 8xH100 SXM, 600s\r\n\r\n  ### Approach\r\n\r\n  Train a larger 27M-param model (d=576 vs standard d=512, +23% parameters) and compress to int5 (32 levels)\r\n  instead of int6 (64 levels). Early int5 QAT activation (threshold 0.50 vs standard 0.10) gives ~1,700 steps of\r\n  adaptation instead of ~300.\r\n\r\n  Li et al. (ICML 2020) showed compressed large models beat lightly compressed small models at the same final size.\r\n   This submission validates that principle for parameter golf.\r\n\r\n  | | Standard approach | This submission |\r\n  |---|---|---|\r\n  | Parameters | 22M | **27M** (+23%) |\r\n  | Model dim | 512 | **576** |\r\n  | Heads / KV | 8 / 4 | **9 / 3** |\r\n  | Quantization | int6 (64 levels) | **int5 (32 levels)** |\r\n  | QAT activation | Last ~4% | **Last ~25%** |\r\n\r\n  ### Results\r\n\r\n  | Seed | val_bpb (sliding s64) | artifact_bytes |\r\n  |------|----------------------|----------------|\r\n  | 1337 | **1.1418** | 15,713,507 |\r\n\r\n  Pre-quant: 1.1515. Quantization gap: 0.010.\r\n\r\n  Single-seed submission \u2014 artifact size varies by seed (15.2\u201316.5 MB range).\r\n\r\n  ### Architecture\r\n\r\n  11 layers, d=576, 9 heads (hd=64), 3 KV (GQA 3:1), MLP 3x, relu\u00b2, SmearGate, BigramHash, XSA last 4, Partial RoPE\r\n   16/64, U-Net skips, OrthoInit, Muon, FA3, SWA, warmdown 3500.\r\n\r\n  ### What's different\r\n\r\n  1. **More params via aggressive quantization**: 27M at int5 instead of 22M at int6, same artifact budget\r\n  2. **Early QAT at threshold 0.50**: critical for int5 \u2014 standard 4% window is too short for 32-level adaptation\r\n\r\n  Built on PR #315 (@jfprincz).",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/469",
+  "draft": false
+}

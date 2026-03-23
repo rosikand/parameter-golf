@@ -1,0 +1,13 @@
+{
+  "number": 104,
+  "title": "Non-record: Stacked hyperparameter tuning + eval2048 (RTX 5090, val_bpb 1.336)",
+  "state": "open",
+  "user": "gwelinder",
+  "created_at": "2026-03-19T17:11:22Z",
+  "updated_at": "2026-03-22T04:19:01Z",
+  "merged_at": null,
+  "body": "## Non-record submission: Stacked Hyperparameter Tuning + Eval2048\n\n**val_bpb: 1.3358** (post-quant int8+zlib) | **15.8MB artifact** | RTX 5090, 20 train shards\n\n### What this is\n\n40+ automated experiments via an autoresearch loop on the baseline 9x512 architecture. No architecture changes. 5 stacked config fixes improve val_bpb by 0.027.\n\n### Key finding\n\n`WARMDOWN_ITERS=1200` is broken at 600s wallclock. At ~620ms/step you get ~968 total steps, so 1200 > total steps and the cosine warmdown fires from step 1. Fix: `WARMDOWN_ITERS=3000`. (PRs #48 and #73 flagged the same thing.)\n\n### Stacked config\n```\nWARMDOWN_ITERS=3000, MATRIX_LR=0.06, LOGIT_SOFTCAP=15, MUON_MOMENTUM=0.99\nTRAIN_BATCH_TOKENS=131072 (quarter-batch), EVAL_SEQ_LEN=2048\n```\n\n### Negative results (also in the README)\n- Butterfly/Monarch MLP: 7MB artifact but 1.46 bpb\n- Reservoir random MLPs: 2.14 bpb\n- Depth recurrence (4x3=12 eff layers): 1.50 bpb\n- 6 alternative shapes: none beat 9x512\n\n### Also in `train_gpt.py`\n- EVAL_SEQ_LEN decoupling (train short, eval long)\n- Alias-aware serialization (shared weights stored once)\n- Mixed int6/int8 quantization (INT6_ALL_BLOCK_MATRICES env var)\n- Sliding-window eval (EVAL_STRIDE env var, batched)\n- Depth recurrence support (NUM_UNIQUE_LAYERS, NUM_RECURRENCE)\n\nHardware: RTX 5090, RunPod. Not 8xH100. This is a dev iteration result with interesting negative findings.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/104",
+  "draft": false
+}

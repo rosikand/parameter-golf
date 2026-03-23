@@ -1,0 +1,15 @@
+{
+  "number": 198,
+  "title": "11-Layer Int6 + WD=0.04 + SWA + FA3 (val_bpb: 1.1318)",
+  "state": "open",
+  "user": "jfprincz",
+  "created_at": "2026-03-20T09:27:08Z",
+  "updated_at": "2026-03-21T16:34:23Z",
+  "merged_at": null,
+  "body": "## 11-Layer Int6 + WD=0.04 + SWA + FA3 (val_bpb: 1.1318)\n\n**val_bpb: 1.1318** (sliding window, stride=64) | **15.7 MB** | 8xH100 SXM, 600s\n\n### Progress from prior submissions\n\n| | [PR #70](https://github.com/openai/parameter-golf/pull/70) | [PR #164](https://github.com/openai/parameter-golf/pull/164) | This | Delta vs #164 |\n|---|---|---|---|---|\n| **val_bpb (sliding)** | 1.1659 (s256) | 1.1524 (s256) | **1.1318 (s64)** | **-0.0206** |\n| Layers | 9 | 9 | 11 | +2 |\n| Params | 21.8M | 22.4M | 26.8M | +4.4M |\n| Artifact | 14.9 MB | 15.4 MB | 15.7 MB | +0.3 MB |\n| Steps (600s) | 12,485 | 8,390 | 7,412 | -978 |\n| Step time (8xH100) | 48ms | 68ms | 81ms | +13ms |\n\nTwo extra layers compensate for fewer steps. Weight decay 0.04 (Muon + AdamW) keeps weights quantization-friendly under int6. Sliding window now at stride=64.\n\n### Key additions over PR #164\n\n| Change | Impact |\n|--------|--------|\n| **11 layers** (was 9) | +4.4M params, major capacity gain, funded by int6 headroom |\n| **Weight decay 0.04** | Muon WD + AdamW WD, smaller weights improve int6 compression |\n| **SWA** (~8 checkpoint avg) | Smoothed weights during warmdown |\n| **Eval stride=64** (was 256) | Near-full context for every scored token |\n| **Bigram 2048 buckets** (was 4096) | Saves ~300 KB artifact, negligible BPB cost |\n\nEverything else from PR #164 carries forward: OrthoInit + muP, 3x MLP, int6 mixed quant + zstd-22, SmearGate, BigramHash, FA3, seq 2048, tuned Muon.\n\n### Results\n\n| Metric | Value |\n|--------|-------|\n| Pre-quant val_bpb | 1.1432 |\n| Int6 roundtrip val_bpb | 1.1543 |\n| **Int6 sliding val_bpb (s64)** | **1.1318** |\n| Steps completed (600s cap) | 7,412 |\n| Step time | 81ms |\n| Model params | 26,829,913 |\n| Artifact size | 15,689,380 bytes |\n\n### Reproducibility (3 seeds)\n\n| Seed | Steps | Sliding s64 | Artifact |\n|------|-------|-------------|----------|\n| **1337** | **7,412** | **1.1318** | **15.69 MB** |\n| 42 | 7,407 | 1.1335 | 15.70 MB |\n| 2025 | 7,412 | 1.1324 | 15.69 MB |\n\nMean: **1.1326** | Variance: 0.0017 | Submitted: seed 1337\n\n### Run command\n\n```bash\nNUM_LAYERS=11 BIGRAM_VOCAB_SIZE=2048 \\\nMUON_WD=0.04 ADAM_WD=0.04 \\\nMATRIX_LR=0.025 SCALAR_LR=0.025 TIED_EMBED_LR=0.035 \\\nMUON_MOMENTUM=0.99 MUON_MOMENTUM_WARMUP_START=0.92 \\\nMUON_MOMENTUM_WARMUP_STEPS=1500 WARMDOWN_ITERS=3000 \\\nITERATIONS=9000 MAX_WALLCLOCK_SECONDS=600 EVAL_STRIDE=64 \\\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n",
+  "labels": [
+    "record submission ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/198",
+  "draft": false
+}

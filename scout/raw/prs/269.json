@@ -1,0 +1,13 @@
+{
+  "number": 269,
+  "title": "Restore train_gpt.py before bd2463a",
+  "state": "closed",
+  "user": "yuzhougu-oai",
+  "created_at": "2026-03-20T21:15:39Z",
+  "updated_at": "2026-03-20T21:37:44Z",
+  "merged_at": "2026-03-20T21:24:25Z",
+  "body": "## Summary\nRestore the root `train_gpt.py` to the exact state from the parent of `bd2463aaa21fec47f643c593d86d4dd385d474e9`.\n\n## Testing\nNot run",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/269",
+  "draft": false
+}

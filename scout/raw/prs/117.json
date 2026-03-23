@@ -1,0 +1,13 @@
+{
+  "number": 117,
+  "title": "submission: Int6 MLP3x + QAT + SlidingWindow (val_bpb: 1.1702)",
+  "state": "open",
+  "user": "trovatochris",
+  "created_at": "2026-03-19T19:05:09Z",
+  "updated_at": "2026-03-19T19:05:09Z",
+  "merged_at": null,
+  "body": "## Summary\r\nStacked int6 per-row quantization + zstd22 compression, 3x MLP expansion, QAT weight-snapping at 70% training, tuned Muon optimizer (momentum=0.99 with warmup), extended warmdown (3000 iters), and stride-64 sliding window evaluation.\r\n\r\n## Key Metrics\r\n- seed1337\r\n- final_sliding_window_eval_exact val_loss:1.97577705 val_bpb:1.17016796\r\n- Total submission size int6+zstd22: 15,306,777 bytes\r\n- Under 16MB: YES (693,223 bytes headroom)\r\n- Training steps: 9,540/20,000 (600s wallclock cap)\r\n- Average step time: 62.86ms\r\n- Model params: 21,778,504\r\n\r\n## Configuration\r\nMLP_MULT=3 VAL_LOSS_EVERY=0 MATRIX_LR=0.02 SCALAR_LR=0.02 TIED_EMBED_LR=0.03 MUON_MOMENTUM=0.99 MUON_MOMENTUM_WARMUP_STEPS=1500 MUON_MOMENTUM_WARMUP_START=0.92 WARMDOWN_ITERS=3000 ENABLE_QAT=1 QAT_START_FRAC=0.7 USE_SLIDING_EVAL=1 EVAL_STRIDE=64\r\n\r\n## Command\r\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\r\n\r\nRequires `pip install zstandard` for zstd compression.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/117",
+  "draft": false
+}

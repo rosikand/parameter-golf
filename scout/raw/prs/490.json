@@ -1,0 +1,13 @@
+{
+  "number": 490,
+  "title": "Record: 11L Value Residual + Gated Attention + AdamW TTT (val_bpb=1.0891)",
+  "state": "open",
+  "user": "amaljithkuttamath",
+  "created_at": "2026-03-23T01:48:57Z",
+  "updated_at": "2026-03-23T01:48:57Z",
+  "merged_at": null,
+  "body": "## Summary\n\n**val_bpb = 1.0891** (sliding window stride=64, seed 1337) | **14.2 MB** artifact | 8xH100 SXM, 600s\n\nFirst validation of Value Residual (ResFormer) + Gated Attention on the full competitive stack with AdamW TTT.\n\n## Approach\n\nTwo architecture additions on top of the PR #442 recipe:\n\n- **Value Residual**: Learned 2-element lambda blends first-block V into subsequent blocks. Block 0 passes V through (no lambda). +2 params/layer.\n- **Gated Attention**: Per-head sigmoid gate on attention output. Init bias=4.0 (near-open). +4104 params/layer.\n\nBoth ablated in PR #413 (-0.017 bpb combined) but never tested with AdamW TTT + EMA.\n\n## Results (seed 1337, 8xH100 SXM)\n\n| Metric | Value |\n|--------|-------|\n| Training steps | 6,021 |\n| Step time | 99.66 ms |\n| Pre-quant val_bpb | 1.1545 |\n| **Sliding window val_bpb** | **1.0891** |\n| Artifact | 14,195,825 bytes |\n\n## vs. Prior SOTA\n\n| Submission | Best BPB | Mean BPB | Steps |\n|-----------|----------|----------|-------|\n| **Ours** | **1.0891** | pending (1 seed) | 6,021 |\n| PR #442 (sjp611) | 1.0992 | 1.1027 | 4,612 |\n| PR #481 (mrdavtan) | 1.0959 | 1.0970 | 7,101 |\n\nAdditional seeds pending compute credits.\n\n## Run command\n\n```bash\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\nAll hyperparameters set as defaults in train_gpt.py.\n\n## Credits\n\n- PR #442 (sjp611): AdamW TTT\n- PR #398 (felipe-parodi): EMA, TTT findings\n- PR #413: VR + GA ablation\n- PR #315 (jfprincz): Foundation architecture",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/490",
+  "draft": false
+}

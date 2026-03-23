@@ -1,0 +1,13 @@
+{
+  "number": 291,
+  "title": "Non-record: 11L SwiGLU + XSA4 + EMA + U-Net + AdamW TTT (pending compute)",
+  "state": "open",
+  "user": "mohosy",
+  "created_at": "2026-03-21T00:10:38Z",
+  "updated_at": "2026-03-23T00:19:41Z",
+  "merged_at": null,
+  "body": "## Non-record: 11L SwiGLU + XSA4 + EMA + U-Net + AdamW TTT + BigramHash(8192)\n\n**val_bpb: pending** \u2014 awaiting compute credits for 8xH100 verification\n\n### Approach\n\nFull frontier stack built on proven techniques from top submissions:\n\n| Component | Details |\n|-----------|---------|\n| **SwiGLU FFN** | Star-ReLU activation, hidden=1792 |\n| **U-Net skips** | Learned gating, encoder=5, decoder=6 |\n| **XSA4** | Exclusive Self Attention on last 4 layers |\n| **EMA** | decay=0.9985, replaces SWA |\n| **AdamW TTT** | lr=0.0005, 10 epochs, legal score-first protocol |\n| **Partial RoPE** | 16 dims only |\n| **LN Scale** | 1/sqrt(layer_idx+1) per block |\n| **BigramHash** | 8192 buckets, 128 dim |\n| **Quantization** | Int6 + GPTQ-lite + zstd-22 |\n\n### Credits\n- SwiGLU + U-Net + GEPA architecture: @JoeProAI (#462)\n- XSA + EMA + Partial RoPE + LN Scale: @felipe-parodi (#398)\n- AdamW TTT: @sjp611 (#442)\n- Late QAT: @fbedev (#410)\n\n### Status\nApplied for compute grant, will update with verified score once credits arrive.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/291",
+  "draft": false
+}

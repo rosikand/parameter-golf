@@ -1,0 +1,13 @@
+{
+  "number": 334,
+  "title": "Non-record: 11L PartialRoPE + LNScale + EMA + SWA + TTT (1xH100 107min, val_bpb=1.2207, 15.4MB)",
+  "state": "open",
+  "user": "nathon-lee",
+  "created_at": "2026-03-21T10:42:02Z",
+  "updated_at": "2026-03-21T16:31:56Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\nNon-record submission: 11-layer 512-dim GPT with PartialRoPE, LNScale, SmearGate,\r\nBigramHash(2048\u00d764), U-Net skip connections, EMA + SWA, and test-time training (TTT).\r\n\r\nTrained on **1\u00d7H100 PCIe for ~107 minutes** (~equivalent to 8\u00d7H100 SXM 10 minutes).\r\n\r\n## Results\r\n\r\n| Metric | Value |\r\n|---|---|\r\n| val_bpb (pre-TTT) | 1.2207 |\r\n| val_loss | 2.0611 |\r\n| Training steps | 3374 / 20000 |\r\n| Training time | ~107 min (1\u00d7H100 PCIe) |\r\n| Model params | 26.7M |\r\n| Artifact size | **15.4 MB \u2705** |\r\n\r\n## Key Techniques\r\n\r\n- **Partial RoPE** (16/64 dims): position encoding on subset of head dims\r\n- **LN Scale**: RMSNorm damped by 1/\u221a(layer+1)\r\n- **SmearGate**: per-dim gate blending current + previous token\r\n- **BigramHash(2048, dim=64)**: hash-based bigram context embeddings\r\n- **U-Net skip connections** with learnable weights\r\n- **Muon optimizer** (Newton-Schulz) + Adam for embeddings\r\n- **EMA(0.997) + SWA** (last 40%)\r\n- **Uniform int5 quantization** + zstd-22\r\n- **Sliding window eval** (stride=64) + SGD TTT (3 epochs)\r\n\r\n## Changes from v1\r\n\r\n- BigramHash: 4096\u00d7128 \u2192 **2048\u00d764** (-426K params)\r\n- Quantization: mixed int5/int6 \u2192 **uniform int5**\r\n- Artifact: 17.4MB \u274c \u2192 **15.4MB \u2705**\r\n\r\n## Checklist\r\n\r\n- [x] README.md\r\n- [x] submission.json\r\n- [x] train.log\r\n- [x] train_gpt.py\r\n- [x] Artifact under 16MB \u2705'",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/334",
+  "draft": false
+}

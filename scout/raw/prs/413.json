@@ -1,0 +1,13 @@
+{
+  "number": 413,
+  "title": "Non-record: Value Residual (-0.015 BPB) + Gated Attention (-0.003 BPB) with ablations",
+  "state": "open",
+  "user": "anantdgoel",
+  "created_at": "2026-03-22T07:06:50Z",
+  "updated_at": "2026-03-22T07:06:50Z",
+  "merged_at": null,
+  "body": "## Non-record: Value Residual (-0.015 BPB) + Gated Attention (-0.003 BPB) with ablations\n\n**val_bpb: 1.4525** (sliding window, stride=128, GA+VR combined) | **13.2 MB** | 1xRTX3090, 1000 steps, 131K batch\n\nTwo novel architecture modifications and one negative result. Sharing validated techniques with controlled ablation data.\n\n### Contributions\n\n1. **Value Residual (ResFormer)** -- -0.015 BPB. Cache V vectors from layer 0, mix into all subsequent layers via learnable scalars. 18 params total. arXiv:2410.17897 (ACL 2025). Enable: `VALUE_RESIDUAL=1`.\n\n2. **Gated Attention** -- -0.003 BPB. Per-head sigmoid gate after SDPA output, eliminating attention sinks. ~37K params. arXiv:2505.06708 (NeurIPS 2025 Best Paper). Enable: `GATED_ATTENTION=1`.\n\n3. **PPM-C Context Mixer** -- +0.0018 BPB (negative result). Classical compression blended with neural softmax. Dilutes predictions on SmearGate+BigramHash models.\n\nThe two positive techniques **stack additively** for **-0.017 BPB** combined.\n\n### Ablation Results\n\nv1024 9L 2xMLP, SmearGate + BigramHash + OrthoInit + WD 0.04, 131K batch, 1000 steps.\n\n| Config | Sliding BPB | Delta vs Control |\n|--------|-------------|------------------|\n| Control | 1.4697 | -- |\n| Gated Attention only | 1.4665 | -0.0032 |\n| **Value Residual only** | **1.4546** | **-0.0151** |\n| **GA + VR combined** | **1.4525** | **-0.0172** |\n| PPM-C (eval-only) | 1.2900 | +0.0018 (worse) |\n\nA production run (11L MLP3x + full community stack + VR + GA, 9500 steps) is in progress. Results in a follow-up submission if competitive.\n\n### Files\n\n- `README.md` -- Full writeup with technique details and reproducibility\n- `submission.json` -- Metadata\n- `train_gpt.py` -- Training script with Value Residual, Gated Attention, XSA, EMA, Partial RoPE, LN Scale",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/413",
+  "draft": false
+}

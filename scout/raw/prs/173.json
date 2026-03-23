@@ -1,0 +1,13 @@
+{
+  "number": 173,
+  "title": "Record submission : Int6 + MLP 3x + Flash Attention 3 + NorMuon, val_bpb = 1.1532",
+  "state": "open",
+  "user": "tamoghnokandar",
+  "created_at": "2026-03-20T05:13:05Z",
+  "updated_at": "2026-03-20T05:13:05Z",
+  "merged_at": null,
+  "body": "This PR builds directly on the prior PR #114  and improves it further by replacing Muon with NorMuon and switching the attention path to FlashAttention 3.\r\n\r\n\r\n**val_bpb = 1.1532 (best seed), 1.1546 mean over 3 seeds.**\r\n\r\nOn the three completed seeds in this PR:\r\n- Seed 7: `val_bpb = 1.1532`, `val_loss = 1.9471`\r\n- Seed 42: `val_bpb = 1.1542`, `val_loss = 1.9488`\r\n- Seed 1337: `val_bpb = 1.1563`, `val_loss = 1.9524`\r\n\r\nMean over seeds 7 / 42 / 1337:\r\n- `val_bpb = 1.1546`\r\n- `val_loss = 1.9495`\r\n\r\nArtifact size remains within budget at about `15.96MB`. Training still uses the 10-minute wallclock cap on `8x H100`, with sliding-window evaluation at stride 256.\r\n\r\n## What's New\r\n\r\n1. **NorMuon replaces Muon**  \r\n   This keeps the same overall optimizer split but swaps the optimizer to NorMuon. In this setup, NorMuon gave a modest but repeatable improvement over the previous Muon-based version.\r\n\r\n2. **FlashAttention 3 replaces the prior attention path**  \r\n   The model now uses the FA3 kernel directly for the attention mechanism. This keeps the same architecture and evaluation setup, but improves the training/runtime path on H100s.\r\n\r\n3. **Multi-seed validation**  \r\n   The previous README highlighted a single best result plus older seed runs. This PR updates the result summary to the actual new 3-seed set for this NorMuon + FA3 variant: seeds `7`, `42`, and `1337`.\r\n\r\n## Approach\r\n\r\nThis submission keeps the main structure from the previous PR:\r\n- Int6 post-training quantization with per-row scaling\r\n- MLP hidden size increased from `1024 -> 1536`\r\n- tied embedding kept in fp16\r\n- final-layer `c_k.weight` passthrough retained in fp16\r\n- train at `seq_len=2048`\r\n- sliding-window eval at `eval_seq_len=2048`, `stride=256`\r\n- GRAD_CLIP_NORM=0.3 stabilizes long-sequence training\r\n\r\nThe key change here is not a new quantization scheme or architecture jump, but a cleaner training/runtime stack:\r\n- **NorMuon** for optimizer updates\r\n- **FlashAttention 3** for the attention kernel\r\n\r\n## Training\r\nTraining was done on 8 H100 GPUs using Modal. The script for training on Modal is also attached.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/173",
+  "draft": false
+}

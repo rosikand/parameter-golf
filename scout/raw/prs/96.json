@@ -1,0 +1,13 @@
+{
+  "number": 96,
+  "title": "Sliding Window + Long-Context Training: val_bpb=1.1764",
+  "state": "open",
+  "user": "saml212",
+  "created_at": "2026-03-19T15:52:57Z",
+  "updated_at": "2026-03-19T15:52:57Z",
+  "merged_at": null,
+  "body": "## Score\n\n**val_bpb = 1.1764** (baseline: 1.2244, improvement: 0.048 BPB / 0.087 nats)\n\nAcross seeds: 1.1764 (SEED=1337)\n\n## Approach\n\nTrain at longer sequences (2048 tokens) with high Muon momentum (0.99), low learning rate (0.02), and tight gradient clipping (0.3). Evaluate with overlapping sliding windows where every scored token sees 1536+ tokens of preceding context.\n\n## Novel Findings\n\n### 1. Training length doesn't matter with sliding window eval\nTraining at 2048 vs 4096 gives identical BPB when evaluated with sliding window (1.1764 vs 1.1765). The sliding window already provides long context at eval \u2014 the model just needs to learn local patterns well. Training at 2048 is strictly better because it gets more optimization steps in 10 minutes.\n\n### 2. Gradient clipping sweet spot for long sequences\nLong-sequence training benefits from a narrow clipping window (0.3 vs default 1.0). Full sweep from 0.0 to 1.0 identified 0.3 as optimal \u2014 stabilizes long-sequence gradient variance without over-constraining.\n\n### 3. Batch=786K is optimal for train@2048\nSwept 393K to 1M. The sweet spot (786K) balances gradient noise against step count within the 10-min budget.\n\n### 4. Quantization-aware warmdown (from our earlier PR #61)\nAggressive LR warmdown reduces post-quant penalty 3x (0.014\u21920.005 BPB). However, this interacts with base LR \u2014 the benefit only appears at high LR (0.06), not low LR (0.02). Full curve mapped across 10 warmdown values in PR #61.\n\n## Configuration\n\n```\nTRAIN_SEQ_LEN=2048 TRAIN_BATCH_TOKENS=786432 MATRIX_LR=0.02 SCALAR_LR=0.02\nTIED_EMBED_LR=0.03 MUON_MOMENTUM=0.99 MUON_MOMENTUM_WARMUP_START=0.92\nMUON_MOMENTUM_WARMUP_STEPS=1500 WARMDOWN_ITERS=3000 GRAD_CLIP_NORM=0.3\nEVAL_SEQ_LEN=2048 EVAL_STRIDE=512\n```\n\n## Reproduction\n\n```bash\nTRAIN_SEQ_LEN=2048 TRAIN_BATCH_TOKENS=786432 MATRIX_LR=0.02 SCALAR_LR=0.02 \\\nTIED_EMBED_LR=0.03 MUON_MOMENTUM=0.99 MUON_MOMENTUM_WARMUP_START=0.92 \\\nMUON_MOMENTUM_WARMUP_STEPS=1500 WARMDOWN_ITERS=3000 GRAD_CLIP_NORM=0.3 \\\nEVAL_SEQ_LEN=2048 EVAL_STRIDE=512 \\\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\n15.88MB artifact. 8xH100 SXM (RunPod, ~47ms/step).",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/96",
+  "draft": false
+}

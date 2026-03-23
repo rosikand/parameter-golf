@@ -1,0 +1,11 @@
+{
+  "number": 27,
+  "title": "Experiment runner: harness, result logging, research_log.md",
+  "state": "closed",
+  "user": "tayeva",
+  "created_at": "2026-03-18T22:38:30Z",
+  "updated_at": "2026-03-18T22:40:13Z",
+  "body": "## Description\nBuild experiment infrastructure:\n- `pgolf/experiment.py` \u2014 Experiment runner that takes config overrides, runs training, logs results\n- `docs/research_log.md` \u2014 Template for recording hypotheses, results, learnings\n- Config snapshot saving to `docs/experiment_results/`\n- Structured result output for comparison\n\n## Acceptance Criteria\n- [ ] Can run experiments with config overrides from CLI\n- [ ] Results automatically logged to research_log.md\n- [ ] Config snapshots saved per experiment\n- [ ] Tests for experiment runner",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/issues/27"
+}

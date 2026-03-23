@@ -1,0 +1,13 @@
+{
+  "number": 48,
+  "title": "[Submission] Warmdown Scheduling - 1.2430 BPB on 8\u00d7H100 SXM",
+  "state": "closed",
+  "user": "MajdiZamim",
+  "created_at": "2026-03-19T03:55:01Z",
+  "updated_at": "2026-03-19T23:15:46Z",
+  "merged_at": null,
+  "body": "## Submission: Optimal LR Warmdown Scheduling\r\n\r\n**Score:** 1.2430 BPB  \r\n**Hardware:** 8\u00d7H100 SXM, 10 minutes  \r\n**Author:** Majdi Zamim (@MajdiZamim)\r\n\r\n## Key Insight\r\n\r\nThe default `WARMDOWN_ITERS=1200` never fires when training is \r\nwallclock-capped at 600 seconds on slower hardware, causing the \r\nmodel to terminate without proper LR decay.\r\n\r\nBy setting `WARMDOWN_ITERS=3000`, the cosine warmdown fires in \r\nthe final ~30% of training steps, producing better convergence.\r\n\r\n## Command\r\n```bash\r\nNCCL_IB_DISABLE=1 \\\r\nRUN_ID=submission_final \\\r\nVOCAB_SIZE=1024 \\\r\nNUM_LAYERS=9 \\\r\nMODEL_DIM=512 \\\r\nNUM_HEADS=8 \\\r\nNUM_KV_HEADS=4 \\\r\nTRAIN_BATCH_TOKENS=524288 \\\r\nMAX_WALLCLOCK_SECONDS=600 \\\r\nVAL_LOSS_EVERY=200 \\\r\nWARMDOWN_ITERS=3000 \\\r\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\r\n```\r\n\r\n## Files\r\n- `README.md` \u2014 approach description\r\n- `submission.json` \u2014 metadata\r\n- `train.log` \u2014 full training log\r\n- `train_gpt.py` \u2014 training script",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/48",
+  "draft": false
+}

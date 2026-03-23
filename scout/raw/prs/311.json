@@ -1,0 +1,13 @@
+{
+  "number": 311,
+  "title": "Non-record: Internal control port on the PR180 stack",
+  "state": "open",
+  "user": "small-cactus",
+  "created_at": "2026-03-21T05:00:14Z",
+  "updated_at": "2026-03-21T05:00:14Z",
+  "merged_at": null,
+  "body": "## Summary\n\nNon-record submission porting our late-attention internal-control method onto the PR180 stack.\n\nThis is **not** a record claim yet. The record run is still in development. This PR documents the port, the current training/eval path, and the runtime fixes needed to make the approach runnable on multi-GPU pods.\n\n## Key ideas\n\n1. **Late-attention internal control** on top of the PR180 recipe rather than replacing the existing stack.\n2. **Detached gate-controlled attention scaling** with `gate_fuse_mode=k`.\n3. **EMA-zscore energy normalization** with clipping to stabilize the control signal.\n4. **Compile-path fixes** so the control recurrence does not blow up graph size in the public script.\n5. **Fast iteration support** for public-track debugging: capped validation for smoke runs and eval progress logging.\n\n## Files\n\n- `records/track_10min_16mb/2026-03-20_10L_Int5MLP_MuonWD04_SWA50/train_gpt.py`\n  - Internal-control port\n  - Compile isolation fixes for the recurrent control path\n  - Multi-GPU grad accumulation override\n  - Fastcheck validation cap and eval progress logging\n\n## Reproducibility\n\nFastcheck example:\n\n```bash\nCONTROL_ENABLED=1 \\\nCONTROL_DETACH_GATES=1 \\\nCONTROL_GATE_FUSE_MODE=k \\\nCONTROL_ENERGY_NORM=ema_zscore \\\nCONTROL_ENERGY_CLIP=0.99 \\\nCONTROL_APPLY_TO=attn \\\nCONTROL_LATE_LAYERS=3 \\\nCONTROL_WARMUP_STEPS=8 \\\nCONTROL_SCAN_BLOCK_SIZE=16 \\\nVAL_LOSS_EVERY=0 \\\nVAL_MAX_TOKENS=4194304 \\\nCOMPILE_MODEL=0 \\\nCOMPILE_ZERPOWER=1 \\\nCOMPILE_CONTROL_SCAN=0 \\\ntorchrun --standalone --nproc_per_node=5 train_gpt.py\n```\n\n## Status\n\n- Public-track port is running on multi-GPU hardware.\n- Fastcheck runs are working after fixing the control compile path and the silent full-validation stall.\n- Full record-size evaluation is still in development.\n- No record claim in this PR.\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/311",
+  "draft": false
+}

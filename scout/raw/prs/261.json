@@ -1,0 +1,13 @@
+{
+  "number": 261,
+  "title": "Create main.pyInitial compact language model baseline",
+  "state": "open",
+  "user": "MnemoTek",
+  "created_at": "2026-03-20T19:58:43Z",
+  "updated_at": "2026-03-20T19:58:43Z",
+  "merged_at": null,
+  "body": "\r\n\r\nInitial baseline experiment for the Parameter Golf challenge.\r\n\r\nThis PR introduces a small PyTorch language model used as a starting point for experiments with compact architectures.\r\n\r\nNext steps:\r\n- reduce model size\r\n- experiment with quantization\r\n- optimize for the 16MB artifact limit\r\n- improve training efficiency",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/261",
+  "draft": false
+}

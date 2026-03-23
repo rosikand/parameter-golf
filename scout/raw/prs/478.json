@@ -1,0 +1,13 @@
+{
+  "number": 478,
+  "title": "New SOTA: 1.12676 BPB - 11L XSA-all(11) + GPTQ-lite + EMA + Late QAT",
+  "state": "open",
+  "user": "gowtham0992",
+  "created_at": "2026-03-23T00:21:12Z",
+  "updated_at": "2026-03-23T00:33:24Z",
+  "merged_at": null,
+  "body": "## New SOTA Record: val_bpb 1.12676 (3-seed mean)\r\n\r\nBeats current SOTA (1.14276) by 0.016 nats.\r\n\r\n### 3-Seed Results (8xH100 SXM, 600s)\r\n\r\n| Seed | BPB | Size |\r\n|------|-----|------|\r\n| 42 | 1.12713 | 15.64 MB |\r\n| 1337 | 1.12648 | 15.62 MB |\r\n| 2024 | 1.12667 | 15.88 MB |\r\n| **Mean** | **1.12676** | **~15.7 MB** |\r\n\r\n### Key Techniques\r\n- XSA on ALL 11 layers\r\n- GPTQ-lite optimal clip percentile search\r\n- EMA(0.997) + Tight SWA\r\n- Late QAT int6-all at LR scale < 0.15\r\n- Raw binary + zstd22 serialization\r\n\r\n### Dependencies\r\n- `zstandard`, `flash_attn_3` (see requirements.txt)\r\n\r\n### Verified on RunPod 8xH100 SXM (official template): 1.12753 BPB\r\n\r\nSee README.md for full details.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/478",
+  "draft": false
+}

@@ -1,0 +1,13 @@
+{
+  "number": 379,
+  "title": "Record: 11L GPTQ-lite + Int6 MLP3x (val_bpb=1.1257)",
+  "state": "open",
+  "user": "dannywillowliu-uchi",
+  "created_at": "2026-03-22T00:08:47Z",
+  "updated_at": "2026-03-22T05:11:12Z",
+  "merged_at": null,
+  "body": "## Summary\n\n**val_bpb: 1.1257** (sliding window, stride=64) | 8xH100 SXM, 600s\n\nBuilt on PR #374's SOTA stack with GPTQ-lite: per-layer optimal clip percentile search during int6 quantization.\n\n### Novel: GPTQ-lite\n\nStandard int6 quantization uses row-wise absolute max for clipping. GPTQ-lite searches 5 clip percentiles per weight matrix (100%, 99.9%, 99.5%, 99%, 98%) and selects the one minimizing reconstruction error. This reduces quantization degradation at zero training cost.\n\n| Metric | Value |\n|--------|-------|\n| Steps | 6,733 (89.1ms/step) |\n| Pre-quant val_bpb | 1.1417 |\n| **Sliding window val_bpb (s64)** | **1.1257** |\n\nArchitecture: 11L, XSA4, Tight SWA, Partial RoPE 16/64, LN Scale, Late QAT, Value Embedding, SmearGate, BigramHash, FA3, int6+zstd-22, WD=0.04.\n\nFull source and experiment history: https://github.com/dannywillowliu-uchi/parameter-golf-entry",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/379",
+  "draft": false
+}

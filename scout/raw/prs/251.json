@@ -1,0 +1,13 @@
+{
+  "number": 251,
+  "title": "Add SP4096 11L432 MLP3x Int6+Zstd Momentum99 record (val_bpb=1.1596)",
+  "state": "open",
+  "user": "kshitizz36",
+  "created_at": "2026-03-20T18:56:07Z",
+  "updated_at": "2026-03-20T21:56:51Z",
+  "merged_at": null,
+  "body": "## Summary\r\n- **New SOTA: val_bpb=1.1596** (prev: 1.1753, \u0394=\u22120.0157)\r\n- SP-4096 tokenizer, 11 layers \u00d7 dim 432, 3x MLP expansion (relu\u00b2)\r\n- Muon momentum 0.99, decoupled WD 0.02, warmdown 3000 iters\r\n- Int6 PTQ (levels=31) + zstd-22, fp16 embedding passthrough\r\n- Sliding-window eval stride=64, 20.3M params \u2192 15.3MB artifact\r\n- 9237 steps in 600s on 8\u00d7H100\r\n\r\n## Key changes from previous record\r\n| | Previous (1.1753) | This (1.1596) |\r\n|---|---|---|\r\n| Layers | 10 | 11 |\r\n| Dim | 496 | 432 |\r\n| MLP mult | 2x | 3x |\r\n| Muon momentum | 0.95 | 0.99 |\r\n| Warmdown iters | 2500 | 3000 |\r\n| Params | ~19.5M | 20.3M |\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/251",
+  "draft": false
+}

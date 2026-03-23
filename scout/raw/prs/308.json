@@ -1,0 +1,13 @@
+{
+  "number": 308,
+  "title": "TPI-001 eval-first monkey model prototype",
+  "state": "open",
+  "user": "gb250e",
+  "created_at": "2026-03-21T04:14:55Z",
+  "updated_at": "2026-03-21T04:14:55Z",
+  "merged_at": null,
+  "body": "Internal draft PR for TPI-001. This branch tests a minimal eval-first sliding-window policy and remains in continue_sharpening status pending a real baseline/candidate run.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/308",
+  "draft": true
+}

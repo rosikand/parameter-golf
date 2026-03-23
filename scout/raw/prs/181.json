@@ -1,0 +1,13 @@
+{
+  "number": 181,
+  "title": "Aweb Optimized Baseline \u2014 1.2194 BPB",
+  "state": "open",
+  "user": "manfromnowhere143",
+  "created_at": "2026-03-20T06:55:29Z",
+  "updated_at": "2026-03-21T14:13:16Z",
+  "merged_at": null,
+  "body": "## Summary\n\nBaseline architecture (9 layers, 512 dim) with optimizer hyperparameter tuning derived from analysis of top-scoring submissions.\n\n- **val_bpb: 1.21943065** (vs baseline 1.2244, improvement: 0.005)\n- 13,442 steps in 600s on 8\u00d7H100\n- 15.88MB artifact (int8+zlib)\n- Uses unmodified `NaiveBaseline/train_gpt.py` \u2014 all changes via env vars\n\n## Key Changes (env vars only)\n\n| Parameter | Baseline | Ours |\n|-----------|----------|------|\n| MUON_MOMENTUM | 0.95 | 0.99 |\n| MATRIX_LR / SCALAR_LR | 0.04 | 0.02 |\n| WARMDOWN_ITERS | 1200 | 3000 |\n| GRAD_CLIP_NORM | 0.0 | 0.3 |\n| MLP_MULT | 2 | 3 |\n| TRAIN_SEQ_LEN | 1024 | 2048 |\n| TRAIN_ON_VAL | 0 | 1 |\n\n## Reproduction\n\n```bash\nTRAIN_ON_VAL=1 MUON_MOMENTUM=0.99 MATRIX_LR=0.02 SCALAR_LR=0.02 \\\nTIED_EMBED_LR=0.03 WARMDOWN_ITERS=3000 MUON_MOMENTUM_WARMUP_START=0.92 \\\nMUON_MOMENTUM_WARMUP_STEPS=1500 GRAD_CLIP_NORM=0.3 MLP_MULT=3 \\\nTRAIN_SEQ_LEN=2048 TRAIN_BATCH_TOKENS=524288 VAL_LOSS_EVERY=200 \\\ntorchrun --standalone --nproc_per_node=8 \\\n  records/track_10min_16mb/2026-03-17_NaiveBaseline/train_gpt.py\n```\n\n## Author\n\nDaniel Wahnich (@manfromnowhere143)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/181",
+  "draft": false
+}

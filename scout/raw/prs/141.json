@@ -1,0 +1,13 @@
+{
+  "number": 141,
+  "title": "Non-record: Systematic Hyperparameter Search (val_bpb=1.2075)",
+  "state": "open",
+  "user": "nglain",
+  "created_at": "2026-03-20T00:03:37Z",
+  "updated_at": "2026-03-20T00:03:37Z",
+  "merged_at": null,
+  "body": "## Summary\n\n| Metric | Value |\n|--------|-------|\n| Post-quant val_bpb | 1.2075 |\n| Pre-quant val_bpb | 1.2008 |\n| Compressed artifact | ~15.2 MB |\n| Training steps | 7,390 |\n| Training time | 600s (8\u00d7H100 SXM) |\n\n## Approach\n\nMethodical hyperparameter search through 33 experiments across three GPU tiers (A40 \u2192 1\u00d7H100 \u2192 8\u00d7H100), using fixed-seed paired comparison (SEED=1337) for reliable delta measurement (\u00b10.001 BPB).\n\n## What works\n- Muon optimizer (lr=0.02, momentum=0.99, warmdown=3000): **-0.005 BPB**\n- ROPE_BASE=200000: **-0.003 BPB**\n- seq_len=4096: **-0.006 BPB**\n\n## What doesn't work\n- int6 STE + Muon: **conflicts** (+0.007 worse)\n- 12 layers: too slow, fewer steps\n- Larger batch (786K): fewer steps outweighs quality\n\n## Key insight\nOptimal hyperparameters differ dramatically across compute budgets. The optimal LR on A40/2min (0.10) is 5\u00d7 the optimal on 8\u00d7H100/10min (0.02). Parameters must be re-validated at target compute scale.\n\n## Changes from baseline\nOnly hyperparameters: MATRIX_LR=0.02, MUON_MOMENTUM=0.99, WARMDOWN_ITERS=3000, ROPE_BASE=200000, TRAIN_SEQ_LEN=4096. No architectural changes.\n\n## Test plan\n- [x] Trained on 8\u00d7H100 SXM, 600s wallclock\n- [x] final_int8_zlib_roundtrip val_bpb: 1.2075\n- [x] Artifact under 16,000,000 bytes\n- [x] train_gpt.py compiles and runs from records folder\n- [x] train.log included",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/141",
+  "draft": false
+}

@@ -1,0 +1,11 @@
+{
+  "number": 280,
+  "title": "flash_attn_interface (FA3) missing from runpod/parameter-golf:latest image",
+  "state": "open",
+  "user": "ibarrajo",
+  "created_at": "2026-03-20T22:30:25Z",
+  "updated_at": "2026-03-22T06:27:51Z",
+  "body": "## Issue\n\nThe official RunPod template (`y5cejece4j`, image `runpod/parameter-golf:latest`) does **not** include `flash_attn_interface` (Flash Attention 3). Attempting to import it fails:\n\n```python\n>>> from flash_attn_interface import flash_attn_func\nModuleNotFoundError: No module named 'flash_attn_interface'\n```\n\nThe standard `flash_attn` package (FA2) is also missing.\n\n## Impact\n\nMultiple top submissions (#198, #254, #265) use FA3 with a bare import \u2014 no try/except fallback:\n\n```python\nfrom flash_attn_interface import flash_attn_func as flash_attn_3_func\n```\n\nThese scripts would crash on the official RunPod template. This creates confusion about the evaluation environment:\n\n- The README says *\"All Python dependencies are already pre-installed in the image\"* and *\"Evaluation will be in the RunPod environment with all packages installed\"*\n- But FA3 is not installed, and it's the attention backend used by every top submission\n\n## Environment\n\n- Image: `runpod/parameter-golf:latest`\n- Template: `y5cejece4j`\n- PyTorch: 2.9.1+cu128\n- CUDA: 12.8\n\nVerified by inspecting Docker Hub layer history \u2014 no flash-attn install step exists.\n\n## Questions\n\n1. Does the official evaluation environment differ from the RunPod template?\n2. Should `flash_attn_interface` be added to the image?\n3. Should submissions include a fallback to `F.scaled_dot_product_attention` for compatibility?\n\n## Workaround\n\nFor participants: use a try/except fallback to PyTorch SDPA:\n\n```python\ntry:\n    from flash_attn_interface import flash_attn_func as flash_attn_3_func\nexcept ImportError:\n    def flash_attn_3_func(q, k, v, causal=True):\n        q, k, v = (x.transpose(1, 2) for x in (q, k, v))\n        out = F.scaled_dot_product_attention(q, k, v, is_causal=causal, enable_gqa=True)\n        return out.transpose(1, 2)\n```\n\nThis works on PyTorch 2.6+ but is ~10% slower than FA3 on H100.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/issues/280"
+}

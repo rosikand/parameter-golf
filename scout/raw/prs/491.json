@@ -1,0 +1,13 @@
+{
+  "number": 491,
+  "title": "Value Residual + DenseFormer DWA + TTT",
+  "state": "open",
+  "user": "ahmettrkck",
+  "created_at": "2026-03-23T02:15:48Z",
+  "updated_at": "2026-03-23T02:15:48Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **Value Residual (ResFormer)**: Cache first layer's V vectors, blend into all subsequent layers via `V_used = 0.5 * (V_n + V_1)`. Zero extra parameters, ~10% parameter efficiency gain (arXiv:2410.17897).\n- **DenseFormer DWA**: Replace U-Net skip connections with full depth-weighted averaging over all previous layer outputs. ~65 scalar params for 10 layers. Strictly more general than U-Net skips (arXiv:2402.02622).\n- **Test-Time Training**: AdamW fine-tuning on already-scored validation tokens during sliding window eval. Score-then-train strategy ensures no cheating.\n\nBuilt on top of the current #1 submission (10L_Int5MLP_MuonWD04_SWA50 by thwu1).\n\n## Status\n\nPending 8xH100 run logs. Will update with 3-seed results once compute is available.\n\n## Test plan\n\n- [ ] Run 3 seeds (42, 1337, 2024) on 8xH100 under 10 min\n- [ ] Verify artifact size < 16MB\n- [ ] Confirm val_bpb improvement > 0.005 nats over current SOTA\n- [ ] Add train logs to PR",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/491",
+  "draft": false
+}

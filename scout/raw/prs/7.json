@@ -1,0 +1,13 @@
+{
+  "number": 7,
+  "title": "fix(data): normalize cached FineWeb paths",
+  "state": "closed",
+  "user": "RolanH",
+  "created_at": "2026-03-18T18:54:58Z",
+  "updated_at": "2026-03-18T18:56:05Z",
+  "merged_at": null,
+  "body": "## Summary\n- normalize `MATCHED_FINEWEB_REMOTE_ROOT_PREFIX` handling for manifest, docs, dataset, and tokenizer downloads in `data/cached_challenge_fineweb.py`\n- strip full multi-segment remote prefixes before mapping files into local `data/datasets` and `data/tokenizers`\n- add regression coverage for nested remote prefixes and empty-prefix manifest resolution\n\n## Test Plan\n- `python3 -m unittest discover -s tests -v`\n- `python3 -m py_compile $(rg --files -g '*.py')`\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/7",
+  "draft": false
+}

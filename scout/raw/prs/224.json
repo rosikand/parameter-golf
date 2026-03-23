@@ -1,0 +1,13 @@
+{
+  "number": 224,
+  "title": "Complexity MoE + PID Dynamics (Token-Routed I64)",
+  "state": "open",
+  "user": "Complexity-ML",
+  "created_at": "2026-03-20T15:36:40Z",
+  "updated_at": "2026-03-20T18:34:49Z",
+  "merged_at": null,
+  "body": "## Summary\n\nNovel architecture from [Complexity Framework](https://github.com/Complexity-ML/complexity-framework):\n\n- **Token-Routed MoE** \u2014 4 experts, deterministic routing (`token_id % 4`), mask-multiply (fullgraph safe)\n- **PID Dynamics** \u2014 mu traverses all 9 layers, tight clamping for stability\n- **SwiGLU** activation replacing relu\u00b2\n- **Cosine Warm Restarts** (SGDR) LR schedule\n\n14.7M params, under 16MB cap. Awaiting compute credits for final val_bpb.\n\n## Status\n\n\u23f3 Pending training results \u2014 compute credits requested.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/224",
+  "draft": true
+}

@@ -1,0 +1,15 @@
+{
+  "number": 5,
+  "title": "[WIP] Sparse Attention + Recursive Weight Sharing for 16MB Efficiency",
+  "state": "closed",
+  "user": "albertorkive",
+  "created_at": "2026-03-18T18:20:47Z",
+  "updated_at": "2026-03-19T21:19:45Z",
+  "merged_at": null,
+  "body": "### Research Lead: Rkive AI\r\nThis PR introduces a flexible architecture skeleton designed to maximize **parameter density** within the 16MB artifact constraint. \r\n\r\n**Key Mechanisms:**\r\n1. **Sliding Window Attention (`WINDOW_SIZE`):** Restricts causal attention to a local window. This reduces the $O(N^2)$ compute bottleneck on the 8xH100s, potentially allowing for wider `d_model` configurations within the 10-minute training wall-clock.\r\n2. **Recursive Weight Tying (`NUM_PHYSICAL_LAYERS`):** Implements weight sharing across logical layers (e.g., 3 physical blocks acting as 9 logical layers). This increases \"effective depth\" without increasing the stored parameter count in the 16MB `.pt` file.\r\n3. **Optimized for 8xH100s:** Includes hooks for `torch.compile` and quantization-ready layers to hit the sub-1.20 bpb target.\r\n\r\n**Status:** Initial skeleton pushed. Seeking **Development Grant (~$500)** to perform hyperparameter sweeps on sparsity patterns and tie-ratios. \r\n\r\nCurrent baseline: 1.2244 bpb. \r\nTarget: < 1.20 bpb.",
+  "labels": [
+    "not ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/5",
+  "draft": false
+}

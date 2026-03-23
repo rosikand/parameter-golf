@@ -1,0 +1,13 @@
+{
+  "number": 216,
+  "title": "Ternary Universal Transformer \u2014 15.6MB, bfloat16, Muon optimizerAdd ternary Universal Transformer submission",
+  "state": "open",
+  "user": "alons23",
+  "created_at": "2026-03-20T14:27:30Z",
+  "updated_at": "2026-03-20T14:27:30Z",
+  "merged_at": null,
+  "body": "68M-param Universal Transformer with ternary weights {-1,0,+1}, Muon optimizer, QK-Norm, RoPE, FlashAttention-2, bfloat16. NB=4 blocks x NR=6 recurrences = 24 effective layers. Artifact size: ~15.6MB. Test run val_bpb ~0.810 on 1xH100.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/216",
+  "draft": false
+}

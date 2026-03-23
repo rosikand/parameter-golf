@@ -1,0 +1,13 @@
+{
+  "number": 480,
+  "title": "Non-record: MoE exploration + multi-bit quantization analysis",
+  "state": "open",
+  "user": "imyesung",
+  "created_at": "2026-03-23T00:25:02Z",
+  "updated_at": "2026-03-23T01:25:23Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\nNon-record submission with two negative results under the 16MB artifact cap:\r\n\r\n- **Preliminary MoE negative result:** a 2-expert soft-routing MoE (2 \u00d7 1.5x MLP) underperforms the dense control throughout the observed training window. I added `moe_train_partial.log`, the surviving partial 8xH100 SXM log; the RunPod pod died at step 2000, so the MoE conclusion should be interpreted as preliminary rather than a fully converged final result.\r\n- **Leaderboard-relevant multi-bit quantization comparison:** the dense control reaches **1.1456 val_bpb**, which is within **0.0028 BPB** of the **March 20, 2026** leaderboard leader (**1.1428**). On that same trained dense model, int5 MLP costs **+0.0068 BPB** while int4 MLP costs **+0.0655 BPB**, making aggressive quantization unattractive for MoE expansion at this scale.\r\n\r\n## Included evidence\r\n\r\n- `README.md` with updated explanation and MoE-vs-dense checkpoint table\r\n- `submission.json` with updated metadata\r\n- `train.log` for the dense control / quantization comparison\r\n- `moe_train_partial.log` for the surviving MoE run\r\n- `train_gpt.py`\r\n- `quant_comparison.png`\r\n\r\n## Quantization Comparison Results\r\n\r\n| Config | Attn | MLP | Artifact | val_bpb | vs baseline |\r\n|--------|------|-----|----------|---------|-------------|\r\n| attn6_mlp6 | int6 | int6 | 15.14 MB | 1.1456 | baseline |\r\n| attn6_mlp5 | int6 | int5 | 13.39 MB | 1.1524 | +0.0068 |\r\n| attn6_mlp4 | int6 | int4 | 11.51 MB | 1.2111 | +0.0655 |\r\n| attn5_mlp5 | int5 | int5 | 13.05 MB | 1.1559 | +0.0103 |\r\n| attn5_mlp4 | int5 | int4 | 11.29 MB | 1.2183 | +0.0727 |\r\n\r\n## MoE Observed Checkpoints\r\n\r\n| Step | Dense control val_bpb | MoE val_bpb | Delta |\r\n|------|-----------------------|-------------|-------|\r\n| 500  | 1.4058 | 1.4115 | +0.0057 |\r\n| 1000 | 1.3286 | 1.3386 | +0.0100 |\r\n| 1500 | 1.3024 | 1.3163 | +0.0139 |\r\n| 2000 | 1.2709 | 1.2866 | +0.0157 |",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/480",
+  "draft": false
+}

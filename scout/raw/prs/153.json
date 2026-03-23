@@ -1,0 +1,13 @@
+{
+  "number": 153,
+  "title": "Add strong-submission eval pipeline and ablation tooling",
+  "state": "open",
+  "user": "RogueTex",
+  "created_at": "2026-03-20T01:53:51Z",
+  "updated_at": "2026-03-20T01:58:44Z",
+  "merged_at": null,
+  "body": "## Summary\n- add configurable final eval modes: `FINAL_EVAL_MODE=standard|sliding|ttt`\n- add sliding-window eval path (`EVAL_SEQ_LEN`, `EVAL_STRIDE`, `EVAL_BATCH_SEQS`) with compiled `forward_logits`\n- add decoupled Muon weight decay via `MUON_WEIGHT_DECAY`\n- add export passthrough control `INT8_ALWAYS_KEEP_FLOAT_NAME_PATTERNS` (default keeps `tok_emb.weight` in fp16)\n- add experiment runbook and scripts under `experiments/parameter_golf/`\n\n## Why\nThis makes it possible to run controlled ablations and push for stronger 10min/16MB submissions by combining training-side robustness and evaluation-time improvements.\n\n## Validation\n- `python3 -m py_compile train_gpt.py`\n- `bash -n experiments/parameter_golf/run_ablation.sh`\n- `bash -n experiments/parameter_golf/run_top3.sh`\n- `python3 experiments/parameter_golf/summarize_runs.py --help`\n\n## Notes\nGPU training/eval sweeps were not run in this local environment (no CUDA tooling present).",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/153",
+  "draft": false
+}

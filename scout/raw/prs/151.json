@@ -1,0 +1,13 @@
+{
+  "number": 151,
+  "title": "Non-record: FP16 embed + WD20k + seq2048 + doc-isolated sliding window (val_bpb=1.2045)",
+  "state": "closed",
+  "user": "mrdavtan",
+  "created_at": "2026-03-20T01:47:08Z",
+  "updated_at": "2026-03-20T13:07:41Z",
+  "merged_at": null,
+  "body": "## Summary\n\nComposition of proven community techniques on the 9L\u00d7512d baseline:\n- FP16 tied embedding export (from #42, #65)\n- Aggressive warmdown WARMDOWN_ITERS=20000 (from #65)\n- Seq2048 training (from #49)\n- Tuned LRs and optimizer settings (from #65, #128)\n- Sliding window eval stride=64 with doc-isolated scoring (from #50, #77)\n\n**val_bpb: 1.2045** \u2014 beats the naive baseline (1.2244) by 0.020 BPB.\n\n### Hardware limitation\n\nThis result is significantly constrained by RunPod node speed: **70ms/step vs the typical 44ms** reported by other entries. This yielded only 8,528 training steps vs the ~13,600 that standard hardware would produce. We estimate **~1.185 on standard hardware** with the same configuration.\n\n### Key metrics\n\n| Metric | Value |\n|--------|-------|\n| val_bpb (sliding window, doc-isolated) | 1.2045 |\n| Pre-quant val_bpb | 1.2154 |\n| Artifact size | 15,912,648 bytes |\n| Steps | 8,528 (wallclock-limited at 70ms/step) |\n| Eval time | 43s |\n\n### Acknowledgments\n\nAll techniques from community entries: @samuellarson (#65), @mattqlf (#50), @samacquaviva (#77), @spokane-way (#49), @rsavitt (#128).\n\nBuilt with [Claude Code](https://claude.com/claude-code)\n\n## Test plan\n\n- [x] Artifact under 16,000,000 bytes (15,912,648)\n- [x] Training completes within 600s wallclock cap\n- [x] Eval completes within 600s eval budget (43s)\n- [x] Training log included",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/151",
+  "draft": false
+}

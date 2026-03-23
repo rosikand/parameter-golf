@@ -1,0 +1,15 @@
+{
+  "number": 38,
+  "title": "[wip] depth-recurrent QAT: 3x3 shared blocks + LoRA",
+  "state": "closed",
+  "user": "kxddry",
+  "created_at": "2026-03-19T00:10:45Z",
+  "updated_at": "2026-03-19T21:19:52Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\nNew submission to `records/track_10min_16mb/` using depth-recurrent transformer with\r\nquantization-aware training.\r\n\r\n  ### Key optimizations\r\n\r\n  - **Depth recurrence:** 3 shared transformer blocks looped 3\u00d7 with per-iteration LoRA deltas\r\n  (rank 4), replacing 9 unique blocks. Frees ~66% of parameter budget while maintaining\r\n  effective depth.\r\n  - **QAT:** STE fake-quantize in CastedLinear forward pass. Model trains with INT8 noise \u2014\r\n  reduces post-quantization BPB degradation by 18\u00d7 (0.0001 vs 0.002 baseline).\r\n  - **Byte grouping:** Separates int8 weights from fp16 scales before zlib for ~2\u00d7 better\r\n  compression ratio.\r\n  - **Model widening:** dim 512\u2192768 using freed parameter budget (13.2M params, ~4.1MB\r\n  artifact).\r\n  - **LAWA:** Checkpoint averaging during warmdown for free quality boost.\r\n  - **RoPE NTK scaling:** 2048-token eval context (trained at 1024).\r\n\r\n  ### Local validation (MLX, 200 iterations, 1 shard)\r\n\r\n  | Config | val_bpb | Artifact | INT8 degradation |\r\n  |--------|---------|----------|-----------------|\r\n  | Baseline (512d, 9 blocks) | 3.022 | 5.35MB | 0.00217 |\r\n  | Ours (768d, 3\u00d73+LoRA) | 2.962 | 4.12MB | 0.00012 |\r\n\r\n  H100 multi-seed results pending compute grant approval.\r\n\r\n  ### Submission checklist\r\n\r\n  - [x] `records/track_10min_16mb/2026-03-19_DepthRecurrentQAT/README.md`\r\n  - [x] `records/track_10min_16mb/2026-03-19_DepthRecurrentQAT/submission.json`\r\n  - [x] `records/track_10min_16mb/2026-03-19_DepthRecurrentQAT/train_gpt.py`\r\n  - [ ] Training log (pending H100 runs)\r\n  - [ ] Multi-seed validation p < 0.01 (pending H100 runs)",
+  "labels": [
+    "not ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/38",
+  "draft": false
+}

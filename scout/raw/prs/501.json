@@ -1,0 +1,13 @@
+{
+  "number": 501,
+  "title": "Non-record: 1xH100 warmdown100 30m scaling run",
+  "state": "open",
+  "user": "aamodbhatt",
+  "created_at": "2026-03-23T04:36:59Z",
+  "updated_at": "2026-03-23T04:37:08Z",
+  "merged_at": null,
+  "body": "## Summary\nThis PR adds one non-record unlimited-compute folder with a 30-minute 1xH100 run using the baseline script and WARMDOWN_ITERS=100.\n\n## Why this matters\n- Low-cost 1x evidence while waiting for larger 8x grants\n- Same-session controlled comparison against a 10-minute baseline\n\n## Key result\n- 30m run: val_bpb=1.27705124\n- Same-session 10m control: val_bpb=1.34638424\n- Improvement: 0.06933300\n\n## Included files\n- README.md\n- submission.json\n- train.log\n- train_gpt.py\n\nThis PR only adds one folder under records/track_non_record_16mb/.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/501",
+  "draft": false
+}

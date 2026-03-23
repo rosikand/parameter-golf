@@ -1,0 +1,15 @@
+{
+  "number": 73,
+  "title": "Non-record: SwiGLU + warmdown fix + quarter batch (1x5090, 1.3281 bpb)",
+  "state": "closed",
+  "user": "NishantDahal",
+  "created_at": "2026-03-19T09:40:21Z",
+  "updated_at": "2026-03-20T18:42:15Z",
+  "merged_at": "2026-03-20T18:42:15Z",
+  "body": "Non-record submission documenting a 10-experiment systematic exploration on 1\u00d7RTX 5090.\r\n\r\n**Best val_bpb:** 1.3281 (post-quant, under 16MB artifact cap)\r\n\r\n**Key findings:**\r\n- Discovered warmdown schedule bug in stock train_gpt.py \u2014 default warmdown_iters=1200 with 600s wallclock causes LR to decay from step 1. Fixed with time-fraction approach (warmdown_frac=0.2). Worth -0.006 bpb alone.\r\n- SwiGLU activation replacing ReLU\u00b2 (-0.004 bpb)\r\n- Quarter batch size (131K tokens) for 4\u00d7 more optimizer steps (-0.016 bpb cumulative)\r\n- Gradient accumulation \u00d72 (-0.002 bpb)\r\n- Negative results: weight decay (no effect), layer recurrence (harmful)\r\n\r\n**Total improvement:** -0.035 bpb over stock baseline\r\n\r\nScore gap vs leaderboard baseline (1.2244) is explained by hardware throughput \u2014 1\u00d75090 gets ~3,773 steps vs ~13,780 on 8\u00d7H100. The improvements are hardware-agnostic and should transfer to multi-GPU runs.\r\n\r\nFull experiment log and analysis in README.",
+  "labels": [
+    "not ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/73",
+  "draft": false
+}

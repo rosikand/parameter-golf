@@ -1,0 +1,13 @@
+{
+  "number": 367,
+  "title": "Non-record: BitNet b1.58 - 68M ternary params, val_bpb=1.1770, systematic analysis of ternary limitations",
+  "state": "open",
+  "user": "ksang123",
+  "created_at": "2026-03-21T20:21:40Z",
+  "updated_at": "2026-03-21T20:21:40Z",
+  "merged_at": null,
+  "body": "Improves on PR #139 (1.2029 \u2192 1.1770). 68M ternary {-1,0,1} params packed at 1.6 bits/param in 15.88MB via base-3 encoding.\r\n\r\nKey findings:\r\n- The entire standard competition stack (XSA, SmearGate, BigramHash, OrthoInit, WD, EMA/SWA, TTT) either breaks or doesn't help ternary models\r\n- XSA and weight decay cause complete training plateaus at val_loss 2.4 \u2014 ternary is a fundamentally different optimization regime\r\n- Near-lossless quantization roundtrip (0.0016 BPB gap) via fp16 scale simulation during training\r\n- Ternary prefers higher LR (0.04 vs 0.025), no regularization, and longer warmdown \u2014 the opposite of int6 best practices\r\n- Suggests int4 with late QAT as an unexplored middle ground: 50% more params than int6 with near-zero quant gap\r\n\r\nFull writeup with negative results table in the README.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/367",
+  "draft": false
+}

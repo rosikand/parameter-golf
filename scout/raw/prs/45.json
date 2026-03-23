@@ -1,0 +1,15 @@
+{
+  "number": 45,
+  "title": "Modal 8xH100 LowerLR FP16Embed 960 (val_bpb 1.22395)",
+  "state": "closed",
+  "user": "kiankyars",
+  "created_at": "2026-03-19T02:51:31Z",
+  "updated_at": "2026-03-19T21:19:54Z",
+  "merged_at": null,
+  "body": "## Summary\nThis PR adds one new record folder for a valid 8xH100 run.\n\n## Result\n- val_bpb: 1.22395035\n- val_loss: 2.06658890\n- bytes_total: 15844118\n- train_time: 599.863s\n- step_stop: 13289\n\n## What is in the folder\n- README.md\n- submission.json\n- train.log\n- train_gpt.py\n\n## Notes\n- tied embedding kept higher precision in the record snapshot\n- MLP_HIDDEN=960 to stay under the 16MB cap\n- this PR only adds the new records folder",
+  "labels": [
+    "does not beat SOTA"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/45",
+  "draft": false
+}

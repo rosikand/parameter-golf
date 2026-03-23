@@ -1,0 +1,15 @@
+{
+  "number": 8,
+  "title": "Add depth recurrence + SwiGLU submission (Apple M3 8GB)",
+  "state": "closed",
+  "user": "iranzithierry",
+  "created_at": "2026-03-18T19:11:39Z",
+  "updated_at": "2026-03-19T21:19:45Z",
+  "merged_at": null,
+  "body": "  ## Summary      \r\n  - Non-record submission exploring depth recurrence (weight sharing) and SwiGLU MLPs\r\n  - 4 unique transformer blocks reused 3\u00d7 = 12 effective layers at 640 dim                                                                                                                                          \r\n  - SwiGLU MLP replaces relu\u00b2 for better parameter efficiency                                                                                                                                                       \r\n  - Per-recurrence learnable gate scalars for specialization                                                                                                                                                        \r\n  - Trained on Apple M3 with 8GB RAM (hardware-limited, results are directional)                                                                                                                                    \r\n                                                                                                                                                                                                                    \r\n  ## Changes                                                                                                                                                                                                        \r\n  - `records/track_non_record_16mb/2026-03-18_M3_DepthRecurrence_SwiGLU/train_gpt_mlx.py`                                                                                                                           \r\n  - `records/track_non_record_16mb/2026-03-18_M3_DepthRecurrence_SwiGLU/submission.json`                                                                                                                            \r\n  - `records/track_non_record_16mb/2026-03-18_M3_DepthRecurrence_SwiGLU/README.md`                                                                                                                                  \r\n                                                                                                                                                                                                                    \r\n  ## Limitations                                                                                                                                                                                                    \r\n  Trained on consumer hardware (M3/8GB) \u2014 score reflects hardware constraints, not the approach's ceiling. The same script can be run on 8\u00d7H100 for competitive results. ",
+  "labels": [
+    "not ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/8",
+  "draft": false
+}

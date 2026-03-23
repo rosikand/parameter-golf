@@ -1,0 +1,15 @@
+{
+  "number": 317,
+  "title": "Record: 11L XSA4 + EMA + TTT + Int6 MLP3x (val_bpb=1.1442)",
+  "state": "open",
+  "user": "chris-buckley",
+  "created_at": "2026-03-21T06:16:06Z",
+  "updated_at": "2026-03-22T01:08:35Z",
+  "merged_at": null,
+  "body": "This takes the current best public training stack and makes one bet on top of it: full-model SGD test-time training at eval.\n\nThe training recipe is the 11L SmearGate/BigramHash/XSA4/EMA/int6+zstd-22 setup that's been winning. I kept it intact and added TTT as an orthogonal eval-time pass. It costs zero training budget. The SGD pass (3 epochs, lr=0.002, momentum=0.9, first 2 blocks frozen) runs on the dequantized checkpoint before scoring and takes about 50-80s.\n\n## What's different from Compression-Funded MLP3x\n\n- XSA on the last 4 layers\n- EMA instead of SWA\n- TTT at eval time (the big one)\n- Small LR bumps: matrix_lr 0.02 to 0.025, scalar_lr 0.02 to 0.025, tied_embed_lr 0.03 to 0.035\n- eval_stride 256 to 64\n\n## Results\n\n| Seed | Post-TTT val_bpb | Steps | ms/step | Artifact bytes |\n|------|-------------------|-------|---------|----------------|\n| 1337 | 1.1419 | 5,344 | 109.2 | 15,578,775 |\n| 1338 | 1.1464 | 4,559 | 131.6 | 15,661,221 |\n| **Mean** | **1.1442** | | | |\n\nBoth artifacts under 16 MB. Both seeds beat the prior best single seed of 1.1598. Mean beats the prior mean of 1.1647 by 0.0205.\n\n8xH100 SXM on community cloud. The two seeds ran on different nodes, which is why the step times differ. SDPA fallback since neither node had FA3 installed.\n\n## Training stack\n\n11 layers, 512 dim, 8 heads / 4 KV heads, MLP 3x, SmearGate, BigramHash(2048), OrthoInit, muP-style output scaling, Muon/AdamW with WD=0.04, XSA on last 4 layers, EMA, int6 mixed quant + zstd-22.\n\n## Compatibility\n\nThe script falls back from FA3 to PyTorch SDPA automatically. I had to add manual KV head repeat for GQA since PyTorch 2.4 doesn't have `enable_gqa`, and clear the RoPE cache before TTT to avoid an inference tensor error during backward. It needs the `zstandard` package for zstd-22 compression (zlib puts the artifact over 16 MB).",
+  "labels": [
+    "invalid"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/317",
+  "draft": false
+}

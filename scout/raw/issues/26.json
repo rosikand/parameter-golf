@@ -1,0 +1,11 @@
+{
+  "number": 26,
+  "title": "Modular package: break train_gpt_cpu.py into pgolf/ modules",
+  "state": "closed",
+  "user": "tayeva",
+  "created_at": "2026-03-18T22:38:27Z",
+  "updated_at": "2026-03-18T22:40:11Z",
+  "body": "## Description\nRefactor train_gpt_cpu.py into importable, testable modules:\n- `pgolf/config.py` \u2014 Hyperparameters dataclass\n- `pgolf/data.py` \u2014 TokenStream, data loading\n- `pgolf/model.py` \u2014 GPT, Block, Attention, MLP, RMSNorm, Rotary\n- `pgolf/optim.py` \u2014 Muon optimizer, LR scheduling\n- `pgolf/quantize.py` \u2014 int8 quantization + zlib\n- `pgolf/eval.py` \u2014 BPB evaluation, tokenizer LUTs\n- `train_cpu.py` \u2014 Thin CLI entrypoint\n\n## Acceptance Criteria\n- [ ] All modules independently importable\n- [ ] `train_cpu.py` reproduces exact same behavior as `train_gpt_cpu.py`\n- [ ] Unit tests for each module\n- [ ] ruff + mypy pass",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/issues/26"
+}

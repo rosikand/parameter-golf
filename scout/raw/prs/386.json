@@ -1,0 +1,13 @@
+{
+  "number": 386,
+  "title": "Depth-recurrent transformer: shared block \u00d7 12 passes, val_bpb 1.4061, 4.39MB artifact",
+  "state": "open",
+  "user": "Sambhav242005",
+  "created_at": "2026-03-22T01:35:57Z",
+  "updated_at": "2026-03-22T01:35:57Z",
+  "merged_at": null,
+  "body": "## Approach\r\nSingle shared transformer block applied 12 times instead of independent layers.\r\nReduces unique params from ~25M \u2192 4.7M, freeing budget to go wider (dim=768).\r\n\r\nKey changes from baseline:\r\n- Depth recurrence: 1 shared Block \u00d7 num_passes (default 12)\r\n- U-Net skip connections: encoder passes store activations, decoder passes consume in reverse\r\n- x0 residual mix: original embedding injected at every pass for stability\r\n- Wider model: MODEL_DIM=768, NUM_HEADS=12 vs baseline 512/8\r\n\r\n## Result\r\n- val_bpb: 1.4061 (after int8 + zlib roundtrip)\r\n- Artifact size: 4.39MB / 16MB budget\r\n- Parameters: 4,726,284\r\n- Hardware: RTX 4090, ~45s training time\r\n\r\n## Run command\r\nMODEL_DIM=768 NUM_HEADS=12 NUM_KV_HEADS=4 NUM_PASSES=12 \r\nMATRIX_LR=0.02 WARMDOWN_ITERS=600 MAX_WALLCLOCK_SECONDS=0 \r\nTRAIN_BATCH_TOKENS=524288 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True\r\ntorchrun --standalone --nproc_per_node=1 train_gpt_recurrent.py",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/386",
+  "draft": false
+}

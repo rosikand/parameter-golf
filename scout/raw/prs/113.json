@@ -1,0 +1,13 @@
+{
+  "number": 113,
+  "title": "Record: FP16 Embed + Sliding Window Eval + Warmdown Tuning (pending eval)",
+  "state": "closed",
+  "user": "JoeProAI",
+  "created_at": "2026-03-19T18:26:13Z",
+  "updated_at": "2026-03-21T21:35:17Z",
+  "merged_at": null,
+  "body": "## Summary\n\nCombines three orthogonal improvements over the naive baseline:\n\n1. **FP16 embedding passthrough** \u2014 keep `tok_emb.weight` in fp16 during int8 quantization. The tied embedding/output head is the most sensitive tensor; this eliminates nearly all post-quant BPB degradation (~0.007 \u2192 ~0.0005 BPB).\n\n2. **Sliding window evaluation** (stride=64) \u2014 score every validation token with 960+ tokens of context instead of the baseline's average ~512. Each window advances by 64 tokens, scoring only the rightmost positions.\n\n3. **Warmdown/LR tuning** \u2014 `WARMDOWN_ITERS=3600` and `MATRIX_LR=0.06` for better convergence under the 10-minute wallclock cap.\n\n## Configuration\n\n```\nVOCAB_SIZE=1024  NUM_LAYERS=9  MODEL_DIM=512  NUM_HEADS=8  NUM_KV_HEADS=4\nMLP_HIDDEN=992  TIE_EMBEDDINGS=1  WARMDOWN_ITERS=3600  MATRIX_LR=0.06\nEVAL_STRIDE=64  EVAL_BATCH_SEQS=1024\n```\n\n## Status\n\nPending 8xH100 verification run. Estimated val_bpb ~1.187 based on component-level improvements from existing records (#42 FP16 Embed, #50 Sliding Window Eval).\n\nWill update with exact metrics and training logs after verification.\n\n## Author\nJoe Gaither (@JoeProAI)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/113",
+  "draft": false
+}

@@ -1,0 +1,13 @@
+{
+  "number": 299,
+  "title": "[Non-record] LoRA TTT + HParams (val_bpb=1.16973333)",
+  "state": "open",
+  "user": "Mistobaan",
+  "created_at": "2026-03-21T01:58:37Z",
+  "updated_at": "2026-03-21T02:01:39Z",
+  "merged_at": null,
+  "body": "## Summary\n- add the `2026-03-20_better_baseline_params` record for the 10min/16mb track\n- include the submitted `train_gpt.py`, run logs, and aggregated `submission.json`\n- document the hyperparameter deltas relative to `2026-03-17_LoRA_TTT`\n\n## Details\nThis keeps the same LoRA TTT evaluation path as `2026-03-17_LoRA_TTT` and updates the baseline defaults to an 8x768 configuration with a 2048 sequence length, a 262144-token training batch, lower learning rates, lower logit softcap, and `beta1=0.70`.\n\n## Validation\n- staged files reviewed locally\n- PR is scoped to the currently staged files only\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/299",
+  "draft": false
+}

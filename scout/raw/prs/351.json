@@ -1,0 +1,13 @@
+{
+  "number": 351,
+  "title": "Memory Tokens + Mixed Quantization (val_bpb: 1.1659)",
+  "state": "closed",
+  "user": "sp00mm",
+  "created_at": "2026-03-21T16:36:21Z",
+  "updated_at": "2026-03-21T16:36:48Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **val_bpb: 1.1659** (sliding window stride=128, post int5/int6+zstd roundtrip)\n- **Artifact: 15.0MB** (under 16MB cap)\n- **8xH100 SXM, 600s, 9030 steps**\n\n### Novel contribution: Memory Tokens\n64 learnable embedding vectors that overwrite the first K positions of every input sequence, acting as a global context scratchpad. All real tokens attend to them via the causal mask. A/B tested: **-0.014 BPB improvement** vs identical config without memory tokens.\n\n### Other techniques\n- 10 layers, 3x MLP, BigramHashEmbedding(10240), SmearGate\n- Partial RoPE (16/64 dims), LN Scale, EMA (0.997), Late QAT\n- Mixed int5 MLP / int6 attention + zstd-22 compression\n- MTP auxiliary heads (k=2, stripped before export)\n- Batched sliding window eval with compiled forward_logits\n\n## Test plan\n- [x] A/B test confirming memory tokens improve val_bpb (-0.014)\n- [x] Verified artifact under 16MB (15,070,662 bytes)\n- [x] Int6+zstd roundtrip validation passes\n- [x] 8xH100 SXM run completes in 600s\n- [ ] Reproducibility: additional seed runs for p<0.01 (pending compute credits)\n\n## Files\n- `records/track_10min_16mb/2026-03-21_MemoryTokens/README.md`\n- `records/track_10min_16mb/2026-03-21_MemoryTokens/submission.json`\n- `records/track_10min_16mb/2026-03-21_MemoryTokens/train.log`\n- `records/track_10min_16mb/2026-03-21_MemoryTokens/train_gpt.py`",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/351",
+  "draft": false
+}

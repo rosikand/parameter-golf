@@ -1,0 +1,13 @@
+{
+  "number": 147,
+  "title": "Record/smaller batch sota, val_bpb 1.16314679 (post-quant, int6+zlib, sliding eval)",
+  "state": "open",
+  "user": "ankitmaloo",
+  "created_at": "2026-03-20T01:21:58Z",
+  "updated_at": "2026-03-20T01:22:53Z",
+  "merged_at": null,
+  "body": "",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/147",
+  "draft": false
+}

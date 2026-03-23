@@ -1,0 +1,13 @@
+{
+  "number": 288,
+  "title": "Non-record: Hybrid Depth-Recurrent Transformer + Int5 Quantization Studies",
+  "state": "open",
+  "user": "trasnake87",
+  "created_at": "2026-03-20T23:38:53Z",
+  "updated_at": "2026-03-23T03:14:20Z",
+  "merged_at": null,
+  "body": "## Two non-record submissions\n\n### 1. Hybrid Depth-Recurrent Transformer (1.2334 BPB)\n**Solved quantization compounding** for looped layers (0.40 BPB gap \u2192 0.007). 8 physical layers \u00d7 2 loops = 16 effective depth from 20M stored params. Novel input features (word-position, copy flags, unigram frequency). Full details in records/track_non_record_16mb/2026-03-22_HybridLoopedTransformer_8xH100/\n\n### 2. Content-Dependent SmearGate (negative result at scale)\nH100 validation showed content-dependent gating adds step overhead that doesn't compensate. Details in records/track_non_record_16mb/2026-03-20_ContentSmearGate_RTX4070/\n\nBuilt on PR #315 by @alertcat.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/288",
+  "draft": false
+}

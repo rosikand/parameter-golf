@@ -1,0 +1,15 @@
+{
+  "number": 14,
+  "title": "[non-submission] CPU fallback for the poors (non-CUDA non-MLX)",
+  "state": "closed",
+  "user": "jordankzf",
+  "created_at": "2026-03-18T20:09:01Z",
+  "updated_at": "2026-03-19T21:19:47Z",
+  "merged_at": null,
+  "body": "Changes:\n\n*train_gpt.py*\n- Device auto-detection: CPU fallback instead of raise `RuntimeError(\"CUDA is required\")`\n- Guards on torch.compile, fused Adam, flash SDP, DDP, torch.cuda.synchronize(), nvidia-smi\n- autocast(device_type=device.type, ...) instead of hardcoded \"cuda\"\n- (new) MAX_VAL_TOKENS env var to truncate the val set for faster local iteration",
+  "labels": [
+    "not ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/14",
+  "draft": false
+}

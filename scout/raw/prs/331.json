@@ -1,0 +1,13 @@
+{
+  "number": 331,
+  "title": "10L MLP3x + BigramHash(2048) + SWA + Stride-32: 1.1487 BPB",
+  "state": "open",
+  "user": "Rhodrium",
+  "created_at": "2026-03-21T09:16:51Z",
+  "updated_at": "2026-03-21T09:16:51Z",
+  "merged_at": null,
+  "body": "## Summary\n- 10-layer relu\u00b2 MLP3x with BigramHash(2048), SmearGate, OrthoInit, mixed int5/int6 + zstd-22, SWA averaging, stride-32 sliding window eval\n- **val_bpb: 1.1487** (mean of 3 seeds, std 0.0020)\n- 14.9 MB artifact, 8xH100 SXM, 600s\n\n## 3-Seed Results\n\n| Seed | Steps | Step time | Sliding s32 BPB | Artifact |\n|------|-------|-----------|-----------------|----------|\n| 1337 | 6,374 | 94ms | 1.1503 | 14.90 MB |\n| 42 | 6,626 | 91ms | 1.1493 | 14.78 MB |\n| 2025 | 6,622 | 91ms | 1.1464 | 14.99 MB |\n\n## Test plan\n- [ ] Verify `train_gpt.py` runs successfully from the records folder on 8xH100\n- [ ] Confirm val_bpb reproduces within reported std\n- [ ] Verify artifact size < 16,000,000 bytes\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/331",
+  "draft": false
+}

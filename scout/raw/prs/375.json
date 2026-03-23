@@ -1,0 +1,13 @@
+{
+  "number": 375,
+  "title": "Non-record: Negative results & insights from 24hrs on 8xH100",
+  "state": "open",
+  "user": "charmquark1984",
+  "created_at": "2026-03-21T22:51:16Z",
+  "updated_at": "2026-03-21T22:51:16Z",
+  "merged_at": null,
+  "body": "**Title:** Non-record: Negative results & insights from 24hrs on 8xH100\r\n\r\n**Description:**\r\n\r\nWe spent ~$500 of 8xH100 time systematically testing 13 techniques on top of the PR #315 base. Most of them made things worse. This submission documents what didn't work and why, so other competitors can skip these dead ends.\r\n\r\n**Negative results (did not improve on PR #315 base):**\r\n- Causal TTT (3 variants): neutral on EMA+XSA base\r\n- MTP: +0.028 BPB, throughput penalty kills it\r\n- INT4: 0.06 BPB quant gap wipes out param advantage\r\n- Canon layers: 48% step overhead not compensated\r\n- Memory tokens, gradient-guided quant, cautious WD, L1 regularization, label smoothing, 1M batch, full-run QAT\r\n\r\n**Positive findings:**\r\n- EMA > SWA by 0.003 BPB (3-seed verified)\r\n- Weight decay directly controls compressed artifact size (~1.5-2MB per 0.01 WD)\r\n- 786K > 524K batch by 0.004 BPB (total tokens matter more than gradient steps)\r\n- FA3 Hopper: 15-20% more steps at same wallclock\r\n\r\n**Meta-insight:** At 86ms/step, each 1ms of per-step overhead costs ~0.006 BPB. Most techniques fail this throughput test.\r\n\r\nBest verified result: 1.1257 BPB (PR #315 reproduction). Full details, methodology, and 12 training logs in the README.\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/375",
+  "draft": false
+}

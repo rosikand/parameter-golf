@@ -1,0 +1,13 @@
+{
+  "number": 259,
+  "title": "submission: QK Gain Init 1.2 + Sliding Window Eval (stride=64)",
+  "state": "open",
+  "user": "outsourc-e",
+  "created_at": "2026-03-20T19:37:10Z",
+  "updated_at": "2026-03-20T19:37:10Z",
+  "merged_at": null,
+  "body": "## QK Gain Init 1.2 + Sliding Window Eval\n\nTwo orthogonal improvements over the naive baseline:\n\n### 1. QK Gain Initialization (training)\n- `QK_GAIN_INIT=1.2` (default: 1.5) \u2014 better attention stability during short runs\n\n### 2. Sliding Window Evaluation (eval-only)  \n- `EVAL_STRIDE=64`, `EVAL_BATCH_SEQS=32` \u2014 each token scored with 960+ tokens of context\n- Added `forward_logits()` and `eval_val_sliding()` functions (~70 lines)\n- Free ~0.03 bpb gain with zero training changes\n\n### Local Results (RTX 4090, ~340 steps)\n| Config | int8+zlib bpb |\n|--------|--------------|\n| Baseline | 1.6353 |\n| QK Gain 1.2 | 1.6133 |\n| Sliding Window (raw) | 1.5879 |\n\nLooking forward to seeing H100 numbers from CI!",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/259",
+  "draft": false
+}

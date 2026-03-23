@@ -1,0 +1,13 @@
+{
+  "number": 398,
+  "title": "Non-record: 11L EMA + TTT(20ep,freeze=0) + 15-run ablation study \u2014 val_bpb=1.1213 (3-seed)",
+  "state": "open",
+  "user": "felipe-parodi",
+  "created_at": "2026-03-22T04:15:33Z",
+  "updated_at": "2026-03-23T01:02:11Z",
+  "merged_at": null,
+  "body": "## Record: 11L EMA + TTT(20ep) \u2014 val_bpb: 1.1213\n\n**val_bpb = 1.1213** (sliding window stride=64, best seed 1337) | **15.53 MB** artifact | 8xH100 SXM, 600s\n\n### Key Finding: EMA + Aggressive TTT with All Blocks Unfrozen\n\nEMA(0.997) weight averaging combined with aggressive test-time training (20 epochs SGD, lr=0.008, **all blocks unfrozen**) outperforms Tight SWA + VE128 approaches (PR #388, 1.1231).\n\n### Results (3-seed, 8xH100 SXM)\n\n| Seed | Steps | Sliding BPB (s64) | Artifact |\n|------|-------|-------------------|----------|\n| **1337** | **7386** | **1.1213** | 15.53 MB |\n| 42 | 7411 | 1.1221 | 15.51 MB |\n| 2025 | 7386 | 1.1228 | 15.53 MB |\n\n**Mean: 1.1221 | Std: 0.0008**\n\n### Critical Discoveries (15-run ablation)\n\n1. **TTT_FREEZE_BLOCKS=0 is essential** \u2014 freezing early blocks during aggressive TTT creates internal inconsistency (quant gap 5x worse)\n2. **Late QAT is counterproductive** with aggressive TTT\n3. **XSA removed** \u2014 saves ~1.4ms/step, yielding ~130 more training steps\n4. **PPM-C eval blending hurts strong models** \u2014 classical compression adds noise when neural model is already strong\n5. **Memory tokens, aggressive warmdown, gradient-guided quant** \u2014 all documented negative results\n\n### Run Command\n\n```bash\npip install zstandard flash_attn_3 --find-links https://windreamer.github.io/flash-attention3-wheels/cu128_torch291\n\nSEED=1337 NUM_LAYERS=11 BIGRAM_VOCAB_SIZE=2048 XSA_LAST_N=0 \\\nEMA_ENABLED=1 EMA_DECAY=0.997 SWA_ENABLED=0 \\\nROPE_DIMS=16 LN_SCALE=1 LATE_QAT=0 \\\nTTT_ENABLED=1 TTT_LR=0.008 TTT_EPOCHS=20 TTT_MOMENTUM=0.9 TTT_FREEZE_BLOCKS=0 \\\nMUON_WD=0.04 ADAM_WD=0.04 \\\nMATRIX_LR=0.025 SCALAR_LR=0.025 TIED_EMBED_LR=0.035 \\\nMUON_MOMENTUM=0.99 MUON_MOMENTUM_WARMUP_START=0.92 \\\nMUON_MOMENTUM_WARMUP_STEPS=1500 WARMDOWN_ITERS=3000 \\\nITERATIONS=9000 MAX_WALLCLOCK_SECONDS=600 EVAL_STRIDE=64 \\\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\nSee the full README in the submission folder for detailed architecture, training config, TTT analysis, and the complete 15-run ablation table.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/398",
+  "draft": false
+}

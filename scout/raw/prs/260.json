@@ -1,0 +1,13 @@
+{
+  "number": 260,
+  "title": "[codex] Validate sliding-window post-quant evaluation on 1xH100 proxy",
+  "state": "open",
+  "user": "Kevxn97",
+  "created_at": "2026-03-20T19:51:11Z",
+  "updated_at": "2026-03-20T19:51:11Z",
+  "merged_at": null,
+  "body": "## Summary\n\nThis draft PR captures my current best validated parameter-golf attempt so far: a sliding-window post-quant evaluation variant built on top of the baseline training path.\n\nThe core idea is simple: the baseline validation path scores many tokens with very limited left context because validation is chunked into non-overlapping windows. This PR adds a sliding-window evaluation mode so that each scored token sees near-max context at evaluation time while keeping training behavior unchanged.\n\nI am using this as a serious proxy line while searching for stronger architectures. My current workflow is to use 1xGPU proxy runs to rank ideas by final post-quantized performance, then only spend larger multi-GPU budget on the most credible candidates.\n\n## Why this matters\n\nFor parameter golf, the metric that matters is not just training loss or even pre-quant validation, but the final post-quantized score after the exact export path. This PR focuses on improving that part of the pipeline directly and serves as a validated baseline for future architecture search.\n\n## Current validated result\n\nBest validated proxy result on my side so far:\n\n- Hardware: RunPod 1xH100 proxy run\n- Branch/commit lineage: `codex/sliding-window-eval-v1`\n- Exact printed metric: `final_int8_zlib_roundtrip_exact val_bpb: 1.32756718`\n\nThis is not presented as a final official leaderboard submission. It is my current best validated attempt and a stable reference point for future work.\n\n## Main changes\n\n- add sliding-window validation support\n- add configuration knobs for evaluation stride / batching\n- keep training path otherwise close to baseline\n- document local + RunPod workflow for reproducibility\n- record validated experiment details in the repo tracker\n\n## Validation\n\nI validated the approach with a real proxy run and recorded the final exact post-quant metric above. The main purpose of this PR is to provide a credible, reproducible baseline and demonstrate an active, evidence-driven workflow for continued submission development.\n\n## Notes\n\nThis PR is intentionally marked as draft. I am still using it as a base for further experiments and compute-efficient filtering before opening a stronger final submission.\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/260",
+  "draft": true
+}

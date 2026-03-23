@@ -1,0 +1,13 @@
+{
+  "number": 463,
+  "title": "Anticipatory Transformer: trajectory-aware attention bias",
+  "state": "open",
+  "user": "Diomandeee",
+  "created_at": "2026-03-22T21:49:49Z",
+  "updated_at": "2026-03-22T22:03:48Z",
+  "merged_at": null,
+  "body": "## Summary\n- Parameter-free trajectory bias derived from hidden state dynamics (running velocity + commitment scalar)\n- Entropy-weighted training loss focuses gradient on high-uncertainty tokens\n- Mixed int6 quantization + sliding window evaluation\n- Orthogonal to existing leaderboard techniques (can stack with int5/BigramHash/SmearGate/SWA)\n\n## Results (preliminary, RTX 2080 Ti)\n- Trajectory-aware model beats baseline by 0.018 val loss\n- 2.6x less overfitting (train-val gap 0.10 vs 0.26)\n- Awaiting H100 validation on FineWeb\n\n## Files\n- `train_gpt.py` \u2014 Complete self-contained training script (1,335 lines)\n- `README.md` \u2014 Approach documentation\n- `submission.json` \u2014 Metadata\n\n## Test plan\n- [ ] Validate on 1xH100 with FineWeb sp1024\n- [ ] Run 3 seeds for statistical significance\n- [ ] Compare with/without trajectory bias (ablation)\n- [ ] Final 8xH100 submission run\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/463",
+  "draft": false
+}

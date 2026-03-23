@@ -1,0 +1,16 @@
+{
+  "number": 56,
+  "title": "Add Deep14x416 KV2 non-record MLX submission (val_bpb=1.8440)",
+  "state": "open",
+  "user": "cschubiner",
+  "created_at": "2026-03-19T06:37:12Z",
+  "updated_at": "2026-03-19T21:09:26Z",
+  "merged_at": null,
+  "body": "This PR adds a non-record unlimited-compute submission under `records/track_non_record_16mb/`.\n\nThe user-facing effect is a new reproducible Apple Silicon MLX result in the repository: a deeper/narrower SP-1024 model with 14 layers at width 416 and 2 KV heads, trained locally on an Apple M5 Max for 750 steps against a 10-shard FineWeb subset. The final post-quantized roundtrip metric recorded in the included log is `val_bpb=1.84404368`, with an int8+zlib model payload of `12,339,367` bytes and total submission size of `12,388,989` bytes.\n\nThe underlying motivation was to explore a simple parameter-budget trade: reduce width slightly, add depth, and use more aggressive KV sharing while staying well under the 16 MB artifact limit. This submission keeps the trainer straightforward by reusing the repository `train_gpt_mlx.py` snapshot exactly, and only changes the runtime configuration through environment variables. To make full validation tractable on local Apple Silicon hardware, the run also uses a larger validation batch and logit chunking; these settings affect execution efficiency, not the metric definition itself.\n\nThe root cause this PR addresses is not a bug in the repo but a gap in the records folder: there was no local Apple Silicon submission documenting this deeper/narrower 14x416 KV2 configuration and its measured result. The fix is therefore additive only: a new record folder containing the copied training script, the exact train log, a README with command/config details, and `submission.json` metadata.\n\nValidation for this PR was done by actually running the training job to completion locally, then checking the copied script compiles with `python -m py_compile`. The included `train.log` contains the full training trace, the pre-quant validation result, the compressed model size, and the final `final_int8_zlib_roundtrip_exact` metric.\n",
+  "labels": [
+    "valid submission",
+    "does not beat SOTA"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/56",
+  "draft": false
+}

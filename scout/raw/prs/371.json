@@ -1,0 +1,13 @@
+{
+  "number": 371,
+  "title": "Record: 11L XSA + EMA + TTT + Partial RoPE + LN Scale \u2014 val_bpb=1.1401",
+  "state": "closed",
+  "user": "mrdavtan",
+  "created_at": "2026-03-21T20:43:56Z",
+  "updated_at": "2026-03-21T20:53:32Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **val_bpb = 1.1401** (seed=1337, sliding window stride=32)\n- **artifact = 15.4 MB** (int6 + zstd-22)\n- **8\u00d7H100 SXM**, 600s wallclock, ~7100 steps at ~82ms/step\n\n11-layer transformer stacking: XSA (last 4 layers), EMA (decay=0.997), Test-Time Training (3-epoch SGD), U-Net skip connections, Partial RoPE (16/64 dims), LN Scale, SmearGate, BigramHash, OrthoInit, and late QAT (absmax int6 STE).\n\n## Key findings\n\n- **SmearGate** should use interpolation (`torch.lerp(x, prev, g)`), not additive blending. The additive formula inflates magnitude at default gate values.\n- **BigramHash** benefits from XOR-based hashing with large primes and a learned output scalar (init 0.05).\n- **U-Net skip connections** with skip added before decoder block and single `nn.Parameter` tensor for torch.compile compatibility.\n- **Partial RoPE** (16/64 dims) and **LN Scale** (`1/sqrt(layer+1)`) provide improvements at zero parameter cost.\n- **Optimizer coverage**: SmearGate and BigramHash parameters must be explicitly added to optimizer groups \u2014 they silently freeze from initialization otherwise.\n\nFull development log in `records/track_10min_16mb/2026-03-21_11L_XSA_EMA_TTT/SESSION_LOG.md`.\n\n## Reproduction\n\n```bash\ncd /workspace\ngit clone https://github.com/mrdavtan/parameter-golf.git\ncd parameter-golf && git checkout 11l-xsa-ema-ttt\npip install flash-attn --no-cache-dir --no-build-isolation\npip install zstandard sentencepiece huggingface_hub\npython3 data/cached_challenge_fineweb.py --variant sp1024\n\nunset MLP_HIDDEN QUANT_BITS RUN_ID SEED TIER2_MODE && \\\nROPE_DIMS=16 LN_SCALE=1 ROPE_BASE=10000 \\\nEVAL_STRIDE=32 DOC_ISOLATED_EVAL=0 \\\ntorchrun --standalone --nproc_per_node=8 \\\n  records/track_10min_16mb/2026-03-21_11L_XSA_EMA_TTT/train_gpt.py\n```\n\nHardware: 8\u00d7H100 SXM (RunPod), PyTorch 2.9.1+cu128, Flash Attention 2",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/371",
+  "draft": false
+}

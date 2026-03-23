@@ -1,0 +1,13 @@
+{
+  "number": 284,
+  "title": "Add non-record local A100 PR60-stack reproduction",
+  "state": "open",
+  "user": "DanishjeetSingh",
+  "created_at": "2026-03-20T23:07:05Z",
+  "updated_at": "2026-03-20T23:07:05Z",
+  "merged_at": null,
+  "body": "Adds a non-record 16MB submission folder for a local 1xA100 reproduction of the PR60-style stack (10L + FP16 tied embedding export + Muon WD + overtone init + residual mix + sliding eval).\r\n\r\n  Key result: final_int8_zlib_roundtrip_exact val_bpb = 1.41057617\r\n  Size: 11,124,153 bytes (int8+zlib total)\r\n  Train cap: 600s (step 716)\r\n\r\n  Included:\r\n  - README.md\r\n  - submission.json\r\n  - train.log\r\n  - train_gpt.py (exact snapshot used)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/284",
+  "draft": false
+}

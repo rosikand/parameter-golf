@@ -1,0 +1,13 @@
+{
+  "number": 350,
+  "title": "Fix grammar in README",
+  "state": "closed",
+  "user": "sha-huang",
+  "created_at": "2026-03-21T16:22:15Z",
+  "updated_at": "2026-03-21T16:29:37Z",
+  "merged_at": "2026-03-21T16:27:52Z",
+  "body": "Update the text to reflect the passive voice grammar.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/350",
+  "draft": false
+}

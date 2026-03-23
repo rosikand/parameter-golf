@@ -1,0 +1,13 @@
+{
+  "number": 417,
+  "title": "Record: 11L XSA4 + Tight SWA + FA3 + Two-Phase TTT (3-seed mean val_bpb=1.1227)",
+  "state": "open",
+  "user": "EthanYangTW",
+  "created_at": "2026-03-22T10:40:40Z",
+  "updated_at": "2026-03-22T10:44:18Z",
+  "merged_at": null,
+  "body": "## Summary\n\nBuilt on PR #374 with FA3 Hopper attention and a novel **two-phase test-time training** approach:\n\n- **FA3 Hopper:** 84.65ms/step, enabling ~7,000 training steps in 600s\n- **Phase 1 \u2014 Norm-Only Recalibration** (50 epochs, Adam lr=0.01): Only unfreeze LayerNorm weights + scales (~22K params). Recalibrates activation distributions damaged by int6 quantization.\n- **Phase 2 \u2014 Selective-Freeze Block Adaptation** (10 epochs, SGD lr=0.005): Unfreeze last 3 blocks + norms + scales + lm_head (~7.6M params). Adapts on the recalibrated foundation while preserving SWA-averaged weights in first 8 blocks.\n\nKey insight: the two phases target different error sources (quantization artifacts vs. distribution mismatch) and are additive.\n\n## Results\n\n| Seed | val_bpb | Artifact |\n|------|---------|----------|\n| 1337 | 1.1222 | 15,758,953 bytes |\n| 42 | 1.1230 | 15,798,468 bytes |\n| 2024 | 1.1228 | 15,689,654 bytes |\n| **Mean** | **1.1227** | **All under 16MB** |\n\n- Post-SWA BPB: ~1.1414\n- TTT improvement: ~-0.019\n- Training: 84.65ms/step, ~7000 steps, 600s\n- Eval (TTT + sliding window): ~500s\n\n## Architecture\n\n- 11L, dim=512, 8 heads / 4 KV (GQA), XSA last 4 layers\n- 3x MLP relu\u00b2 + SmearGate + OrthoInit\n- Partial RoPE 16/64, LN Scale, BigramHash(2048)\n- Tight SWA, Late QAT (4%), int6 + zstd-22, 2% pruning\n- FA3 Hopper (flash_attn_interface)\n\n## Setup\n\n```bash\npip install zstandard\npip install flash_attn_3 --find-links https://windreamer.github.io/flash-attention3-wheels/cu128_torch291\n```\n\n## Command\n\n```bash\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/417",
+  "draft": false
+}

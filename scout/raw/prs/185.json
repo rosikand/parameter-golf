@@ -1,0 +1,13 @@
+{
+  "number": 185,
+  "title": "Non-record: Wider-shallower 4x768 + QAT (1xH100, 1.3043 bpb)",
+  "state": "open",
+  "user": "dttdrv",
+  "created_at": "2026-03-20T07:15:09Z",
+  "updated_at": "2026-03-22T05:18:02Z",
+  "merged_at": null,
+  "body": "## Summary\n\nNon-record submission exploring architecture and training optimizations on 1xH100 SXM 80GB (10 min wallclock).\n\n**Key result:** 1.3043 val_bpb on 1xH100 (4661 steps, 262K batch). Architecture beats baseline by 0.032 bpb at matched wallclock time.\n\n### Changes from baseline\n- **Architecture:** 4 layers x 768 dim (wider + shallower) with GQA (12h/4kv)\n- **QK gain:** 2.5 (up from 1.5) for sharper attention\n- **Optimizer:** Muon lr=0.06 with grad clip 0.5, beta2=0.99\n- **QAT:** Straight-through estimator quantization-aware training after 0.5% warmup, reducing int8 gap from ~0.03 to 0.0016 bpb\n\n### Methodology\n- 51 hyperparameter experiments on A40 (5-30 min each)\n- 4 validation runs on 1xH100 (10 min each) sweeping batch size\n- 262K batch optimal on single GPU (balances gradient quality vs step count)\n\n### 8xH100 projection\nExtrapolated performance at 20K steps: ~1.19 bpb (pending compute grant for official leaderboard run).\n\n## Files\n- `train_gpt.py` \u2014 modified training script\n- `submission.json` \u2014 metadata\n- `README.md` \u2014 detailed approach description",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/185",
+  "draft": false
+}

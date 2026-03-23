@@ -1,0 +1,13 @@
+{
+  "number": 193,
+  "title": "Add CTM tail-QAT proxy non-record snapshot",
+  "state": "open",
+  "user": "KHUCHAN",
+  "created_at": "2026-03-20T08:04:33Z",
+  "updated_at": "2026-03-20T08:04:33Z",
+  "merged_at": null,
+  "body": "## Summary\r\n- add a standalone non-record snapshot under `records/track_non_record_16mb/2026-03-20_CTMTailQAT_Proxy1xH100_KHUCHAN`\r\n- package the current best 1xH100 proxy run for the causal CTM + error-gated skip + export-matched tail-QAT recipe\r\n- include the exact `train_gpt.py` snapshot, `train.log`, `README.md`, and `submission.json`\r\n\r\n## Notes\r\n- this is intentionally **not** a main-leaderboard claim\r\n- the logged run is a `1xH100`, `10`-shard, `20 minute` proxy run\r\n- the exact logged score is `val_bpb = 1.29167890`\r\n- the logged standalone artifact is `16,009,531` bytes, so this folder is submitted as an honest non-record in-progress snapshot rather than a record attempt\r\n- the README also notes that the root script was later code-trimmed, but that exact rerun is not included here",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/193",
+  "draft": false
+}

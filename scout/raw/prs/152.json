@@ -1,0 +1,13 @@
+{
+  "number": 152,
+  "title": "Add TTT (Test-Time Training) submission: 1.1767 BPB",
+  "state": "closed",
+  "user": "timowhite88",
+  "created_at": "2026-03-20T01:53:46Z",
+  "updated_at": "2026-03-21T01:16:59Z",
+  "merged_at": null,
+  "body": "Full-model SGD adaptation during eval phase improves BPB by 3.0% over static inference with zero architecture changes.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/152",
+  "draft": false
+}

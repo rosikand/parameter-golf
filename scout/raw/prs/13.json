@@ -1,0 +1,15 @@
+{
+  "number": 13,
+  "title": "Add experiment workflow and sweep helpers",
+  "state": "closed",
+  "user": "GLDRoger",
+  "created_at": "2026-03-18T20:00:44Z",
+  "updated_at": "2026-03-20T05:41:14Z",
+  "merged_at": null,
+  "body": "## Summary\n- add a reproducible local-to-CUDA experiment workflow runbook\n- add a wave-1 sweep launcher that isolates each run into its own working directory\n- add a log parser that extracts stable metrics into a JSONL-friendly ledger format\n- document the trainer log source-dump quirk in `AGENTS.md` so future tooling does not mis-parse template strings\n\n## Why\nThis PR is meant to support a disciplined experiment pipeline for new participants who want to go from local Apple Silicon smoke tests to leaderboard-oriented CUDA sweeps without changing the baseline trainer.\n\n## What changed\n- `docs/experiment_workflow.md`\n  - local Apple Silicon setup notes\n  - verified MLX smoke result\n  - wave-1 CUDA sweep plan\n  - run isolation and ledger fields\n- `scripts/run_wave1_screen.sh`\n  - generates per-run directories under `runs/`\n  - records `command.sh` and `env.txt`\n  - supports `--dry-run` for sweep inspection\n- `scripts/extract_run_metrics.py`\n  - parses stable metric anchors from trainer logs\n  - emits one JSON object per run\n  - ignores the trainer's source-dump prefix by anchoring on runtime metric lines\n- `README.md`\n  - links the new experiment workflow from the Apple Silicon getting-started section\n- `.gitignore`\n  - ignores `runs/`\n- `AGENTS.md`\n  - records the log parsing surprise for future agents\n\n## Verification\n```bash\nbash -n scripts/run_wave1_screen.sh\npython3 -m py_compile scripts/extract_run_metrics.py\nbash scripts/run_wave1_screen.sh --dry-run\npython3 scripts/extract_run_metrics.py logs/mlx_smoke.txt\npython3 scripts/extract_run_metrics.py records/track_10min_16mb/2026-03-17_NaiveBaseline/train.log\n```\n\n## Notes\n- This PR intentionally does not change `train_gpt.py` or `train_gpt_mlx.py`.\n- The sweep defaults target 1xH100 breadth screening first; 8xH100 confirmation is still the next step for real leaderboard attempts.\n",
+  "labels": [
+    "not ready for review"
+  ],
+  "url": "https://github.com/openai/parameter-golf/pull/13",
+  "draft": true
+}

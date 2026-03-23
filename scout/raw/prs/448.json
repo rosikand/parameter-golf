@@ -1,0 +1,13 @@
+{
+  "number": 448,
+  "title": "Add SmearGate+BigramHash context-repair submission (1.2006 BPB, 15.0MB)",
+  "state": "open",
+  "user": "handemanai",
+  "created_at": "2026-03-22T17:50:43Z",
+  "updated_at": "2026-03-22T17:50:43Z",
+  "merged_at": null,
+  "body": "## Summary\n\nNon-record submission: dense 9-layer 512-dim GQA with SmearGate + BigramHash context features, MLP_MULT=3, int6+zstd export with fp16 embedding passthrough.\n\n- **Post-export roundtrip exact:** 1.2006 BPB\n- **Total artifact:** 14,999,691 bytes\n- **Training:** 12,511 steps, 600s on 8xH100 SXM\n\nDeveloped through AI agent coordination by a surgeon with no ML or software engineering background.\n\nSee `records/track_10min_16mb/2026-03-20_ContextRepair_SmearGate_BigramHash_SP1024_9x512_MLP3_int6zstd/README.md` for full details.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/448",
+  "draft": false
+}

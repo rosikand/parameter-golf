@@ -1,0 +1,13 @@
+{
+  "number": 457,
+  "title": "11L + XSA + VRL + SWA + seq4096 + cross-doc TTT - val_bpb 1.1839",
+  "state": "open",
+  "user": "carlesonielfa",
+  "created_at": "2026-03-22T20:13:53Z",
+  "updated_at": "2026-03-22T20:13:53Z",
+  "merged_at": null,
+  "body": "Stacks several wins on the 11L dim=512 base:\r\n\r\n- **seq_len=4096**: long-context training (single largest contributor)\r\n- **Exclusive Self-Attention (XSA)**: removes value-aligned component from attention output on deepest 4 layers\r\n- **Value Residual Learning (VRL)**: per-layer learnable residual from layer-0 value vectors\r\n- **SmearGate**: learned token-blending gate at embedding layer\r\n- **SWA**: 24 checkpoints averaged from last 40% of warmdown\r\n- **Cross-doc TTT**: rank-8 LoRA adapters trained per document at eval time\r\n- **Warmdown-QAT**: near-zero quantization penalty\r\n\r\nResults (seed=1337, 8xH100, 600s):\r\n- post-quant (int8+zlib): 1.2192\r\n- post-quant + TTT: **1.1839**\r\n- model size: 15.35 MB",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/457",
+  "draft": false
+}

@@ -1,0 +1,13 @@
+{
+  "number": 328,
+  "title": "Non-record: MLX prototyping harness with validated technique stack (val_bpb=1.9588, Mac)",
+  "state": "open",
+  "user": "kingjulio8238",
+  "created_at": "2026-03-21T08:59:26Z",
+  "updated_at": "2026-03-21T13:02:06Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\nNon-record submission \u2014 Mac MLX prototyping only, pending H100 validation.\r\nSubmitting to document systematic technique exploration and support compute grant application.\r\n\r\n**val_bpb: 1.9588** (14L\u00d7416d, 750 steps, 10 shards, int8+zlib, full FineWeb val, Apple Silicon)\r\n\r\n## Approach\r\n\r\n25+ MLX experiments validating leaderboard techniques, identifying what works and what doesn't.\r\n\r\n### Implemented & Validated\r\n- 10-14 layer architectures with KV2 (GQA)\r\n- MLP 3x expansion (-0.013 BPB vs MLP 2x)\r\n- Int6 per-row quantization + FP16 tied embedding passthrough\r\n- Sliding window eval (stride-64, compiled forward)\r\n- Muon decoupled weight decay (0.02)\r\n- Overtone spectral embedding init (SVD power-law)\r\n- Phase-transition resid_mix initialization\r\n- Multi-eval mode (multiple eval configs per training run)\r\n\r\n### Key Finding\r\nFP16 embed + Muon WD achieves **near-zero quantization gap (0.001 BPB)**. Post-quant \u2248 pre-quant.\r\n\r\n### Negative Results (documented)\r\n| Technique | Result | Why |\r\n|-----------|--------|-----|\r\n| Depth recurrence + int6 | +0.61 BPB quant gap | Shared weights amplify quantization error |\r\n| DenseFormer DWA | +0.003 regression | No benefit at this scale |\r\n| Eval-time loop scaling | +1.15 regression | Model calibrated to exact loop count |\r\n| NTK-RoPE extrapolation (1024\u21924096) | +0.06 regression | Must train at target seq_len |\r\n\r\n## Results\r\n\r\n| Config | Params | Compressed | Val BPB | Int8 BPB |\r\n|--------|--------|-----------|---------|----------|\r\n| 14L\u00d7416d KV2 | 16.2M | 12.3MB | 1.9578 | 1.9588 |\r\n| 10L\u00d7512d + all tricks | 19.0M | 10.8MB | 1.9800 | 1.9808 |\r\n\r\n## Test plan\r\n- [x] train_gpt_mlx.py compiles and runs from records folder\r\n- [x] Full FineWeb val evaluation (62M tokens)\r\n- [x] Int8+zlib roundtrip verified\r\n- [x] Artifact under 16MB (12.3MB)\r\n- [ ] H100 validation (pending compute grant)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/328",
+  "draft": false
+}

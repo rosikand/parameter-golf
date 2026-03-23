@@ -1,0 +1,13 @@
+{
+  "number": 449,
+  "title": "11L Gated XSA + Cosine LN Scale + Int6",
+  "state": "open",
+  "user": "eb1386",
+  "created_at": "2026-03-22T18:08:29Z",
+  "updated_at": "2026-03-22T18:08:29Z",
+  "merged_at": null,
+  "body": "## Summary\n\n11-layer int6 model with gated exclusive self-attention, cosine LN scale decay, SmearGate, BigramHash, EMA, late QAT, partial RoPE (16 dims), and stride-64 sliding window eval. 26.8M params under 16MB with zstd-22.\n\nXSA uses a learned per-layer sigmoid gate to control how much of the self-value projection gets removed, instead of the standard binary on/off. Cosine LN scale gives a smoother depth-dependent dampening than inverse sqrt. Both are zero-cost additions that let the model tune its own layer dynamics during training.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/449",
+  "draft": false
+}

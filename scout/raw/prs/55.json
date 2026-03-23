@@ -1,0 +1,13 @@
+{
+  "number": 55,
+  "title": "Add RecursoLM v0 non-record submission scaffold",
+  "state": "open",
+  "user": "AVINASH0052",
+  "created_at": "2026-03-19T06:33:37Z",
+  "updated_at": "2026-03-19T06:33:37Z",
+  "merged_at": null,
+  "body": "- Concrete model architecture and training pipeline implemented\r\n- Non-record submission folder added\r\n- Run scripts and experiment tracker included\r\n- Benchmark logs will be added after first H100 runs",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/55",
+  "draft": true
+}

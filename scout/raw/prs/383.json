@@ -1,0 +1,13 @@
+{
+  "number": 383,
+  "title": "Record: 11L Full Stack + XSA4 + Tight SWA + Late QAT (val_bpb=1.1320)",
+  "state": "open",
+  "user": "joelnishanth",
+  "created_at": "2026-03-22T01:07:59Z",
+  "updated_at": "2026-03-22T01:07:59Z",
+  "merged_at": null,
+  "body": "## Record: 11L Full Stack + XSA4 + Tight SWA + Late QAT\n\n**val_bpb: 1.1320** (sliding window, stride=64) | Artifact: 15,753,020 bytes | 8xH100 SXM\n\n## Architecture\n- 11 transformer layers, 512-dim, 8 heads (4 KV heads, GQA)\n- 3x MLP expansion with relu-squared activation\n- XSA on last 4 layers (GQA-aware, zero-alloc)\n- Partial RoPE (16/64 dims) + NTK-aware scaling\n- LN Scale Factor 1/sqrt(layer_idx+1)\n- U-Net skip connections (5 encoder, 6 decoder)\n- SmearGate + BigramHash (2048 buckets, dim=128)\n- Shared Value Embedding (dim=128, layers 9,10)\n- FlashAttention 3 (with FA2 fallback)\n- Orthogonal init with proj scaling\n- Logit softcap 30.0, tied embeddings\n\n## Training\n- Muon: lr=0.025, momentum=0.99, WD=0.04\n- AdamW embeddings: lr=0.035, scalars: lr=0.025, WD=0.04\n- Gradient clip: 0.3\n- Batch: 786,432 tokens/step, seq_len=2048\n- Warmdown: 3000 iters (wallclock-based)\n- Tight SWA: every 50 steps when scale<0.2 (12 checkpoints)\n- Late QAT: STE int6 when LR scale<0.1\n\n## Quantization\n- Int6 per-row for MLP + attention weights\n- Int8 per-row for embeddings\n- zstd level 22 compression\n\n## Results\n- 6,374 steps in 600s at 94ms/step\n- Pre-quant val_bpb: 1.1475\n- Post-SWA val_bpb: 1.1475 (zero SWA penalty)\n- Quant gap: ~0.008\n- **Sliding window val_bpb: 1.1320**\n- Artifact size: 15,753,020 bytes\n\n## Run\n```bash\nDATA_PATH=../../../data/datasets/fineweb10B_sp1024/ TOKENIZER_PATH=../../../data/tokenizers/fineweb_1024_bpe.model VOCAB_SIZE=1024 torchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\n\u2014 [Joel Nishanth](https://offlyn.ai) \u00b7 [offlyn.AI](https://offlyn.ai)\n\nMade with [Cursor](https://cursor.com)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/383",
+  "draft": false
+}
