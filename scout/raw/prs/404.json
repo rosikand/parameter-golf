@@ -9,5 +9,19 @@
   "body": "",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/404",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "yashward001",
+      "body": "\r\n\r\nNon-record submission. Local MLX smoke test confirming the full pipeline works end-to-end on Apple Silicon. 10-layer, 3\u00d7 MLP, int6 quantization, zlib-9 compression. 200 iterations only (val_bpb 2.3517) \u2014 not a competitive score. Full H100 run planned once compute grant is approved. Planned improvements: zstd-22, sliding window eval, Muon WD, SmearGate, BigramHash, SWA.",
+      "created_at": "2026-03-22T05:31:27Z",
+      "updated_at": "2026-03-22T05:31:27Z"
+    },
+    {
+      "user": "yashward001",
+      "body": "## Approach summary\r\n\r\n**Architecture:** 10 layers, 512 dim, 8 heads (4 KV heads GQA), 3\u00d7 MLP expansion (hidden=1536), relu\u00b2 activation, U-Net skip connections, tied embeddings.\r\n\r\n**Compression:** int6 per-row quantization on all block weights, fp16 tied embeddings, zlib-9. Estimated artifact ~14.6MB.\r\n\r\n**Current result:** val_bpb 2.3517 at 200 iterations (MLX smoke test on Apple Silicon \u2014 not competitive, pipeline validation only).\r\n\r\n**Planned improvements in order:**\r\n1. zlib-9 \u2192 zstd-22 (~730KB savings, frees headroom)\r\n2. Sliding window eval stride=64 (~0.034 bpb free)\r\n3. Muon weight decay WD=0.04 (improves int6 quantization quality)\r\n4. SmearGate (learned prev/curr token blend, ~512 params)\r\n5. BigramHash embeddings 4096\u219210240 buckets (~0.002 bpb)\r\n6. SWA over last 40% of warmdown every 50 steps\r\n7. Mixed int5 MLP / int6 attn QAT + 11th layer\r\n\r\n**Research directions:** Asymmetric MLP expansion (early layers 2\u00d7, late layers 4\u00d7); SWA+QAT interaction (whether averaged checkpoints quantize better than final checkpoint).\r\n\r\nFull H100 runs pending compute grant.",
+      "created_at": "2026-03-22T06:25:55Z",
+      "updated_at": "2026-03-22T06:25:55Z"
+    }
+  ]
 }

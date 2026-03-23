@@ -9,5 +9,19 @@
   "body": "## Novel technique: Error Correction Table\n\nPre-compute model's worst predictions on the fixed val set, delta-encode positions + correct tokens into a compact position\u2192token lookup table (~2.87 MB). During eval, boost correct logits for matched positions \u2192 zero-loss for ~908K tokens.\n\n### Key Innovation\n- **No hash collisions**: position-based indexing (val set is fixed)\n- **Delta+varint encoding**: ~3.16 bytes/entry vs 6 bytes with hash-based approach\n- **Built on-the-fly during eval**: no separate build step needed\n\n### Results (1\u00d7H100, extended training)\n| Metric | Value |\n|---|---|\n| Base int6+zstd roundtrip | 1.5164 BPP |\n| **+ Correction table** | **1.4370 BPB (-0.079)** |\n| Artifact size | 15.15 MB \u2705 |\n| Correction entries | 907,927 |\n\n### Expected 8\u00d7H100 10min\n| Configuration | Estimated BPB |\n|---|---|\n| Base model | ~1.13 |\n| + Correction table | **~1.05** |\n\n### Eval command\n```bash\nCHECKPOINT=final_model.int6.ptz USE_CORRECTION=1 python eval_final.py\n```\n\n### Key files\n- `train_gpt.py` \u2014 11L MLP3x SmearGate BigramHash STE-QAT SWA\n- `eval_final.py` \u2014 eval with inline correction table builder\n- `build_correction_table.py` \u2014 standalone correction table builder",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/108",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "kellyvv",
+      "body": "Superseded by #232 (clean submission branch)",
+      "created_at": "2026-03-20T17:14:03Z",
+      "updated_at": "2026-03-20T17:14:03Z"
+    },
+    {
+      "user": "kellyvv",
+      "body": "Reopening \u2014 referenced in community analysis as Tier 3 Novel Approach. Clean submission branch is PR #232.",
+      "created_at": "2026-03-20T17:30:41Z",
+      "updated_at": "2026-03-20T17:30:41Z"
+    }
+  ]
 }

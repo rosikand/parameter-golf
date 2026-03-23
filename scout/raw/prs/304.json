@@ -9,5 +9,6 @@
   "body": "## Summary\n\nNon-record submission exploring three eval-time techniques stacked on the #1 training recipe (Int5-MLP + BigramHash + SWA by @thwu1):\n\n1. **Quantization-Aware Training (QAT):** STE fake-quantization during training matching int5/int6 export format\n2. **Neural Cache:** Hidden-state similarity lookup with logaddexp interpolation during sliding window eval\n3. **LoRA Test-Time Training:** Per-document rank-8 LoRA adaptation with entropy-gated updates\n\n## Results\n\n| Seed | Pre-quant val_bpb | Post-quant sliding val_bpb | Steps |\n|------|-------------------|---------------------------|-------|\n| 1337 | 1.1739 | 1.4245 | 5109 |\n\n## Known Issues\n\nThe QAT implementation has a mismatch: STE uses symmetric clipping while the export uses percentile-based per-row scaling. This causes a 0.25 BPB quantization penalty instead of the expected ~0.02. Submitting as non-record to document the approach \u2014 the neural cache and LoRA TTT implementations are validated and working, and will show gains once the QAT bug is fixed.\n\n## Test plan\n- [x] Full 8xH100 training run completed (5109 steps, 600s)\n- [x] SWA applied (24 checkpoints)\n- [x] Sliding window eval completed on 1xH100\n- [x] Neural cache eval validated on H100\n- [ ] Fix QAT export mismatch\n- [ ] 3+ seeds for statistical significance",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/304",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

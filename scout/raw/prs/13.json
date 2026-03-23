@@ -11,5 +11,13 @@
     "not ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/13",
-  "draft": true
+  "draft": true,
+  "comments": [
+    {
+      "user": "GLDRoger",
+      "body": "A fresh records-only submission PR is being opened for the latest valid result, because the repo rules require submission PRs to add only a new `records/...` folder. Latest validated run: `final_sliding_window_exact val_bpb: 1.17334285`, `final_quant_zlib_roundtrip_exact val_bpb: 1.20752367`, `Total submission size quant+zlib: 15859700`.",
+      "created_at": "2026-03-20T05:41:14Z",
+      "updated_at": "2026-03-20T05:41:14Z"
+    }
+  ]
 }

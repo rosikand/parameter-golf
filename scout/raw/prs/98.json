@@ -11,5 +11,19 @@
     "not ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/98",
-  "draft": true
+  "draft": true,
+  "comments": [
+    {
+      "user": "zenithlight",
+      "body": "I've been looking in this direction too. The Moonshot researchers find that vanilla Muon outperforms weight decay (validation loss) in the Chinchilla regime, but weight decay outperforms in the overtrain regime. The authors similarly use a weight decay of 0.1. https://arxiv.org/html/2502.16982v1#S2\r\n\r\nWith ~17M parameters, the Chinchilla optimal token count is 340M. Most of my smoke test runs see well over 1 billion parameters, and my full run will likely see many more, which supports the idea that training would benefit from weight decay.",
+      "created_at": "2026-03-19T19:53:58Z",
+      "updated_at": "2026-03-19T19:53:58Z"
+    },
+    {
+      "user": "leloykun",
+      "body": "The main mechanism seems to be that if you're doing steepest descent under the norm `|| * ||`, then (decoupled) weight decay of `\\lambda` upper bounds your weight norms by `1 / \\lambda` (tho this is usually tight in practice). So e.g., if you're using Muon, then you're doing steepest descent under the spectral norm, and weight decay `\\lambda` constrains your singular values to be within the radius `1 / \\lambda`. And if you're using AdamW, then this constrains your weight _entries_ to have max abs value `1 / \\lambda`. Either way, weight decay causes weight entries to be naturally small. And if they're naturally small the lower their entropy is, the more compressible they are.",
+      "created_at": "2026-03-19T22:25:50Z",
+      "updated_at": "2026-03-19T22:25:50Z"
+    }
+  ]
 }

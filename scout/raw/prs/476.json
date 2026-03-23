@@ -9,5 +9,6 @@
   "body": "Multi-kernel language model with 5 geometric readout heads (Spherical, Gabor, Laplacian, Tucker GL, Linear) in 128-dim St\u00e4ckel coordinate space. BigramHash(10240), ComplexSSM, 13.6M params, 10.8 MB artifact, 594s on 8\u00d7H100.\r\n\r\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/476",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

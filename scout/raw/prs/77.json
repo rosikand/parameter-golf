@@ -11,5 +11,25 @@
     "record submission ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/77",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "0hq",
+      "body": "Awesome! I'll try to review and get this in ASAP.",
+      "created_at": "2026-03-19T16:53:12Z",
+      "updated_at": "2026-03-19T16:53:12Z"
+    },
+    {
+      "user": "evan-conway",
+      "body": "This is really cool! One interesting thing to experiment with would be changing the training dataset, since this helps remove some of the train-test mismatch issues you get from doing that. In NanoChat there's been some success using [ClimbMix](https://arxiv.org/abs/2504.13161), so that'd be fun to test out. Karpathy has a shuffle [here](https://huggingface.co/datasets/karpathy/climbmix-400b-shuffle).",
+      "created_at": "2026-03-19T17:19:04Z",
+      "updated_at": "2026-03-19T17:19:04Z"
+    },
+    {
+      "user": "FI-Mihej",
+      "body": "@0hq Is it intentional that this PR not only creates a subfolder with the code, but also globally modifies the reference `train_gpt.py` in the root of the repository for everyone else?\r\n",
+      "created_at": "2026-03-20T01:56:51Z",
+      "updated_at": "2026-03-20T01:57:32Z"
+    }
+  ]
 }

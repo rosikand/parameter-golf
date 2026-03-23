@@ -9,5 +9,13 @@
   "body": "## Crystal Curriculum Entry\n\n**Key idea:** TF-IDF-based curriculum learning via the Crystallizer module. Instead of training on random FineWeb sequences, we score candidate batches by information density (token entropy via unigram statistics) and oversample the densest ones.\n\n### Changes from baseline\n- **Crystallizer**: lightweight TF-IDF sequence scorer (~2ms/batch overhead)\n- **10 transformer layers** (up from 9)\n- **Muon weight decay** (0.02) for better quantization/compression\n- **Curriculum schedule**: dense data first, linearly decay to uniform sampling\n\n### Local validation (1\u00d7 H100 SXM, 10 min)\n| Metric | Baseline | Crystal Curriculum |\n|---|---|---|\n| val_bpb (LoRA TTT) | 1.3049 | **1.2988** |\n| val_bpb (int8+zlib) | 1.3369 | **1.3278** |\n| Steps completed | 1,298 | 1,250 |\n| Model size (int8+zlib) | 13.4MB | 13.8MB |\n\nThe crystallizer beat the baseline on every metric despite running 48 fewer steps (overhead from 4\u00d7 batch scoring). We expect a larger margin on 8\u00d7H100 where the crystallizer compounds its per-step advantage over 10,000+ steps.\n\n### Files\n- `train_gpt.py` \u2014 single-file entry with Crystallizer class\n- `README.md` \u2014 technique description\n- `submission.json` \u2014 metadata\n\nAuthor: Bee Bytez (jamesrziggy)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/242",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "jamesrziggy",
+      "body": "Nice waste of money",
+      "created_at": "2026-03-22T06:33:28Z",
+      "updated_at": "2026-03-22T06:33:28Z"
+    }
+  ]
 }

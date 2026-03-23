@@ -9,5 +9,19 @@
   "body": "## Summary\n- Adds `lzma6` record for the `10min_16mb` track\n- val_bpb: 1.17217075, val_loss: 1.97916121\n- 12196 steps, artifact size 15.3MB\n- Author: lee101\n\n## Details\n- Seed 1337 result included\n- INT8 quantized model with LZMA compression",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/329",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Point the experiment manifest at the new LZMA trainer**\n\nThe manifest still tells reruns to execute `records/track_10min_16mb/2026-03-19_SlidingWindow_FP16Emb_10L_MuonWD_OvertoneInit/train_gpt.py`, but that script hardcodes `zlib.compress(...)` and logs `final_int8_zlib_roundtrip_exact` (`.../train_gpt.py:1228-1246,1287-1291`). In other words, replaying this `experiment.json` cannot reproduce the LZMA-6 artifact or metric recorded in `records/lzma6/result.json`, so the included reproduction metadata is currently wrong.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-21T09:04:20Z",
+      "updated_at": "2026-03-21T09:04:20Z"
+    },
+    {
+      "user": "lee101",
+      "body": "i do have the model for this hmm its an old run here though i may still have a better submission coming :)",
+      "created_at": "2026-03-21T09:05:14Z",
+      "updated_at": "2026-03-21T09:05:14Z"
+    }
+  ]
 }

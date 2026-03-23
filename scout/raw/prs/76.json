@@ -11,5 +11,31 @@
     "record submission ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/76",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "unixmadtoonslab",
+      "body": "This submission is ready for review. Merge conflicts have been resolved.\n\n**val_bpb: 1.1599** (3-seed mean on 8xH100 SXM, 10 min)\n\nThe 'not ready for review' label is stale \u2014 I don't have permissions to remove it. This is a complete submission with validated results.",
+      "created_at": "2026-03-20T07:20:43Z",
+      "updated_at": "2026-03-20T07:20:43Z"
+    },
+    {
+      "user": "unixmadtoonslab",
+      "body": "### Compute Credits Feedback\n\nI want to flag a significant issue with the compute credit program for this challenge.\n\nOpenAI advertises **$1,000,000 in compute credits** to help participants. I applied for credits through the official form requesting $500 \u2014 a modest amount for a competition that requires 8xH100 SXM pods at ~$20/hr. I received **$25**.\n\n$25 buys roughly **one single training run** on 8xH100s. That's not enough to even validate a baseline, let alone iterate on ideas. For context, I've spent **over $300 out of my own pocket** just to develop and test the techniques in this submission (QAT scheduling, int6 quantization, ablation studies across dozens of runs).\n\nI understand compute is expensive and there are many participants, but $25 out of a $1M pool feels disconnected from the stated goal of helping people \"get started training their models.\" A single 8xH100 validation run costs more than the entire grant.\n\nIs this the level of support OpenAI intended for active participants who are pushing the leaderboard? I'd appreciate clarity on the credit allocation process, or an increase that would allow meaningful experimentation.",
+      "created_at": "2026-03-20T10:08:57Z",
+      "updated_at": "2026-03-20T10:08:57Z"
+    },
+    {
+      "user": "cocohearts",
+      "body": "@unixmadtoonslab we'll be handing out higher compute credit grants shortly",
+      "created_at": "2026-03-21T16:33:07Z",
+      "updated_at": "2026-03-21T16:33:07Z"
+    },
+    {
+      "user": "cocohearts",
+      "body": "@unixmadtoonslab pls clean ur diff to only include sota submission",
+      "created_at": "2026-03-21T16:34:10Z",
+      "updated_at": "2026-03-21T16:34:10Z"
+    }
+  ]
 }

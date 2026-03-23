@@ -9,5 +9,6 @@
   "body": "## Summary\n- add a repo-local `Dockerfile.local-gpu` for local NVIDIA GPU iteration on consumer/workstation Linux machines\n- document a local single-GPU Docker workflow in the README\n- pin the helper image to `torch==2.10.0` and include `build-essential` because the current trainer uses features and local Triton/Inductor compilation paths that fail on the stock 2.4.1 runtime image\n\n## Why\nThe repo already has a friendly local Apple Silicon path and a remote Runpod/H100 path.\nThis PR adds a middle path for contributors who want to validate trainer compatibility and run short local ablations on an existing NVIDIA GPU before spending cloud credits.\n\n## Notes\n- this is explicitly an iteration/compatibility workflow, not a change to the official leaderboard rules\n- the helper image is intentionally narrow and lives in the repo so the local command in the README is copy/pasteable\n- I verified the containerized runtime on a local RTX 4070 path while debugging torch/triton compatibility issues around the current trainer\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/227",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

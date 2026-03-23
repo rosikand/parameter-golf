@@ -9,5 +9,6 @@
   "body": "Built a non-record submission around the strongest branch found during our iteration cycle: a dense 10-layer transformer using the provided SP-1024 tokenizer, 2048-token train/eval context, and sliding-window evaluation at stride 64. The code starts from the strong 2026-03-19 dense recipe and keeps the most reliable components: tied embeddings, grouped-query attention, Muon with decoupled weight decay, spectral tied-embedding initialization, residual mixing, post-training int8 quantization, and zlib compression.\r\n\r\nThe main contribution of this submission is empirical: we used a structured ablation loop to narrow the search space and identify which ideas were actually helping in our setup. The dense 2048/64 branch reached a best completed `final_int8_zlib_roundtrip_exact` score of `1.29280874` BPB at `13,039,699` total bytes. Several neighboring ideas regressed relative to that baseline, including 4096-token context, lower matrix LR, longer warmdown, recurrent/shared-depth variants, and a first LoRA TTT attempt. We therefore packaged the best dense branch plus the negative-result ablations, since they meaningfully document the search process and help guide future work. An 8xH100 run of the same dense 2048/64 recipe is also in progress and early validation trends suggest it is the right direction for a future record attempt.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/460",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

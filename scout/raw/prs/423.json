@@ -9,5 +9,6 @@
   "body": "key features\r\n1. Recurrent transformer style architeure\r\n2.  low rank - attention projections\r\n3. rotary positional emebeddings (RoPE)\r\n4. SwiGLU feed forward network\r\n5. token frequency weighted loss\r\n6. curriculum training (64-256)\r\n7. adaptive Ema smoothing",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/423",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

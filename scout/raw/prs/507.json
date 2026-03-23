@@ -1,0 +1,14 @@
+{
+  "number": 507,
+  "title": "Record: 1.1558 BPB \u2014 11L U-Net + Catalytic + SwiGLU + SW64",
+  "state": "open",
+  "user": "skarakulak",
+  "created_at": "2026-03-23T05:46:52Z",
+  "updated_at": "2026-03-23T05:46:52Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **val_bpb: 1.1558** (sliding window, stride=64)\n- Artifact: 15.1 MB (15,192,709 bytes)\n- 8\u00d7H100 SXM, 6,898 steps in 600s (87ms/step)\n\n## Techniques\n\n- 11 transformer layers with **gated U-Net skip connections** (sigmoid-gated encoder\u2192decoder blending)\n- **Catalytic residuals** (PR #450): learned per-dim gates on attn/MLP outputs, init=1.0\n- **SwiGLU MLP** with 3\u00d7 expansion\n- **Value residual** (ResFormer): first-layer V blended into all subsequent layers\n- **LN scale dampening**: 1/\u221a(layer_idx+1) on RMSNorm inputs\n- **Decoder LR multiplier** (2\u00d7) for Muon and Adam\n- **Int5/Int6 mixed quantization** + zstd-22 compression\n- **Sliding window eval** (stride=64, seq_len=1024)\n- BigramHash (4096 buckets), partial RoPE (25%), XSA last 4 layers, gated attention\n- EMA (decay=0.9985), Muon (momentum=0.99, WD=0.04)\n\n## Results\n\n| Seed | val_loss | val_bpb | Steps | ms/step |\n|------|----------|---------|-------|---------|\n| 1337 | 1.9516 | 1.1558 | 6898 | 87.0 |\n\nPre-quant EMA: 1.1606 \u2192 Post-quant int5/6+zstd: 1.1723 \u2192 Sliding window: **1.1558**\n\n## Files\n\n- `train_gpt.py` \u2014 self-contained training + eval script\n- `submission.json` \u2014 structured results\n- `train_seed1337.log` \u2014 full training log",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/507",
+  "draft": false,
+  "comments": []
+}

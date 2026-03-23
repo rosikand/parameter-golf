@@ -9,5 +9,6 @@
   "body": "10-layer Transformer with ReLU\u00b2 MLP 3x, BigramHash embeddings, mixed INT6 quantization with STE, Stochastic Weight Averaging, and zstd-22 compression.\r\n\r\n- val_bpb: 1.2421 (post-roundtrip)\r\n- Artifact: 13.28 MB\r\n- Training: 11,070 steps in 600s on 8xH100 SXM",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/370",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

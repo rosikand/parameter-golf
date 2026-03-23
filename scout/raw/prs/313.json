@@ -9,5 +9,6 @@
   "body": "This PR adds a non-record submission under track_10min_16mb.\r\n\r\nSummary:\r\nThis submission improves over a local MLX baseline (~1.87 bpb) and demonstrates that schedule tuning alone yields significant gains under the 16MB constraint.\r\n\r\n- baseline architecture\r\n- no tokenizer or dataset changes\r\n- schedule tuning only:\r\n  - WARMDOWN_ITERS=3600\r\n  - MATRIX_LR=0.06\r\n\r\nResult:\r\n- final int8+zlib roundtrip val_bpb: 1.7232\r\n- total submission size int8+zlib: 8,397,395 bytes\r\n\r\nHardware:\r\n- 1x A40\r\n- 600s wallclock-capped run\r\n\r\nThis is a reproducible non-record submission demonstrating a simple improvement from training schedule tuning under the 16MB constraint.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/313",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

@@ -9,5 +9,13 @@
   "body": "## Summary\r\nNew `track_10min_16mb` record submission using a 4096-vocab SentencePiece tokenizer with int6-range quantization (levels=31 in int8 container) and zstd compression.\r\n\r\n- **val_bpb (exact):** `1.17528238`\r\n- **val_loss (exact):** `2.70393625`\r\n- **Submission size:** `14,672,752` bytes (compliant, under 16MB)\r\n\r\n## Key Techniques\r\n1. **SP4096 tokenizer** \u2014 4096-vocab BPE\r\n2. **QUANT_LEVELS=31** \u2014 int6-range in int8 container, improves zstd compressibility\r\n3. **zstd level 22** \u2014 stronger compression than zlib\r\n4. **FP16 tied embeddings** \u2014 tok_emb.weight kept in fp16 passthrough\r\n5. **Sliding window eval** \u2014 stride=64, every token scored with 960+ context\r\n6. **Overtone spectral init** + **Phase-transition residual mixing**\r\n\r\n## Architecture\r\n- NUM_LAYERS=10, MODEL_DIM=496, MLP_MULT=2\r\n- GQA: 8 heads, 4 KV heads, vocab=4096, ~19M params\r\n\r\n## Results\r\n| Seed | val_bpb | Size |\r\n|------|---------|------|\r\n| 1337 | 1.17528238 | 14,672,752 bytes |",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/217",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "kshitizz36",
+      "body": "@0hq\r\nWould appreciate a review.\r\n",
+      "created_at": "2026-03-20T16:51:57Z",
+      "updated_at": "2026-03-20T16:51:57Z"
+    }
+  ]
 }

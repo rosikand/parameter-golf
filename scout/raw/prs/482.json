@@ -9,5 +9,25 @@
   "body": "## Summary\n- **val_bpb: 1.1522** (sliding window stride=64, post int5/int6+zstd quantization roundtrip)\n- 10 layers, 512 dim, 8 heads / 4 KV heads, tied embeddings\n- Artifact: 15,384,232 bytes (15.38 MB)\n\n## Novel Contributions\n\n### Count-Initialized Exact Bigram Logit Head\nA 1024x1024 lookup table initialized from corpus bigram transition probabilities (B[a,b] = log p(b|a) - log p(b)) before training begins. Provides a strong Markov prior from step 0 \u2014 the neural network only needs to refine it. Applied BEFORE logit softcap.\n\n### Int4 Nibble Packing\nCustom pack_i4/unpack_i4 functions pack signed int4 values into uint8 bytes (two values per byte). Applied to the bigram logit table, halving its storage from ~1MB to ~524KB.\n\n## Adopted Techniques\n- XSA on last 4 layers (arxiv:2603.09078)\n- Partial RoPE 16/64 dims\n- LN Scale 1/sqrt(layer+1)\n- Higher LR (0.025)\n- SmearGate, OrthoInit, U-Net skips, SWA, int5/int6 + zstd-22\n\n## Results\nSteps: 6267 at 95.75 ms/step (8xH100 SXM, 600s wallclock)\nPre-SWA val_bpb: 1.1563\nPost-SWA+quant val_bpb: 1.1522\nArtifact: 15.38 MB (0.62 MB headroom)\n\n## Test plan\n- [x] Verified artifact under 16MB limit\n- [x] Post-quant roundtrip bpb verified\n- [x] 8xH100 SXM, 600s wallclock\n\nBuilt on baseline by @thwu1 (PR #180).",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/482",
-  "draft": true
+  "draft": true,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "`Hyperparameters.bigram_logit_head` defaults to 0, but this record/README/submission claims the count-initialized BigramLogitHead is part of the default run. With the current default, the bigram head (and count-based init + int4 packing) won\u2019t be active unless `BIGRAM_LOGIT_HEAD=1` is set, which makes the provided run command non-reproducible as written. Either flip the default to 1 for this record script, or update the README run command (and/or submission blurb) to explicitly set `BIGRAM_LOGIT_HEAD=1`.",
+      "created_at": "2026-03-23T00:32:31Z",
+      "updated_at": "2026-03-23T00:32:32Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The README says \u201cAll parameters are set as defaults\u2026 No env vars needed\u201d, but `train_gpt.py` has `BIGRAM_LOGIT_HEAD` defaulting to 0. As a result, running the documented command won\u2019t enable the count-initialized exact bigram logit head unless an env var is provided (or the script default is changed). Please update the README command/notes to reflect the needed env var(s), or change the script defaults to match the documented configuration.",
+      "created_at": "2026-03-23T00:32:31Z",
+      "updated_at": "2026-03-23T00:32:32Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "A few log lines hardcode \"int8+zlib\" / \"final_int8_zlib_roundtrip\" even though this script may actually use zstd (and uses mixed int5/int6 + optional int4 packed tensors). This makes the logs misleading when `_COMPRESSOR == 'zstd'`. Consider incorporating `{_COMPRESSOR}` (and the actual quant scheme) into these log message strings so the recorded artifact details match what was produced.\n```suggestion\n    quant_scheme = \"mixed_int6\"  # matches dequantize_mixed_int6 / mixed int5/6 (+ optional int4) scheme\n    log0(\n        f\"final_{quant_scheme}_{_COMPRESSOR}_roundtrip \"\n        f\"val_loss:{q_val_loss:.4f} val_bpb:{q_val_bpb:.4f} \"\n        f\"eval_time:{1000.0 * (time.perf_counter() - t_qeval):.0f}ms\"\n    )\n    log0(\n        f\"final_{quant_scheme}_{_COMPRESSOR}_roundtrip_exact \"\n        f\"val_loss:{q_val_loss:.8f} val_bpb:{q_val_bpb:.8f}\"\n    )\n```",
+      "created_at": "2026-03-23T00:32:31Z",
+      "updated_at": "2026-03-23T00:32:32Z"
+    }
+  ]
 }

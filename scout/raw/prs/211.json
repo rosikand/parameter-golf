@@ -9,5 +9,6 @@
   "body": "- Adds `records/track_10min_16mb/2026-03-20_Wavelet_Weighted_Widenet` submission directory\r\n- README documenting the WWW architecture: 12-layer ternary MLP transformer with VQ compression (~1 bit/param), achieving val_bpb=1.1719\r\n- submission.json with competition metadata\r\n- Training log and script copy",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/211",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

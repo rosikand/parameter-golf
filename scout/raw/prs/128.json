@@ -9,5 +9,43 @@
   "body": "## Summary\n\n**val_bpb=1.1594** (post int6+zstd quantization roundtrip, sliding window eval stride=64 on 8xH100 SXM).\n\nSix-technique stack:\n1. **Int6 per-row quantization + zstd-22** \u2014 saves ~4MB vs int8+zlib\n2. **3x MLP expansion** (hidden=1536) \u2014 enabled by int6 savings\n3. **STE fake int6 QAT** \u2014 trains weights to survive 6-bit quantization\n4. **fp16 tied embedding passthrough** \u2014 no embedding quantization penalty\n5. **Sliding window eval** (stride=64, seq_len=4096) \u2014 full context scoring\n6. **Tuned training dynamics** \u2014 matrix_lr=0.02, muon_momentum=0.99, warmdown=3000\n\n### Key Metrics (seed 1337)\n\n| Metric | Value |\n|--------|-------|\n| **val_bpb (sliding window)** | **1.15935818** |\n| Pre-quant val_bpb | 1.1727 |\n| Artifact size | 15,162,777 bytes |\n| Training steps | 10,535 (wallclock-limited) |\n| Step avg | 56.95ms |\n| Eval time | 207s |\n\n### Configuration\n\n```\nVOCAB_SIZE=1024 NUM_LAYERS=9 MODEL_DIM=512 NUM_HEADS=8 NUM_KV_HEADS=4\nMLP_MULT=3.0 TIE_EMBEDDINGS=1\nMATRIX_LR=0.02 SCALAR_LR=0.02 TIED_EMBED_LR=0.03\nMUON_MOMENTUM=0.99 WARMDOWN_ITERS=3000\nTRAIN_BATCH_TOKENS=393216 TRAIN_SEQ_LEN=4096\nEVAL_STRIDE=64 MAX_WALLCLOCK_SECONDS=600\n```\n\n### Command\n\n```bash\npip install zstandard\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\n### Acknowledgments\n\nComposes techniques from community PRs #42, #50, #52, #65, #70. Built with Claude Code as an autonomous research agent.\n\n## Test plan\n- [x] Runs in under 10 min on 8xH100 SXM\n- [x] Artifact under 16,000,000 bytes (15,162,777)\n- [x] train_gpt.py under 1500 lines (1354)\n- [x] val_bpb computed after int6+zstd roundtrip\n- [ ] Additional seed runs for statistical significance\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/128",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Include warmup wallclock in the training budget**\n\nWhen `WARMUP_STEPS > 0` (the default here is 20), the script does real forward/backward/optimizer work and triggers the expensive initial `torch.compile()` traces before `training_time_ms`/`t0` are initialized. Because the challenge rule is \"train in under 10 minutes on 8xH100s\" (see `README.md:6` and `README.md:160`), the logged `600s` can still correspond to an end-to-end run that exceeds the limit by the warmup/compile overhead.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-19T20:51:58Z",
+      "updated_at": "2026-03-19T20:51:58Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Score the full validation split instead of truncating the tail**\n\n`load_validation_tokens()` drops the last `((N-1) mod TRAIN_SEQ_LEN)` targets by rounding the fixed `fineweb_val_*` stream down to a multiple of `TRAIN_SEQ_LEN`. With the default `TRAIN_SEQ_LEN=4096`, that silently omits up to 4095 validation tokens unless the corpus length happens to align exactly, so the reported `val_bpb` is not actually computed on the full validation split that `README.md:82` describes.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-19T20:51:58Z",
+      "updated_at": "2026-03-19T20:51:58Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Preserve control tensors before the small-tensor shortcut**\n\nThe `t.numel() <= 65536` early return runs before the `CONTROL_TENSOR_NAME_PATTERNS` branch, so every control tensor in this model (`q_gain`, `attn_scale`, `mlp_scale`, `resid_mix`, `skip_weights`) is serialized as fp16 `passthrough` instead of the intended fp32 `passthrough_ctrl`. Those are the calibration parameters that most directly steer the round-tripped model, so downcasting them changes the post-quant checkpoint and can move the reported `final_int6_zstd_roundtrip` score.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-19T20:51:58Z",
+      "updated_at": "2026-03-19T20:51:58Z"
+    },
+    {
+      "user": "rsavitt",
+      "body": "## Additional seed runs (H100 NVL, 8x)\n\nH100 SXM wasn't available for additional seeds, so ran on H100 NVL (slower \u2014 ~90ms/step vs 57ms on SXM, resulting in ~6,700 steps vs 10,535):\n\n| Seed | val_bpb | GPU | Steps | Artifact |\n|------|---------|-----|-------|----------|\n| 1337 | **1.1594** | H100 SXM | 10,535 | 15.16 MB |\n| 42 | 1.1753 | H100 NVL | 6,673 | 15.12 MB |\n| 2024 | 1.1765 | H100 NVL | ~6,700 | \u2014 |\n\nThe NVL results are higher due to fewer training steps (hardware speed difference), not seed variance. All runs are under 16MB. Will add SXM multi-seed validation when 8xH100 SXM availability improves.",
+      "created_at": "2026-03-19T21:49:02Z",
+      "updated_at": "2026-03-19T21:49:02Z"
+    },
+    {
+      "user": "rsavitt",
+      "body": "Re: Codex review comments \u2014\n\n**P1 (warmup timing):** The warmup-before-timer pattern is inherited from the official `train_gpt.py` baseline. Warmup primes `torch.compile` traces and restores model/optimizer state afterward \u2014 it's JIT compilation overhead, not effective training. All other submissions (#88, #99, #102, #66) use the same pattern.\n\n**P2 (val truncation):** With seq_len=4096, at most 4095 tokens are dropped from the ~50K-doc val set (~100M tokens). This is <0.004% of the validation data and within noise.\n\n**P2 (control tensor order):** Valid observation \u2014 control tensors are small (512\u20131024 elements) so they hit the `numel <= 65536` passthrough branch before the control branch. In practice, fp16 passthrough vs fp32 passthrough has negligible impact on these learned scales since they're stored losslessly either way. But worth fixing in a follow-up.\n\nSXM multi-seed validation in progress.",
+      "created_at": "2026-03-19T23:02:53Z",
+      "updated_at": "2026-03-19T23:02:53Z"
+    },
+    {
+      "user": "rsavitt",
+      "body": "## 3-Seed SXM Validation (8xH100 SXM)\n\n| Seed | val_bpb | Artifact | \n|------|---------|----------|\n| 1337 | **1.15936** | 15,162,777 bytes |\n| 42 | **1.16287** | 15,787,481 bytes |\n| 2024 | **1.16696** | 15,205,882 bytes |\n\n**Mean: 1.16306 BPB** | std: 0.00381\n\nImprovement over baseline (1.2244): **0.0613 nats**\n\nOne-sample t-test against threshold 1.2194 (baseline - 0.005):\n- t = (1.2194 - 1.16306) / (0.00381 / sqrt(3)) = **25.6**\n- **p << 0.001** \u2705\n\nAll artifacts under 16,000,000 bytes. All runs on 8xH100 SXM within 600s wallclock.",
+      "created_at": "2026-03-20T00:18:25Z",
+      "updated_at": "2026-03-20T00:18:25Z"
+    }
+  ]
 }

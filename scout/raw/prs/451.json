@@ -9,5 +9,6 @@
   "body": "10L Int5/Int6 + BigramHash(10240) + SmearGate + SWA Boost\r\n- Mixed int5 MLP / int6 attention quantization + FP16 embeddings + zstd-22\r\n- Reduced batch (622592 tokens) for ~7370 steps in 600s\r\n- SWA boost: every=30 steps, start_frac=0.50, 49 averaged checkpoints\r\n- Best val_bpb: 1.14638 (seed=1337)\r\n- Artifact size: 15,736,555 bytes (under 16MB limit)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/451",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

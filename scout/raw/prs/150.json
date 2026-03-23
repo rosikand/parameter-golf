@@ -9,5 +9,6 @@
   "body": "## Summary\n\nFull-stack submission: **val_bpb = 1.1478** (seed 1337, sliding window stride=64)\n\n12 techniques stacked:\n- **11 transformer layers** (MLP 3x = 1536 hidden)\n- **STE int6 QAT** \u2014 zero quantization gap\n- **SmearGate** \u2014 learned token blending\n- **BigramHash** (2048 buckets, dim=128)\n- **OrthoInit + muP scaling** for output projections\n- **SWA** \u2014 8 checkpoint average during warmdown\n- **TTT** \u2014 full-weight SGD on val data (lr=0.002, 3 epochs, freeze first 2 blocks)\n- **NTK-RoPE** base=50000\n- **Muon WD=0.04**, momentum=0.99, LR=0.025\n- **zstd-22 compression**, FP16 tied embeddings\n- **Sliding window eval** stride=64\n\n## Results\n\n| Seed | Steps | Sliding BPB | Artifact |\n|------|-------|-------------|----------|\n| 1337 | 5,166 | **1.1478** | 15.76MB |\n\n## Timing Budget\n\n| Phase | Time |\n|-------|------|\n| Training | 600s |\n| TTT | 73s |\n| Sliding eval | ~370s |\n| **Total eval** | **~443s** (< 600s) |\n\nRequires: `pip install zstandard`",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/150",
-  "draft": true
+  "draft": true,
+  "comments": []
 }

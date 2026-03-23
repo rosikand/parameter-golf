@@ -9,5 +9,6 @@
   "body": "## Summary\n\nCombines the two strongest eval-time techniques (XSA + TTT) on top of the full competitive meta stack. Score pending 8xH100 validation \u2014 applying for compute grant.\n\n- **XSA** (Exclusive Self Attention) on last 3 layers \u2014 removes self-value bias (~0.002 bpb)\n- **TTT** (Test-Time Training) \u2014 SGD on val data before scoring (~0.005 bpb)\n- 11 layers, 3x MLP (1536), int6 per-row quant + zstd-22\n- SmearGate + BigramHash (2048 buckets)\n- SWA every 120 steps, Muon WD=0.04, momentum=0.99\n- Batch size 524K (optimized per saml212's finding)\n- FlashAttention 3, OrthoInit, muP output scaling\n\n## Checklist\n- [x] `records/track_10min_16mb/` submission folder\n- [x] `README.md`, `submission.json`, `train_gpt.py`\n- [ ] Training log (pending compute)\n- [ ] BPB score (pending compute)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/277",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

@@ -9,5 +9,6 @@
   "body": "## Summary\n- add `records/track_10min_16mb/2026-03-19_ContextFuse-2048`\n- include the canonical training log, submission metadata, and standalone `train_gpt.py`\n- document the method, artifact accounting, reproduction command, and validation notes in the record README\n\n## Submission details\n- name: `ContextFuse-2048`\n- author: `Julz19`\n- `val_bpb`: `1.17792945`\n- `val_loss`: `1.98887927`\n- estimated artifact bytes for the standalone folder: `15,929,105`\n- train stop: `599075ms`\n- eval time: `132220ms`\n\n## Notes\n- this is intended as a valid `track_10min_16mb` submission, not a SOTA claim\n- the canonical successful run used Modal as the GPU provider, but the record folder contains the standalone submission artifact path\n- prepared with assistance from OpenAI Codex\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/143",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

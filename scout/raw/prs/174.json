@@ -9,5 +9,19 @@
   "body": "## Summary\n\nThis PR updates the `track_10min_16mb` submission:\n\n- `records/track_10min_16mb/2026-03-20_ContextFuse-2048-BigramSmear`\n\nThis remains a follow-up to PR #143 (`ContextFuse-2048`) and stays focused on `val_bpb` as the primary challenge metric.\n\nCorrected canonical run (`seed=1337`):\n- `val_loss = 1.94796677`\n- `val_bpb = 1.15369565`\n- original training time for the saved model = `589978ms`\n- corrected fixed-eval time = `150215ms`\n- standalone total bytes = `15331125`\n\nRelative to PR #143, this improves the canonical `val_bpb` from `1.17792945` to `1.15369565`.\n\n## Scoring Correction\n\nThe prior revision of this submission used a sliding-window evaluator that could rescore the same final stride tokens more than once in truncated tail windows when `EVAL_STRIDE < TRAIN_SEQ_LEN`.\n\nThis PR fixes that evaluator in the standalone `train_gpt.py` and updates the submission metadata to use the corrected canonical metric from an exact reevaluation of the saved `seed=1337` raw checkpoint.\n\nBecause of that fix:\n- `train.log`, `train_seed42.log`, and `train_seed7.log` are retained as original pre-fix training logs for transparency\n- the old three-seed mean / median claim is withdrawn\n- this PR no longer presents a post-fix statistical multi-seed claim\n\n## Method\n\nRelative to PR #143, this submission keeps the same baseline-derived train@2048 path and adds the stronger compression-aware stack that transferred honestly:\n\n- BigramHash token-pair features\n- SmearGate input smoothing\n- mixed int6 export\n- SWA checkpoint averaging\n- Muon weight decay\n- corrected bigram control-tensor handling\n- fixed sliding-window evaluation\n\n## Attribution\n\nThis submission builds on ideas previously explored in the repo, especially:\n\n- PR #143 for the original `ContextFuse-2048` base\n- PR #135 for the BigramHash + SmearGate + mixed-int6 direction\n- PR #162 for the later high-scoring stacked recipe\n\n## Validation\n\nIncluded in the submission folder:\n- standalone `train_gpt.py` that compiles and runs from inside the record folder\n- original `train.log`\n- corrected canonical reevaluation log: `train_fixed_eval_seed1337.log`\n- original `train_seed42.log` and `train_seed7.log` for transparency\n- updated artifact accounting in `README.md` and `submission.json`\n\nThe standalone script in the submission folder is `1500` lines and the canonical standalone artifact is `15331125` bytes.\n\nPrepared with assistance from OpenAI Codex.\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/174",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Exclude partial tail windows from sliding evaluation**\n\nThe current `window_starts` logic includes starts where `ws > total_tokens - seq_len`, which creates multiple truncated tail windows; because scoring uses `score_start = wlen - stride`, each of those truncated windows scores the same final `stride` tokens again. This double-counts tail tokens and biases `val_loss/val_bpb` (the primary reported metric), so experiment comparisons can be skewed whenever `EVAL_STRIDE < TRAIN_SEQ_LEN` (including the documented `64/2048` setting).\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-20T05:22:21Z",
+      "updated_at": "2026-03-20T05:22:21Z"
+    },
+    {
+      "user": "Julz19",
+      "body": "Resolved bug identified in comment by codex which cause our script to double-count tail tokens and bias the `val_loss/val_bpb`.",
+      "created_at": "2026-03-20T06:23:32Z",
+      "updated_at": "2026-03-20T06:23:32Z"
+    }
+  ]
 }

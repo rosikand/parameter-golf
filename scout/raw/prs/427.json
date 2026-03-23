@@ -9,5 +9,6 @@
   "body": "## Summary\n\n- **TrigramHash embedding** (4096 buckets, dim=64) \u2014 novel 3-gram context capture alongside existing bigram hashing\n- **Larger BigramHash** (12288 buckets, up from SOTA 10240) \u2014 monotonically reduces hash collisions\n- **Aggressive SWA** (start_frac=0.35, every=40 steps) \u2014 more checkpoints averaged for smoother quantization-friendly weights\n- **5% magnitude pruning** (vs SOTA 3%) \u2014 zeroes more small weights for better zstd compression\n- Mixed **int5 MLP / int6 attention** quantization with zstd-22 compression\n\n## Architecture\n\n10 layers, 512 dim, 8 heads, 4 KV heads (GQA), 3x MLP (hidden=1536), relu\u00b2 activation, SmearGate, orthogonal init with muP output scaling, U-Net skip connections, tied embeddings (FP16), Muon optimizer (WD=0.04, momentum 0.92\u21920.99), sliding window eval (stride=64).\n\n## Test plan\n\n- [ ] Run 3 seeds (42, 1337, 2024) on 8\u00d7H100 SXM within 10-minute wall-clock\n- [ ] Verify val_bpb beats SOTA (1.1428) by \u22650.005 with p < 0.01\n- [ ] Confirm artifact size \u2264 16,000,000 bytes (code + compressed model)\n- [ ] Attach training logs for all 3 seeds\n\n> **Note:** Training logs will be added once 8\u00d7H100 runs are completed. Submitting code for review in parallel.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/427",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

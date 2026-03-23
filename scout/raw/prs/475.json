@@ -9,5 +9,6 @@
   "body": "Novel architecture using HECR quantum state vectors.\r\nint16 only \u2014 no transformers, no gradients, no floats.\r\n34 KB model \u2014 0.21% of 16MB limit.\r\nval_bpb: ~0.50 (simulation dataset \u2014 FineWeb validation pending compute grant)\r\n\r\nAuthor: Abraham | H.A.S. Framework | Genoma Cognitivo\r\nSan Luis Potos\u00ed, M\u00e9xico\r\ngithub.com/abrahaw123-cell/abram_chip",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/475",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

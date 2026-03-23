@@ -9,5 +9,6 @@
   "body": "Non-record submission of PipeOwl-1.8-jp-parameter-golf.\r\n\r\nrepo:[PipeOwl-1.8-jp-parameter-golf](https://huggingface.co/WangKaiLin/PipeOwl-1.8-jp-parameter-golf)\r\n\r\nThis work explores a field-based language model with linear-time scoring, without attention or transformer weights.\r\n\r\nFocus is on alternative structure rather than benchmark performance.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/496",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

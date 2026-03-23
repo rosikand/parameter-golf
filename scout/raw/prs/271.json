@@ -9,5 +9,6 @@
   "body": "## Summary\n\nSystematic hyperparameter optimization of the baseline 9x512 architecture with FP16 embedding export. Seven throughput-neutral changes that compound to measurable BPB improvement.\n\n## Changes\n\n| Parameter | Baseline | Ours |\n|-----------|----------|------|\n| NUM_KV_HEADS | 4 | **2** |\n| MATRIX_LR | 0.04 | **0.048** |\n| WARMDOWN_ITERS | 1200 | **600** |\n| SCALAR_LR | 0.04 | **0.03** |\n| MUON_MOMENTUM | 0.95 | **0.97** |\n| QK_GAIN_INIT | 1.5 | **1.35** |\n| tok_emb export | int8 | **fp16** |\n\n## Preliminary Results\n\n1xH100 (10 min wallclock): val_bpb = 1.3003 (baseline: 1.3106, -0.8%)\n\nPending 8xH100 SXM validation \u2014 applying for compute credits to run final numbers and statistical significance tests.\n\n## Key Finding\n\nThroughput is everything in this wallclock-capped competition. Tried SwiGLU, depth recurrence, width reinvestment, cosine warmdown \u2014 all net negative because per-step slowdown outweighed quality gains. Details in README.md.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/271",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

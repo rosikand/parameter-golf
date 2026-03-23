@@ -9,5 +9,6 @@
   "body": "Was trying stuff out on my mac and thought this change could make it easier in the future (though I very much prefer uv overall)\r\n\r\n- Added `requirements_mlx.txt` with MLX dependencies for Apple Silicon setup\r\n- Updated README to reference the new file in the MLX getting started section\r\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/19",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

@@ -9,5 +9,6 @@
   "body": "Adds one non-record submission folder under records/track_non_record_16mb with README, submission.json, train.log, and train_gpt.py.\\n\\nHighlights:\\n- 1-hour 1xH100 run (unlimited-compute non-record track).\\n- val_bpb improved to 1.25402600 from earlier 10-minute best 1.34862689 (improvement 0.09460089).\\n- Artifact remains under 16,000,000 bytes total.\\n- Run performed on 1x H100 due to limited compute budget while awaiting grant-backed 8xH100 runs.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/111",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

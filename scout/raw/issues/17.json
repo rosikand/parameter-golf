@@ -7,5 +7,49 @@
   "updated_at": "2026-03-19T17:23:31Z",
   "body": "1. The requirements.txt lists torch==2.10.0 but the official runpod image template has pytorch 2.9.1 (CUDA 12.8). Can you please clarify which versions of python, pytorch, and CUDA will be used in the evaluation environment?\n\n2. Will you please update the readme to clarify if you will be using SXM or NVL H100s?",
   "labels": [],
-  "url": "https://github.com/openai/parameter-golf/issues/17"
+  "url": "https://github.com/openai/parameter-golf/issues/17",
+  "comments": [
+    {
+      "user": "serdardoesml",
+      "body": "Would be also great to clarify if FA2 backend will keep being supported for those of us using A100s",
+      "created_at": "2026-03-18T20:55:51Z",
+      "updated_at": "2026-03-18T20:55:51Z"
+    },
+    {
+      "user": "davidmoore-io",
+      "body": "+1 on this - had the same question.",
+      "created_at": "2026-03-18T20:57:23Z",
+      "updated_at": "2026-03-18T20:57:23Z"
+    },
+    {
+      "user": "0hq",
+      "body": "Good point, will fix ASAP.",
+      "created_at": "2026-03-18T23:30:55Z",
+      "updated_at": "2026-03-18T23:30:55Z"
+    },
+    {
+      "user": "0hq",
+      "body": "Clarifying the SXM H100s, working on fixing environment now.",
+      "created_at": "2026-03-18T23:58:03Z",
+      "updated_at": "2026-03-18T23:58:03Z"
+    },
+    {
+      "user": "mikeapedia",
+      "body": "Thanks Will! @0hq ",
+      "created_at": "2026-03-19T01:04:50Z",
+      "updated_at": "2026-03-19T01:04:50Z"
+    },
+    {
+      "user": "cocohearts",
+      "body": "resolved:\nthe eval environment is just whatever packages come installed on the runpod template\nno pip install is needed afterwards",
+      "created_at": "2026-03-19T17:19:38Z",
+      "updated_at": "2026-03-19T17:19:38Z"
+    },
+    {
+      "user": "cocohearts",
+      "body": "[resolved](https://github.com/openai/parameter-golf/commit/6e3e90db8696d5f8294a433b70268a1dca72aab5)",
+      "created_at": "2026-03-19T17:23:25Z",
+      "updated_at": "2026-03-19T17:23:25Z"
+    }
+  ]
 }

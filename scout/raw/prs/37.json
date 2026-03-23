@@ -11,5 +11,19 @@
     "not ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/37",
-  "draft": true
+  "draft": true,
+  "comments": [
+    {
+      "user": "serdardoesml",
+      "body": "Would be nice to have the tokenizer and dataset somehow available to replicate. Also, this most likely wont scale up as the baseline compressed size is very close to the limit.",
+      "created_at": "2026-03-19T00:17:53Z",
+      "updated_at": "2026-03-19T00:17:53Z"
+    },
+    {
+      "user": "khasinski",
+      "body": "Thanks for the feedback! Good points on both.\n\n**Tokenizer and dataset:** I'll upload the sp4096 tokenizer and pre-tokenized shards to HuggingFace so anyone can replicate. Will add the link to the README.\n\n**Compressed size:** You're right that the baseline config (9L/512d tied) lands at ~13.6MB, which leaves headroom but not a ton. We've been experimenting with untied embeddings (15.0MB, still under 16MB) which actually gives the best BPB so far in our single-GPU tests. The budget is tight but workable -- and the tokenizer improvement alone is worth ~12% BPB even without architectural changes.\n\nStill working on the 8xH100 validation run. Will update the PR with final numbers and the dataset link soon.",
+      "created_at": "2026-03-19T00:55:13Z",
+      "updated_at": "2026-03-19T00:55:13Z"
+    }
+  ]
 }

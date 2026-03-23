@@ -7,5 +7,31 @@
   "updated_at": "2026-03-20T09:56:58Z",
   "body": "Dear Organizers,\n\nThank you for organizing such a creative and open-ended competition. I really appreciate the spirit of the challenge, and I wanted to share one concern about the current evaluation setup.\n\nI feel the evaluation budget may be too loose, since it is effectively the same as the training budget. **Under the current setup, I think people will likely converge on various forms of training directly on the validation set.** As the rules are written, as long as nothing larger than 16MB is carried into evaluation, it seems valid to bring in pretrained weights from training and then do fine-tuning, test-time adaptation, or even expand effective model capacity during evaluation. Since the challenge is defined around a 16MB artifact, a 10-minute budget on 8\u00d7H100s, and evaluation on the FineWeb validation set, this seems like a natural direction for participants to explore.  \ufffc\n\nIn my own experiment with 4 GPUs (RTX6000) for 20 minutes, which I think is roughly comparable to the 8\u00d7H100 10-minute setting, I started from the baseline and followed this path: train on training set \u2192 quantize to 8-bit (under 16MB) \u2192 take the quantized model back to full precision and fine-tune on the validation set for about 18 minutes \u2192 use the remaining 2 minutes for evaluation.\n| Stage | Val bpb |\n|---|---:|\n| Baseline / train \u2192 eval | 1.2287 |\n| After 8-bit quantization (Baseline provided) | 1.2348 |\n| After validation-set fine-tuning | 1.0712 |\n| PR #64 that optimizes arch/hyper-parameter with validation-set finetuning| 1.0149| \n\nThis is a big leap compared to simply doing train \u2192 eval, but much less interesting as one is overfitting on eval.\n\nI completely understand the intention of keeping the competition open-ended and creative. My concern is simply that the current setup may reward how much a method can overfit within the evaluation budget on the evaluation set itself, rather than other forms of innovation, such as architecture design or training algorithms. Also, ideally, a good test-time adaptation method should not be nearly as expensive as training.\n\nI think it may be worth reflecting a bit more on how much the current setup encourages test-time adaptation tricks while also increasing the risk of overfitting to the evaluation set. Perhaps a separate track with a stricter evaluation-time resource limit (e.g. 10x or more less compute allowed during validation) could help encourage more innovation beyond overfitting the evaluation set, while still preserving the open-ended spirit of the competition.\n\nThank you again for organizing this challenge. I hope this feedback is helpful, and I would be very interested to hear your thoughts.\n",
   "labels": [],
-  "url": "https://github.com/openai/parameter-golf/issues/67"
+  "url": "https://github.com/openai/parameter-golf/issues/67",
+  "comments": [
+    {
+      "user": "abhishekgahlot2",
+      "body": "You are using same data for training and validation (so its going to remember everything eventually). i will be surprised this is allowed.",
+      "created_at": "2026-03-19T09:01:05Z",
+      "updated_at": "2026-03-19T09:01:05Z"
+    },
+    {
+      "user": "jojo23333",
+      "body": "@abhishekgahlot2 \nClarification: The whole training on validation data setting is based on the author's response in Discord and the rule markdown itself (no restriction on evaluation at all, other than the 16MB ckpt + code limit) \n<img width=\"1008\" height=\"252\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/636afbbc-825f-442d-b0e2-4632c7870590\" />\n\nThe link of the discussion on discord:\nhttps://discord.com/channels/974519864045756446/1415383518258794709/1483974241241137324",
+      "created_at": "2026-03-19T09:51:15Z",
+      "updated_at": "2026-03-19T09:51:15Z"
+    },
+    {
+      "user": "0hq",
+      "body": "Training on the validation set is only allowed insofar as you are still fairly not leaking information when evaluating. For example, when you're evaluating your test loss on token N, you're allowed to train on token [0:N-1] since you've already been evaluated on those tokens. Clearly, you aren't allowed to train on the validation set multiple times before evaluating on the same validation set.",
+      "created_at": "2026-03-19T21:59:45Z",
+      "updated_at": "2026-03-19T21:59:45Z"
+    },
+    {
+      "user": "jojo23333",
+      "body": "Thanks for the clarification!",
+      "created_at": "2026-03-20T09:40:43Z",
+      "updated_at": "2026-03-20T09:56:58Z"
+    }
+  ]
 }

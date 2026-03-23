@@ -9,5 +9,19 @@
   "body": "",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/72",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Set VOCAB_SIZE from selected variant**\n\nWhen `--variant` is changed (for example `sp4096`), `cmd_command` updates `DATA_PATH` but leaves `VOCAB_SIZE` at the profile default because `setdefault` does not overwrite existing keys. The generated command can therefore pair a 4096-token dataset with `VOCAB_SIZE=1024`, which will fail once token IDs exceed 1023 (embedding index out of range) and makes non-`sp1024` variants unusable from this helper.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-19T09:42:50Z",
+      "updated_at": "2026-03-19T09:42:51Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Compute quant delta from exact post-quant metric**\n\n`parse_log` derives `quant_delta_bpb` and `quant_delta_val_loss` from `final_int8_zlib_roundtrip` (4-decimal values) even when `final_int8_zlib_roundtrip_exact` is present and already parsed. This introduces rounding error in the comparison metric used for ranking/gating runs, which can flip decisions near tight thresholds (e.g. 0.003).\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-19T09:42:50Z",
+      "updated_at": "2026-03-19T09:42:51Z"
+    }
+  ]
 }

@@ -9,5 +9,6 @@
   "body": "## Summary\n- Int6 per-row quantization ([-31,31] range in int8 storage) + zstd-22 compression\n- 10-layer model with 3x MLP width (enabled by ~25% artifact byte savings)\n- Sliding window evaluation at stride-64 for better per-token context\n- Muon weight decay (0.04) and momentum tuning (0.99)\n\n## Files\n- experiments/phase1/train_phase1.py \u2014 monkey-patches baseline with all features\n- experiments/phase1/run_smoke.sh \u2014 smoke test (~2-3 min on 4xGPU)\n- experiments/phase1/run_full.sh \u2014 full 10-minute submission run\n\n## Test plan\n- [ ] Smoke test completes end-to-end with final_int8_zlib_roundtrip line emitted\n- [ ] Artifact size under 16MB\n- [ ] BPB improvement over 1.2244 baseline\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/282",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

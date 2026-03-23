@@ -11,5 +11,37 @@
     "not ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/5",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "jordankzf",
+      "body": "bro we can see claude did it",
+      "created_at": "2026-03-18T18:36:57Z",
+      "updated_at": "2026-03-18T18:36:57Z"
+    },
+    {
+      "user": "vukrosic",
+      "body": "@jordankzf goal is scientific advent, not who did it",
+      "created_at": "2026-03-18T19:07:38Z",
+      "updated_at": "2026-03-18T19:07:38Z"
+    },
+    {
+      "user": "albertorkive",
+      "body": "Lol @jordankzf cause you definitely are hand coding every character \ud83d\ude02 Based on that comment you are either a hypocrite or slow (adopting tools I mean) \ud83d\ude2c",
+      "created_at": "2026-03-18T20:05:36Z",
+      "updated_at": "2026-03-18T20:05:36Z"
+    },
+    {
+      "user": "jordankzf",
+      "body": "@albertorkive Just messing with you, man. Claude (and Codex) is awesome! Good luck on your submission :)",
+      "created_at": "2026-03-18T20:20:10Z",
+      "updated_at": "2026-03-18T20:20:10Z"
+    },
+    {
+      "user": "albertorkive",
+      "body": "@jordankzf likewise, good luck. May the best coding assistant win \ud83d\ude0c",
+      "created_at": "2026-03-18T20:40:39Z",
+      "updated_at": "2026-03-18T20:40:39Z"
+    }
+  ]
 }

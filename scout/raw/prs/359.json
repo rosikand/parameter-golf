@@ -9,5 +9,13 @@
   "body": "## 11L MLP3x + Int6 QAT + XSA + EMA + BigramHash + FA3\n\n**Best val_bpb: 1.1345** (seed 2025) | **Mean: 1.1364** (3 seeds) | **Artifact: 15.37MB**\n\n### Results\n\n| Seed | val_bpb | Steps | ms/step | Artifact |\n|---:|---:|---:|---:|---:|\n| 2025 | **1.1345** | 6810 | 88.10 | 15,369,315 |\n| 42 | 1.1368 | 6136 | 97.78 | 15,248,694 |\n| 1337 | 1.1379 | 6366 | 94.24 | 15,579,821 |\n\nAll runs under the 16,000,000 byte cap. Trained on 8\u00d7H100 SXM within the 600s wallclock budget.\n\n### Key recipe\n\n- 11 layers, dim 512, GQA (8/4), 3\u00d7 MLP (SwiGLU)\n- Int6 STE QAT + zstd-22 compression\n- XSA on last 4 layers, EMA (0.997), BigramHash(2048)\n- Muon (momentum=0.99, WD=0.04) + Adam\n- Sliding-window eval at stride=64\n- FlashAttention 3 (Hopper build) required\n\n### Requirements\n\n```\npip install sentencepiece zstandard\n# FA3:\ncd /tmp && git clone https://github.com/Dao-AILab/flash-attention.git\ncd flash-attention/hopper && pip install .\n```\n\n### Files\n\n- `README.md` \u2014 explanation\n- `submission.json` \u2014 metadata with 3-seed results\n- `train_gpt.py` \u2014 exact script\n- `train.log` \u2014 best seed (2025) full log\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/359",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "tmustier",
+      "body": "Closing \u2014 this is a straight PR #287 reproduction without novel ML contributions. Will resubmit if/when we have something beyond the existing recipe.",
+      "created_at": "2026-03-21T19:10:10Z",
+      "updated_at": "2026-03-21T19:10:10Z"
+    }
+  ]
 }

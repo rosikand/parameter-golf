@@ -9,5 +9,19 @@
   "body": "## Summary\n\n- Weight entropy regularization (`loss += \u03bb * weight_entropy`) has **zero effect** during normal training but **improves SWA averaging by 0.028 BPB** at step 8500, with the gap still growing\n- Mechanism: entropy-regularized weights are more consistent across checkpoints, making averaging more effective\n- 5 lines of code, zero extra parameters, composes with any architecture\n- Also includes documented negative results from 15 experiments (depth recurrence, Kronecker attention, skip-gram hash, entropy masking)\n\n## Learning Curve Comparison (1xH100, 20 shards)\n\nSteps 0-5500: baseline and entropy reg are **identical** (\u00b10.001 BPB)\nSteps 5500+: entropy reg pulls ahead during SWA warmdown\n\n| Step | Baseline | Entropy Reg | Delta |\n|------|----------|-------------|-------|\n| 5000 | 1.223 | 1.223 | 0.000 |\n| 6000 | 1.219 | 1.214 | -0.005 |\n| 7000 | 1.212 | 1.192 | -0.020 |\n| 8000 | 1.189 | 1.164 | -0.025 |\n| 8500 | 1.177 | 1.149 | **-0.028** |\n\nBaseline final (9717 steps): 1.154 post-quant. Entropy reg at 1.149 pre-quant at step 8500 with ~1200 SWA steps remaining. Run interrupted before completion.\n\n## Status\n\nExperimental / non-SOTA. Seeking compute to complete the run on 8xH100 for a definitive comparison.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/459",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "mohosy",
+      "body": "weight entropy regularization is a cool idea for compression, havent seen anyone approach it from that angle before. how much overhead does it add to training",
+      "created_at": "2026-03-23T00:23:07Z",
+      "updated_at": "2026-03-23T00:23:07Z"
+    },
+    {
+      "user": "mer2234",
+      "body": "> weight entropy regularization is a cool idea for compression, havent seen anyone approach it from that angle before. how much overhead does it add to training\r\n\r\n~12% overhead per step in the current implementation (830ms vs 741ms on 1xH100). This comes from computing\r\n  torch.histc over all weight tensors every step. Some ways to optimize might be to apply every N steps, subsample parameters, or a use a differentiable proxy.",
+      "created_at": "2026-03-23T00:42:30Z",
+      "updated_at": "2026-03-23T00:42:30Z"
+    }
+  ]
 }

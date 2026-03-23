@@ -9,5 +9,19 @@
   "body": "## New SOTA Record: val_bpb 1.12676 (3-seed mean)\r\n\r\nBeats current SOTA (1.14276) by 0.016 nats.\r\n\r\n### 3-Seed Results (8xH100 SXM, 600s)\r\n\r\n| Seed | BPB | Size |\r\n|------|-----|------|\r\n| 42 | 1.12713 | 15.64 MB |\r\n| 1337 | 1.12648 | 15.62 MB |\r\n| 2024 | 1.12667 | 15.88 MB |\r\n| **Mean** | **1.12676** | **~15.7 MB** |\r\n\r\n### Key Techniques\r\n- XSA on ALL 11 layers\r\n- GPTQ-lite optimal clip percentile search\r\n- EMA(0.997) + Tight SWA\r\n- Late QAT int6-all at LR scale < 0.15\r\n- Raw binary + zstd22 serialization\r\n\r\n### Dependencies\r\n- `zstandard`, `flash_attn_3` (see requirements.txt)\r\n\r\n### Verified on RunPod 8xH100 SXM (official template): 1.12753 BPB\r\n\r\nSee README.md for full details.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/478",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "mohosy",
+      "body": "xsa on all 11 layers is bold, most ppl only do last 3 or 4. does it actualy help on the early layers too or is it just not hurting? also gptq lite clip search is a nice touch i havent seen anyone else do that yet",
+      "created_at": "2026-03-23T00:22:58Z",
+      "updated_at": "2026-03-23T00:22:58Z"
+    },
+    {
+      "user": "gowtham0992",
+      "body": "> xsa on all 11 layers is bold, most ppl only do last 3 or 4. does it actualy help on the early layers too or is it just not hurting? also gptq lite clip search is a nice touch i havent seen anyone else do that yet\r\n\r\nthanks! yeah xsa on all layers actually helps, not just not hurting. its ablated to:\r\n\r\nXSA-all(11): 1.12676 BPB, 6764 steps, 88.7ms/step XSA(4) last only: 1.13266 BPB, 6998 steps, 85.7ms/step\r\n\r\nso ~0.006 BPB win even though its 3ms/step slower and we lose ~230 steps. early layers tend to repeat self-value patterns, xsa forces them to actually encode new info. at 11L 512d every layer counts\r\n\r\ngptq-lite is free basically. 5 clip percentiles per row, pick min MSE. adds like 2 seconds to save and gets ~0.0006 BPB back from quant gap.",
+      "created_at": "2026-03-23T00:33:23Z",
+      "updated_at": "2026-03-23T00:33:23Z"
+    }
+  ]
 }

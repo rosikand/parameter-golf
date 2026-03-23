@@ -7,5 +7,6 @@
   "updated_at": "2026-03-18T22:39:49Z",
   "body": "## Description\nMove the competition plan and hypothesis list into `docs/`:\n- `docs/plan.md` \u2014 Full competition plan\n- `docs/research_log.md` \u2014 Empty template ready for experiments\n\n## Acceptance Criteria\n- [ ] `docs/plan.md` committed\n- [ ] `docs/research_log.md` template ready\n- [ ] `docs/experiment_results/` directory exists",
   "labels": [],
-  "url": "https://github.com/openai/parameter-golf/issues/28"
+  "url": "https://github.com/openai/parameter-golf/issues/28",
+  "comments": []
 }

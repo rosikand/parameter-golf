@@ -9,5 +9,6 @@
   "body": "## Summary\r\n`records/track_non_record_16mb/2026-03-22_11L_XSA4_EMA_Modal_1.12296_Over16MB/`\r\n\r\n## Why non-record\r\nThis run is not leaderboard-eligible due to size:\r\n\r\n- `final_int6_sliding_window_exact val_bpb: 1.12296159`\r\n- `Total submission size int6+zstd: 20,906,280` bytes (> 16,000,000 limit)\r\n\r\n## Included files\r\n- `README.md`\r\n- `submission.json`\r\n- `train.log`\r\n- `train_gpt.py`\r\n\r\n## Key details\r\n- 8x H100, 600s wallclock\r\n- stopped at `step:6900`, `step_avg:86.96ms`\r\n- `final_int6_roundtrip_exact val_bpb: 1.14634024`\r\n- `final_int6_sliding_window_exact val_bpb: 1.12296159`\r\n\r\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/416",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

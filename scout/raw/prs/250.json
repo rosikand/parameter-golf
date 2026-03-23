@@ -9,5 +9,6 @@
   "body": "## Summary\n\nFull-stack MoE architecture from [Complexity Framework](https://github.com/Complexity-ML/complexity-framework) + [vllm-i64](https://github.com/Complexity-ML/vllm-i64):\n\n- **Token-Routed MoE** \u2014 4 SwiGLU experts, hybrid routing (modulo base + learned override)\n- **PID Dynamics** \u2014 INL mu traverses all 11 layers, tight clamping [0.5, 1.5]\n- **CUDA scatter dispatch** \u2014 real scatter+gather from vllm-i64 (no wasted compute)\n- **Int6 quantization + zstd-22** compression\n- **SWA** \u2014 fp32 checkpoint averaging\n- **Cosine Warm Restarts** (SGDR) LR schedule\n- **Sliding window eval** (stride=64, window=2048)\n\n26.5M params, estimated ~14.2MB with int6+zstd.\n\nSupersedes #224.\n\n## Status\n\u23f3 Awaiting RunPod compute credits for val_bpb.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/250",
-  "draft": true
+  "draft": true,
+  "comments": []
 }

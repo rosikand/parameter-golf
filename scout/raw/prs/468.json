@@ -9,5 +9,85 @@
   "body": "Pure modeling track submission.\r\n\r\n- 10 layers, 448 dim, BigramHash(8192) + SmearGate\r\n- Muon optimizer + SWA + 5.5% global prune + mixed Int5/Int6 PTQ\r\n- Trained 10 min on 8\u00d7H100 with real FineWeb data\r\n- Final artifact: 15.46 MB after zstd-22",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/468",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "This `train_gpt.py` is just a placeholder print and does not contain the training/eval/export code used to produce `submission.zst`, nor does it generate the required training logs. The repo submission requirements expect a runnable record-folder script that reproduces the run and emits logs/artifact; please include the actual script snapshot (and any dependencies) used for this submission.",
+      "created_at": "2026-03-22T22:23:13Z",
+      "updated_at": "2026-03-22T22:23:14Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`submission.json` field names and types don\u2019t match the schema used by other `records/track_10min_16mb/*/submission.json` entries (typically `author`, `github_id`, `blurb`, `date`, plus numeric `val_bpb` and size fields like `bytes_total`/`bytes_code`). As-is, tooling that aggregates the leaderboard metadata is likely to break; please align keys with the existing convention and keep `val_bpb` as a number (not a string).\n```suggestion\n  \"author\": \"Utku Aydin\",\n  \"github_id\": \"utkuaydiin\",\n  \"blurb\": \"Exact reproduction of thwu1 SOTA with corrected SWA + real FineWeb loader\",\n  \"date\": \"2026-03-23\",\n  \"val_bpb\": 1.18\n```",
+      "created_at": "2026-03-22T22:23:13Z",
+      "updated_at": "2026-03-22T22:23:14Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This README doesn\u2019t include the usual reproducibility details expected for record/non-record entries (e.g., exact run command, key env vars/defaults, evaluation method like stride, seeds, and an \u201cIncluded files\u201d list referencing the train logs). Without that, reviewers can\u2019t validate the claimed setup or reproduce the result.",
+      "created_at": "2026-03-22T22:23:14Z",
+      "updated_at": "2026-03-22T22:23:14Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Per the repo\u2019s submission requirements, this record folder should include at least one training log produced by the script (and typically multiple seeds / significance evidence for leaderboard records). This folder currently appears to only contain `README.md`, `submission.json`, `train_gpt.py`, and `submission.zst`\u2014no `train.log` files\u2014so reviewers can\u2019t validate the run.",
+      "created_at": "2026-03-22T22:23:14Z",
+      "updated_at": "2026-03-22T22:23:14Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The `notes` claim \"Exact reproduction of thwu1 SOTA\" doesn\u2019t match the provided `val_bpb` (1.18) which is substantially worse than the current SOTA shown in the main leaderboard (1.1428). Please correct the metric/claim, and if this isn\u2019t intended as a new record, consider moving it under `records/track_non_record_16mb/` and labeling it accordingly.",
+      "created_at": "2026-03-22T22:23:14Z",
+      "updated_at": "2026-03-22T22:23:15Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`get_batch()` memmaps the FineWeb shard as raw `uint16` tokens starting at byte 0, but this repo\u2019s `fineweb_{split}_*.bin` format includes a 256\u00d7int32 header (magic/version/token count) before the token payload. As written, the header will be treated as tokens and corrupt training. Parse/validate the header and memmap with the proper byte offset (or reuse the repo\u2019s `load_data_shard()`/loader utilities).\n```suggestion\n    # FineWeb shards include a 256 x int32 header (magic, version, token count, etc.)\n    # which must be skipped before reading the uint16 token payload.\n    header_int_count = 256\n    header_nbytes = header_int_count * 4  # int32 = 4 bytes\n\n    # Optionally read the header once; this can be extended for stronger validation.\n    try:\n        header = np.fromfile(filename, dtype=np.int32, count=header_int_count)\n    except OSError:\n        header = None\n\n    # Memmap only the token region, starting after the header.\n    data = np.memmap(filename, dtype=np.uint16, mode='r', offset=header_nbytes)\n\n    if len(data) <= block_size + 1:\n        # Fallback to random tokens if the shard is unexpectedly small.\n        print(\"WARNING: FineWeb shard too small or malformed \u2014 using random tokens\")\n        x = torch.randint(0, 1024, (batch_size, block_size))\n        y = torch.randint(0, 1024, (batch_size, block_size))\n        return x.to(device), y.to(device)\n\n    ix = torch.randint(len(data) - block_size - 1, (batch_size,))\n    x = torch.stack(\n        [torch.from_numpy((data[i : i + block_size]).astype(np.int64)) for i in ix]\n    )\n    y = torch.stack(\n        [torch.from_numpy((data[i + 1 : i + 1 + block_size]).astype(np.int64)) for i in ix]\n    )\n```",
+      "created_at": "2026-03-22T22:47:52Z",
+      "updated_at": "2026-03-22T22:47:54Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "If the FineWeb shard is missing, the code silently falls back to training on random tokens. That can easily produce an invalid \u201creal FineWeb\u201d reproduction without being noticed (especially in automated runs). Prefer failing fast (raise) or gate the random-token fallback behind an explicit opt-in flag/env var.\n```suggestion\n\n    if not os.path.exists(filename):\n        allow_random = os.getenv(\"FINEWEB_ALLOW_RANDOM_TOKENS\", \"0\") == \"1\"\n        if allow_random:\n            print(\n                \"WARNING: FineWeb shard not found at \"\n                f\"{filename!r}. Using random tokens because \"\n                \"FINEWEB_ALLOW_RANDOM_TOKENS=1.\"\n            )\n            x = torch.randint(0, 1024, (batch_size, block_size))\n            y = torch.randint(0, 1024, (batch_size, block_size))\n            return x.to(device), y.to(device)\n        raise FileNotFoundError(\n            f\"FineWeb shard not found at {filename!r}. \"\n            \"To explicitly allow training on random tokens, set \"\n            \"FINEWEB_ALLOW_RANDOM_TOKENS=1 in the environment.\"\n        )\n```",
+      "created_at": "2026-03-22T22:47:52Z",
+      "updated_at": "2026-03-22T22:47:54Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`MuonHybridOptimizer` subclasses `torch.optim.Optimizer` but never calls `super().__init__` to initialize `param_groups`/`state`. This breaks standard optimizer behaviors (e.g., `state_dict()`, schedulers, AMP tooling) and is inconsistent with other optimizers in the repo. Either implement it as a plain helper (not inheriting from `Optimizer`) or initialize via `super().__init__(...)` and store momentum buffers in `self.state`.",
+      "created_at": "2026-03-22T22:47:53Z",
+      "updated_at": "2026-03-22T22:47:54Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The parameter exclusion filter uses the substring `\"hash_table\"`, but this model defines the bigram table as `bigram.table` (and there is no parameter name containing `hash_table`). As a result, the bigram table will be included in Muon updates, orthogonal init, and global pruning even though the code reads like it intends to exclude the hash table. Update the name filter to match the actual module/parameter names (or rename the parameter) so exclusions do what they claim.\n```suggestion\n        self.muon_params = [p for n, p in model.named_parameters() if p.ndim == 2 and \"wte\" not in n and \"bigram.table\" not in n]\n```",
+      "created_at": "2026-03-22T22:47:53Z",
+      "updated_at": "2026-03-22T22:47:54Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "In `CustomBinaryCheckpoint.pack`, `scale = amax/clip` is not clamped. If any row is all zeros (e.g., after pruning), `scale` becomes 0 and `t/scale` will produce inf/nan, leading to corrupted quantized weights. Clamp `scale` to a small minimum (similar to `MixedQuantLinear.quantize_post_training()`).",
+      "created_at": "2026-03-22T22:47:53Z",
+      "updated_at": "2026-03-22T22:47:54Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`apply_magnitude_pruning()` computes `k = int(numel * prune_percent)` and passes it to `torch.kthvalue`. If `prune_percent` is 0 (or very small), `k` becomes 0 and `kthvalue` will throw; if it\u2019s too large, `k` can reach `numel` and also error. Consider clamping `k` into `[1, numel-1]` (or special-casing 0%) to make this helper robust.\n```suggestion\n    if not prunable:\n        print(\"[Prune] No prunable parameters found; skipping magnitude pruning\")\n        return\n    all_w = torch.cat(prunable)\n    numel = all_w.numel()\n    if prune_percent <= 0:\n        print(\"[Prune] prune_percent <= 0; skipping magnitude pruning\")\n        return\n    # compute k based on requested prune_percent and clamp to a valid range for torch.kthvalue\n    k = int(numel * prune_percent)\n    # ensure k is in [1, numel - 1] to avoid kthvalue domain errors\n    if numel > 1:\n        k = max(1, min(k, numel - 1))\n    else:\n        k = 1\n```",
+      "created_at": "2026-03-22T22:47:53Z",
+      "updated_at": "2026-03-22T22:47:54Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`finalize_and_pack()` always overwrites the trained model weights with the SWA snapshot. If training ends before any `swa_model.update_parameters()` calls, `AveragedModel` will still reflect the initial weights and this will effectively discard training. Guard this with `swa_model.n_averaged > 0` (or start SWA from step 0) so short/slow runs still export the trained parameters.\n```suggestion\n    # Only overwrite with SWA weights if the SWA model has actually been updated.\n    if swa_model is not None:\n        swa_source = swa_model.module if hasattr(swa_model, \"module\") else swa_model\n        n_averaged = getattr(swa_source, \"n_averaged\", None)\n        if n_averaged is None or n_averaged > 0:\n            model.load_state_dict(swa_source.state_dict())\n```",
+      "created_at": "2026-03-22T22:47:53Z",
+      "updated_at": "2026-03-22T22:47:54Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This script imports `zstandard` unconditionally, but the repo\u2019s `requirements.txt` doesn\u2019t include it and other training scripts treat it as optional with a fallback (e.g., zlib). To keep the record runnable in minimal environments, either add an ImportError fallback or include a per-record requirements note/file that ensures `zstandard` is installed.\n```suggestion\ntry:\n    import zstandard  # optional, preferred compressor\nexcept ImportError:\n    import zlib\n\n    class _ZlibCompressor:\n        def __init__(self, level: int = 9):\n            self.level = level\n\n        def compress(self, data: bytes) -> bytes:\n            return zlib.compress(data, self.level)\n\n    class _ZlibDecompressor:\n        def decompress(self, data: bytes) -> bytes:\n            return zlib.decompress(data)\n\n    class _ZstandardShim:\n        # Expose zlib-based classes under the expected Zstandard API names.\n        ZstdCompressor = _ZlibCompressor\n        ZstdDecompressor = _ZlibDecompressor\n\n    zstandard = _ZstandardShim()\n```",
+      "created_at": "2026-03-22T22:47:54Z",
+      "updated_at": "2026-03-22T22:47:54Z"
+    }
+  ]
 }

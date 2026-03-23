@@ -9,5 +9,6 @@
   "body": "## Summary\n\nInt6 block-weight compression saves enough artifact budget to widen the MLP from 2x to 3x. The extra feed-forward capacity more than pays for itself, and paired with seq2048 training and stride-256 sliding-window eval, it beats the current SOTA by 0.010-0.015 nats.\n\n## Results (8xH100 SXM, 3 seeds)\n\n| Seed | val_bpb | Steps | ms/step | Artifact |\n|------|---------|-------|---------|----------|\n| 1337 | 1.17283 | 5,358 | 112.0 | 15.9 MB |\n| 1338 | 1.16143 | 6,817 | 88.0 | 15.9 MB |\n| 1339 | 1.15982 | 7,170 | 83.7 | 15.9 MB |\n| **Mean** | **1.16469** | | | |\n\nSeed 1337 was the first run in the session and ate the CUDA compilation overhead, so its step time is higher and it got fewer steps. Seeds 1338/1339 reflect steady-state performance.\n\nAll runs: artifact < 16MB, training <= 600s, eval ~36.5s.\n\n## vs. current SOTA\n\n- Mean improvement over Muon WD + 10L (1.1748): **-0.0101 nats**\n- Best seed improvement: **-0.0150 nats**\n\n## What changed\n\n- Int6 per-row quantization + zlib for large weight matrices\n- fp16 storage for tied embeddings and last two c_k weights\n- MLP_MULT=3 (up from 2)\n- Seq2048 long-context recipe with tuned LRs (MATRIX_LR=0.02, SCALAR_LR=0.02, TIED_EMBED_LR=0.03)\n- Sliding-window eval at stride=256\n\nSee the [README](records/track_10min_16mb/2026-03-20_CompressionFundedMLP3x/README.md) for full details and reproduction commands.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/191",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

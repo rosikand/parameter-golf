@@ -9,5 +9,6 @@
   "body": " (int8 clip 99.99995 + float32 per-row scales)\r\n\r\n\r\nSee readme.md. \r\n\r\nFinal loss at 1.19",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/142",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

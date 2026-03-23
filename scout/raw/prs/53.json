@@ -12,5 +12,37 @@
     "does not beat SOTA"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/53",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "kshitizz36",
+      "body": "**Hey @0hq** \r\nPTL\r\nExcited to submit! \r\n**Used SP-4096 tokenizer (0.30 tokens/byte) + sliding window eval (stride=64) \u2014 two improvements that stack multiplicatively in BPB.**\r\n\r\n_Hit 1.1888 BPB on 8\u00d7H100s in <10min, 15.68MB artifact_ ",
+      "created_at": "2026-03-19T07:00:58Z",
+      "updated_at": "2026-03-19T07:00:58Z"
+    },
+    {
+      "user": "0hq",
+      "body": "Your PR edits train_gpt and adds an extra script. Please restrict your changes solely to the /records file to be considered. Thank you!",
+      "created_at": "2026-03-19T21:11:22Z",
+      "updated_at": "2026-03-19T21:11:22Z"
+    },
+    {
+      "user": "kshitizz36",
+      "body": "@0hq \r\nThanks for the review. I\u2019ve cleaned this PR \r\nNow it only adds the submission folder:\r\n`records/track_10min_16mb/2026-03-19_SP4096_SlidingWindowEval/`\r\nwith:\r\n- README.md\r\n- submission.json\r\n- train.log\r\n- train_gpt.py\r\n\r\nThere are no changes outside `records/...` anymore \r\n Please re-check.\r\n",
+      "created_at": "2026-03-20T05:49:42Z",
+      "updated_at": "2026-03-20T05:49:42Z"
+    },
+    {
+      "user": "cocohearts",
+      "body": "this got beaten by baseline before you, please rebase and confirm its a new record for the main leaderboard",
+      "created_at": "2026-03-20T18:26:58Z",
+      "updated_at": "2026-03-20T18:26:58Z"
+    },
+    {
+      "user": "kshitizz36",
+      "body": "@cocohearts Closing this superseded by new PR with val_bpb=1.1596 beating current SOTA #251\r\n\r\n",
+      "created_at": "2026-03-20T19:01:51Z",
+      "updated_at": "2026-03-20T19:01:51Z"
+    }
+  ]
 }

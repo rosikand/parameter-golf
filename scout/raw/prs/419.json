@@ -9,5 +9,37 @@
   "body": "",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/419",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "There are several quantization-related constants and helpers defined here that are never used in this script (e.g. `INT8_KEEP_FLOAT_FP32_NAME_PATTERNS`, `INT8_KEEP_FLOAT_MAX_NUMEL`, `INT8_KEEP_FLOAT_STORE_DTYPE`, `tensor_nbytes`). Consider removing unused definitions to reduce file size/complexity, especially since this script is intended to stay approachable for newcomers.\n```suggestion\nINT8_PER_ROW_SCALE_DTYPE = torch.float16\nINT8_CLIP_PERCENTILE = 99.99984\nINT8_CLIP_Q = INT8_CLIP_PERCENTILE / 100.0\n```",
+      "created_at": "2026-03-22T12:18:42Z",
+      "updated_at": "2026-03-22T12:18:43Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`DistributedTokenLoader.next_batch()` reshapes `local[:-1]` to `(-1, seq_len)`, but `local_tokens = global_tokens // (world_size * grad_accum_steps)` is not validated to be a multiple of `seq_len`. If `TRAIN_BATCH_TOKENS` is set to a value that isn\u2019t divisible by `WORLD_SIZE * GRAD_ACCUM_STEPS * TRAIN_SEQ_LEN`, this will raise a runtime reshape error. Add an explicit validation (and a clear ValueError) that `local_tokens % seq_len == 0` (and ideally that `global_tokens` is divisible by `world_size * grad_accum_steps`) before reshaping.",
+      "created_at": "2026-03-22T12:18:42Z",
+      "updated_at": "2026-03-22T12:18:43Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`BigramHashEmbedding.bigram_hash()` uses `mod = self.bigram_vocab_size - 1` and then does `% mod`. If `bigram_vocab_size` is set to 1 (or 0, though the module is only constructed for `>0`), this becomes a modulo-by-zero error. Add input validation in `BigramHashEmbedding.__init__` (or when reading hyperparameters) to require `bigram_vocab_size >= 2` when enabled.",
+      "created_at": "2026-03-22T12:18:43Z",
+      "updated_at": "2026-03-22T12:18:43Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This `submission.json` format doesn\u2019t match the other entries in `records/track_non_record_16mb`, which include `track` and typically record both `val_loss` and `val_bpb`. Also, `val_loss` here is set to ~1.14, but the accompanying `train.log` shows `val_loss` ~1.929 and `val_bpb` ~1.143 after quant roundtrip, so the metric appears mislabeled. Recommend adding `track` (e.g. `non-record-16mb`), adding `val_bpb`, and setting `val_loss`/`bytes_total` to the exact values emitted by the training log.",
+      "created_at": "2026-03-22T12:18:43Z",
+      "updated_at": "2026-03-22T12:18:43Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The trailing `# fixes applied` / `# tuned` comments look like leftover scratch notes rather than explanatory documentation. Consider removing them or replacing with a brief, specific note about what was changed/tuned (or link to the relevant result) so the file doesn\u2019t accumulate ambiguous annotations.\n```suggestion\n\n```",
+      "created_at": "2026-03-22T12:18:43Z",
+      "updated_at": "2026-03-22T12:18:43Z"
+    }
+  ]
 }

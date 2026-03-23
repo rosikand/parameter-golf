@@ -9,5 +9,6 @@
   "body": "- Issue 140 summary: 7 MD files covering leaderboard, core/advanced techniques, negative results, untried ideas, tier analysis, and technique lineage from the live AI commentary thread.\r\n- Hypernetwork prototype: a shared-trunk MLP that generates full GPT weights from compact conditioning vectors (9.34x compression, 26.5M target params from 2.8M hypernet params, 2.09 MB artifact).\r\n- Artifact size checker with --sweep mode to explore config space.\r\n- Baseline train_gpt.py copied for reference.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/336",
-  "draft": true
+  "draft": true,
+  "comments": []
 }

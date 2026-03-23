@@ -9,5 +9,31 @@
   "body": "QAT + BigramHash(12288) + Stride 32 \u2014 1.1444 bpb\r\n\r\n  Body:\r\n  ## Summary\r\n  - QAT with STE (int5 MLP / int6 attn) reduces post-quantization degradation\r\n  - BigramHash increased from 10240 to 12288\r\n  - Eval stride reduced from 64 to 32\r\n  - Magnitude pruning 5%, SWA every 25 steps\r\n  - Artifact: 15.90MB\r\n\r\n  ## Results\r\n  - seed=2024: **val_bpb=1.14443**\r\n  - 8xH100 SXM, 6549 steps in 600s\r\n\r\n  ## Base\r\n  Built on `records/track_10min_16mb/2026-03-20_10L_Int5MLP_MuonWD04_SWA50`\r\n\r\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/348",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "README claims \u201cSWA every 25 steps\u201d, but the actual default in `train_gpt.py` is `swa_every = ... 50` (and the included log shows SWA starting at step 5400, consistent with 50-step cadence). Please either update the README to match the code, or change the default/command/env vars so the run truly uses SWA every 25 steps and regenerate the log/metrics accordingly.\n```suggestion\n- **SWA every 50 steps:** Checkpoint averaging during warmdown.\n```",
+      "created_at": "2026-03-21T15:26:39Z",
+      "updated_at": "2026-03-21T15:26:40Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`submission.json` blurb states \u201cSWA every 25 steps\u201d, but `train_gpt.py` defaults to `SWA_EVERY=50`. For reproducibility, please align the blurb with the actual run configuration (or adjust the code/run to match the blurb and update the reported metrics if they change).\n```suggestion\n  \"blurb\": \"10 layers, QAT with STE (int5 MLP / int6 attn), BigramHash 12288, eval stride 32, magnitude pruning 5%, SWA every 50 steps, zstd-22. Based on 10L_Int5MLP_MuonWD04_SWA50.\",\n```",
+      "created_at": "2026-03-21T15:26:39Z",
+      "updated_at": "2026-03-21T15:26:40Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The script silently falls back to zlib when `zstandard` isn\u2019t installed, but the record metadata/README call out \u201czstd-22\u201d and the reported `bytes_total` depends on the compressor. For reproducibility, consider failing fast when `zstandard` is missing (or at least reflecting the fallback clearly in README/submission metadata and the logged size label).\n```suggestion\nexcept ImportError as exc:\n    raise RuntimeError(\n        \"The `zstandard` package is required for this script to run reproducibly \"\n        \"with the documented 'zstd-22' compression. Please install it with \"\n        \"`pip install zstandard` and try again.\"\n    ) from exc\n```",
+      "created_at": "2026-03-21T15:26:39Z",
+      "updated_at": "2026-03-21T15:26:40Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`swa_every` defaults to 50 here, but the accompanying README/submission metadata claim SWA every 25 steps. Please align the defaults (and regenerate logs/metrics if behavior changes), or update the metadata to match the actual configuration used.\n```suggestion\n    swa_every = int(os.environ.get(\"SWA_EVERY\", 25))\n```",
+      "created_at": "2026-03-21T15:26:40Z",
+      "updated_at": "2026-03-21T15:26:40Z"
+    }
+  ]
 }

@@ -12,6 +12,8 @@ from config import (
     PR_BATCH_SIZE,
     STATE_DIR,
     BRIEFINGS_DIR,
+    MAX_BODY_CHARS_FOR_ANALYSIS,
+    MAX_COMMENT_CHARS_FOR_ANALYSIS,
 )
 
 client = anthropic.Anthropic()
@@ -57,6 +59,35 @@ Return ONLY the JSON array, no other text.
 """
 
 
+def _format_pr_for_analysis(p):
+    """Format a PR with body + comments for Claude analysis, respecting size limits."""
+    body = p["body"][:MAX_BODY_CHARS_FOR_ANALYSIS]
+    if len(p["body"]) > MAX_BODY_CHARS_FOR_ANALYSIS:
+        body += "\n[...truncated...]"
+
+    text = (
+        f"PR #{p['number']} by @{p['user']} [{p['state']}]\n"
+        f"Title: {p['title']}\n"
+        f"Labels: {', '.join(p['labels']) if p['labels'] else 'none'}\n"
+        f"Created: {p['created_at']} | Updated: {p['updated_at']}\n"
+        f"Draft: {p.get('draft', False)}\n\n"
+        f"{body}"
+    )
+
+    comments = p.get("comments", [])
+    if comments:
+        comment_text = ""
+        for c in comments:
+            entry = f"\n  @{c['user']} ({c['created_at']}): {c['body']}"
+            if len(comment_text) + len(entry) > MAX_COMMENT_CHARS_FOR_ANALYSIS:
+                comment_text += "\n  [...more comments truncated...]"
+                break
+            comment_text += entry
+        text += f"\n\nCOMMENTS:{comment_text}"
+
+    return text
+
+
 def extract_pr_data(prs):
     """Send PRs to Claude in batches and extract structured records."""
     if not prs:
@@ -66,13 +97,7 @@ def extract_pr_data(prs):
     for i in range(0, len(prs), PR_BATCH_SIZE):
         batch = prs[i:i + PR_BATCH_SIZE]
         batch_text = "\n\n---\n\n".join(
-            f"PR #{p['number']} by @{p['user']} [{p['state']}]\n"
-            f"Title: {p['title']}\n"
-            f"Labels: {', '.join(p['labels']) if p['labels'] else 'none'}\n"
-            f"Created: {p['created_at']} | Updated: {p['updated_at']}\n"
-            f"Draft: {p['draft']}\n\n"
-            f"{p['body']}"
-            for p in batch
+            _format_pr_for_analysis(p) for p in batch
         )
 
         print(f"  Extracting batch {i // PR_BATCH_SIZE + 1} ({len(batch)} PRs)...")
@@ -121,6 +146,34 @@ Return ONLY the JSON array, no other text.
 """
 
 
+def _format_issue_for_analysis(iss):
+    """Format an issue with body + comments for Claude analysis."""
+    body = iss["body"][:MAX_BODY_CHARS_FOR_ANALYSIS]
+    if len(iss["body"]) > MAX_BODY_CHARS_FOR_ANALYSIS:
+        body += "\n[...truncated...]"
+
+    text = (
+        f"Issue #{iss['number']} by @{iss['user']} [{iss['state']}]\n"
+        f"Title: {iss['title']}\n"
+        f"Labels: {', '.join(iss['labels']) if iss['labels'] else 'none'}\n"
+        f"Created: {iss['created_at']} | Updated: {iss['updated_at']}\n\n"
+        f"{body}"
+    )
+
+    comments = iss.get("comments", [])
+    if comments:
+        comment_text = ""
+        for c in comments:
+            entry = f"\n  @{c['user']} ({c['created_at']}): {c['body']}"
+            if len(comment_text) + len(entry) > MAX_COMMENT_CHARS_FOR_ANALYSIS:
+                comment_text += "\n  [...more comments truncated...]"
+                break
+            comment_text += entry
+        text += f"\n\nCOMMENTS:{comment_text}"
+
+    return text
+
+
 def extract_issue_data(issues):
     """Send issues to Claude in batches and extract structured records."""
     if not issues:
@@ -130,12 +183,7 @@ def extract_issue_data(issues):
     for i in range(0, len(issues), PR_BATCH_SIZE):
         batch = issues[i:i + PR_BATCH_SIZE]
         batch_text = "\n\n---\n\n".join(
-            f"Issue #{iss['number']} by @{iss['user']} [{iss['state']}]\n"
-            f"Title: {iss['title']}\n"
-            f"Labels: {', '.join(iss['labels']) if iss['labels'] else 'none'}\n"
-            f"Created: {iss['created_at']} | Updated: {iss['updated_at']}\n\n"
-            f"{iss['body']}"
-            for iss in batch
+            _format_issue_for_analysis(iss) for iss in batch
         )
 
         print(f"  Extracting issue batch {i // PR_BATCH_SIZE + 1} ({len(batch)} issues)...")

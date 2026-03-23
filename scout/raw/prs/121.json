@@ -9,5 +9,6 @@
   "body": "Fixes a bug in the sliding window evaluation from #50 where the final partial window (shorter than `stride`) was silently dropped, leaving up to `stride-1` tokens unscored.\n\nTwo changes:\n- `>= stride` \u2192 `>= 1` in the window filter (include all windows with at least 1 token)\n- `wlen - stride` \u2192 `max(wlen - stride, 0)` to handle short final windows without negative indexing",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/121",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

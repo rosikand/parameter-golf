@@ -9,5 +9,73 @@
   "body": "This PR adds end-to-end automation scripts for Parameter Golf:\\n\\n- run_remote_fast.sh: parallel multi-candidate sweep\\n- run_remote_record_chase.sh: staged record-chase search (screen + finals)\\n- submit_remote_fast.sh: auto-build submission folder + commit/push/PR\\n- runpod_bootstrap_fast.sh: one-shot bootstrap on CUDA hosts\\n\\nGoal: speed up reproducible SOTA chasing and submission workflow on RunPod/H100.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/378",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "`submit_remote_fast.sh` assumes it is run from the repo root (uses relative paths like `runs/...` and `records/...`) but never `cd`s into a known location. This is inconsistent with the other automation scripts (which `cd` to `REPO_DIR`) and makes failures like \u201ccandidate script not found\u201d easy to trigger when invoked from another directory. Consider `cd \"$(git rev-parse --show-toplevel)\"` (or similar) early in the script.",
+      "created_at": "2026-03-21T23:27:49Z",
+      "updated_at": "2026-03-21T23:27:52Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`run_remote_record_chase.sh` calls `submit_remote_fast.sh` with `RUN_DIR=\"${OUTROOT}\"`, but `submit_remote_fast.sh` requires `${RUN_DIR}/candidate_manifest.json`. This record-chase script never creates `candidate_manifest.json`, so AUTO_SUBMIT will reliably fail with \u201cMissing candidate manifest\u201d. Either emit a compatible manifest in `${OUTROOT}` (mapping finalists to their script + env) or teach `submit_remote_fast.sh` to handle record-chase outputs (e.g., infer script/env some other way).\n```suggestion\n  if [[ -f \"${OUTROOT}/candidate_manifest.json\" ]]; then\n    export RUN_DIR=\"${OUTROOT}\"\n    bash submit_remote_fast.sh\n  else\n    echo \"AUTO_SUBMIT=1 but ${OUTROOT}/candidate_manifest.json not found; skipping auto-submit.\"\n  fi\n```",
+      "created_at": "2026-03-21T23:27:50Z",
+      "updated_at": "2026-03-21T23:27:52Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`New-SubmissionFolder` writes `submission.json` with `val_loss` set to the mean of `val_bpb` values, and does not write a `val_bpb` field at all. This conflicts with the repo\u2019s submission format (see existing `records/**/submission.json` files and README guidance requiring `val_bpb`) and will generate incorrect submission metadata. Write `val_bpb` (and optionally `val_loss` separately if available) instead of putting BPB into `val_loss`.",
+      "created_at": "2026-03-21T23:27:50Z",
+      "updated_at": "2026-03-21T23:27:52Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The header comment says `FORK_REMOTE` defaults to `origin`, but the script actually defaults it to `fork` (`FORK_REMOTE=\"${FORK_REMOTE:-fork}\"`). This mismatch will confuse users and can cause `git push` failures if no `fork` remote exists. Update the comment or change the default to match.\n```suggestion\nFORK_REMOTE=\"${FORK_REMOTE:-origin}\"\n```",
+      "created_at": "2026-03-21T23:27:50Z",
+      "updated_at": "2026-03-21T23:27:52Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "If there are no `runs/remote_fast_*` directories, `ls -dt runs/remote_fast_*` will exit non-zero and, with `set -e`, the script will abort with an unhelpful `ls: cannot access ...` message. Consider explicitly checking for matches (e.g., via `compgen -G`) and printing a clear error like \u201cno remote_fast runs found\u201d.\n```suggestion\n  if compgen -G \"runs/remote_fast_*\" > /dev/null; then\n    RUN_DIR=\"$(ls -dt runs/remote_fast_* | head -n1)\"\n  else\n    echo \"No remote_fast runs found (expected directories matching runs/remote_fast_*).\"\n    exit 1\n  fi\n```",
+      "created_at": "2026-03-21T23:27:51Z",
+      "updated_at": "2026-03-21T23:27:52Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The chosen \u201cbest\u201d run is selected purely by minimum `val_bpb` (`best = min(runs, key=lambda x: x[\"val_bpb\"])`) without enforcing the 16,000,000-byte artifact cap. Since `summary.json` includes `total_bytes` (and `run_remote_fast.sh` even records `valid_16mb`), this script should reject or filter out runs/candidates that exceed the size limit before building a submission folder.\n```suggestion\nSIZE_LIMIT_BYTES = 16_000_000\nvalid_runs = []\nfor r in runs:\n    total_bytes = r.get(\"total_bytes\")\n    valid_16mb = r.get(\"valid_16mb\")\n    if total_bytes is not None:\n        if total_bytes <= SIZE_LIMIT_BYTES:\n            valid_runs.append(r)\n    elif valid_16mb is not None:\n        if bool(valid_16mb):\n            valid_runs.append(r)\n    else:\n        # If size metadata is missing, keep existing behavior by treating the run as valid.\n        valid_runs.append(r)\n\nif not valid_runs:\n    raise SystemExit(\"No runs within 16MB size limit in summary.json\")\n\nbest = min(valid_runs, key=lambda x: x[\"val_bpb\"])\nbest_candidate = best[\"candidate\"]\nif best_candidate not in manifest:\n    raise SystemExit(f\"Best candidate {best_candidate} missing in manifest\")\n\ncand_runs = [r for r in valid_runs if r[\"candidate\"] == best_candidate]\n```",
+      "created_at": "2026-03-21T23:27:51Z",
+      "updated_at": "2026-03-21T23:27:52Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "In Stage A parallel mode, each job is assigned a single GPU ID (`visible_gpus` is a single index), but `nproc_local` is set from `NPROC_PER_JOB` (defaulting to 1). If a user sets `NPROC_PER_JOB>1`, `torchrun --nproc_per_node=${nproc_local}` will try to spawn multiple ranks on a single visible GPU and will fail. Either clamp `J` to 1 when assigning a single GPU, or allocate `visible_gpus` as a comma-list with `J` GPUs per job.",
+      "created_at": "2026-03-21T23:27:51Z",
+      "updated_at": "2026-03-21T23:27:52Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "When `-PrepareSubmission` is used, the defaults `SubmissionAuthor=\"YOUR_NAME\"` and `SubmissionGithubId=\"YOUR_GITHUB_ID\"` will produce a scaffold with placeholder identity fields unless the user overrides them. Consider validating these inputs (e.g., error if they still equal the placeholder strings) before generating `submission.json`, similar to how `submit_remote_fast.sh` requires `GITHUB_ID`.",
+      "created_at": "2026-03-21T23:27:51Z",
+      "updated_at": "2026-03-21T23:27:52Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The first embedded Python block reads `os.environ[\"RUN_DIR\"]`, but `RUN_DIR` is only a shell variable here (not exported) and this Python invocation does not prefix env vars (unlike the later one). As written, this will raise a `KeyError: 'RUN_DIR'` unless the caller exported RUN_DIR beforehand. Export RUN_DIR before invoking Python, or pass it inline (`RUN_DIR=... python3 - ...`) for this first block as well.",
+      "created_at": "2026-03-21T23:27:51Z",
+      "updated_at": "2026-03-21T23:27:52Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This script runs two separate Python blocks to (1) create the submission folder and (2) recompute `SUBMISSION_DIR`. Because the folder name includes `datetime.now().strftime('%Y-%m-%d')`, the recomputed path can differ from the created folder (e.g., if the date rolls over at midnight), causing `git add` to fail or to add the wrong path. Prefer capturing the printed output path from the *creating* Python block and reusing it, rather than recomputing.\n```suggestion\nrecords_root = pathlib.Path(\"records\") / \"track_10min_16mb\"\nsuffix = f\"_AutoSweep_{best['candidate']}\"\ncandidates = [\n    d for d in records_root.iterdir()\n    if d.is_dir() and d.name.endswith(suffix)\n]\nif not candidates:\n    raise SystemExit(f\"No submission directory found matching '*{suffix}' under {records_root}\")\nsubmission_dir = sorted(candidates)[-1]\nprint(str(submission_dir))\n```",
+      "created_at": "2026-03-21T23:27:52Z",
+      "updated_at": "2026-03-21T23:27:52Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`submission.json` is being written with `\"val_loss\": round(mean_bpb, 6)`, but `mean_bpb` is the bits-per-byte score, not the validation loss. Repo documentation and existing submissions require a `val_bpb` field (and typically `val_loss` is a different metric). This will generate invalid/misleading submission metadata. Write `val_bpb` (and optionally the true mean `val_loss` if available) instead of storing BPB under `val_loss`.",
+      "created_at": "2026-03-21T23:27:52Z",
+      "updated_at": "2026-03-21T23:27:52Z"
+    }
+  ]
 }

@@ -9,5 +9,6 @@
   "body": "## Summary\r\n\r\n- 3x MLP expansion with blockade attention diversity and uncertainty-gated residuals. \r\n- Mixed quantization (INT8 attention + INT6 MLP) fits wider MLP under 16MB (15.37 MB). \r\n- Trained on 8xH100 PCIe, 7441 steps in 10 min.\r\n- val_bpb: 1.1812 (mixed roundtrip)\r\n\r\n## Details\r\nSee records/track_10min_16mb/2026-03-19_3xMLP_MixedQuant_BlockadeSigma/README.md\r\n\r\nGarret Sutherland, MirrorEthic LLC\r\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/172",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

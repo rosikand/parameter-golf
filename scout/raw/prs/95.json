@@ -11,5 +11,25 @@
     "does not beat SOTA"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/95",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Prevent exporting an EMA buffer that was never updated**\n\nThe EMA update guard in `main()` only runs on `step > 0 and step % ema_every == 0`, but `step` is incremented after that block; with runs where training ends before the first eligible step (for example `ITERATIONS=10` with `EMA_EVERY=10`, or an early wall-clock stop), `ema_flat` remains the initial weights and is still applied during export (`Applying EMA weights for export` block), which silently overwrites trained parameters with near-initial ones and corrupts the final artifact.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-19T15:50:35Z",
+      "updated_at": "2026-03-19T15:50:35Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Fix submission size metadata to match recorded artifact bytes**\n\n`submission.json` reports `bytes_total` as `15893533`, but the bundled run log records `final_model.int8.ptz` at `15813783` bytes and code size at `49825`, implying a total of `15863608`; this 29,925-byte overstatement can mis-rank the run in size-constrained leaderboard tooling that trusts `submission.json`.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-19T15:50:35Z",
+      "updated_at": "2026-03-19T15:50:35Z"
+    },
+    {
+      "user": "MatoTeziTanka",
+      "body": "Acknowledged \u2014 this doesn't beat SOTA. Reframing as a non-record submission.\n\nThe value here is the documented negative results:\n- **INT4 post-training quantization fails catastrophically** \u2014 roundtrip BPB goes from 1.44 to 3.73. Per-row, per-group (gs=64), and QAT with STE all fail. Root cause: quantization error compounds through layers (cosine similarity drops to 0.90 at 18 layers).\n- **Shared-weight depth recurrence (LoopFormer) loses to more tokens** at this training budget \u2014 1-pass beats 2-pass by 0.0185 BPB on 8\u00d7H100.\n- **EMA reduces INT8 quantization loss** from 0.0072 to 0.0048 BPB, but the per-step overhead costs ~600 training steps, partially offsetting the gain.\n\nWe have a v4 in progress that addresses the size/score issues. Will submit separately when ready.",
+      "created_at": "2026-03-21T18:50:40Z",
+      "updated_at": "2026-03-21T18:50:40Z"
+    }
+  ]
 }

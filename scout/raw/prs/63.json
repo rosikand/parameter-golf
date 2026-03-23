@@ -11,5 +11,25 @@
     "record submission ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/63",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "yahya010",
+      "body": "Updated submission to **val_bpb 1.1598** (3-seed mean, sliding window stride=64). Key techniques: 10L, STE int6 QAT (zero quant gap), full int6+zstd-22, MLP 1344, fp16 tied embedding, Muon 0.99, seq2048, grad clip 0.3. All constraints met (15.56MB artifact, 600s training, 370s eval). Ready for review.",
+      "created_at": "2026-03-19T20:21:06Z",
+      "updated_at": "2026-03-19T20:21:06Z"
+    },
+    {
+      "user": "0hq",
+      "body": "Do you mind creating a new PR when you edit things? Not chronological credit note in FAQ. Otherwise keep as [WIP] or Draft PR until it's fully ready and locked.",
+      "created_at": "2026-03-19T22:28:09Z",
+      "updated_at": "2026-03-19T22:28:29Z"
+    },
+    {
+      "user": "yahya010",
+      "body": "Yes! Would you like me to remove the additional commits past the ready for review mark? Right now this is ready, so I won\u2019t make any more changes here",
+      "created_at": "2026-03-19T22:42:29Z",
+      "updated_at": "2026-03-19T22:42:29Z"
+    }
+  ]
 }

@@ -9,5 +9,6 @@
   "body": "This PR addresses several open issues and provides additional documentation to help participants get started more effectively.\r\n\r\nKey Changes\r\nEnvironment Fix (#280): Added flash-attn to requirements.txt to ensure the Flash Attention 3 interface is available in the RunPod environment as expected by the training scripts.\r\nNewcomer Documentation (#82): Created TIPS.md, a collection of actionable advice for participants, covering architectural ideas (like Depth Recurrence), training optimizations (Muon), and evaluation tricks (Sliding Window).\r\nRule Clarification (#43): Explicitly documented in TIPS.md that the tokenizer size is not counted toward the 16MB artifact limit, providing clarity for those optimizing their vocabulary.\r\nArchitectural Guidance (#202): Included weight-sharing (layer tying) as a suggested strategy in the new tips document to help users stay within parameter constraints.\r\nVerification\r\nVerified that TIPS.md renders correctly in Markdown.\r\nConfirmed requirements.txt correctly includes the new dependency.\r\nSynced and rebased against the latest main branch.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/357",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

@@ -9,5 +9,13 @@
   "body": "## Summary\n\nBuilt on PR #374 with FA3 Hopper attention and a novel **two-phase test-time training** approach:\n\n- **FA3 Hopper:** 84.65ms/step (vs 96ms with SDPA/FA2), enabling 6,939 training steps in 600s\n- **Phase 1 \u2014 Norm-Only Recalibration** (100 epochs, Adam lr=0.01): Only unfreeze LayerNorm weights + scales (~22K params). Recalibrates activation distributions damaged by int6 quantization.\n- **Phase 2 \u2014 Selective-Freeze Block Adaptation** (25 epochs, SGD lr=0.005): Unfreeze last 3 blocks + norms + scales + lm_head (~7.6M params). Adapts on the recalibrated foundation while preserving SWA-averaged weights in first 8 blocks.\n\nKey insight: the two phases target different error sources (quantization artifacts vs. distribution mismatch) and are additive.\n\n## Results\n\n| Seed | val_bpb | Artifact | Training | TTT |\n|------|---------|----------|----------|-----|\n| 1337 | **1.1216** | 15,704,756 bytes | 84.65ms/step, 6939 steps | 705s two-phase |\n\n- Post-SWA BPB: 1.1421\n- TTT improvement: **-0.021** (1.1421 \u2192 1.1216)\n- Additional seeds running for statistical significance\n\n## Architecture\n\n- 11L, dim=512, 8 heads / 4 KV (GQA), XSA last 4 layers\n- 3x MLP relu\u00b2 + SmearGate + OrthoInit\n- Partial RoPE 16/64, LN Scale, BigramHash(2048)\n- Tight SWA, Late QAT (4%), int6 + zstd-22, 1% pruning\n- FA3 Hopper (flash_attn_interface)\n\n## Setup\n\n```bash\npip install zstandard\npip install flash_attn_3 --find-links https://windreamer.github.io/flash-attention3-wheels/cu128_torch291\n```\n\n## Command\n\n```bash\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/415",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "EthanYangTW",
+      "body": "Superseded by #417 (3-seed mean 1.1227)",
+      "created_at": "2026-03-22T10:42:39Z",
+      "updated_at": "2026-03-22T10:42:39Z"
+    }
+  ]
 }

@@ -9,5 +9,73 @@
   "body": "## Summary\n\nBuilt on PR #374 with a novel **two-phase test-time training** approach:\n\n- **Phase 1 \u2014 Norm-Only Recalibration** (100 epochs, Adam lr=0.01): Only unfreeze LayerNorm weights, scales, and final_norm (~22K params). Recalibrates activation distributions damaged by int6 quantization.\n- **Phase 2 \u2014 Selective-Freeze Block Adaptation** (15 epochs, SGD lr=0.003): Unfreeze last 2 transformer blocks + norms + scales + lm_head (~5.3M params). Adapts representations on the recalibrated foundation while preserving SWA-averaged weights in first 9 blocks.\n\nKey insight: the two phases target different error sources (quantization artifacts vs. distribution mismatch) and are additive (-0.019 BPB combined).\n\n## Results\n\n| Seed | val_bpb | Artifact | Training | TTT |\n|------|---------|----------|----------|-----|\n| 1337 | **1.1258** | 15,762,005 bytes | 96ms/step, 6222 steps | 752s two-phase |\n\n- Post-SWA BPB: 1.1447\n- TTT improvement: **-0.019** (1.1447 \u2192 1.1258)\n\n## Architecture\n\n- 11L, dim=512, 8 heads / 4 KV (GQA), XSA last 4 layers\n- 3x MLP relu\u00b2 + SmearGate + OrthoInit\n- Partial RoPE 16/64, LN Scale, BigramHash(2048)\n- Tight SWA, Late QAT (4%), int6 + zstd-22, 1% pruning\n\n## Command\n\n```bash\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/410",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "`late_k_layers` is computed but never used. If this is leftover from an earlier \u201clate-K passthrough\u201d experiment, it should be removed or wired into the quantization logic to avoid dead code.\n```suggestion\n\n```",
+      "created_at": "2026-03-22T06:49:23Z",
+      "updated_at": "2026-03-22T06:49:25Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The README claims Phase 1 unfreezes \u201cLayerNorm weights\u201d and `final_norm`, but the implementation uses parameterless `RMSNorm`, so there are no norm weights to unfreeze. It also states Phase 2 unfreezes `lm_head`, but with tied embeddings the code effectively unfreezes `tok_emb` instead. Please update the README to reflect which parameters are actually trained in each phase (or change the code to match the described parameter set).\n```suggestion\n- **Phase 1 \u2014 Norm-Only Recalibration (100 epochs, Adam lr=0.01):** Only unfreeze the small set of normalization-related parameters that exist in this model (~22K params). The implementation uses parameterless `RMSNorm`, so there are no LayerNorm gamma/beta or separate `final_norm` weights to train; this phase focuses on recalibrating activation distributions damaged by int6 quantization and acts as post-quantization calibration via gradient descent.\n- **Phase 2 \u2014 Selective-Freeze Block Adaptation (15 epochs, SGD lr=0.003, momentum=0.95):** Unfreeze the last 2 transformer blocks + associated norms/scales + the tied output head / token embedding matrix (`lm_head` is tied to `tok_emb`, so updating the head updates the embeddings; ~5.3M params). This adapts representations on the recalibrated foundation while preserving SWA-averaged weights in the first 9 blocks.\n```",
+      "created_at": "2026-03-22T06:49:23Z",
+      "updated_at": "2026-03-22T06:49:25Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The README states \u201cMagnitude pruning 5%\u201d (and mentions SWA every 50), but the accompanying script prunes at a fixed 15% quantile (`0.15`) and uses `SWA_EVERY=25` by default. Please align the README (and/or make pruning percentage and SWA cadence match the described configuration used for this record).\n```suggestion\n- **Magnitude pruning 15% (quantile=0.15):** Increased from 3% to improve compression ratio.\n- **SWA every 25 steps:** Checkpoint averaging during warmdown.\n```",
+      "created_at": "2026-03-22T06:49:23Z",
+      "updated_at": "2026-03-22T06:49:25Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Magnitude pruning is hard-coded to the 15% quantile (`0.15`), which makes it easy for the record script and README/submission metadata to drift out of sync. Consider wiring this to an env/arg (similar to `PRUNE_PCT` in other record scripts) or updating the documentation/metadata to reflect the actual pruning level used.\n```suggestion\n    # Make pruning percentage configurable via PRUNE_PCT env var (default 0.15)\n    prune_pct_str = os.getenv(\"PRUNE_PCT\")\n    try:\n        prune_pct = float(prune_pct_str) if prune_pct_str is not None else 0.15\n    except (TypeError, ValueError):\n        prune_pct = 0.15\n    if master_process:\n        log0(f\"magnitude_pruning: using prune_pct={prune_pct}\")\n\n    with torch.no_grad():\n        for name, param in base_model.named_parameters():\n            if param.ndim == 2 and param.numel() > 65536:\n                threshold = torch.quantile(param.abs().float().flatten(), prune_pct)\n```",
+      "created_at": "2026-03-22T06:49:24Z",
+      "updated_at": "2026-03-22T06:49:25Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The file docstring mentions SAM (Sharpness-Aware Minimization), but the implementation doesn\u2019t apply SAM (no perturb/second forward, etc.). This is likely to confuse readers and reviewers; either implement SAM in the TTT phases or update the docstring to reflect the actual approach (two-phase selective-freeze TTT).\n```suggestion\n\"\"\"Selective-freeze two-phase TTT (no SAM; Sharpness-Aware Minimization not applied here). Fork of #374.\"\"\"\n```",
+      "created_at": "2026-03-22T06:49:24Z",
+      "updated_at": "2026-03-22T06:49:25Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Phase 1 is described as \u201cNorm-only\u201d, but this model uses `RMSNorm` modules without learnable parameters, so `\"norm\" in name`/`\"final_norm\" in name` won\u2019t actually select any parameters to train. If the intent is to recalibrate norms, you may need learnable norm weights (or explicitly target the parameters that actually exist, e.g., `q_gain`, `smear.gate`, etc.), and align the selector/documentation accordingly.",
+      "created_at": "2026-03-22T06:49:24Z",
+      "updated_at": "2026-03-22T06:49:25Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Phase 2\u2019s selector unfreezes `tok_emb` unconditionally. The PR description/README call out unfreezing `lm_head`, but with tied embeddings `lm_head` is `None` and unfreezing `tok_emb` is the real equivalent; with untied embeddings, this would also update embeddings unexpectedly. Consider gating `tok_emb` unfreezing on `tie_embeddings` (or update the README/description to explicitly include embeddings).",
+      "created_at": "2026-03-22T06:49:24Z",
+      "updated_at": "2026-03-22T06:49:25Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The `blurb` claims \u201cmagnitude pruning 5%\u201d and \u201cSWA every 50 steps\u201d, but the corresponding `train_gpt.py` uses a fixed 15% pruning quantile and defaults `SWA_EVERY` to 25. Please update the blurb (or the script defaults) so the submission metadata reflects the actual configuration used.\n```suggestion\n  \"blurb\": \"10 layers, QAT with STE (int5 MLP / int6 attn), BigramHash 12288, eval stride 32, magnitude pruning 15%, SWA every 25 steps, zstd-22. Based on 10L_Int5MLP_MuonWD04_SWA50.\",\n```",
+      "created_at": "2026-03-22T06:49:24Z",
+      "updated_at": "2026-03-22T06:49:25Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "In distributed TTT, `usable` can be smaller than `chunk` (e.g., small validation set or large `TTT_BATCH_SEQS`). For ranks where `local_bs >= usable`, `idx` becomes empty and `torch.stack([... for i in idx])` will raise. Consider computing a per-iteration `be = min(bs + chunk, usable)`, skipping when `local_bs >= be` (or `idx.numel()==0`), and weighting `ep_loss/ep_count` by the actual local batch size rather than `ttt_batch_seqs` unconditionally.",
+      "created_at": "2026-03-22T06:49:25Z",
+      "updated_at": "2026-03-22T06:49:25Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`subprocess` is imported but never used in this script. Removing unused imports helps keep these record scripts easier to audit and reduces lint noise.\n```suggestion\n\n```",
+      "created_at": "2026-03-22T06:49:25Z",
+      "updated_at": "2026-03-22T06:49:25Z"
+    },
+    {
+      "user": "EthanYangTW",
+      "body": "Superseded by #415 (1.1216 with FA3 Hopper)",
+      "created_at": "2026-03-22T09:08:47Z",
+      "updated_at": "2026-03-22T09:08:47Z"
+    }
+  ]
 }

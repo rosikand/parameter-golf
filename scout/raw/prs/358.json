@@ -9,5 +9,6 @@
   "body": "Description\r\n\r\nThis PR upgrades the baseline train_gpt.py with several state-of-the-art techniques used by top leaderboard entries to achieve ~1.14 BPB.\r\n\r\nArchitectural Improvements\r\nBigramHash Embedding: Adds token-pair hashing for cheap local context.\r\nSmearGate: Implements learned gating to blend information between adjacent tokens.\r\nImproved Initialization: Linear layers now use orthogonal initialization.\r\nTraining & Optimizer Enhancements\r\nQuantization-Aware Training (QAT): Uses Straight-Through Estimators (STE) to simulate Int8 rounding during training.\r\nStochastic Weight Averaging (SWA): Averages weights during the warmdown phase for better generalization.\r\nMuon Upgrade: Adds weight decay support to the Muon optimizer.\r\nCompression & Evaluation\r\nMagnitude Pruning: Zeroes out the smallest 3% of weights post-training to maximize compression.\r\nZstandard (Zstd-22): Replaces zlib with maximum Zstd compression for the 16MB artifact.\r\nSliding Window Evaluation: Implements strided evaluation (stride = 64) to provide tokens with near-full context.\r\nVerification\r\nVerified syntax correctness with py_compile.\r\nConfirmed environment setup using uv.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/358",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

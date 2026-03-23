@@ -9,5 +9,6 @@
   "body": "## Summary\n- add `records/track_10min_16mb/2026-03-20_Int6MLP3x_11L_SmearGate_Bigram4096x128_MuonWD038_SWA50_DocSliding`\n- include the recorded `8xH100` train log, local trainer, legal eval CSVs, and reproduction scripts\n- document the chosen legal `int6_zstd_core` + `doc_sliding 2048/256` result: `val_loss=1.95474571`, `val_bpb=1.15677715`, `artifact_bytes=15704854`\n\n## Notes\n- this folder contains one recorded training run only, so it should be treated as a single-run candidate rather than a statistically demonstrated new record\n- the checked-in `train_gpt.py` is a whitespace-trimmed copy of the logged trainer source so the file stays under the repo's 1500-line limit; only blank lines were removed\n- the integrated export path printed in `train.log` was slightly over the 16 MB cap, so the promoted score in this folder comes from the included legal re-export path\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/207",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

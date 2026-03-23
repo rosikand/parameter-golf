@@ -9,5 +9,6 @@
   "body": "## Summary\r\n\r\n`DenseContextQuantTrim 8xH100` is a clean under-cap `8xH100` submission snapshot with `1.17787170 val_bpb`.\r\n\r\n## Approach Notes\r\n\r\n- dense baseline-family trainer\r\n- `TRAIN_SEQ_LEN=2048`\r\n- sliding-window validation at `VAL_CONTEXT_LEN=2048`, `VAL_SLIDE_TOKENS=512`\r\n- clip-search PTQ\r\n- hybrid `fp16/int8` token embedding export\r\n- no tokenizer changes\r\n- no test-time training\r\n- no stateful evaluation path in the submitted run\r\n- no int6 or QAT path\r\n\r\n## Result\r\n\r\n- Final exact metrics from `train.log`:\r\n  - `final_pre_quant_exact val_bpb: 1.17469015`\r\n  - `final_int8_zlib_roundtrip_exact val_bpb: 1.17787170`\r\n- Final artifact sizes from `train.log`:\r\n  - `Serialized model int8+zlib: 15919719 bytes`\r\n  - `Total submission size int8+zlib: 15981108 bytes`\r\n- Final wallclock from `train.log`:\r\n  - `wallclock_seconds: 594.025`\r\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/256",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

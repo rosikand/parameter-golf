@@ -9,5 +9,6 @@
   "body": "Adds one non-record submission folder under records/track_non_record_16mb with README, submission.json, train.log, and train_gpt.py.\\n\\nNotes:\\n- Run performed on 1x H100 due to limited compute budget while awaiting grant-backed 8xH100 runs.\\n- This is a size/quality tradeoff experiment (smaller artifact, lower score than same-session baseline).\\n- Folder is self-contained and script compiles/runs from within the records folder.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/93",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

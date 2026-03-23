@@ -9,5 +9,6 @@
   "body": "## Non-record submission\n\nThis PR adds a non-record run (STAGING_PROFILE=1). It does **not** beat current leaderboard SOTA (e.g. `Muon WD + 10 layer` at `val_bpb=1.1748`).\n\n### Score (from `train.log`)\n- `final_int8_zlib_roundtrip_exact` val_bpb: **1.18926428** (val_loss: **2.00802292**)\n- `final_int8_ttt_lora` val_bpb: **1.1863**\n- Stopped at step **11436/20000** (wallclock cap; `train_time_ms: 599955`)\n- Artifact size (`int8+zlib`): **15,292,665 bytes**\n\n### Methodology (short)\n- `STAGING_PROFILE=1` injects merged-baseline defaults and enables LAWA (`LAWA_ENABLED=1`).\n- Sliding-window eval enabled via `EVAL_STRIDE=512`.\n- Training uses the FineWeb `sp1024` export and the 8\u00d7H100 setup.\n\n### Reproduction\n```bash\nSTAGING_PROFILE=1 RUN_ID=prod_8xh100 \\\nDATA_PATH=./data/datasets/fineweb10B_sp1024/ \\\nTOKENIZER_PATH=./data/tokenizers/fineweb_1024_bpe.model \\\nVOCAB_SIZE=1024 \\\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\nIncluded files are all contained under the PR-added folder in `records/track_10min_16mb/`.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/197",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

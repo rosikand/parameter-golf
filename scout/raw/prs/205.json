@@ -9,5 +9,61 @@
   "body": "10-layer GPT with BigramHash embeddings, SmearGate, OrthoInit, SWA (30 checkpoints), Muon WD=0.04, mixed int5(MLP)/int6(attn) quantization, 2% magnitude pruning. Sliding window eval at stride=64, seq_len=1024.\r\n\r\nval_bpb: 1.1792 (sliding window int6+zstd22, 12.1MB artifact) Trained 600s on 8xH100 SXM, seed 1337, step 7819.\r\n\r\nIncludes: search harness (ProteinLite), Vast.ai deploy pipeline, live GPU monitor, v1/v2 lineage, test suite.\r\n<3",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/205",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "The formatting block for completed search runs is mis-indented: i6_s/sl_s/sz_s and the `lines.append(...)` call are outside the `for r in completed:` loop, which will raise `UnboundLocalError` (or even a syntax/indentation error depending on editor) and only print one row. Re-indent those lines inside the loop (and consider using `is not None` checks instead of `if pre` so 0.0 doesn\u2019t display as N/A).",
+      "created_at": "2026-03-20T11:47:32Z",
+      "updated_at": "2026-03-20T11:47:34Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`run_remote()` tokenizes the provided SSH command with `ssh_cmd.split()`, which breaks when flags include quoted values (e.g. `-o StrictHostKeyChecking=accept-new`) or paths with spaces. Use `shlex.split(ssh_cmd)` to parse the SSH command line robustly.",
+      "created_at": "2026-03-20T11:47:32Z",
+      "updated_at": "2026-03-20T11:47:34Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`run_local()` executes `cmd` with `shell=True` while many call sites interpolate user-provided `workdir`/paths into the command string. This is both fragile (spaces/quoting) and exposes command-injection risk if the monitor is pointed at an untrusted workdir. Prefer `subprocess.run([...])` with argument lists (and quote/escape remote paths similarly).",
+      "created_at": "2026-03-20T11:47:32Z",
+      "updated_at": "2026-03-20T11:47:34Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`parse_training_log()` matches `weight_decay token:<...> head:<...> muon:<...> scalar:<...>` but the captured `head` value is dropped and the remaining values are stored as strings. This makes the displayed WD incomplete/inconsistent; store all four fields and parse them as floats for reliable formatting/comparisons.",
+      "created_at": "2026-03-20T11:47:33Z",
+      "updated_at": "2026-03-20T11:47:35Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This test hard-codes `ROOT = Path(\"/home/spark-advantage/parameter-golf\")`, which will fail on CI and any developer machine with a different checkout location. Derive the repo root from `__file__` (e.g., `Path(__file__).resolve().parents[1]`) or use relative paths so the test is portable.",
+      "created_at": "2026-03-20T11:47:33Z",
+      "updated_at": "2026-03-20T11:47:35Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`start_monitors()` runs its loops inside subshells `(...)` but uses `local now` / `local now fs ...` inside those subshells. In bash, `local` is only valid inside a function, so this will print an error and can stop the monitor loops. Remove `local` (or restructure into a real helper function invoked normally).",
+      "created_at": "2026-03-20T11:47:33Z",
+      "updated_at": "2026-03-20T11:47:35Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The remote bootstrap script runs `python -m unittest tests.test_search_runner tests.test_vast_render_remote_config`, but `tests/test_vast_render_remote_config.py` is not present in this PR/repo. This will make every remote run fail during the unit test phase; either add the missing test module or remove/replace it with the intended test(s).\n```suggestion\n    run_logged \"unit tests\" \"$PYTHON_BIN\" -m unittest tests.test_search_runner\n```",
+      "created_at": "2026-03-20T11:47:33Z",
+      "updated_at": "2026-03-20T11:47:35Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Defaults are inconsistent: `DISK_SPACE` defaults to 200GB, but `SEARCH_PARAMS` includes `disk_space>=300`. With defaults, the created template configuration won\u2019t match its own search filter expectations. Align the default `PG_TEMPLATE_DISK_GB` with the search params (or drop `disk_space>=...` from the default filter).\n```suggestion\nDISK_SPACE=\"${PG_TEMPLATE_DISK_GB:-300}\"\n```",
+      "created_at": "2026-03-20T11:47:34Z",
+      "updated_at": "2026-03-20T11:47:35Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This module unconditionally imports `scipy` and `scikit-learn`, but the repo\u2019s top-level `requirements.txt` doesn\u2019t include them. As-is, a clean install will fail to import `search.protein_lite` (and the added unit tests will fail). Add these dependencies to the standard requirements (or make the import optional with a clear error message/instructions).\n```suggestion\ntry:\n    from scipy.stats.qmc import Sobol\n    from sklearn.gaussian_process import GaussianProcessRegressor\n    from sklearn.gaussian_process.kernels import ConstantKernel, DotProduct, Matern, WhiteKernel\n    _SCIPY_SKLEARN_AVAILABLE = True\nexcept ImportError:  # pragma: no cover - optional dependencies\n    _SCIPY_SKLEARN_AVAILABLE = False\n\n    class _MissingOptionalDependency:\n        def __init__(self, *args, **kwargs):\n            raise ImportError(\n                \"Optional dependencies 'scipy' and 'scikit-learn' are required for \"\n                \"Sobol sampling and Gaussian process models in 'search.protein_lite'. \"\n                \"Install them with:\\n\\n    pip install scipy scikit-learn\\n\"\n            )\n\n    # Placeholders that raise a clear error if used without the optional deps\n    Sobol = _MissingOptionalDependency\n    GaussianProcessRegressor = _MissingOptionalDependency\n    ConstantKernel = _MissingOptionalDependency\n    DotProduct = _MissingOptionalDependency\n    Matern = _MissingOptionalDependency\n    WhiteKernel = _MissingOptionalDependency\n\n    warnings.warn(\n        \"Optional dependencies 'scipy' and 'scikit-learn' are not installed. \"\n        \"Functionality requiring Sobol sampling or Gaussian process models in \"\n        \"'search.protein_lite' will not be available.\",\n        RuntimeWarning,\n    )\n```",
+      "created_at": "2026-03-20T11:47:34Z",
+      "updated_at": "2026-03-20T11:47:35Z"
+    }
+  ]
 }

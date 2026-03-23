@@ -11,5 +11,19 @@
     "record submission ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/42",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "0hq",
+      "body": "This is great! Thanks for being the first challenge submission, adding now with some review.",
+      "created_at": "2026-03-19T17:11:31Z",
+      "updated_at": "2026-03-19T17:11:31Z"
+    },
+    {
+      "user": "chonchiog",
+      "body": "@0hq awesome!! So excited! Waiting for the runpod credits to keep researching and upgrading my model. Had to spend some money out of pocket to test this but so worth it. :)",
+      "created_at": "2026-03-19T17:15:37Z",
+      "updated_at": "2026-03-19T17:15:37Z"
+    }
+  ]
 }

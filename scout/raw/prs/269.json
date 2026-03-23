@@ -9,5 +9,6 @@
   "body": "## Summary\nRestore the root `train_gpt.py` to the exact state from the parent of `bd2463aaa21fec47f643c593d86d4dd385d474e9`.\n\n## Testing\nNot run",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/269",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

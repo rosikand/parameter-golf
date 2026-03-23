@@ -9,5 +9,6 @@
   "body": "## Summary\n\nExploring depth recurrence for parameter-efficient language modeling. Instead of 9 unique transformer blocks, use 3 unique blocks looped 3 times. Same effective depth, 1/3 the unique parameters. The freed parameter budget goes to wider layers.\n\n## Results\n\n30 experiments across widths (512-1152), layers (2-6), recurrence counts (2-6), and head counts (4-16).\n\n| Config | Iters | Shards | BPB | Compressed |\n|--------|-------|--------|-----|-----------|\n| 3x3 d1024 h8 | 5000 | 10 | 1.589 | 20.4MB* |\n| 3x3 d768 h12 | 5000 | 10 | 1.605 | 11.3MB |\n| 3x3 d1024 h8 | 600 | 10 | 1.996 | 13.0MB |\n| 3x3 d896 h8 | 600 | 10 | 2.010 | 10.5MB |\n| Baseline 9-layer d512 | 200 | 1 | 2.303 | 9.3MB |\n\n*Compression issue to resolve - exceeds 16MB limit. Working on QAT.\n\n## Key Findings\n\n- 3 unique layers with 3 recurrences is the optimal shape\n- Wider models win with sufficient data (d1024 > d896 > d768)\n- More than 3 recurrences shows diminishing returns\n- 8 heads works best at d1024, 12 heads at d768\n\n## Status\n\nWork in progress. Next steps: resolve 16MB compression constraint, QAT, test-time compute, scale to 8xH100s.\n\n## Files\n\n- `our/models/` - Recurrent and enhanced model variants (MLX)\n- `our/scripts/` - Experiment runners and adaptive sweep\n- `our/docs/APPROACH.md` - Full strategy document\n- `results/` - All experiment logs, configs, and results",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/91",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

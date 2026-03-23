@@ -9,5 +9,6 @@
   "body": "## Two quantization findings\n\n**Finding 1: SWA reverses the quantization gap**\nAfter averaging 84 checkpoints, int6+zstd roundtrip BPB is LOWER than pre-quant BPB (1.5164 vs 1.5536, gap = -0.037). SWA smoothing eliminates quantization-sensitive outliers.\n\n**Finding 2: Int5 is catastrophic for undertrained models**\nMixed int5/int6 quant gap explodes from 0.3 to 1.4 BPB (4.5\u00d7). Directly contradicts int5 viability for compute-constrained training.\n\nSee README for detailed analysis and reproduction steps.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/238",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

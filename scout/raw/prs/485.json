@@ -9,5 +9,43 @@
   "body": "## Summary\n- **val_bpb: 1.1522** (sliding window stride=64, post int5/int6+zstd quantization roundtrip)\n- 10 layers, 512 dim, 8 heads / 4 KV heads, tied embeddings\n- Artifact: 15,384,232 bytes (15.38 MB)\n\n## Novel Contributions\n\n### Count-Initialized Exact Bigram Logit Head\nA 1024x1024 lookup table initialized from corpus bigram transition probabilities (B[a,b] = log p(b|a) - log p(b)) before training begins. Provides a strong Markov prior from step 0. Applied BEFORE logit softcap. Int4 nibble-packed (524KB).\n\n### Int4 Nibble Packing\nCustom pack_i4/unpack_i4 for signed int4 values into uint8 bytes. Halves the bigram table storage.\n\n## Adopted Techniques\n- XSA on last 4 layers (arxiv:2603.09078)\n- Partial RoPE 16/64 dims\n- LN Scale 1/sqrt(layer+1)\n- Higher LR (0.025)\n- SmearGate, OrthoInit, U-Net skips, SWA, int5/int6 + zstd-22\n\n## Results\n- Steps: 6267 at 95.75 ms/step (8xH100 SXM, 600s wallclock)\n- Pre-SWA val_bpb: 1.1563\n- Post-SWA+quant val_bpb: 1.1522\n- Artifact: 15.38 MB (0.62 MB headroom)\n\nBuilt on baseline by @thwu1 (PR #180).",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/485",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "README claims \u201cAll parameters are set as defaults \u2026 No env vars needed.\u201d, but `train_gpt.py` defaults `BIGRAM_LOGIT_HEAD` to 0, so running the command as written won\u2019t enable the count-initialized exact bigram logit head described in this record. Either set the default to enabled for this record script, or update the run command/docs to include `BIGRAM_LOGIT_HEAD=1` (and any other required env vars) so results are reproducible.",
+      "created_at": "2026-03-23T01:02:50Z",
+      "updated_at": "2026-03-23T01:02:51Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The Architecture section says \u201crelu squared activation\u201d, but the implementation uses `leaky_relu(..., negative_slope=0.5)` followed by `square()`. Please update the README to match the actual activation, or adjust the code if ReLU^2 was intended.\n```suggestion\n- MLP 3x expansion (hidden=1536), leaky relu squared activation (negative_slope=0.5)\n```",
+      "created_at": "2026-03-23T01:02:50Z",
+      "updated_at": "2026-03-23T01:02:51Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "README lists \u201cwarmdown=2800 iters\u201d, but `train_gpt.py` defaults `WARMDOWN_ITERS` to 3000. Please reconcile the README with the actual default hyperparameters used for this record (or explicitly document the env var override used for the run).",
+      "created_at": "2026-03-23T01:02:50Z",
+      "updated_at": "2026-03-23T01:02:51Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This record is described as \u201cCountInitBigram\u2026\u201d, but `Hyperparameters.bigram_logit_head` defaults to disabled (`BIGRAM_LOGIT_HEAD` default \"0\"). With the current defaults, the count-based init block won\u2019t run and the exact bigram logit head won\u2019t be part of the model unless the env var is set. Consider enabling it by default for this record (or ensure the README/run command documents the required env var).",
+      "created_at": "2026-03-23T01:02:51Z",
+      "updated_at": "2026-03-23T01:02:51Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The quantization/compression logging labels are inconsistent with what the code actually does: it may use zstd (`_COMPRESSOR == \"zstd\"`) and mixed int6/int5 plus optional int4-packed tensors, but the log line still says `Total submission size int8+zlib`, and later messages are hard-coded to `final_int8_zlib_roundtrip`. Please make these log labels reflect the chosen compressor/quantization so the recorded logs and reported metadata aren\u2019t misleading.",
+      "created_at": "2026-03-23T01:02:51Z",
+      "updated_at": "2026-03-23T01:02:51Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Related to the above: the final evaluation log keys are hard-coded as `final_int8_zlib_roundtrip*` even when using zstd and mixed int6/int5 (+ int4 packed) roundtrip. Consider renaming these log keys or including the compressor/quant scheme in the key/value so downstream parsing and human readers don\u2019t misinterpret the result.\n```suggestion\n        f\"final_mixed_int6_{_COMPRESSOR}_roundtrip val_loss:{q_val_loss:.4f} val_bpb:{q_val_bpb:.4f} \"\n        f\"eval_time:{1000.0 * (time.perf_counter() - t_qeval):.0f}ms\"\n    )\n    log0(\n        f\"final_mixed_int6_{_COMPRESSOR}_roundtrip_exact \"\n        f\"val_loss:{q_val_loss:.8f} val_bpb:{q_val_bpb:.8f}\"\n    )\n```",
+      "created_at": "2026-03-23T01:02:51Z",
+      "updated_at": "2026-03-23T01:02:51Z"
+    }
+  ]
 }

@@ -9,5 +9,6 @@
   "body": "## Summary\n\n- **val_bpb: 1.1370** (mean of 3 seeds, post int5/int6+zstd quantization roundtrip, sliding window stride=64)\n- 10 layers, 512 dim, 8 heads / 4 KV heads, tied embeddings\n- Artifact: ~15.9 MB (all 3 seeds under 16 MB)\n\n## 3-Seed Results\n\n| Seed | val_bpb | artifact_bytes | valid |\n|------|---------|---------------|-------|\n| 42 | 1.13815 | 15,983,322 | yes |\n| 1337 | 1.13601 | 15,968,675 | yes |\n| 2024 | 1.13697 | 15,650,120 | yes |\n| **Mean** | **1.13704** | | |\n| **Std** | **0.00088** | | |\n\n## Key Changes from Baseline\n\n1. **XSA (Exclusive Self Attention)** on last 4 layers \u2014 removes self-value projection (arxiv:2603.09078)\n2. **LeakyReLU(0.5)\u00b2** activation replacing ReLU\u00b2\n3. **Partial RoPE** \u2014 rotary embeddings on 25% of head dims (16/64)\n4. **Higher learning rates** \u2014 matrix_lr 0.02\u21920.025, scalar_lr 0.02\u21920.025, tied_embed_lr 0.03\u21920.035\n5. **8% magnitude pruning** (up from 3%) for artifact compliance\n\n## Run Command\n\n```bash\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\nBuilt on SOTA baseline by @thwu1 (PR #180).",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/434",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

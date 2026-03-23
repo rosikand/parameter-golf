@@ -9,5 +9,6 @@
   "body": "## Summary\r\n- **val_bpb: 1.1704** (beats merged SOTA of 1.1748)\r\n- Int6 STE quantization + 3x MLP width (24.1M params)\r\n- Novel cosine warmdown schedule (smoother LR decay)\r\n- Orthogonal init + RoPE base 50K\r\n- Built on merged SOTA (10L + Muon WD + Overtone Init + Sliding Window + FP16 Embed)\r\n- 8xH100 SXM, 7630 steps in 10 min, artifact 13.5MB\r\n\r\n## Key Results\r\n| Metric | Value |\r\n|--------|-------|\r\n| val_bpb (int8+zlib roundtrip) | **1.17043480** |\r\n| val_loss | 1.97623014 |\r\n| Total artifact size | 13,520,480 bytes |\r\n| Steps completed | 7,630 |\r\n| Training time | 603,111ms |\r\n\r\n## Novel Contribution\r\n**Cosine warmdown**: Replaces linear warmdown with `0.5 * (1 + cos(pi * progress))`, keeping LR higher for longer during early warmdown then decaying faster near the end. Standard in LLM pretraining (LLaMA, GPT-3) but not yet applied in this competition.\r\n\r\n## Test plan\r\n- [ ] Verify reproducibility on 8xH100 SXM\r\n- [ ] Run additional seeds for statistical significance\r\n- [ ] Confirm artifact size < 16MB\r\n\r\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/243",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

@@ -9,5 +9,6 @@
   "body": "Adding a new flag, `MLX_EAGER_EVAL` to Hyperparameters, which forces the train script to materialize the loss/grad graph for each sub-batch (as defined by `MLX_MAX_MICROBATCH_TOKENS`), enabled by default.\r\n\r\nThis is a fix to a crash I encountered while attempting to run the train script on a 16GB M4 MacBook Air, which was caused by MLX attempting to build the full computation graph when `loss_and_grad_chunked` was called in warmup. After implementation, the train script executed successfully (warmup, training for 12 epochs before reaching wall time limit, and validation). With all other settings default, the run used a peak of 6.5GB of RAM, and the GPU was constantly at 100% utilization.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/100",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

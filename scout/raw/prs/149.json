@@ -9,5 +9,6 @@
   "body": "Combines best techniques from WarmdownQuantization (#1) and SlidingWindow (#2):\r\n- Int6 quant, FP16 tied embeddings, Late-K passthrough\r\n- Batched sliding window eval (stride=64), overtone init, phase-transition resid_mix\r\n- Muon decoupled weight decay, AdamW for embeddings/scalars\r\n- Novel: QAT with STE in last 30% of training for near-zero quant penalty\r\n- Cosine warmdown schedule, higher Muon momentum warmup",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/149",
-  "draft": true
+  "draft": true,
+  "comments": []
 }

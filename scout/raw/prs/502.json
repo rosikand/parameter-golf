@@ -9,5 +9,6 @@
   "body": "## Summary\nThis PR adds one non-record folder for a 1xH100 quantization policy sweep under a fixed 10-minute budget.\n\n## Theme\nAuto-research on export-time mixed quantization policy via INT6_CATS.\n\n## What changed\n- Added policy knob in record script: INT6_CATS\n- Logged selected policy per run: int6_policy:...\n- Included main run plus extra sweep logs for context\n\n## Main run result\n- val_bpb=1.52481100\n- bytes_total=13,144,462 (under 16MB)\n\n## Why submit this\nThis is a structured negative-result submission: on short 1x runs, aggressive int6 export policies can preserve size but create a large quantization gap. The result is useful for pruning dead-end search directions before expensive 8x attempts.\n\nThis PR only adds one folder under records/track_non_record_16mb/.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/502",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

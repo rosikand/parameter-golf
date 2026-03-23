@@ -9,5 +9,6 @@
   "body": "## Summary\n\n- **Val BPB**: 1.3441 (post-quant) / 1.2105 (pre-quant)\n- **Artifact**: 16,224,826 bytes (int6+zstd-22)\n- **Compute**: 8\u00d7H100 SXM, 4572 steps, 10 min wallclock\n\n**Empirical Bayes Layer Sharing (EBLS)**: 3 shared transformer blocks \u00d7 3 virtual layers = 9 effective layers, with per-virtual-layer rank-8 LoRA deviations gated by learned shrinkage factors \u03b3_i = \u03c3(logit_i).\n\n### Key finding\n\nThe model **discovers the optimal sharing pattern from data**: MLP gammas converge to 0 (fully shared) across all virtual layers, while attention shows minimal specialization only in early layers. This provides empirical evidence for architectural choices that other submissions make by intuition.\n\n| Virtual Layer | Attn \u03b3 | MLP \u03b3 |\n|:---:|:---:|:---:|\n| 0 | 0.0035 | 0.0012 |\n| 1 | 0.0013 | 0.0000 |\n| 2 | 0.0012 | 0.0000 |\n| 3\u20138 | 0.0000 | 0.0000 |\n\n### Architecture\n\n- 1024-dim, 16Q/4KV heads (GQA), 3\u00d7 MLP with ReLU\u00b2\n- SmearGate, BigramHash(10240), U-Net skip connections\n- Int6 STE QAT + zstd-22, Muon+Adam, SWA\n\n### Technical writeup\n\nFull method description with James-Stein statistical foundations: https://github.com/Robby955/parameter-golf-ebls\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/433",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

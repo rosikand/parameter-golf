@@ -9,5 +9,19 @@
   "body": "## Int6 MLP3x + SmearGate + BigramHash + OrthoInit + Muon WD + SWA\n\n**Mean val_bpb: 1.1483** (3 seeds: 1.1488, 1.1485, 1.1476)\n\nTrained on 8\u00d7H100 SXM in 600 seconds. 15.92MB artifact (int6+zstd-22).\n\n### Key Techniques\n\n1. **Per-row int6 quantization** ([-32,31]) on MLP + attention weights, fp16 passthrough for tied embeddings and last-layer key projection. zstd level 22 compression.\n2. **3\u00d7 MLP expansion** (hidden=1536) \u2014 enabled by int6 byte savings. Single largest improvement source.\n3. **SmearGate** \u2014 learned gate blending each token embedding with the previous token's (~512 params).\n4. **BigramHash embedding** \u2014 4096-bucket hash table (dim=128\u2192512) for token-pair context (~524K params).\n5. **Orthogonal init + muP scaling** \u2014 orthogonal weight init, output projections scaled by 1/\u221a(2\u00b7num_layers).\n6. **Muon WD=0.02** with momentum warmup 0.92\u21920.99 over 1500 steps. AdamW WD=0.01 for embeddings/scalars.\n7. **SWA** over last 50% of training (every 200 steps) \u2014 smoother weights, better quantization.\n\n### Hyperparameters\n\n9 layers, 512 dim, MLP 3\u00d7, seq2048, batch=786K, warmdown=3000, matrix_lr=0.02, grad_clip=0.3, muon_momentum=0.99.\n\n### Metrics\n\n| Seed | val_loss | val_bpb |\n|------|----------|---------|\n| 1337 | 1.93978 | 1.14885 |\n| 42 | 1.93923 | 1.14852 |\n| 7 | 1.93762 | 1.14757 |\n| **Mean** | **1.93888** | **1.14831** |\n\n- Pre-quant val_bpb: 1.1640\n- Steps: 7,373 in 600s (81.4 ms/step)\n- Artifact: 15.92MB (int6+zstd-22)\n- Improvement over current SOTA (1.1748): **-0.0265 bpb / -0.046 nats**",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/162",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Avoid double-counting tail tokens in sliding eval**\n\nThe sliding-window scorer can count the same validation tokens more than once near the end of the corpus. With `s = 0 if ws == 0 else max(wlen - stride, 0)`, any non-first window where `wlen < stride` scores the entire short window, including tokens that were already scored by the previous window (e.g., `seq_len=8, stride=4` double-scores the last two tokens). This biases the reported `val_loss`/`val_bpb`, which can skew experiment comparisons.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-20T03:39:16Z",
+      "updated_at": "2026-03-20T03:39:16Z"
+    },
+    {
+      "user": "raahilshah",
+      "body": "**Updated submission** \u2014 improved configuration after systematic hyperparameter sweeps:\n\n- **Muon weight decay**: 0.02 \u2192 **0.04** (swept 0.01\u20130.05, optimal at 0.04)\n- **SWA frequency**: every 200 steps \u2192 **every 50 steps** (swept 25\u2013200, optimal at 50; ~30 checkpoint average)\n\n**New results (3 seeds):**\n\n| Seed | val_loss | val_bpb |\n|------|----------|---------|\n| 1337 | 1.93492 | 1.14597 |\n| 42 | 1.93591 | 1.14656 |\n| 7 | 1.93314 | 1.14492 |\n| **Mean** | **1.93466** | **1.14582** |\n\nPrevious submission mean was 1.1483 \u2192 now **1.1458** (improvement of 0.0025 bpb from tuning WD and SWA frequency alone).",
+      "created_at": "2026-03-20T05:46:31Z",
+      "updated_at": "2026-03-20T05:46:31Z"
+    }
+  ]
 }

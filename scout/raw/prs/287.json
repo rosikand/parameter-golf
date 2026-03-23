@@ -11,5 +11,67 @@
     "record submission ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/287",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "mohosy",
+      "body": "nice find on ema over swa, that makes alot of sense for smoother convergence. did you try different decay values or was 0.997 just the first thing that worked",
+      "created_at": "2026-03-20T23:59:26Z",
+      "updated_at": "2026-03-20T23:59:26Z"
+    },
+    {
+      "user": "himanalot",
+      "body": "@mohosy \r\nwas def tuned based on smaller runs.",
+      "created_at": "2026-03-21T00:11:38Z",
+      "updated_at": "2026-03-21T00:12:00Z"
+    },
+    {
+      "user": "jfprincz",
+      "body": "> nice find on ema over swa, that makes alot of sense for smoother convergence. did you try different decay values or was 0.997 just the first thing that worked\r\n\r\ntried 0.999, averaged too slowly and hurt BPB. 0.997 was better i so kept it",
+      "created_at": "2026-03-21T00:17:29Z",
+      "updated_at": "2026-03-21T00:17:29Z"
+    },
+    {
+      "user": "himanalot",
+      "body": "xsa and ema lowkey hurt mine, was getting similar numbers to urs but they boosted mine back up",
+      "created_at": "2026-03-21T00:57:42Z",
+      "updated_at": "2026-03-21T00:57:42Z"
+    },
+    {
+      "user": "himanalot",
+      "body": "i took a lot of diff approaches from u tho",
+      "created_at": "2026-03-21T00:58:13Z",
+      "updated_at": "2026-03-21T00:58:13Z"
+    },
+    {
+      "user": "himanalot",
+      "body": "im switching off transformers\r\ngonna start from scratch but lowkey might be worth to make my own mechanism (maybe i'll prove myself wrong tho)",
+      "created_at": "2026-03-21T01:20:49Z",
+      "updated_at": "2026-03-21T01:21:04Z"
+    },
+    {
+      "user": "mohosy",
+      "body": "@jfprincz bet thats good to know, 0.997 seems like the sweet spot then. gonna run with that\n\n@himanalot bro switching off transformers is wild but honestly respect the move, if it hits it hits lol. what are you thinking like state space or something completely different",
+      "created_at": "2026-03-21T04:19:48Z",
+      "updated_at": "2026-03-21T04:19:48Z"
+    },
+    {
+      "user": "himanalot",
+      "body": "@mohosy \r\nyou'll see. i j wanna try something diff bc it's gotten boring ngl",
+      "created_at": "2026-03-21T07:52:23Z",
+      "updated_at": "2026-03-21T08:02:19Z"
+    },
+    {
+      "user": "mohosy",
+      "body": "@himanalot lol fair enough, everyone doing the same xsa ema stack does get kinda stale. lmk what you come up with tho im genuinley curious",
+      "created_at": "2026-03-23T00:25:28Z",
+      "updated_at": "2026-03-23T00:25:28Z"
+    },
+    {
+      "user": "himanalot",
+      "body": "@mohosy xsa didn't work for me and ema provided little benefit. ssm didn't work either (not worth taking the hit to avg step time). tbh i was prob wrong in what i said. not sure why everyone's getting benefits with xsa and i'm seeing a 0.006 hit tho.",
+      "created_at": "2026-03-23T00:46:28Z",
+      "updated_at": "2026-03-23T00:46:28Z"
+    }
+  ]
 }

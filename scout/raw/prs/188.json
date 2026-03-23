@@ -9,5 +9,61 @@
   "body": "Changed baseline script for ROCm support on my local environment, hope it helps people who doesn`t have a CUDA system",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/188",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Handle missing `amd-smi` executable**\n\nThis ROCm diagnostics branch can abort startup on valid ROCm setups where `amd-smi` is not installed or not on `PATH`: `subprocess.run(..., check=False)` still raises `FileNotFoundError` when the executable is missing, so training fails before any model work begins. Since this path was added specifically for ROCm support, it should tolerate missing tooling (e.g., catch `FileNotFoundError` or fall back to another probe) instead of hard-failing.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-20T07:33:05Z",
+      "updated_at": "2026-03-20T07:33:05Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Disable math SDP when flash SDP is selected**\n\nWhen `flash_available` is true, this branch enables Flash SDP but never calls `enable_math_sdp(False)`. In PyTorch builds where math SDP is enabled by default, that leaves both backends active even though the log reports `math=False`, so attention can silently route to the slower math kernel for some shapes/dtypes and make backend diagnostics misleading. Explicitly disabling math in the flash branch would preserve the intended backend policy.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-21T03:26:35Z",
+      "updated_at": "2026-03-21T03:26:35Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Disable math SDP when flash attention is available**\n\nIn `maybe_enable_sdp_backends`, the `flash_available` branch enables flash SDP but never disables math SDP, so when math is already enabled (PyTorch default/global state), both backends remain active even though the log reports `math=False`. In that case SDPA can still select math kernels, which changes performance characteristics and makes backend selection inconsistent with the emitted diagnostics. Set `enable_math_sdp(False)` when flash is enabled (or reset it before branching) so the runtime backend state matches the intended policy.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-21T03:29:27Z",
+      "updated_at": "2026-03-21T03:29:27Z"
+    },
+    {
+      "user": "reimorster",
+      "body": "done",
+      "created_at": "2026-03-21T03:43:45Z",
+      "updated_at": "2026-03-21T03:43:46Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P3 Badge](https://img.shields.io/badge/P3-lightgrey?style=flat)</sub></sub>  Remove accidental merge metadata file from repository**\n\nThe newly added `767` file contains only merge/branch metadata (`Head`, `Merge`, `Help`) and is not referenced by the codebase, so it appears to be an accidental artifact committed from local tooling rather than intentional project content. Keeping this file in the repo adds noise and can confuse contributors or automation that treats root files as meaningful inputs.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-21T03:45:31Z",
+      "updated_at": "2026-03-21T03:45:31Z"
+    },
+    {
+      "user": "reimorster",
+      "body": "did that, thank you @codex ",
+      "created_at": "2026-03-21T05:10:47Z",
+      "updated_at": "2026-03-21T05:10:47Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "> [!NOTE]\n> To use Codex here, [create an environment for this repo](https://chatgpt.com/codex/settings/environments).",
+      "created_at": "2026-03-21T05:11:00Z",
+      "updated_at": "2026-03-21T05:11:00Z"
+    },
+    {
+      "user": "reimorster",
+      "body": "@codex , please check this PR after last changes.",
+      "created_at": "2026-03-21T03:41:50Z",
+      "updated_at": "2026-03-21T03:41:50Z"
+    },
+    {
+      "user": "reimorster",
+      "body": "@codex, please review it.",
+      "created_at": "2026-03-22T21:55:24Z",
+      "updated_at": "2026-03-22T21:55:24Z"
+    }
+  ]
 }

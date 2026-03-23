@@ -9,5 +9,6 @@
   "body": "Adds a new 10-minute 8xH100 sliding-window record under `records/track_10min_16mb/2026-03-19_Seq4096SlidingWindowFp16TokCoarsen`.\n\nSummary:\n- canonical sliding exact score: `1.17675682` val_bpb\n- canonical standard exact score: `1.18874323` val_bpb\n- canonical total size: `15,943,260` bytes\n- training recipe: `seq_len=4096`, `TRAIN_BATCH_TOKENS=393216`, tuned Muon schedule\n- export recipe: keep `tok_emb.weight` in fp16 and coarsen only `blocks.5.`\n- eval recipe: `EVAL_STRIDE=64`, `SW_EVAL_BATCH=32`\n\nRepro reruns included in the record folder:\n- `seed=1338`: sliding `1.17675183` val_bpb, `15,949,486` bytes\n- `seed=1339`: sliding `1.17910456` val_bpb, `15,950,789` bytes\n\nFiles included:\n- canonical `train.log`\n- exact `train_gpt.py` snapshot used for the run\n- `submission.json`\n- both rerun logs for reference",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/75",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

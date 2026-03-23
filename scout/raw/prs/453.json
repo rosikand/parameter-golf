@@ -9,5 +9,6 @@
   "body": "## Status\n\nThis PR is exploratory and is **not** claiming a new leaderboard record.\n\nThe attached `8xH100` run for the main candidate is valid under the size cap, but it does not beat the existing PR315 frontier reference.\n\n## What Is In This PR\n\nTwo record folders:\n\n- `records/track_10min_16mb/2026-03-22_11L_XSA4_EMA_PartialRoPE_LNScale_Entropy_LongDocTTT`\n- `records/track_non_record_16mb/2026-03-22_PR315_LoopedDepth_Gate`\n\nThe first folder captures a PR315-derived candidate with experimental codec and TTT branches behind flags. The second folder keeps looped-depth gate work separate from the primary path.\n\n## Official 8xH100 Result For The Main Candidate\n\nFrom `train_seed42.log`:\n\n- stopped at `step 4625` on the `600.037s` wallclock cap\n- peak memory `26152 MiB` allocated / `26526 MiB` reserved\n- total submission size `15,733,011` bytes\n- `final_quant_roundtrip_exact val_bpb = 1.16892776`\n- `final_quant_sliding_window_exact val_bpb = 1.14586586`\n\nThis is worse than the checked-in PR315 reference (`1.1248` sliding-window `val_bpb`), so this PR should be treated as implementation and investigation work only.\n\n## Next Step Outside This PR\n\nThe actual leaderboard path is now a separate exact-reproduction effort: recover PR315 throughput and score parity on the official image first, then make one change at a time.\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/453",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

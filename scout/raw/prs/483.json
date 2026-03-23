@@ -9,5 +9,6 @@
   "body": "## Summary\n\nThis adds a 3-seed 8\u00d7H100 SXM rerun of the PR #287 family with FA3 under a `585s` wallclock cap so all seeds stay within the 16,000,000-byte artifact limit.\n\nRecord folder:\n- `records/track_10min_16mb/2026-03-23_PR287_XSA4_EMA_FA3_585s/`\n\n## Results\n\n| Seed | val_bpb | Artifact bytes |\n|---|---:|---:|\n| 1337 | 1.13467834 | 15,399,663 |\n| 42 | 1.13567697 | 15,580,753 |\n| 2025 | 1.13337713 | 15,398,721 |\n| **Mean** | **1.13457748** | |\n\n- Max artifact size: `15,580,753`\n- One-sided t-test vs merged `1.1428`: `p = 0.0032`\n\n## Files included\n\n- `train_gpt.py`\n- `train.log`\n- `train_seed42.log`\n- `train_seed2025.log`\n- `README.md`\n- `submission.json`\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/483",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

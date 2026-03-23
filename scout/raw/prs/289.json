@@ -9,5 +9,13 @@
   "body": "## Summary\n\n- **val_bpb: 1.1518** (int6 sliding window, stride=64, seed 1337)\n- 11-layer GPT, 26.8M params, 15.2MB artifact (int6+zstd-22)\n- Trained in 600s on 8\u00d7H100 SXM (9,906 steps at 60.6ms/step)\n\n## Key Techniques\n\n- **Per-row int6 quantization** (MLP + attention) + zstd-22 compression\n- **3\u00d7 MLP expansion** (hidden=1536) with **relu\u00b2 activation**\n- **SmearGate**: learned token-predecessor blending at input\n- **BigramHash embedding**: 2048-bucket hash table (dim=128) for token-pair context\n- **U-Net skip connections**: encoder\u2192decoder with learned per-dimension weights\n- **Muon optimizer** with WD=0.04, momentum warmup 0.92\u21920.99\n- **SWA**: 7 snapshots every 200 steps during warmdown\n- **Sliding window eval** (stride=64) as primary score\n- **TTT LoRA eval** also included (1.1535 BPB)\n\n## Eval Results (seed 1337)\n\n| Method | val_loss | val_bpb | eval_time |\n|--------|----------|---------|-----------|\n| Pre-quantization | 1.9841 | 1.1751 | \u2014 |\n| Int6 roundtrip | 2.0027 | 1.1861 | 1.9s |\n| **Int6 sliding (stride=64)** | **1.9448** | **1.1518** | **97s** |\n| Int6 TTT LoRA | 1.9476 | 1.1535 | 83s |\n\n## Submission Checklist\n\n- [x] Artifact < 16MB (15,202,515 bytes)\n- [x] Trains in < 10 min on 8\u00d7H100 (600s)\n- [x] Eval < 10 min (sliding 97s + TTT 83s = 180s)\n- [x] train_gpt.py compiles (1191 lines, under 1500 limit)\n- [x] README.md with technique descriptions\n- [x] submission.json with metadata\n- [x] Training log included\n\n## Note on Seeds\n\nSingle seed submission. The improvement margin over the current #3 (1.1502) is modest, but the submission includes independently developed techniques (U-Net skips, seq_len=1024 tradeoff for more layers/steps) that may be of interest to the community. Additional seeds available on request.\n\n## Differences from Existing Submissions\n\nDeveloped independently from PR #162 (raahilshah). Key architectural differences:\n- 11 layers (vs 9) with seq_len=1024 (vs 2048) \u2014 more layers + more steps\n- U-Net skip connections with learned weights\n- BigramHash 2048 buckets (vs 4096)\n- SWA every 200 steps (vs 50)\n- Includes TTT LoRA as alternative eval",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/289",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "> [!NOTE]\n> You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/settings/usage).\n> To continue using code reviews, add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/codex/settings/code-review).",
+      "created_at": "2026-03-21T00:00:38Z",
+      "updated_at": "2026-03-21T00:00:38Z"
+    }
+  ]
 }

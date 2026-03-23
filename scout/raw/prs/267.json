@@ -9,5 +9,6 @@
   "body": "Flagging that this is doing TTT during Val but compliantly. @0hq \r\n\r\nI believe these make it allowed:\r\n1. **No training before evaluation**: Each chunk is evaluated first, loss is recorded, then training occurs\r\n2. **No re-evaluation**: Tokens are scored exactly once; training on chunk N cannot affect scores for chunks 0..N\r\n3. **No multiple passes**: The validation set is processed in a single sequential pass (32 chunks)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/267",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

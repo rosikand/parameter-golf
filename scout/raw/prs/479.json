@@ -9,5 +9,6 @@
   "body": "## Summary\n\n- **QAT (Quantization-Aware Training):** STE-based QAT during training with int5 clip for MLP, int6 clip for attention \u2014 eliminates quantization gap at inference\n- **SwiGLU activation:** Replaces relu\u00b2 with SiLU-gated linear unit, parameter-matched hidden dim (2/3 \u00d7 mlp_mult \u00d7 model_dim)\n- **Mixed int5/int6 + zstd-22 quantization:** int5 for MLP weights, int6 for attention, FP16 for embeddings\n\nArchitecture: 10 layers, 512 dim, 8 heads, 4 KV heads (GQA), BigramHash(10240), SmearGate, SWA start_frac=0.4, WD=0.04, warmdown=3000, OrthoInit + muP-scaled projections.\n\nPending 3-seed validation on 8\u00d7H100.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/479",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

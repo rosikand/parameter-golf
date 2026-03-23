@@ -9,5 +9,19 @@
   "body": "## Summary\n\n- **val_bpb: 1.1455** (seed 1337, single seed \u2014 3-seed validation in progress)\n- **Artifact: 15.94 MB** (int5-MLP + int6-attn + zstd-22)\n\n## Techniques\n\n| Technique | Source | Impact |\n|-----------|--------|--------|\n| 11 layers (vs 9 baseline) | Funded by int5 savings | More model capacity |\n| Int5 MLP [-16,15] + Int6 attention [-32,31] | Inspired by #180 | Saves ~1.9MB, funds 11th layer |\n| Full-model SGD TTT (2 epochs) | Inspired by #152 | ~0.005 BPB at eval time |\n| SmearGate + BigramHash | From #102/#135 | Bigram context injection |\n| SWA (30 checkpoints) | From #89 | Better generalization |\n| OrthoInit + muP scaling | From #162 | Stable training |\n| Muon WD=0.04 | From #60 | Quantization-friendly weights |\n| Sliding window eval stride=64 | From #50 | Full context per token |\n\n## Architecture\n\n11L / 512d / 8h / 4kv (GQA) / MLP 3x / relu^2 / 2048 seq_len / 26.67M params\n\n## Results\n\n| Stage | val_bpb |\n|-------|---------|\n| End of training (5197 steps) | 1.1583 |\n| Post int5/int6 quant + sliding window | 1.1507 |\n| Post TTT (2 epochs SGD, lr=0.002) | **1.1455** |\n\nTrained on 8xH100 SXM, 600s wallclock, 115ms/step.\n\n## Test plan\n\n- [x] Single seed run (1337): 1.1455 BPB\n- [ ] 3-seed validation (1337, 42, 2025) \u2014 in progress\n- [x] Artifact under 16MB: 15.99 MB total\n- [x] Training under 10 min: 600s on 8xH100\n- [x] Eval under 10 min: ~696s (TTT 422s + sliding eval 273s)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/264",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "mohosy",
+      "body": "ttt with int5 mlp is a sick combo, how long does your ttt take during eval? tryna figure out if 3 epochs is worth it over 2",
+      "created_at": "2026-03-21T00:01:01Z",
+      "updated_at": "2026-03-21T00:01:01Z"
+    },
+    {
+      "user": "stukenov",
+      "body": "@notapplica i am need runpod credits for 3-seed validation ",
+      "created_at": "2026-03-21T06:35:29Z",
+      "updated_at": "2026-03-21T06:35:29Z"
+    }
+  ]
 }

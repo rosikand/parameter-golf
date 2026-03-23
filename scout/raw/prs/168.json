@@ -11,5 +11,31 @@
     "not ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/168",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "0hq",
+      "body": "After some more discussion, mind moving this to non-record submissions? Would accept there as an example.\r\n\r\nSome context: This isn't really a valid submission. In a text-compression benchmark, this would make some sense, given your model always should be a superior compressor than just storing the text itself/compressing the text with a standard compression algorithm. But given the benchmark isn't compressing the training data, but evaluating the performance of your compressor on an unseed IID validation dataset, this submission is equivalent to 'training on the validation set' directly with your prefix.",
+      "created_at": "2026-03-20T23:48:30Z",
+      "updated_at": "2026-03-21T01:07:41Z"
+    },
+    {
+      "user": "ibarrajo",
+      "body": "> After some more discussion, mind moving this to non-record submissions? Would be happy to accept there.\r\n\r\nis that applicable to my PR as well? https://github.com/openai/parameter-golf/pull/275\r\n\r\n@0hq ",
+      "created_at": "2026-03-21T01:00:36Z",
+      "updated_at": "2026-03-21T01:00:36Z"
+    },
+    {
+      "user": "0hq",
+      "body": "@ibarrajo No, I'd only accept this PR, which implemented this idea first, as an example to explain why this type of approach isn't valid.",
+      "created_at": "2026-03-21T01:08:24Z",
+      "updated_at": "2026-03-21T01:08:24Z"
+    },
+    {
+      "user": "ibarrajo",
+      "body": "I see, thanks for the clarification ",
+      "created_at": "2026-03-21T01:12:55Z",
+      "updated_at": "2026-03-21T01:12:55Z"
+    }
+  ]
 }

@@ -20,5 +20,6 @@ RAW_PRS_DIR = os.path.join(SCOUT_DIR, "raw", "prs")
 RAW_ISSUES_DIR = os.path.join(SCOUT_DIR, "raw", "issues")
 
 # Processing
-PR_BATCH_SIZE = 20  # PRs per Claude API call for extraction
-MAX_PR_BODY_CHARS = 3000  # truncate long PR bodies before sending to Claude
+PR_BATCH_SIZE = 10  # PRs per Claude API call (smaller batches since bodies+comments are larger now)
+MAX_BODY_CHARS_FOR_ANALYSIS = 6000  # truncate at analysis time, not storage time
+MAX_COMMENT_CHARS_FOR_ANALYSIS = 2000  # per-PR comment budget for analysis

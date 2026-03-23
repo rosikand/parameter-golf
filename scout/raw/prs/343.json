@@ -9,5 +9,6 @@
   "body": "Score: 1.2459 val_bpb | Size: 15.9MB | 16,562 steps in 600s on 8xH100 SXM. 97 autonomous experiments on RTX 4080, validated on H100.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/343",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

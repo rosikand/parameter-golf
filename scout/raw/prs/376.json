@@ -9,5 +9,37 @@
   "body": "## Summary\n\n9-layer transformer with full competitive stack achieving **val_bpb = 1.1401** on sliding window evaluation (stride=64).\n\n- **9 layers**, 512 dim, 8 heads, 4 KV heads (GQA), MLP 3x (hidden=1536)\n- SmearGate + BigramHash (2048 buckets) + int6+zstd-22 compression\n- SWA (14-15 checkpoint average during warmdown)\n- Muon optimizer (WD=0.04, momentum=0.99, warmup 0.92\u21920.99 over 1500 steps)\n- Orthogonal init + muP scaling\n- NTK-RoPE (base=50000)\n- Sequence length 2048, batch 786K tokens\n\nTrained 4,782 steps at ~125ms/step on 8xH100 SXM in 600s. Artifact under 16MB.\n\nCustom Triton/CUDA kernel pipeline in active development (fused RMSNorm+QKV 1.47x, fused ReLU\u00b2 MLP 1.26x, fused softcap+CE 1.70x) for next submission targeting more training steps within the wallclock budget.\n\n## Test plan\n\n- [x] Full 10-minute training on 8xH100 SXM\n- [x] Sliding window evaluation (stride=64)\n- [x] Int6+zstd-22 compression under 16MB\n- [ ] 3-seed statistical significance run (pending compute)\n- [ ] Custom kernel integration run\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/376",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "The full-weight TTT eval path is currently broken: `use_compile` and `val_tokens_eval` are undefined, and the `eval_val_sliding(...)` call uses a different signature than the function defined earlier in this file. Enabling `TTT_ENABLED=1` will raise at runtime; please wire this block to the existing `val_tokens`/`eval_val_sliding(args, base_model, ...)` API (or add the missing variables and an adapter function) so the advertised TTT mode runs end-to-end.\n```suggestion\n            # Use the standard sliding-window eval API with the TTT-adapted model\n            ttt_val_loss, ttt_val_bpb = eval_val_sliding(\n                args,\n                base_model,\n                rank,\n                world_size,\n                device,\n                val_tokens,\n                base_bytes_lut,\n                has_leading_space_lut,\n                is_boundary_token_lut,\n            )\n        else:\n            # Fallback to the standard non-sliding eval API\n            ttt_val_loss, ttt_val_bpb = eval_val(\n                args,\n                base_model,\n                rank,\n                world_size,\n                device,\n                grad_accum_steps,\n                val_tokens,\n                base_bytes_lut,\n                has_leading_space_lut,\n                is_boundary_token_lut,\n```",
+      "created_at": "2026-03-21T23:01:48Z",
+      "updated_at": "2026-03-21T23:01:49Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The module docstring states a hard stop of 1500 lines for `train_gpt.py`, but this file is currently ~1541 lines long. Either split/refactor to get back under the stated limit, or update/remove the hard-stop text so it matches the actual policy for record scripts.\n```suggestion\nGuideline: To keep these scripts readable for newcomers, try to keep `train_gpt.py` and `train_gpt_mlx.py` reasonably small and avoid unnecessary complexity, even if they occasionally grow beyond roughly 1500 lines.\n```",
+      "created_at": "2026-03-21T23:01:48Z",
+      "updated_at": "2026-03-21T23:01:49Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "README claims an 11-layer model and shows `val_bpb: PENDING`, but this record\u2019s `train_gpt.py` defaults to 9 layers (`NUM_LAYERS=9`) and `submission.json` reports `val_bpb: 1.1401`. Please reconcile the README with the actual configuration/results in this record (or update the code/metadata to match the README).",
+      "created_at": "2026-03-21T23:01:49Z",
+      "updated_at": "2026-03-21T23:01:49Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`submission.json` schema is inconsistent with other records in `records/track_10min_16mb` (which use keys like `name`, `blurb`, `val_loss`, `bytes_total`, `bytes_code`). Using `compressed_model_bytes/code_bytes/total_artifact_bytes: null` may break tooling that expects the established fields; please align this file to the existing record format or update the repository tooling/schema accordingly.\n```suggestion\n    \"name\": \"MatchSOTA_TTT\",\n    \"author\": \"Anthony Maio\",\n    \"github_id\": \"anthony-maio\",\n    \"track\": \"10min_16mb\",\n    \"num_gpus\": 8,\n    \"gpu_type\": \"H100 SXM\",\n    \"training_time_seconds\": 600,\n    \"val_loss\": 1.1401,\n    \"bytes_total\": null,\n    \"bytes_code\": null,\n    \"blurb\": \"9L MLP3x + SmearGate + BigramHash 2048 + int6+zstd + SWA + Muon WD=0.04 + NTK-RoPE 50k + OrthoInit + sliding window eval stride=64. Custom Triton/CUDA kernel pipeline in development.\",\n```",
+      "created_at": "2026-03-21T23:01:49Z",
+      "updated_at": "2026-03-21T23:01:49Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This artifact is written to `final_model.int8.ptz` and the logs mention `int8+zlib`, but the code is doing mixed int6 quantization and may use zstd depending on availability. Consider renaming the output filename/log strings to reflect the actual quantization/compressor to avoid confusion when comparing artifacts.\n```suggestion\n    quant_filename = f\"final_model.int6.{_COMPRESSOR}.ptz\"\n    if master_process:\n        with open(quant_filename, \"wb\") as f:\n            f.write(quant_blob)\n        quant_file_bytes = os.path.getsize(quant_filename)\n        code_bytes = len(code.encode(\"utf-8\"))\n        log0(f\"Serialized model int6+{_COMPRESSOR}: {quant_file_bytes} bytes\")\n        log0(f\"Total submission size int6+{_COMPRESSOR}: {quant_file_bytes + code_bytes} bytes\")\n\n    if distributed:\n        dist.barrier()\n    with open(quant_filename, \"rb\") as f:\n```",
+      "created_at": "2026-03-21T23:01:49Z",
+      "updated_at": "2026-03-21T23:01:49Z"
+    }
+  ]
 }

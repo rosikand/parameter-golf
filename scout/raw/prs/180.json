@@ -11,5 +11,73 @@
     "record submission ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/180",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "In `mixed_quantize_int6`, the `t.numel() <= 65536` passthrough branch runs before the control-tensor branch, so tensors matching `CONTROL_TENSOR_NAME_PATTERNS` (which are typically small) will be downcast to fp16 and never get the intended `passthrough_ctrl` fp32 handling. If control tensors are meant to stay fp32 for roundtrip fidelity, move the control-pattern check before the small-tensor early-return (or apply a `keep_float_tensor` helper like other records do).\n```suggestion\n        # Control tensors should stay in fp32 for roundtrip fidelity, even if small.\n        if t.is_floating_point() and any(p in name for p in CONTROL_TENSOR_NAME_PATTERNS):\n            result[name] = t.float()\n            meta[name] = \"passthrough_ctrl\"\n            continue\n        # Some tensors are explicitly kept in fp16.\n        if any(pattern in name for pattern in FP16_KEEP_NAME_PATTERNS):\n            result[name] = t.to(dtype=torch.float16).contiguous()\n            meta[name] = \"passthrough_fp16\"\n            continue\n        # Small tensors or non-floating tensors are passed through without intN quantization.\n        if not t.is_floating_point() or t.numel() <= 65536:\n            result[name] = t.to(torch.float16) if t.is_floating_point() else t\n            meta[name] = \"passthrough\"\n            continue\n```",
+      "created_at": "2026-03-20T07:00:18Z",
+      "updated_at": "2026-03-20T07:00:20Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Several `INT8_*` constants/patterns are defined here but never used (`INT8_KEEP_FLOAT_FP32_NAME_PATTERNS`, `INT8_KEEP_FLOAT_MAX_NUMEL`, `INT8_KEEP_FLOAT_STORE_DTYPE`). This makes it unclear which tensors are intended to be kept in higher precision; either remove these unused settings or wire them into the mixed-quantization code path.\n```suggestion\n\n```",
+      "created_at": "2026-03-20T07:00:19Z",
+      "updated_at": "2026-03-20T07:00:20Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The size log line hardcodes `int8+zlib`, but this export path is mixed int5/int6 and may use zstd (`_COMPRESSOR`) instead. This makes the recorded byte counts ambiguous; update the message to reflect the actual quantization/compressor used (and keep naming consistent with `Serialized model int6+{_COMPRESSOR}` above).",
+      "created_at": "2026-03-20T07:00:19Z",
+      "updated_at": "2026-03-20T07:00:20Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`submission.json` doesn't follow the existing records schema (e.g., other submissions use `author`, `github_id`, `date`, `val_loss`, and `bytes_total`/`bytes_code`). As-is, any tooling that aggregates records is likely to fail to parse this entry; align the fields and naming with the other `records/track_10min_16mb/*/submission.json` files.\n```suggestion\n  \"val_loss\": 1.14526,\n  \"bytes_total\": 15521020,\n  \"blurb\": \"10 layers with mixed int5/int6 quantization (int5 for MLP, int6 for attention). Int5 MLP compression saves 1.86MB vs uniform int6, funding the extra layer. Weight decay=0.04 improves quantization friendliness. SWA every 50 steps (~29 checkpoint average). SmearGate + BigramHash + OrthoInit + zstd-22.\",\n  \"author\": \"thwu1\",\n  \"github_id\": \"thwu1\",\n  \"date\": \"2026-03-20\"\n```",
+      "created_at": "2026-03-20T07:00:19Z",
+      "updated_at": "2026-03-20T07:00:20Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The README run command references `eval/eval.sh`, but this repository doesn't contain an `eval/` directory or `eval.sh`. Update the command to the actual way this record should be reproduced (e.g., invoking the script directly) so readers can run it successfully.\n```suggestion\nNUM_LAYERS=10 python train_gpt.py\n```",
+      "created_at": "2026-03-20T07:00:20Z",
+      "updated_at": "2026-03-20T07:00:20Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This line says the metric is \u201cpost int6+zstd quantization roundtrip\u201d, but the PR describes mixed int5/int6 quantization and the script can also fall back to zlib if `zstandard` isn't installed. Update the wording to match the actual export/roundtrip used for this record.",
+      "created_at": "2026-03-20T07:00:20Z",
+      "updated_at": "2026-03-20T07:00:20Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Default `FP16_KEEP_NAME_PATTERNS` includes `blocks.8.attn.c_k`, which corresponds to the last layer only for a 9-layer model. This record uses 10 layers (0\u20139), so the \u201clast-layer key projection\u201d would be `blocks.9.attn.c_k`; consider updating the default pattern (or deriving it from `NUM_LAYERS`) to avoid unintentionally keeping the wrong tensor in fp16.\n```suggestion\nnum_layers_str = os.environ.get(\"NUM_LAYERS\")\ntry:\n    num_layers = int(num_layers_str) if num_layers_str is not None else 9\n    last_layer_k_name = f\"blocks.{max(num_layers - 1, 0)}.attn.c_k\"\nexcept (TypeError, ValueError):\n    # Fallback to the historical default: 9 layers total, last index 8.\n    num_layers = 9\n    last_layer_k_name = \"blocks.8.attn.c_k\"\nFP16_KEEP_NAME_PATTERNS = tuple(\n    pattern\n    for pattern in os.environ.get(\n        \"FP16_KEEP_NAME_PATTERNS\",\n        f\"tok_emb,{last_layer_k_name}\",\n    ).split(\",\")\n```",
+      "created_at": "2026-03-20T07:00:20Z",
+      "updated_at": "2026-03-20T07:00:20Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Remove the silent zlib fallback for the export artifact**\n\nOn a fresh environment created from this repo, `requirements.txt` does not install `zstandard`, so this `ImportError` path silently switches the submission from zstd-22 to zlib. That changes the compressed model size and therefore the reproduced `artifact_bytes`/`val_bpb`, which means reviewers can get a materially different result from the one documented here without any explicit failure.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-20T07:02:47Z",
+      "updated_at": "2026-03-20T07:02:47Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Replace the nonexistent eval/eval.sh run command**\n\nI checked the repo tree and there is no `eval/eval.sh`, so the only reproduction command in this README fails immediately. For a record submission, that blocks reviewers from rerunning the folder as documented and makes the claimed score unnecessarily hard to verify.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-20T07:02:47Z",
+      "updated_at": "2026-03-20T07:02:47Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Bake the 10-layer setting into the record script**\n\nThis record is advertised as a 10-layer model, but the script still defaults `NUM_LAYERS` to 9. Any reviewer or automation that launches `train_gpt.py` directly, or fixes the broken README command without adding the extra env override, will train the wrong architecture and miss the logged 24.7M-parameter / 1.1453-BPB result.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-20T07:02:47Z",
+      "updated_at": "2026-03-20T07:02:47Z"
+    },
+    {
+      "user": "thwu1",
+      "body": "## Updated Results: val_bpb = 1.1428 (mean of 3 seeds)\n\nSignificant improvements over the original submission (1.1453):\n\n### Key Changes\n- **bigram_vocab_size: 4096 \u2192 10240** \u2014 More hash buckets reduce token-pair collisions (+0.001 bpb)\n- **SWA_start_frac: 0.5 \u2192 0.4** \u2014 Fewer but more converged SWA checkpoints (+0.0006 bpb)\n- **warmdown_iters: 4000 \u2192 3000** \u2014 More full-LR training steps (+0.0002 bpb)\n- **weight_decay: 0.01 \u2192 0.04 (global)** \u2014 Better quantization robustness (+0.0002 bpb)\n\n### 3-Seed Reproduction (eval_stride=64)\n\n| Seed | val_bpb | artifact_bytes | valid |\n|------|---------|---------------|-------|\n| 42 | 1.14271 | 15,965,978 | \u2705 |\n| 1337 | 1.14298 | 15,830,186 | \u2705 |\n| 2024 | 1.14260 | ~15.8M | \u2705 |\n| **Mean** | **1.14276** | | |\n| **Std** | **0.00016** | | |\n\n### How to run\n\n```bash\nbash prepare.sh\nbash eval/eval.sh > run.log 2>&1\ngrep \"^val_bpb:\\|^valid:\" run.log\n```\n\nTo run with a specific seed:\n```bash\nSEED=42 bash eval/eval.sh > run.log 2>&1\n```\n\n### Full Recipe\n- 10 layers, model_dim=512, 8 heads, 4 KV heads (GQA)\n- Int5 MLP + Int6 attention quantization + zstd-22 compression\n- BigramHash(10240, dim=128) + SmearGate + U-Net skip connections\n- SWA: start_frac=0.4, every=50 steps (24 checkpoint average)\n- Muon optimizer: matrix_lr=0.02, WD=0.04, momentum=0.99\n- AdamW for embeddings/scalars: WD=0.04\n- warmdown=3000 iters, warmup=20 steps, grad_clip=0.3\n- seq_len=2048, batch=786K tokens, seed=42\n- 3% magnitude pruning, sliding window eval stride=64\n- Orthogonal init + muP scaling, tied embeddings in FP16 passthrough\n\nUpdating `train_gpt.py` in the PR now.",
+      "created_at": "2026-03-20T16:35:33Z",
+      "updated_at": "2026-03-20T16:35:33Z"
+    }
+  ]
 }

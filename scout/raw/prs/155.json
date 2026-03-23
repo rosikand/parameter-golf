@@ -9,5 +9,6 @@
   "body": "# Summary\r\n\r\n6 techniques stacked on the upgraded trainer recipe, achieving `final_int8_zlib_roundtrip_exact val_bpb 1.18762449` on a single 8xH100 record-track run:\r\n\r\n- Sliding-window final evaluation with `stride=64`\r\n- FP16 tied embedding export\r\n- 10 transformer layers\r\n- Muon weight decay `0.02`\r\n- Overtone spectral embedding initialization with power `0.5`\r\n- Phase-transition residual-mix initialization\r\n\r\n# Results\r\n\r\n| Seed | Steps | val_bpb (pre-quant) | val_bpb (post-quant) | Artifact size |\r\n|---|---:|---:|---:|---:|\r\n| 1337 | 8,260 | 1.2202 | 1.18762449 | 15,842,628 |\r\n\r\n- Pre-quant eval at stop: `val_loss:2.0602`, `val_bpb:1.2202`\r\n- Post-quant eval: `val_loss:2.00525163`, `val_bpb:1.18762449`\r\n- Train wallclock: `599846ms`\r\n- Final eval time: `118402ms`\r\n- Hardware: `8x H100 80GB`\r\n- Code size: `128619` bytes\r\n- Trainer used: upgraded trainer copied into the record folder as `train_gpt.py`\r\n\r\n# Test plan\r\n\r\n- 1 record-track run on `8x H100 80GB`\r\n- Training completed under `600s` wallclock: `599846ms`\r\n- Final artifact stayed under `16MB`: `15,842,628` bytes total\r\n- Post-quant roundtrip validation matches the printed exact metric\r\n- Final sliding-window evaluation completed in `118402ms`\r\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/155",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

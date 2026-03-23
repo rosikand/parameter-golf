@@ -9,5 +9,13 @@
   "body": "\r\n![frugendorff](https://github.com/user-attachments/assets/fd9507c3-939a-496b-9dd4-c5ebad7c5395)\r\n\r\n## Summary\r\n\r\nNon-record submission exploring **recursive weight sharing** \u2014 a novel approach where 6 unique transformer blocks are looped 2x each, providing 12 effective layers of depth with only 6 blocks of stored parameters. The freed parameter budget enables **MLP 4x expansion**, which is the primary quality driver.\r\n\r\n- **val_bpb: 1.1478** (sliding window stride=64) | **15.19 MB** | 8xH100 SXM, 600s\r\n- 28.2M params, 4,396 steps at 136.5ms/step\r\n- Full pipeline: Muon + SWA + Late QAT + Training Replay + Self-Distillation + EMA\r\n\r\n## Key Insight\r\n\r\nMLP 4x gives ~2% relative BPB improvement over MLP 3x, but doesn't fit in 16MB with 12 unique layers. Recursive weight sharing (6 unique x 2 loops) fits it in 15.19 MB. The weight sharing is the compression technique; the MLP 4x is the quality lever.\r\n\r\n## Architecture\r\n\r\n- 6 unique blocks x 2 loops = 12 effective depth\r\n- dim=640, 10 heads, 5 KV (GQA), head_dim=64\r\n- MLP 4x (hidden=2560), relu-squared\r\n- Orthogonal loop positions, U-Net skips, SmearGate, BigramHash, VE128, XSA last 2\r\n\r\n## Results\r\n\r\n| Metric | Value |\r\n|--------|-------|\r\n| Sliding window val_bpb (stride=64) | **1.1478** |\r\n| Pre-quant (post-EMA) | 1.1572 |\r\n| Post-quant roundtrip | 1.1716 |\r\n| Artifact | 15,192,793 bytes (15.19 MB) |\r\n| Steps | 4,396 in 600s |\r\n| Params | 28,224,320 |\r\n\r\n## No TTT on Validation Data\r\n\r\nAll training uses training data only. Late replay buffers training batches. Self-distillation uses EMA teacher on training data.\r\n\r\n## Test plan\r\n\r\n- [x] 8xH100 SXM, 600s\r\n- [x] Artifact under 16MB (15.19 MB)\r\n- [x] No TTT on validation data\r\n- [x] Post-quant int6 roundtrip verified\r\n- [x] Sliding window eval (stride=64)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/498",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "newjordan",
+      "body": "Closing to clean up \u2014 resubmitting with only submission files.",
+      "created_at": "2026-03-23T04:17:08Z",
+      "updated_at": "2026-03-23T04:17:08Z"
+    }
+  ]
 }

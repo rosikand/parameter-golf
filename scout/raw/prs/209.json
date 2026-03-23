@@ -9,5 +9,25 @@
   "body": "## Summary\n- add a non-record `/records` folder for an 11-layer int6 challenger attempt\n- include the exact challenger code snapshot used for the strongest 8xH100 run and the copied remote `train.log`\n- document the best measured result: `1.1624` pre-roundtrip BPB at the `600s` cap on `8xH100`, with the provider terminating the pod during export before a final roundtrip score could be recorded\n\n## Why non-record\nThis is not claiming a leaderboard score. The strongest run reached the training-phase validation point and logged `val_bpb:1.1624`, but RunPod terminated the pod during export before the post-roundtrip metric was printed. I am submitting it as a candid non-record / in-progress attempt rather than a record claim.\n\n## Validation\n- `python3 -m py_compile records/track_non_record_16mb/2026-03-20_11LInt6Challenger_8xH100_Preroundtrip/train_gpt.py records/track_non_record_16mb/2026-03-20_11LInt6Challenger_8xH100_Preroundtrip/root_train_gpt_vendor.py records/track_non_record_16mb/2026-03-20_11LInt6Challenger_8xH100_Preroundtrip/lowbit_utils.py records/track_non_record_16mb/2026-03-20_11LInt6Challenger_8xH100_Preroundtrip/optimizer_variants.py records/track_non_record_16mb/2026-03-20_11LInt6Challenger_8xH100_Preroundtrip/validation_utils.py records/track_non_record_16mb/2026-03-20_11LInt6Challenger_8xH100_Preroundtrip/mlp_variants.py`\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/209",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Score the prefix of the first sliding-eval window**\n\nFor any run with `EVAL_STRIDE < EVAL_SEQ_LEN` (including this folder's default 64/2048 setup), `score_from` is applied to every window, so the first window only contributes its last `stride` positions. That means tokens `1..EVAL_SEQ_LEN-stride` are never evaluated at all, which biases the reported `sliding_val_*` / `final_sliding_window_exact` metrics and can make the roundtrip score look better than it is.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-20T12:16:03Z",
+      "updated_at": "2026-03-20T12:16:03Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Include vendored helper bytes in submission-size accounting**\n\n`code_bytes` is computed from `Path(__file__)` only, but this entry point now requires several local modules (`lowbit_utils.py`, `optimizer_variants.py`, `validation_utils.py`, `root_train_gpt_vendor.py`, etc.). Any run that appears to fit under the 16 MB artifact cap using `Total submission size` is therefore undercounting the actual submission payload, so the logged size is not a valid artifact-size check for this folder.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-20T12:16:03Z",
+      "updated_at": "2026-03-20T12:16:03Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Compile the Newton-Schulz kernel in optimizer_variants**\n\nRebinding `zeropower_via_newtonschulz5` here does not affect what `Muon.step` / `NorMuon.step` call, because those methods resolve the symbol from `optimizer_variants.py`, where they were defined. In practice this leaves the optimizer on the eager Newton-Schulz path for every matrix update, which costs training time under the 600s wallclock cap without any warning.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-20T12:16:03Z",
+      "updated_at": "2026-03-20T12:16:03Z"
+    }
+  ]
 }

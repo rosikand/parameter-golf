@@ -9,5 +9,37 @@
   "body": "# MLA + SmearGate + BigramHash + SWA\r\n\r\n## Summary\r\n\r\nNon-record submission demonstrating a stacked architecture combining:\r\n- Multi-Head Latent Attention (MLA) with kv_rank=128\r\n- SmearGate MLP (relu^2 gated, mlp_mult=3)\r\n- BigramHash embeddings (10240 buckets, dim=128)\r\n- Stochastic Weight Averaging (start_frac=0.4, every=50 steps)\r\n- Muon optimizer (momentum=0.99, WD=0.04)\r\n- Mixed int5/int6 quantization + zstd-22\r\n- Sliding-window evaluation (stride=64)\r\n\r\n## Results\r\n\r\n| Metric | Value |\r\n|---|---|\r\n| Pre-quantization val_bpb | 1.2838 |\r\n| Roundtrip val_bpb | 1.3559 |\r\n| Model size | 14.449MB |\r\n| Training steps | 7001 / 20000 |\r\n| Tokens seen | ~3.7B |\r\n| Step time | ~83ms |\r\n\r\n## Key Finding\r\n\r\nMLA attention, while parameter-efficient, adds significant compute overhead\r\nper step (~83ms vs ~43ms for the baseline). In a fixed 10-minute window on\r\n8xH100s this reduces token throughput from ~7.2B (baseline) to ~3.7B \u2014\r\nroughly half the training data. The pre-quantization bpb of 1.2838 suggests\r\nthe architecture itself is competitive; the bottleneck is throughput, not\r\ncapacity.\r\n\r\nReplacing MLA with standard GQA would recover the full step budget (~11,500\r\nsteps at ~52ms/step) and likely push final bpb below 1.15.\r\n\r\n## Architecture\r\n\r\n- vocab_size=1024, num_layers=13, model_dim=512\r\n- num_heads=8, num_kv_heads=4, kv_rank=128\r\n- mlp_mult=3, bigram_buckets=10240, bigram_dim=128\r\n- SWA: start_frac=0.4, every=50\r\n- Quantization: int5 MLP, int6 attention, fp16 embeddings\r\n- Compression: zstd-22\r\n\r\n## Run Command\r\n```bash\r\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\r\n```\r\n\r\n## Files\r\n\r\n- `train_gpt.py` \u2014 training script\r\n- `train.log` \u2014 full training log\r\n- `submission.json` \u2014 metadata\r\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/354",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "The module docstring and example run commands reference `train_gpt_mla.py`, but the checked-in script is named `train_gpt.py` (and README/run command also uses `train_gpt.py`). Please update the docstring header + commands to match the actual filename to avoid confusion when reproducing the run.\n```suggestion\ntrain_gpt.py\n================\r\nAll techniques stacked. Run with:\r\n  torchrun --nproc_per_node=8 train_gpt.py          (H100 submission)\n  USE_COMPILE=0 MAX_VAL_TOKENS=65536 python train_gpt.py  (laptop test)\n```",
+      "created_at": "2026-03-21T16:47:26Z",
+      "updated_at": "2026-03-21T16:47:27Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "README lists `train.log` as an included file, but this record directory contains a UUID-named log file instead. For consistency with other `/records/track_non_record_16mb/*` entries (which use `train.log`), either rename the log file to `train.log` or update this list to match the actual filename.\n```suggestion\n- `*.log` \u2014 full training log for this run (UUID-named in this directory)\n```",
+      "created_at": "2026-03-21T16:47:27Z",
+      "updated_at": "2026-03-21T16:47:27Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`run_id` is set to `mla_10layer`, but this submission/config is `NUM_LAYERS=13` (and the included training log filename appears to be a UUID). Please update `run_id` to accurately identify this run so the metadata matches the record contents.\n```suggestion\n  \"run_id\": \"mla_13layer\",\n```",
+      "created_at": "2026-03-21T16:47:27Z",
+      "updated_at": "2026-03-21T16:47:27Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "In the quantized-path deserialization, `scale` is always read as `np.float16`, but `_quantize_tensor()` returns a `float32` scale for non-2D tensors. That mismatch will corrupt dequantization for any quantized non-matrix tensor. Consider storing the scale dtype in `meta` (or always emitting float16 scales) and reading it accordingly.",
+      "created_at": "2026-03-21T16:47:27Z",
+      "updated_at": "2026-03-21T16:47:27Z"
+    },
+    {
+      "user": "Skrisps26",
+      "body": "In practice all quantized tensors in this submission are 2D \r\n(weight matrices), so the float32/float16 scale mismatch doesn't affect \r\nresults here. A robust fix would store the scale dtype in meta or \r\nstandardise on float16 scales throughout. Will address in follow-up runs.",
+      "created_at": "2026-03-21T16:57:41Z",
+      "updated_at": "2026-03-21T16:57:41Z"
+    }
+  ]
 }

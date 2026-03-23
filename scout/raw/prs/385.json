@@ -9,5 +9,6 @@
   "body": "## Summary\n\n**Mean val_bpb = 1.1488** (3-seed verified, std=0.0006)\n\nBuilds on @baudrillardsgh0st's technique stack (PR #194). Two hyperparameter changes informed by 30+ experiments:\n\n1. **Muon WD=0.04** (vs 0.038) \u2014 improves int6 quantization quality\n2. **SWA_START_FRAC=0.4** (vs 0.5) \u2014 33% more checkpoint diversity for smoother weight averaging\n\n| Seed | val_bpb | Steps | ms/step | Artifact |\n|------|---------|-------|---------|----------|\n| **42** | **1.1482** | 8,393 | 71.79 | 15.2MB |\n| 7 | 1.1489 | 8,380 | 71.59 | 15.2MB |\n| 1337 | 1.1494 | 8,390 | 71.51 | 15.3MB |\n| **Mean** | **1.1488** | | | |\n\nStd: 0.0006 (4\u00d7 tighter than SOTA's 0.0024)\n\n## Key finding\n\nSWA_START_FRAC=0.4 captures ~33% more checkpoints, producing smoother weight distributions that survive int6 quantization better. Combined with WD=0.04, the quantization gap is minimized.\n\n## Submission checklist\n\n- [x] 3-seed verification (mean=1.1488, std=0.0006)\n- [x] All artifacts < 16MB (max 15.3MB)\n- [x] Wallclock < 600s on 8\u00d7H100\n- [x] Train logs included (3 seeds)\n- [x] Reproducible train_gpt.py included\n- [x] README with detailed explanation",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/385",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

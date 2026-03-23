@@ -11,5 +11,13 @@
     "not ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/38",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "> [!NOTE]\n> You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/settings/usage).\n> To continue using code reviews, you can upgrade your account or add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/codex/settings/code-review).",
+      "created_at": "2026-03-19T00:10:50Z",
+      "updated_at": "2026-03-19T00:10:50Z"
+    }
+  ]
 }

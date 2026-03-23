@@ -9,5 +9,13 @@
   "body": "## Summary\n\nThis PR adds a practical local iteration workflow plus two non-record 16MB submissions produced from local runs.\n\n### Added tooling\n- `scripts/make_fast_local_dataset.py`\n  - Builds a fast local dataset variant by truncating validation tokens for quick sweeps.\n- `scripts/run_local_sweep.sh`\n  - Runs a 3-config local architecture sweep with consistent env-based config.\n- `ARIA_WIN_CHECKLIST.md`\n  - Execution checklist for rule-safe iteration and submission packaging.\n\n### Added non-record run folders\n- `records/track_non_record_16mb/2026-03-19_Aria_8x576_KV4_i1200_fullval_local/`\n- `records/track_non_record_16mb/2026-03-19_Aria_8x576_KV4_i1200_rope50k_fullval_local/`\n\nEach contains:\n- `README.md`\n- `submission.json`\n- `train.log`\n- `train_gpt.py` snapshot\n\n## Best run in this PR\n\n`aria_confirm_fullval_8x576_kv4_i1200_rope50k`\n- `final_int8_zlib_roundtrip_exact val_bpb: 1.90409654`\n- `final_int8_zlib_roundtrip_exact val_loss: 3.21498726`\n- `Total submission size int8+zlib: 14,205,090 bytes`\n\n## Notes\n\n- These are non-record unlimited-compute-track style submissions, packaged per repo submission format.\n- All artifacts remain below the 16,000,000-byte cap when measured as `int8+zlib model bytes + code bytes`.\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/80",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "staticplayHub",
+      "body": "Reproducibility note for the best run in this PR:\n\n`aria_confirm_fullval_8x576_kv4_i1200_rope50k`\n\n```bash\nRUN_ID=aria_confirm_fullval_8x576_kv4_i1200_rope50k \\\nDATA_PATH=./data/datasets/fineweb10B_sp1024 \\\nTOKENIZER_PATH=./data/tokenizers/fineweb_1024_bpe.model \\\nVOCAB_SIZE=1024 \\\nNUM_LAYERS=8 MODEL_DIM=576 NUM_HEADS=8 NUM_KV_HEADS=4 \\\nROPE_BASE=50000 \\\nITERATIONS=1200 \\\nTRAIN_BATCH_TOKENS=8192 \\\nVAL_LOSS_EVERY=0 \\\nVAL_BATCH_SIZE=8192 \\\nMAX_WALLCLOCK_SECONDS=0 \\\ntorchrun --standalone --nproc_per_node=1 train_gpt.py\n```\n\nKey result lines from `train.log`:\n\n- `step:1200/1200 val_loss:3.2144 val_bpb:1.9037`\n- `Total submission size int8+zlib: 14205090 bytes`\n- `final_int8_zlib_roundtrip_exact val_loss:3.21498726 val_bpb:1.90409654`\n",
+      "created_at": "2026-03-19T13:10:04Z",
+      "updated_at": "2026-03-19T13:10:04Z"
+    }
+  ]
 }

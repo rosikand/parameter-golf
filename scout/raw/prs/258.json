@@ -9,5 +9,6 @@
   "body": "## Summary\n- add a non-record submission folder under `records/track_non_record_16mb/`\n- include `README.md`, `submission.json`, `train.log`, and `train_gpt.py`\n- document a local 1x RTX 4070 Laptop GPU run of a shallower 7-layer KV4 configuration found through the local search loop\n\n## Notes\n- this is **not** intended to satisfy the official 10-minute / 8xH100 record track\n- it is a non-record submission showing a compact local-workstation run under the 16MB artifact cap\n- full published validation split was used (`fineweb_val_*`), while training used the first published train shard\n- final post-quant metric in the included log is `val_bpb=1.65718316`\n\n## Included files\n- `README.md`\n- `submission.json`\n- `train.log`\n- `train_gpt.py`\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/258",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

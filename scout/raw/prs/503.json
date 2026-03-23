@@ -9,5 +9,37 @@
   "body": "## Summary\n\n11-layer GPT with XSA on all layers, legal score-first TTT using AdamW optimizer.\n\n**3-seed results (seeds 1337, 42, 7):**\n\n| Seed | Base BPB | TTT BPB | Artifact Size |\n|------|----------|---------|---------------|\n| 1337 | 1.1235 | **1.1212** | 15.88 MB |\n| 42 | 1.1248 | **1.1222** | 15.82 MB |\n| 7 | 1.1241 | **1.1219** | 15.54 MB |\n| **Mean** | 1.1241 | **1.1218** | |\n| **Std** | | 0.0005 | |\n\n## Architecture\n- 11 layers, model_dim=512, 8 heads / 4 KV heads (GQA)\n- **XSA (Exclusive Self-Attention) on all 11 layers** (novel \u2014 others use last 4)\n- Partial RoPE 16/64, LN Scale (1/sqrt(layer+1))\n- SmearGate + OrthoInit, BigramHash 2048, Shared VE128\n- Tight SWA (every 50 steps) + EMA 0.9985\n- Muon optimizer (lr=0.025, WD=0.04)\n- Flash Attention 3 (Hopper), 89ms/step, ~6737 steps in 600s\n- int6 quantization + zstd-22, 2% magnitude pruning\n\n## Legal Score-First TTT\nCompliant with all organizer rulings on TTT (issues #67, #44, #152, #168):\n\n1. Val data split into sequential 65536-token chunks\n2. For each chunk: **score first** (sliding window stride=32, inference_mode)\n3. Then **adapt** on already-scored tokens (AdamW lr=0.0001, 3 epochs)\n4. Last chunk is never trained on\n5. Every token is evaluated BEFORE any gradient update that uses it\n\nTTT config: AdamW (lr=0.0001, wd=0.0), cosine LR across chunks, last 2 blocks + norms + lm_head unfrozen (4.7M / 27M params), manual grad all_reduce across ranks.\n\n## Training\n- 8xH100 SXM 80GB, 600s wallclock\n- Data: fineweb10B_sp1024, 80 train shards\n- Eval: sliding window stride=32 + score-first TTT, ~630s total\n\n## Key Differences from Base (#374)\n- XSA on all 11 layers (vs 4)\n- Legal score-first TTT with AdamW (vs no TTT)\n- 2% magnitude pruning for artifact size compliance",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/503",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "The module docstring is misleading: it claims \u201cDCT-domain quantization\u201d but this file implements mixed int6/int8 quantization and (optionally) zstd/zlib compression. Also, removing the onboarding guidance conflicts with the repo\u2019s stated intent that `train_gpt.py` remains a simple starting point (see README.md:204). Consider restoring the original guidance and updating the short description to match the actual implementation (or moving record-specific code under `/records`).\n```suggestion\n\"\"\"GPT training script with mixed int6/int8 weight quantization and optional zstd/zlib compression.\n\nThis file is intended to remain a readable, onboarding-friendly starting point for training and fine-tuning.\nFor more specialized experiments or record-specific code, prefer placing that logic in separate modules\n(for example under a `records/` directory) rather than expanding this script.\"\"\"\n```",
+      "created_at": "2026-03-23T04:53:09Z",
+      "updated_at": "2026-03-23T04:53:10Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`Rotary` uses a hard-coded `train_seq_len=1024` when constructed in attention blocks, but the script\u2019s default `TRAIN_SEQ_LEN` is now 2048. This means NTK-style RoPE base scaling will always trigger during training/eval at 2048, which is likely unintended and makes behavior depend on a hidden constant. Pass the actual configured train sequence length into `Rotary` (or rename the parameter if 1024 is intentional).",
+      "created_at": "2026-03-23T04:53:09Z",
+      "updated_at": "2026-03-23T04:53:10Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`Rotary.forward()` computes `rd / (rd - 2)` and `apply_rotary_emb()` assumes `rope_dims` splits cleanly into two equal halves. If `rope_dims` is set to 2 (or any odd value) via env/config, this will divide by zero or produce shape mismatches. Add explicit validation that `rope_dims` is even and > 2 (and <= head_dim) when configuring RoPE dims.",
+      "created_at": "2026-03-23T04:53:09Z",
+      "updated_at": "2026-03-23T04:53:10Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`eval_val_sliding()` will double-count tokens at the end of the validation stream: the final window can have `wlen < stride`, which makes `s=0` and causes those tail tokens to be scored again even though they were already included in the previous window\u2019s last-stride segment. Mirror the filter used in `eval_val_sliding_ttt()` (skip windows with `wlen < stride` except `ws==0`), or adjust `s` so each token is scored exactly once.",
+      "created_at": "2026-03-23T04:53:10Z",
+      "updated_at": "2026-03-23T04:53:10Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The manual gradient `all_reduce` in TTT is conditional on `p.grad is not None` and only happens on ranks that enter the training loop. If some ranks have `my_chunk_seqs == 0` (e.g., when `chunk_seqs < world_size` or for small `TTT_CHUNK_TOKENS`), they will never call `all_reduce`, causing other ranks to deadlock. Ensure every rank participates in the same collectives (e.g., add a barrier between score/train, always all_reduce a zero grad for missing grads, or use DDP for the unfrozen subset).",
+      "created_at": "2026-03-23T04:53:10Z",
+      "updated_at": "2026-03-23T04:53:10Z"
+    }
+  ]
 }

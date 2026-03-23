@@ -9,5 +9,6 @@
   "body": "## Summary\n\n- **val_bpb: 1.1354** (sliding window, stride=64)\n- 15.85 MB artifact (int6 + zstd-22, under 16MB)\n- 8xH100 SXM, 8,945 steps in 600s + 132s eval\n\n## Approach\n\nFour improvements stacked on the PR #198 base:\n\n1. **Partial XSA** (last 3 layers) \u2014 efficient GQA-aware self-attention debiasing (PR #265, arXiv:2603.09078)\n2. **TTT** (3-epoch full-model SGD, freeze first 2 blocks) \u2014 eval-time adaptation (PR #254)\n3. **Batch=524K** \u2014 22% more gradient updates (PR #236 finding)\n4. **RoPE base 50K** \u2014 extended positional encoding (PR #206)\n\n## Key Metrics\n\n| Metric | Value |\n|--------|-------|\n| **Sliding val_bpb (stride=64)** | **1.1354** |\n| Standard roundtrip val_bpb | 1.1583 |\n| Artifact size | 15,851,371 bytes |\n| Training steps | 8,945 |\n| TTT time | 50s |\n| Eval time | 80s |\n\n## Note\n\nUses PyTorch SDPA fallback (FA3 not in RunPod image \u2014 see #280). With FA3, expect ~600 more training steps and slightly better BPB.\n\n## Test plan\n\n- [x] Artifact under 16MB (15.85MB)\n- [x] Trains in 600s on 8xH100\n- [x] Eval completes in <600s (132s total)\n- [x] Post-quant roundtrip verified\n- [x] train_gpt.py runs from records/ folder\n- [x] Train log included\n- [ ] Multi-seed validation (budget constrained \u2014 single seed)\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/290",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

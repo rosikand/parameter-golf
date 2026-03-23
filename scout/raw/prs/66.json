@@ -6,10 +6,36 @@
   "created_at": "2026-03-19T07:50:27Z",
   "updated_at": "2026-03-21T16:36:56Z",
   "merged_at": null,
-  "body": "Hey there! This was super fun thanks. I took the approach of building an AutoResearch agent harness that could work towards solving this autonomously. Added as an agent skill in my submission for others to build off of!\n\nBuilt an auto-research pipeline:\n1. Gave an agent the GitHub CLI\n2. Asked it to go through all of the open PRs, describe what the approach being taken was and bucketing it by expected impact on BPB (High, Medium or Low)\n3. The agent then composed the approaches in the \"High\" bucket\n4. Iteratively trying to figure out which approaches built on top of each other well and led to the best score\n\nArjunAutoResearch ended up with a final val_bpb of **1.16323 +/- 0.00042** (mean across 3 seeds, p << 0.001).\nThe artifact size is: **15,265,243 bytes** (under 16,000,000).\n\nWith more compute (will apply for more) I would scale this AutoResearch agent by trying to compose approaches in the Medium, Low buckets as well as trying to come up with strategies on its own and researching approaches from the internet that people haven't made pull requests for yet.\n\nThe approach ArjunAutoResearch came up with composed the following techniques from these pull requests:\n\n1. **Wider MLP (`MLP_MULT=3.0`, hidden=1536)** (from #70)\n3x MLP expansion enabled by int6 quantization saving ~4MB. 1536 is 64-aligned for optimal H100 matmul tile utilization.\n\n2. **Longer training context (`TRAIN_SEQ_LEN=4096`)** (from #65)\n4x more context per sequence than the baseline's 1024, significantly improving convergence quality per step.\n\n3. **Optimizer tuning** (from #52)\n- `MUON_MOMENTUM=0.99`, learning rates halved, batch 393K, warmdown 3000 steps\n\n4. **STE fake int6 quantization-aware training** (from #65)\nDuring training, all `CastedLinear` weights get fake int6 quantization via Straight-Through Estimator: forward uses quantized weights, backward passes gradients through originals. Teaches weight distributions that survive int6 post-training quantization.\n\n5. **int6 per-row quantization on MLP+attention** (from #70)\nMixed precision: int6 on 2D block weights, fp16 passthrough on tied embedding, zstd-22 compression.\n\n6. **fp16 tied embedding passthrough** (from #42)\nThe tied embedding doubles as the output head. Keeping it in fp16 eliminates embedding quantization penalty entirely.\n\n7. **Sliding window evaluation (`EVAL_STRIDE=64`, `TRAIN_SEQ_LEN=4096`)** (from #50, extended to seq_len=4096)\nEach token scored with up to 4032 tokens of context. Compiled `forward_logits` for fast eval.\n\n### Results\n\n| Seed | val_bpb |\n|------|---------|\n| 1337 | 1.16356083 |\n| 1338 | 1.16275343 |\n| 1339 | 1.16337225 |\n\n**Mean: 1.16323**, std: 0.00042. One-sample t-test against threshold 1.2194: **t = 230.34** (df=2). p << 0.001.\n\n### Key numbers (seed 1337)\n\n- Stopped at step 9211/20000 (wallclock cap)\n- Pre-quant val_bpb: 1.1769\n- Post-quant sliding window val_bpb: **1.16356083**\n- Train time: 600s at 65.15ms/step\n- Eval time: 157s (within the separate 10-min eval budget)\n- Artifact size: ",
+  "body": "Hey there! This was super fun thanks. I took the approach of building an AutoResearch agent harness that could work towards solving this autonomously. Added as an agent skill in my submission for others to build off of!\n\nBuilt an auto-research pipeline:\n1. Gave an agent the GitHub CLI\n2. Asked it to go through all of the open PRs, describe what the approach being taken was and bucketing it by expected impact on BPB (High, Medium or Low)\n3. The agent then composed the approaches in the \"High\" bucket\n4. Iteratively trying to figure out which approaches built on top of each other well and led to the best score\n\nArjunAutoResearch ended up with a final val_bpb of **1.16323 +/- 0.00042** (mean across 3 seeds, p << 0.001).\nThe artifact size is: **15,265,243 bytes** (under 16,000,000).\n\nWith more compute (will apply for more) I would scale this AutoResearch agent by trying to compose approaches in the Medium, Low buckets as well as trying to come up with strategies on its own and researching approaches from the internet that people haven't made pull requests for yet.\n\nThe approach ArjunAutoResearch came up with composed the following techniques from these pull requests:\n\n1. **Wider MLP (`MLP_MULT=3.0`, hidden=1536)** (from #70)\n3x MLP expansion enabled by int6 quantization saving ~4MB. 1536 is 64-aligned for optimal H100 matmul tile utilization.\n\n2. **Longer training context (`TRAIN_SEQ_LEN=4096`)** (from #65)\n4x more context per sequence than the baseline's 1024, significantly improving convergence quality per step.\n\n3. **Optimizer tuning** (from #52)\n- `MUON_MOMENTUM=0.99`, learning rates halved, batch 393K, warmdown 3000 steps\n\n4. **STE fake int6 quantization-aware training** (from #65)\nDuring training, all `CastedLinear` weights get fake int6 quantization via Straight-Through Estimator: forward uses quantized weights, backward passes gradients through originals. Teaches weight distributions that survive int6 post-training quantization.\n\n5. **int6 per-row quantization on MLP+attention** (from #70)\nMixed precision: int6 on 2D block weights, fp16 passthrough on tied embedding, zstd-22 compression.\n\n6. **fp16 tied embedding passthrough** (from #42)\nThe tied embedding doubles as the output head. Keeping it in fp16 eliminates embedding quantization penalty entirely.\n\n7. **Sliding window evaluation (`EVAL_STRIDE=64`, `TRAIN_SEQ_LEN=4096`)** (from #50, extended to seq_len=4096)\nEach token scored with up to 4032 tokens of context. Compiled `forward_logits` for fast eval.\n\n### Results\n\n| Seed | val_bpb |\n|------|---------|\n| 1337 | 1.16356083 |\n| 1338 | 1.16275343 |\n| 1339 | 1.16337225 |\n\n**Mean: 1.16323**, std: 0.00042. One-sample t-test against threshold 1.2194: **t = 230.34** (df=2). p << 0.001.\n\n### Key numbers (seed 1337)\n\n- Stopped at step 9211/20000 (wallclock cap)\n- Pre-quant val_bpb: 1.1769\n- Post-quant sliding window val_bpb: **1.16356083**\n- Train time: 600s at 65.15ms/step\n- Eval time: 157s (within the separate 10-min eval budget)\n- Artifact size: 15,265,243 bytes (under 16,000,000)\n- Peak memory: 8521 MiB",
   "labels": [
     "does not beat SOTA"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/66",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "arjun-krishna1",
+      "body": "Time to sleep \ud83d\ude2d ",
+      "created_at": "2026-03-19T10:33:10Z",
+      "updated_at": "2026-03-19T10:33:10Z"
+    },
+    {
+      "user": "chonchiog",
+      "body": "Awesome!",
+      "created_at": "2026-03-19T13:45:58Z",
+      "updated_at": "2026-03-19T13:45:58Z"
+    },
+    {
+      "user": "arjun-krishna1",
+      "body": "> Awesome!\r\n\r\nthanks man! @chonchiog feel free to fork and build off of it\r\n",
+      "created_at": "2026-03-19T14:24:05Z",
+      "updated_at": "2026-03-19T14:24:05Z"
+    },
+    {
+      "user": "chonchiog",
+      "body": "for sure! @arjun-krishna1  I'm waiting for the runpod credits :)",
+      "created_at": "2026-03-19T14:25:59Z",
+      "updated_at": "2026-03-19T14:25:59Z"
+    }
+  ]
 }

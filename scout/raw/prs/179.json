@@ -9,5 +9,19 @@
   "body": "## Summary\n\nTwo submissions for the `10min_16mb` track, both using an 11-layer GPT with GQA (NUM_KV_HEADS=4), int6 per-row quantization, fp16 embeddings, zstd-22 compression, and sliding window evaluation (stride=64).\n\n### 1. Main SOTA Record: 11L WD0.038 Non-Val (`2026-03-20_11L_WD038_NonVal`)\n\n| Seed | val_loss | val_bpb | Steps |\n|------|----------|---------|-------|\n| 1337 | 1.93869 | 1.14821 | 6986 |\n| 42 | 1.93202 | 1.14425 | 8202 |\n| 7 | 1.94044 | 1.14924 | 6961 |\n| **Mean** | **1.93705** | **1.14723** | |\n\n- **Improvement over current SOTA** (notapplica, 1.1748): **0.0275 BPB**\n- **p-value**: 0.0008 (Welch's t-test, one-sided) \u2014 well below 0.01 threshold\n- All artifacts under 16MB (max: 15,905,331 bytes)\n- Trained on standard training shards only (no val data)\n- Key innovations: decoupled weight decay (0.038) on Muon optimizer reduces quantization gap, enabling 11 layers to fit under 16MB with int6+zstd; higher LR (0.025) improves convergence\n\n### 2. Non-Record Aside: 11L WD0.034 Val-Only (`2026-03-20_11L_WD034_ValOnly`)\n\n| Seed | val_loss | val_bpb | Steps |\n|------|----------|---------|-------|\n| 1337 | 1.56344 | 0.92596 | 8290 |\n| 42 | 1.56780 | 0.92854 | 8252 |\n| 7 | 1.56622 | 0.92761 | 8298 |\n| **Mean** | **1.56582** | **0.92737** | |\n\n- Trains on `fineweb_val_*.bin` \u2014 same architecture with WD=0.034\n- Included as a **non-record submission** to demonstrate the val-only approach\n- All artifacts under 16MB\n\nBoth submissions share the same `train_gpt.py` (58,486 bytes); configuration differences are via environment variables. All 6 training runs executed on Modal 8xH100.\n\n## Review & Testing Checklist for Human\n\n- [ ] Verify the non-val mean_val_bpb (1.1472) beats the current SOTA (1.1748) by \u22650.005 nats\n- [ ] Verify p-value (0.0008) meets the p < 0.01 significance threshold\n- [ ] Spot-check training logs for consistent hardware (8xH100) and wallclock under 10 min\n- [ ] Confirm all artifact sizes are under 16,000,000 bytes\n- [ ] Review val-only submission is clearly marked as non-record/aside\n\n### Notes\n\n- The `train_gpt.py` files in both submission directories are byte-identical\n- Non-val seed 7 experienced a Modal preemption and automatic restart, resulting in slightly slower ms_per_step (86.15 vs ~73 for other seeds) but completed successfully within the time cap\n- Author: Silas Alberti (github: silasalberti)\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/179",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "cocohearts",
+      "body": "lmao @devin-cog this is training on val right",
+      "created_at": "2026-03-20T18:50:55Z",
+      "updated_at": "2026-03-20T18:50:55Z"
+    },
+    {
+      "user": "silasalberti",
+      "body": "@cocohearts there are two runs here. the main one didn't train on val (unless I missed sth) and was a record at the time of submission\r\n\r\nit included a second one which trained on val beating the previous best val solution - but you can ignore this one",
+      "created_at": "2026-03-20T23:29:01Z",
+      "updated_at": "2026-03-20T23:29:01Z"
+    }
+  ]
 }

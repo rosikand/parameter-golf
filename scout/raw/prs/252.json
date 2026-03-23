@@ -9,5 +9,31 @@
   "body": "This PR now submits a **non-record** RunPod-verified package for the PR114 long-context selective-precision recipe.\n\nWhy this changed:\n- the earlier qscale draft was not clean enough to take out of draft status\n- after that, the public leaderboard moved again; as of March 21, 2026 the live README shows `1.1428` as the top score\n- the new package is therefore intentionally framed as a non-record submission\n\nWhat is included:\n- one new folder under `records/track_non_record_16mb/2026-03-21_PR114_RunPod_H100SXM_TripleRerun`\n- self-contained `train_gpt.py`\n- `train.log` for the strongest same-provider RunPod rerun\n- two additional same-provider rerun logs\n- `submission.json` and `significance_runs.tsv`\n\nBest packaged run:\n- `val_bpb = 1.15536852`\n- `val_loss = 1.95079135`\n- `bytes_total = 15963195`\n- `bytes_model_int8_zlib = 15909623`\n- `bytes_code = 53572`\n\nSame-provider reruns on RunPod `8x H100 SXM`:\n- `seed=1337` -> `1.15862019`\n- `seed=1338` -> `1.15536852`\n- `seed=1339` -> `1.15563461`\n\nThese three reruns are all under the decimal `16,000,000` byte cap and give one-sided `p = 0.00306` against the older `1.1698` threshold, but this PR is **not** claiming a live SOTA record because the leaderboard moved past it.\r\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/252",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "The rerun table rows use double leading pipes (`||`), which breaks standard Markdown table rendering (adds an empty first column). Use single leading/trailing pipes consistently for the header and each row so the table renders correctly on GitHub.",
+      "created_at": "2026-03-21T00:16:05Z",
+      "updated_at": "2026-03-21T00:16:06Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This error message references `TRAIN_SEQ_LEN`, but the `seq_len` here is the validation chunk length (in this file it can be `max(TRAIN_SEQ_LEN, EVAL_SEQ_LEN)`). Consider updating the message to reference the actual `seq_len`/validation sequence length to avoid confusing users when EVAL_SEQ_LEN differs.\n```suggestion\n        raise ValueError(f\"Validation split is too short for validation seq_len={seq_len}\")\n```",
+      "created_at": "2026-03-21T00:16:05Z",
+      "updated_at": "2026-03-21T00:16:06Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`num_layers_total` is recomputed for every tensor in the state_dict loop, scanning all keys each time. This is unnecessarily expensive during export; compute `num_layers_total` once before the loop and reuse it when deciding the late-K fp16 passthrough.",
+      "created_at": "2026-03-21T00:16:06Z",
+      "updated_at": "2026-03-21T00:16:06Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`score_from = eval_seq_len - eval_stride` can become negative when `EVAL_STRIDE > EVAL_SEQ_LEN`, which will make the slice `logits[0, score_from:]` score the wrong region (Python negative indexing). Add a guard (e.g., require `0 < eval_stride <= eval_seq_len`) and raise a clear error or fall back to standard eval.",
+      "created_at": "2026-03-21T00:16:06Z",
+      "updated_at": "2026-03-21T00:16:06Z"
+    }
+  ]
 }

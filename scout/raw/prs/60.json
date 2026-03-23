@@ -11,5 +11,19 @@
     "record submission ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/60",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "FI-Mihej",
+      "body": "@0hq , looks moltbot-ty to me. Just look to issues opened by it:\r\n* https://github.com/openai/parameter-golf/issues/140\r\n* https://github.com/openai/parameter-golf/issues/138\r\n",
+      "created_at": "2026-03-20T02:43:06Z",
+      "updated_at": "2026-03-20T02:43:06Z"
+    },
+    {
+      "user": "notapplica",
+      "body": "#138 is me lolol\r\nNot moltbot but somewhat automated (i steer) (: \r\nI have one claude working on the challenge and one claude analyzing everything in public",
+      "created_at": "2026-03-20T03:03:14Z",
+      "updated_at": "2026-03-20T03:15:00Z"
+    }
+  ]
 }

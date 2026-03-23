@@ -9,5 +9,19 @@
   "body": "## Summary\n\nThis PR adds a new non-record submission folder under `records/track_non_record_16mb` for a clean-rules dense branch built from local search on Apple Silicon.\n\nThe submission does not claim a leaderboard record. I do not have a valid `8xH100` timed run from this workspace, so the folder is intentionally filed under the non-record track rather than `track_10min_16mb`.\n\nThe branch itself is a compact dense model that reallocates budget away from K/V channels and into MLP width:\n\n- `9` layers, `512` model dim\n- `8` query heads with `2` KV heads\n- `MLP_HIDDEN=1248`\n- lower LR schedule: `0.02 / 0.02 / 0.03`\n- grouped `int8+zlib` export\n- `INT8_KEEP_FLOAT_MAX_NUMEL=65535` so the smaller `KV2` matrices are actually quantized\n- gentle post-export coarsening on middle layers: `INT4_LAYERS=4,5`, `INT4_STEP=2`\n\n## Why this submission exists\n\nThe root problem in the local search was that reduced-KV branches looked attractive on raw parameter count but did not actually translate into payload savings at export. The smaller `128x512` K/V matrices landed exactly on the float-passthrough threshold and were being serialized as fp16 instead of quantized.\n\nLowering that threshold made the reduced-KV branch real, which in turn made it possible to reinvest the saved budget into a wider MLP. On the local proxy, that family beat the earlier dense `KV4 / MLP_HIDDEN=1120` branch and remained more stable than the nearby `10L` variants.\n\nI also explicitly did not take the most rules-edge routes from the public search space. This submission does not use val-only training, and it does not change the tokenizer or dataset.\n\n## Included evidence\n\nThe folder contains:\n\n- `README.md` describing the branch and the clean-rules submission posture\n- `submission.json`\n- `train.log` for the best local proxy seed\n- `train_seed42.log` and `train_seed1337.log` as repeat runs\n- `experiment_log.md` summarizing the local search\n- `train_gpt.py` and `train_gpt_mlx.py`\n\nMost relevant local results documented in the README:\n\n- best seed: `val_bpb=3.31983927`\n- three-seed mean: `3.32743880`\n- local compressed artifact sizes around `6.74MB`\n\nThese are Apple Silicon proxy numbers, not `8xH100` leaderboard numbers.\n\n## Validation\n\nI ran the lightweight checks that are available from this machine:\n\n- `python3 -m py_compile records/track_non_record_16mb/2026-03-19_GW_DenseKV2MLP1248_Int7Mid45_LowerLR/train_gpt.py`\n- `python3 -m py_compile records/track_non_record_16mb/2026-03-19_GW_DenseKV2MLP1248_Int7Mid45_LowerLR/train_gpt_mlx.py`\n\nThe folder is meant to be publicly reviewable and rerunnable, while staying honest about the fact that I have not verified a record-class timed H100 run here.\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/90",
-  "draft": true
+  "draft": true,
+  "comments": [
+    {
+      "user": "gwskier11-design",
+      "body": "Added  inside the submission folder with exact  commands, fallback order, log-extraction commands, and the record-promotion checklist. This is meant to make the branch directly runnable as a clean leaderboard attempt once real H100 time is available.",
+      "created_at": "2026-03-19T15:35:02Z",
+      "updated_at": "2026-03-19T15:35:02Z"
+    },
+    {
+      "user": "gwskier11-design",
+      "body": "Added `H100_RUNBOOK.md` inside the submission folder with exact `8xH100` commands, fallback order, log-extraction commands, and the record-promotion checklist.\n\nThis is meant to make the branch directly runnable as a clean leaderboard attempt once real H100 time is available.\n",
+      "created_at": "2026-03-19T15:35:09Z",
+      "updated_at": "2026-03-19T15:35:09Z"
+    }
+  ]
 }

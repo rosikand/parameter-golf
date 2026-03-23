@@ -9,5 +9,6 @@
   "body": "This is a draft work-in-progress PR for Parameter Golf. It is not a leaderboard submission yet.\n\nWhat is in this PR:\n- score logging for pre-compression and post-compression evaluation\n- an eval profiler for sequence-length and batch-size sweeps\n- export candidate selection based on final scored output\n- pilot hooks for late-stage quantization-aware fine-tuning\n- pilot hooks for one-family control-tensor test-time adaptation\n- a shared-depth recurrence pilot\n\nWhat I have already done:\n- set up the local workflow\n- downloaded the tokenizer and a smoke-test dataset shard\n- ran a 200-step MLX smoke run on Apple Silicon\n- verified the updated scripts compile locally\n\nWhat this PR does not claim:\n- no remote CUDA score yet\n- no claim that the approach beats baseline\n- no claim that this is ready for leaderboard submission\n\nNext step: run short remote experiments on the scored CUDA path once compute support is available.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/24",
-  "draft": true
+  "draft": true,
+  "comments": []
 }

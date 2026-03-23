@@ -11,5 +11,19 @@
     "record submission ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/50",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "0hq",
+      "body": "One nit: Can you double check that the tail can't be silently dropped in the eval? window_starts only keeps windows where ... >= stride, so the last partial segment of validation data is not scored if it is shorter than stride. This can bias the metric downward or upward depending on what was skipped.",
+      "created_at": "2026-03-19T17:32:56Z",
+      "updated_at": "2026-03-19T17:32:56Z"
+    },
+    {
+      "user": "mattqlf",
+      "body": "Good catch \u2014 the final partial window was indeed silently dropped. Fixed in #124: changed the filter to `>= 1` and clamped `wlen - stride` to avoid negative indexing on short windows.",
+      "created_at": "2026-03-19T19:33:56Z",
+      "updated_at": "2026-03-19T19:40:59Z"
+    }
+  ]
 }

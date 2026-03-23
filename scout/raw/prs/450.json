@@ -9,5 +9,13 @@
   "body": "## 12L + Catalytic Residuals + BigramHash(10240) + SWA + Late QAT\n\n**val_bpb: 1.14662** (mean of 3 seeds, sliding window stride=64, post int6+zstd quantization roundtrip)\n\n### 3-Seed Results\n\n| Seed | val_bpb | artifact_bytes | valid |\n|------|---------|---------------|-------|\n| 1337 | 1.14749 | 14,014,540 | yes |\n| 42 | 1.14575 | 14,104,510 | yes |\n| 7 | 1.14662 | 14,385,363 | yes |\n| **Mean** | **1.14662** | | |\n| **Std** | **0.00071** | | |\n\n- Training: 600s, ~5,370 steps, ~112 ms/step on 8xH100 SXM\n- Eval: ~120s (20s roundtrip + 98s sliding window stride=64)\n- No TTT\n\n### Key Innovations\n\n1. **Catalytic Residual Connections** (novel): Replace `x + f(x)` with `x + c * f(x)`, where `c` is a learned per-dimension vector. -0.024 bpb at zero computational overhead (~11K extra params).\n\n2. **12 Layers**: Standard stack uses 10-11 layers leaving significant budget headroom. 12L is the depth sweet spot (-0.023 bpb vs 11L).\n\n3. **BigramHash(10240)**: Larger bigram vocabulary (-0.070 bpb vs BigramHash(2048)).\n\n4. **Late QAT** (threshold=0.25): STE int6 quantization in the final portion of training.\n\n5. **SWA**: Stochastic weight averaging from last 20% of warmdown.\n\n### Run Command\n\n```bash\npip install sentencepiece zstandard\npython3 data/cached_challenge_fineweb.py --variant sp1024 --train-shards 80\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\nAll parameters set as defaults. No env vars needed.\n\nBuilt on PR #180 standard stack by @thwu1.\n\nFull logs for all 3 seeds included.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/450",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "mohosy",
+      "body": "catalytic residuals are lowkey genius, learning a per dim scale on the residual for basically free params. 12 layers is intresting too most people stopped at 11 did you have any issues with artifact size going that deep",
+      "created_at": "2026-03-23T00:23:05Z",
+      "updated_at": "2026-03-23T00:23:05Z"
+    }
+  ]
 }

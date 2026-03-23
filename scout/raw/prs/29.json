@@ -11,5 +11,13 @@
     "not ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/29",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "nidhilak-Aquarius",
+      "body": "Recurrent MQA Transformer \u2014 Core Logic\r\n\r\nThis submission focuses on maximizing effective model capacity under a strict artifact constraint through parameter sharing and architectural efficiency:\r\n\r\n- Depth Recurrence \u2014 a single TransformerBlock is looped 12x, achieving deep computation with ~3.28M unique parameters (~39M effective).\r\n- Weight-Tied Embeddings \u2014 input embeddings are reused for output projection, eliminating additional parameters.\r\n- Multi-Query Attention (8Q / 1KV) \u2014 shared KV heads reduce attention parameters and memory overhead.\r\n- SwiGLU FFN \u2014 improved efficiency over GELU at the same parameter count.\r\n- RoPE \u2014 parameter-free positional encoding.\r\n\r\nArtifact size (measured): ~2.82MB (int8 + zlib, smoke test) \u2014 well under the 16MB constraint, leaving substantial headroom for further optimization.\r\n\r\nHypothesis: Increasing recurrence depth (N=12) improves performance over shallower configurations at fixed parameter count, with diminishing returns beyond N~16.\r\n\r\nLocal smoke test completed successfully; full GPU evaluation (val_bpb) pending compute grant.",
+      "created_at": "2026-03-19T14:23:14Z",
+      "updated_at": "2026-03-19T14:23:14Z"
+    }
+  ]
 }

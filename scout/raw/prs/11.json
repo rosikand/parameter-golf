@@ -11,5 +11,19 @@
     "not ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/11",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Shift MTP targets by one fewer token**\n\nWhen multi-token prediction is enabled, `target_ids` is already the `t+1` sequence, so `shift = i + 2` makes the first auxiliary head train on `target_ids[:, 2:]` (`t+3` from `x_t`) instead of `t+2`. Every later MTP head is likewise one token too far ahead, so the new auxiliary loss is supervising the wrong future tokens rather than the advertised `t+2`, `t+3`, ... targets.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-18T19:51:22Z",
+      "updated_at": "2026-03-18T19:51:22Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Restore LoRA adapter weights to fp32 before Muon**\n\nWith the default `LORA_RANK>0`, the only loop-specific weights are the new LoRA adapters, but after the global `.bfloat16()` cast this block only promotes `CastedLinear` modules back to fp32. `LoRAAdapter.A/B` stay bf16, and `Muon.step()` allocates its momentum buffer with `zeros_like(g)`, so those adapters are trained with bf16 state/update precision while the rest of the matrix weights stay fp32. That materially weakens the per-loop specialization path this change is adding.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-18T19:51:22Z",
+      "updated_at": "2026-03-18T19:51:22Z"
+    }
+  ]
 }

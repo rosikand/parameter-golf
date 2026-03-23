@@ -9,5 +9,6 @@
   "body": "## Summary\n\nNon-record research submission exploring test-time adaptation strategies for compressed language models at 16MB scale.\n\n### Key findings\n\n1. **Reptile meta-learning improves SmearGate models by 0.011 BPB** \u2014 10x better than naive TTT (+0.001), partially overcoming the SmearGate/TTT redundancy\n2. **Error-guided TTT is a negative result** \u2014 concentrating adaptation on highest-loss tokens does not improve val_loss, indicating these tokens are genuinely unpredictable\n3. **13 layers beat 10 layers on 8xH100** (1.1884 vs 1.2090) despite 23% fewer training steps\n4. **Per-token loss distribution** on full 62M val set: hardest 2.7% of tokens account for ~15% of total loss\n\n### Score\n\n- val_bpb: 1.1645 (sliding window, stride=64)\n- Artifact: 12.7MB\n\nSee README for full methodology and analysis.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/296",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

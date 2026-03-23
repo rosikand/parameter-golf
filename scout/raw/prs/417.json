@@ -9,5 +9,55 @@
   "body": "## Summary\n\nBuilt on PR #374 with FA3 Hopper attention and a novel **two-phase test-time training** approach:\n\n- **FA3 Hopper:** 84.65ms/step, enabling ~7,000 training steps in 600s\n- **Phase 1 \u2014 Norm-Only Recalibration** (50 epochs, Adam lr=0.01): Only unfreeze LayerNorm weights + scales (~22K params). Recalibrates activation distributions damaged by int6 quantization.\n- **Phase 2 \u2014 Selective-Freeze Block Adaptation** (10 epochs, SGD lr=0.005): Unfreeze last 3 blocks + norms + scales + lm_head (~7.6M params). Adapts on the recalibrated foundation while preserving SWA-averaged weights in first 8 blocks.\n\nKey insight: the two phases target different error sources (quantization artifacts vs. distribution mismatch) and are additive.\n\n## Results\n\n| Seed | val_bpb | Artifact |\n|------|---------|----------|\n| 1337 | 1.1222 | 15,758,953 bytes |\n| 42 | 1.1230 | 15,798,468 bytes |\n| 2024 | 1.1228 | 15,689,654 bytes |\n| **Mean** | **1.1227** | **All under 16MB** |\n\n- Post-SWA BPB: ~1.1414\n- TTT improvement: ~-0.019\n- Training: 84.65ms/step, ~7000 steps, 600s\n- Eval (TTT + sliding window): ~500s\n\n## Architecture\n\n- 11L, dim=512, 8 heads / 4 KV (GQA), XSA last 4 layers\n- 3x MLP relu\u00b2 + SmearGate + OrthoInit\n- Partial RoPE 16/64, LN Scale, BigramHash(2048)\n- Tight SWA, Late QAT (4%), int6 + zstd-22, 2% pruning\n- FA3 Hopper (flash_attn_interface)\n\n## Setup\n\n```bash\npip install zstandard\npip install flash_attn_3 --find-links https://windreamer.github.io/flash-attention3-wheels/cu128_torch291\n```\n\n## Command\n\n```bash\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/417",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "`late_k_layers` is computed but never used, which makes the quantization code harder to understand/maintain. Please remove it or use it (e.g., if the intent was different quantization for late layers).\n```suggestion\n\n```",
+      "created_at": "2026-03-22T10:44:16Z",
+      "updated_at": "2026-03-22T10:44:18Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "In distributed runs where `n_seqs < ttt_batch_seqs * world_size` (or whenever `usable < chunk` and you fall back to `usable = n_seqs`), ranks with `rank > 0` will slice an empty `idx`, causing `torch.stack([])` to throw. Add a guard like `if local_bs >= usable: continue` and handle partial batches (or ensure `usable` is always at least `chunk`).",
+      "created_at": "2026-03-22T10:44:17Z",
+      "updated_at": "2026-03-22T10:44:18Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`torch._dynamo.reset()` is a private/internal API and may break across PyTorch versions or unexpectedly invalidate other compiled graphs. Prefer avoiding global resets (e.g., keep separate compiled functions per phase, or use supported APIs to manage compilation cache) so the script is more robust.\n```suggestion\n            # compiled graph is tied to ttt_compiled and will be released after this function returns\n```",
+      "created_at": "2026-03-22T10:44:17Z",
+      "updated_at": "2026-03-22T10:44:18Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Phase 1 is described as unfreezing \u201cLayerNorm weights \u2026 and final_norm\u201d, but the model uses `RMSNorm` implemented via `F.rms_norm` (no learnable weight/bias), so there aren\u2019t any LayerNorm/RMSNorm weights to unfreeze. Please update this description to reflect what\u2019s actually being trained in phase 1 (e.g., scale/residual-mix/gains), so the README matches the code/logs.\n```suggestion\n- **Phase 1 \u2014 Norm-Only Recalibration (50 epochs, Adam lr=0.01):** Only unfreeze lightweight scalar parameters (scale / residual-mix / gain parameters; ~22K params). Recalibrates activation distributions damaged by int6 quantization. Acts as post-quantization calibration via gradient descent.\n- **Phase 2 \u2014 Selective-Freeze Block Adaptation (10 epochs, SGD lr=0.005, momentum=0.9):** Unfreeze last 3 transformer blocks + all Phase\u20111 scale / residual-mix / gain parameters + lm_head (~7.6M params). Adapts representations on the recalibrated foundation while preserving SWA-averaged weights in the first 8 blocks.\n```",
+      "created_at": "2026-03-22T10:44:17Z",
+      "updated_at": "2026-03-22T10:44:18Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`requirements.txt` lists `flash_attn_3`, but the code imports `flash_attn_interface` (preferred) and falls back to `flash_attn`. If `flash_attn_3` doesn\u2019t provide those import names in the execution environment, installs will succeed but runtime imports will still fail. Consider pinning/adding the package that actually provides `flash_attn_interface`, or clarify installation instructions so requirements and imports align.\n```suggestion\nflash-attn\n```",
+      "created_at": "2026-03-22T10:44:17Z",
+      "updated_at": "2026-03-22T10:44:18Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The PR description focuses on the 2026-03-22 two-phase TTT record, but this PR also adds a separate 2026-03-21 QAT/BigramHash record. If this extra record is intentional, it would help to mention it in the PR description (or split into a separate PR) so reviewers understand the scope.",
+      "created_at": "2026-03-22T10:44:18Z",
+      "updated_at": "2026-03-22T10:44:18Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The module docstring says this fork uses SAM (Sharpness-Aware Minimization), but the code below only uses Adam/SGD and doesn\u2019t implement SAM. This is misleading for readers trying to reproduce results; please either implement SAM or update the docstring to match the actual optimizers used.\n```suggestion\n\"\"\"Selective-freeze TTT training script. Fork of #374.\"\"\"\n```",
+      "created_at": "2026-03-22T10:44:18Z",
+      "updated_at": "2026-03-22T10:44:18Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`eval_val_sliding()` compiles `forward_logits` with `dynamic=False/fullgraph=True` but then calls it with a batch size (`bsz`) that can vary (especially on the last batch). This can trigger recompiles or failures and adds substantial overhead during eval. Consider using a fixed `batch_seqs` tensor shape (pad the final batch) or compile with `dynamic=True`, and/or compile once outside the loop with a warmup input (see similar pattern in other records scripts).",
+      "created_at": "2026-03-22T10:44:18Z",
+      "updated_at": "2026-03-22T10:44:19Z"
+    }
+  ]
 }

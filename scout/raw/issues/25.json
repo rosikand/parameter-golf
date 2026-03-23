@@ -7,5 +7,6 @@
   "updated_at": "2026-03-18T22:40:10Z",
   "body": "## Description\nSet up project tooling infrastructure:\n- `pyproject.toml` with ruff, mypy, pytest configuration\n- uv-based dependency management\n- Quality gates for CI\n\n## Acceptance Criteria\n- [ ] pyproject.toml with ruff (linting + formatting), mypy (strict), pytest config\n- [ ] `uv run ruff check` passes\n- [ ] `uv run mypy` configured\n- [ ] `uv run pytest` discovers tests",
   "labels": [],
-  "url": "https://github.com/openai/parameter-golf/issues/25"
+  "url": "https://github.com/openai/parameter-golf/issues/25",
+  "comments": []
 }

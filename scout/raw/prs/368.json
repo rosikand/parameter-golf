@@ -9,5 +9,6 @@
   "body": "## Summary\n\nNon-record submission. 10-layer transformer with mixed INT5/INT6 quantization.\n\n- `val_bpb: 1.20368943` (post-quant sliding window eval)\n- Artifact: 12,499,612 bytes (78.1% of 16MB cap)\n- Run on Modal 8\u00d7H100\n\nSee [PR #95](https://github.com/openai/parameter-golf/pull/95) for our earlier submission with documented negative results on INT4, depth recurrence, and EMA overhead.\n\n## Techniques\n\n| Technique | Source |\n|-----------|--------|\n| Mixed INT5 MLP / INT6 attention | @nanlliu PR #39 concept, our implementation |\n| SmearGate + BigramHash + OrthoInit | @unnir PR #162 |\n| Muon WD 0.04 | @notapplica PR #60 |\n| Sliding window eval stride=64 | @mattqlf PR #50 |\n| EMA, 3% pruning, RoPE 50K, zstd-22 | Various / our additions |\n\nBuilt with [PROTEUS](https://lightspeedup.com) by LightSpeedUp",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/368",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

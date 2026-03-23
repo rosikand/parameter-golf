@@ -9,5 +9,6 @@
   "body": "Adds one non-record submission folder under records/track_non_record_16mb with README, submission.json, train.log, and train_gpt.py.\\n\\nNotes:\\n- Run performed on 1x H100 due to limited compute budget while awaiting grant-backed 8xH100 runs.\\n- Focused change: scheduler warmdown behavior () for 1-GPU step-time regime.\\n- Improves same-session 1x baseline val_bpb by ~0.0013 while staying within 16MB cap.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/94",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

@@ -9,5 +9,6 @@
   "body": "## Summary\r\n\r\nImprovements over the naive baseline (1.2244 bpb) using mixed precision quantization \r\nto fund a 10th layer within the 16MB budget.\r\n\r\n**mean val_bpb: 1.20262** (3 seeds, post int5/int6+zlib quantization roundtrip)\r\n\r\n## 3-Seed Results\r\n\r\n| Seed | val_bpb |\r\n|------|---------|\r\n| 1337 | 1.20375402 |\r\n| 42   | 1.20134663 |\r\n| 123  | 1.20275459 |\r\n| **Mean** | **1.20262** |\r\n\r\nAll artifacts under 16MB (~15.7MB).\r\n\r\n## Key Changes vs Baseline\r\n\r\n- **NUM_LAYERS 9 \u2192 10**: extra layer funded by Int5 MLP quantization\r\n- **MLP_MULT 2 \u2192 3**: wider MLP (hidden 1024 \u2192 1536)\r\n- **Mixed quantization**: Int5 for MLP weights, Int6 for attention, FP16 for embeddings\r\n- **WARMDOWN_ITERS 1200 \u2192 3000**: better convergence\r\n- **GRAD_CLIP_NORM 0.0 \u2192 0.3**: stable training\r\n\r\n## Checklist\r\n- [x] Beats baseline by \u2265 0.005 nats\r\n- [x] 3 seeds provided\r\n- [x] All artifacts < 16,000,000 bytes\r\n- [x] train_gpt.py included\r\n- [x] Logs included",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/426",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

@@ -9,5 +9,6 @@
   "body": "## Summary\n- Competitive stack: int6 STE QAT, BigramHash, SmearGate, OrthoInit, MLP 3x\n- **val_bpb: 1.2055** (sliding window, stride=64) on 4xH100 SXM\n- Includes IPA phonetic tokenization research (interesting negative result: phonetic encoding provides marginal gains in isolation but is subsumed by modern training techniques)\n- Known issue: model 19.6MB with int8 export, needs int6 export for 16MB compliance\n\nSee `records/track_non_record_16mb/2026-03-20_CompetitiveStack/README.md` for details.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/454",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

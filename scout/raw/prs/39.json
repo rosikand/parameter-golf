@@ -9,5 +9,13 @@
   "body": "## Summary\n\nTwo submissions:\n\n### 1. 10L Mixed Precision (val_bpb=1.2139 mean across 5 seeds)\n- **10 transformer layers** (vs baseline 9) with mixed int8/int6 compression\n- Full int8 for first/last 3 layers, **int6 (step=4 rounding) for middle layers 3-6**\n- Lower LR: MATRIX_LR=0.02 SCALAR_LR=0.02 TIED_EMBED_LR=0.03\n- Improves post-quant roundtrip validation metrics on the same val set from **1.2244 \u2192 1.2139 bpb** and **2.0727 \u2192 2.0496 nats**\n- Artifact: ~15.93MB (under 16MB)\n\n### 2. Lower LR (val_bpb=1.2230)\n- Same 9-layer architecture, only LR change\n\n## Multi-seed results (5 seeds, p < 0.001)\n\n| Seed | val_loss (nats) | val_bpb | Artifact |\n|---|---|---|---|\n| 1337 | 2.0502 | 1.2142 | 15.92MB |\n| 42 | 2.0509 | 1.2146 | 15.94MB |\n| 123 | 2.0493 | 1.2137 | 15.93MB |\n| 7 | 2.0481 | 1.2130 | 15.93MB |\n| 2024 | 2.0493 | 1.2137 | 15.94MB |\n| **Mean** | **2.0496** | **1.2139** | **15.93MB** |\n| **Std** | **0.0010** | **0.0006** | |\n\n- **Mean improvement: 0.0231 nats** (4.6x the 0.005 threshold)\n- **t-statistic: 39.29** (df=4, one-sided t critical for p<0.001 = 7.17)\n- **p < 0.001**\n- All 5 runs individually beat SOTA by >0.005 nats\n- All 5 artifacts under 16MB\n\n## How mixed precision compression works\n\n10L model has 18.9M params \u2192 17.6MB with standard int8+zlib (over 16MB). By reducing middle layers to int6, compressed size drops to ~15.9MB:\n\n| Layer Group | Precision | Reason |\n|---|---|---|\n| Layers 0-2 (early) | int8 (256 levels) | Critical for input processing |\n| Layers 3-6 (middle) | int6 (64 levels) | Less sensitive, saves ~1.6MB |\n| Layers 7-9 (late) | int8 (256 levels) | Critical for output quality |\n\n## Note on hardware\n\nThe baseline run was on 8xH100 and these runs on 8xH200, which reached slightly more training steps (~13.1k vs ~13.0k). This is directionally positive but not a perfectly compute-matched comparison. An H100 verification run is recommended.\n\n## Test plan\n- [x] Post-quant val_bpb verified via int8/int6+zlib roundtrip\n- [x] Artifact under 16MB (all 5 seeds)\n- [x] Runs within 600s wallclock\n- [x] train_gpt.py compiles and runs from records folder\n- [x] Multiple seed runs: **p < 0.001** (5 seeds, t=39.29)\n- [ ] Verify on 8xH100 (pending compute)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/39",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "0hq",
+      "body": "Reversing this, given others have made int6 work here I'll give you credit.",
+      "created_at": "2026-03-19T22:23:54Z",
+      "updated_at": "2026-03-19T22:23:54Z"
+    }
+  ]
 }

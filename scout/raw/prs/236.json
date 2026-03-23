@@ -11,5 +11,13 @@
     "record submission ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/236",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "cocohearts",
+      "body": "please clean up ur diff",
+      "created_at": "2026-03-22T01:10:01Z",
+      "updated_at": "2026-03-22T01:10:01Z"
+    }
+  ]
 }

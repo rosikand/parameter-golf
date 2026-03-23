@@ -12,5 +12,49 @@
     "does not beat SOTA"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/56",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Invoke the archived trainer, not the mutable repo-root script**\n\nAs written, `python3 train_gpt_mlx.py` only works if the user runs this README from the repo root, but in that case it executes the top-level `train_gpt_mlx.py` instead of the snapshot archived in this record. Running the command inside the record folder does pick up the archived script, but that script defaults `DATA_PATH` and `TOKENIZER_PATH` to `./data/...` (`train_gpt_mlx.py` lines 45-46), and `load_validation_tokens()` raises when that local `./data` tree is missing (`train_gpt_mlx.py` lines 725-728). So there is currently no invocation here that both uses the preserved script and reproduces the logged run.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-19T06:45:07Z",
+      "updated_at": "2026-03-19T06:45:08Z"
+    },
+    {
+      "user": "cschubiner",
+      "body": "Fixed in f9ce10b. The README command now explicitly runs from the archived record folder, calls `./train_gpt_mlx.py`, and sets `DATA_PATH` / `TOKENIZER_PATH` relative to that folder so the preserved snapshot and published dataset/tokenizer are used together reproducibly.",
+      "created_at": "2026-03-19T06:47:05Z",
+      "updated_at": "2026-03-19T06:47:05Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Add the required `train_gpt.py` entrypoint**\n\nThe repository\u2019s submission contract still treats `train_gpt.py` as the artifact entrypoint: `README.md:133` says all counted code must live in that file, and `README.md:167` says every record folder must include a `train_gpt.py` that compiles and runs in place. This record only ships `train_gpt_mlx.py`, so any reviewer or automation following the documented submission flow can reject the run or measure `bytes_code` against the wrong file. Please add a `train_gpt.py` wrapper/copy (or update the submission contract in the same change) before landing this record.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-19T06:52:08Z",
+      "updated_at": "2026-03-19T06:52:08Z"
+    },
+    {
+      "user": "cschubiner",
+      "body": "Fixed in 9159214. The record now ships the archived trainer under `train_gpt.py`, the README invokes `python3 ./train_gpt.py`, and the entrypoint still compiles cleanly with `python -m py_compile`.",
+      "created_at": "2026-03-19T06:53:56Z",
+      "updated_at": "2026-03-19T06:53:56Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Pin the exact FineWeb train shards for this run**\n\nPointing `DATA_PATH` at the generic `fineweb10B_sp1024` directory is not enough to reproduce this result. The archived trainer consumes every `fineweb_train_*.bin` under that path (`train_gpt.py`, `TokenStream.__init__`), while the attached log only says that `10/195` shards happened to be present. If someone reruns this from a normal published export, or from a different 10-shard subset, they will train on different data and get a different score. Please record the exact shard filenames (or include a subset manifest) in the record entry.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-19T07:00:17Z",
+      "updated_at": "2026-03-19T07:00:17Z"
+    },
+    {
+      "user": "cschubiner",
+      "body": "@codex review",
+      "created_at": "2026-03-19T06:47:17Z",
+      "updated_at": "2026-03-19T06:47:17Z"
+    },
+    {
+      "user": "cschubiner",
+      "body": "Addressed the remaining reproducibility gap in e13e8db. The record now includes `train_shards.txt` with the exact 10 FineWeb train shards used for the run, and the README stages a local `data_subset` containing only those train shards plus the fixed validation shard before invoking `train_gpt.py`.",
+      "created_at": "2026-03-19T07:30:41Z",
+      "updated_at": "2026-03-19T07:30:41Z"
+    }
+  ]
 }

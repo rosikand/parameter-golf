@@ -9,5 +9,6 @@
   "body": "## Summary\n- add bounded candidate retry helpers and explicit exhaustion errors in autoresearch random/evolution/code flows\n- harden CUDA/MLX metric parsing and add targeted regression tests plus `just test` quality gate\n- make MLX iteration reliable and fast with compile-safe sparse FFN residual handling and `MLX_COMPILE_SANITY_ONLY` / `MLX_SKIP_VALIDATION` modes\n\n## Test plan\n- [x] `just test`\n- [x] `python3 -m py_compile train_gpt_mlx.py`\n- [x] `RUN_ID=mlx_pr_sanity WARMUP_STEPS=0 MLX_COMPILE_SANITY_ONLY=1 TRAIN_BATCH_TOKENS=8192 VAL_BATCH_SIZE=8192 uv run python3 train_gpt_mlx.py`\n- [x] `RUN_ID=mlx_train_smoke WARMUP_STEPS=0 ITERATIONS=1 TRAIN_BATCH_TOKENS=8192 VAL_BATCH_SIZE=8192 VAL_LOSS_EVERY=0 MLX_SKIP_VALIDATION=1 uv run python3 train_gpt_mlx.py`\n\nMade with [Cursor](https://cursor.com)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/234",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

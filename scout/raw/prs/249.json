@@ -9,5 +9,6 @@
   "body": "wider MLP (3x) enabled by int6 quantization, cosine warmdown schedule, ortho init.\nbuilt on top of the merged SOTA. single seed, 8xH100 SXM.\n\n- val_bpb: 1.1704\n- artifact: 13.5MB\n- steps: 7630\n- training: 10min wallclock cap",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/249",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

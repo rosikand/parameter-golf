@@ -9,5 +9,49 @@
   "body": "Add MPK 8x384 10-minute submission record\n\nThis PR adds a new 10-minute / 16 MB submission record:\n- records/track_10min_16mb/2026-03-20_MPK_8x384\n\nHighlights:\n- model_family: mpk\n- 8 layers, width 384\n- 8 heads / 4 KV heads\n- MPK strides k=2, m=4\n- 80 FineWeb SP-1024 train shards\n- wallclock stop at 599.527s\n- final int8+zlib roundtrip val_bpb: 1.01558307\n- total submission size int8+zlib: 14578273 bytes\n\nIncluded files:\n- README.md\n- submission.json\n- train.log\n- train_gpt.py\r\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/144",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "DJLougen",
+      "body": "This PR currently includes the strongest completed run I have so far (\\\u000bal_bpb: 1.01558307\\). I\u2019m attempting to gather additional seeds for statistical significance, but 8xH100 availability is currently constrained. I\u2019ll add more run logs here as soon as I can.",
+      "created_at": "2026-03-20T01:12:58Z",
+      "updated_at": "2026-03-20T01:12:58Z"
+    },
+    {
+      "user": "DJLougen",
+      "body": "\ufeffAdded 2 supporting seed logs to the record folder:\n- `seed=1338`: `final_int8_zlib_roundtrip_exact val_loss:2.35043404 val_bpb:1.04330173`\n- `seed=1339`: `final_int8_zlib_roundtrip_exact val_loss:2.32680692 val_bpb:1.03281422`\n\nTogether with the original submitted run:\n- `seed=1337`: `final_int8_zlib_roundtrip_exact val_loss:2.28798722 val_bpb:1.01558307`\n\n3-seed mean:\n- `val_bpb:1.03056634`\n\nImportant environment note: the two additional runs were gathered on a fresh 8x H100 instance that I provisioned without the exact earlier par-golf template environment. That host was materially slower than the original best run (`~238-280ms` step average vs `145.94ms` on the submitted run), so both supporting seeds stopped earlier under the same 600s wallclock cap (`2146` and `2480` steps vs `4108`).\n\nI also had to use a small compatibility patch for hosts whose installed PyTorch lacked native `enable_gqa`; the rerun logs are included in the PR under the submission record folder.\r\n",
+      "created_at": "2026-03-20T03:02:26Z",
+      "updated_at": "2026-03-20T03:02:26Z"
+    },
+    {
+      "user": "DJLougen",
+      "body": "\ufeffAdded a clean matched-environment rerun log to the record folder:\n- `seed=1340`: `final_int8_zlib_roundtrip_exact val_loss:2.28560860 val_bpb:1.01452726`\n\nThis run is the most directly comparable support seed so far:\n- native `enable_gqa` environment\n- `4094` steps before the 600s wallclock cap (vs `4108` on the original run)\n- `step_avg:146.50ms` (vs `145.94ms` on the original run)\n\nSo the two most apples-to-apples runs currently in the PR are:\n- `seed=1337`: `1.01558307`\n- `seed=1340`: `1.01452726`\n\nThe clean 2-seed mean across those matched-environment runs is `1.01505517`.\r\n",
+      "created_at": "2026-03-20T03:24:47Z",
+      "updated_at": "2026-03-20T03:24:47Z"
+    },
+    {
+      "user": "DJLougen",
+      "body": "\ufeffAdded the final clean matched-environment support seed to the record folder:\n- `seed=1341`: `final_int8_zlib_roundtrip_exact val_loss:2.28350588 val_bpb:1.01359392`\n\nThe clean comparable runs are now:\n- `seed=1337`: `1.01558307`\n- `seed=1340`: `1.01452726`\n- `seed=1341`: `1.01359392`\n\nClean 3-seed mean across those matched-environment runs:\n- `val_bpb:1.01456808`\n\nThese three runs are closely matched in throughput / stop depth:\n- `1337`: `4108` steps, `145.94ms` step avg\n- `1340`: `4094` steps, `146.50ms` step avg\n- `1341`: `4093` steps, `146.57ms` step avg\n\nSo the clean apples-to-apples reruns now consistently reproduce the original result in the same `~1.014-1.016` band.\r\n",
+      "created_at": "2026-03-20T03:38:13Z",
+      "updated_at": "2026-03-20T03:38:13Z"
+    },
+    {
+      "user": "andrewgcodes",
+      "body": "Really interesting approach! I was wondering about [line 205](https://github.com/openai/parameter-golf/pull/144/changes#diff-49393f3b459b944faae34a2b572e561f81f7e4c156a5ebdd6befcb97f22a48b7R205) of train_gpt.py. Could this have an effect on val_bpb?",
+      "created_at": "2026-03-20T03:40:03Z",
+      "updated_at": "2026-03-20T03:40:03Z"
+    },
+    {
+      "user": "DJLougen",
+      "body": "Yep, that definitely could affect val_bpb \u2014 thanks for catching it. I confirmed the line in the committed source and I\u2019m retesting with the corrected SentencePiece leading-space marker handling now. I\u2019ll post the corrected logs/results as soon as the rerun finishes.",
+      "created_at": "2026-03-20T03:47:00Z",
+      "updated_at": "2026-03-20T03:48:27Z"
+    },
+    {
+      "user": "DJLougen",
+      "body": "\ufeffI confirmed the bug and pushed a correction.\r\n\r\nThe issue was in `build_sentencepiece_luts`: the SentencePiece leading-space marker check was committed as `piece.startswith(\"?\")` instead of `piece.startswith(\"?\")`, which invalidated the previously reported BPB values.\r\n\r\nI've now updated the record folder to:\r\n- fix the marker check in the submitted `train_gpt.py`\r\n- add a corrected rerun log: `mpk_seed_1341_bpbfix.txt`\r\n- update `README.md` and `submission.json` to reflect the corrected numbers\r\n\r\nSadly the corrected rerun result:\r\n- `final_int8_zlib_roundtrip_exact val_loss:2.28232567 val_bpb:1.35172182`\r\n\r\nSo the earlier `~1.01` BPB claim should be disregarded; it was due to the accounting bug above. Thanks again for catching it.\r\n",
+      "created_at": "2026-03-20T03:58:17Z",
+      "updated_at": "2026-03-20T03:58:56Z"
+    }
+  ]
 }

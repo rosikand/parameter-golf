@@ -9,5 +9,13 @@
   "body": "## Submission: GANGUS \u00d7 NEXUS AI Orchestrator\n\n**Approach:** AI-orchestrated architecture search using multi-tier model delegation.\n\nInstead of manual iteration, we use a **production AI infrastructure stack** to systematically explore architecture space:\n\n| Layer | System | Role |\n|-------|--------|------|\n| **Brain** | GPT-5.4 Codex | Strategic planning, experiment design |\n| **Orchestrator** | [Gangus AI](https://github.com/wojciechkowalczyk11to-tech/Gangus_Ai) | Multi-model routing, cost optimization, token guard |\n| **Backend** | [N.O.C](https://github.com/wojciechkowalczyk11to-tech/N.O.C) | 8 LLM providers, RAG + pgvector, multi-agent runtime |\n| **Research** | [GigaGrok](https://github.com/wojciechkowalczyk11to-tech/gigagrok-bot) | Grok 4.20 with web+X search, 925-doc knowledge base |\n| **Infra** | [NEXUS MCP](https://github.com/wojciechkowalczyk11to-tech/nexus-mcp-server-public) | 54-tool control plane: RunPod, GCP, GitHub, Cloudflare |\n\n### Architecture candidates:\n- Cross-layer weight sharing (~40% param reduction)\n- GQA with reduced KV heads\n- SwiGLU FFN + RoPE (zero positional params)\n- Hybrid transformer + linear attention (RWKV-style)\n- Post-training int8 quantization + magnitude pruning\n\n### Status: Active development\n- Infrastructure: \u2705 Live (mcp.nexus-oc.pl)\n- Research pipeline: \u2705 Running\n- First training runs: \ud83d\udd04 In progress\n\nFull approach details in `submissions/gangus-nexus/README.md`\n\n---\n*Team: Wojciech Kowalczyk | Poland | AI Systems Developer*\n*Stack: Claude Opus 4.6 + GPT-5.4 + Grok 4.20 + DeepSeek + Mistral + 54 MCP tools*",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/214",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "> [!NOTE]\n> You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/settings/usage).",
+      "created_at": "2026-03-20T14:10:06Z",
+      "updated_at": "2026-03-20T14:10:06Z"
+    }
+  ]
 }

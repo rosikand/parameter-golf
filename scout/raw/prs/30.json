@@ -9,5 +9,6 @@
   "body": "Depth-recurrent transformer: 5 shared blocks looped 3x for 15 effective layers at dim=768 (baseline uses 9 layers at dim=512). GQA 12:6. 21.4M params, ~13.9MB compressed.\n\nval_bpb: 1.2663 (4xH100 SXM, 2651 steps, 10min wallclock)\nBaseline: 1.2244\nModel still improving at cutoff, loss curve had not plateaued.\n\nNext: tokenizer optimization (sp4096), width/depth sweep, test-time training, QAT.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/30",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

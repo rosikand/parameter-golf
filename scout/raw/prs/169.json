@@ -9,5 +9,13 @@
   "body": "## Summary\n\n- **Mean val_bpb: 1.1973** (3 seeds: 1337\u21921.1968, 42\u21921.1974, 7\u21921.1978, p<0.001)\n- Artifact: ~15.9 MB (under 16 MB)\n- Training: ~13,688 steps in 600s on 8xH100 SXM\n- Eval: ~126s sliding window (within 10 min budget)\n\n## Key Techniques\n\n1. **Sliding Window Evaluation (stride=256)**: Each token scored with 768+ context instead of 0-1023 average. Added `forward_logits()` method for efficient inference.\n2. **Muon 6-step Newton-Schulz**: More accurate gradient orthogonalization (`MUON_BACKEND_STEPS=6`).\n3. **Extended Momentum Warmup**: `MUON_MOMENTUM_WARMUP_STEPS=1000` (up from 500) stabilizes early training.\n4. **Longer Warmdown**: `WARMDOWN_ITERS=1500` (up from 1200) for smoother LR decay.\n\n## Reproduction\n\n```bash\nMUON_BACKEND_STEPS=6 MUON_MOMENTUM_WARMUP_STEPS=1000 WARMDOWN_ITERS=1500 EVAL_STRIDE=256 \\\nSEED=1337 RUN_ID=submission VAL_LOSS_EVERY=0 \\\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\n## Results\n\n| Seed | val_loss | val_bpb | Steps |\n|------|----------|---------|-------|\n| 1337 | 2.0208 | 1.1968 | 13,688 |\n| 42 | 2.0217 | 1.1974 | 13,688 |\n| 7 | 2.0225 | 1.1978 | 13,688 |\n| **Mean** | **2.0217** | **1.1973** | |",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/169",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Prevent double-counting boundary tokens in sliding eval**\n\nOn multi-GPU runs, `eval_val_sliding` partitions the validation set with `my_start`/`my_end`, but this scoring window still extends each rank by a full `stride` because `score_end` is only clamped to `actual_len`. In the 8xH100 path used for leaderboard submissions, that means the last window on rank `r` can score past `my_end` while rank `r+1` starts again at its own `my_start`, so the boundary tokens are counted twice in the all-reduced `val_loss`/`val_bpb`. Please clamp the scored range to the local shard (or distribute work by windows instead of raw tokens) so the final metric matches the true dataset average.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-20T04:56:10Z",
+      "updated_at": "2026-03-20T04:56:10Z"
+    }
+  ]
 }

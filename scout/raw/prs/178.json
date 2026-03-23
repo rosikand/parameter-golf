@@ -9,5 +9,25 @@
   "body": "Int6 + 3x MLP + SmearGate + BigramHash + SWA + TTT with honest eval. More seeds running \u2014 will be added as they complete.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/178",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "timowhite88",
+      "body": "  @0hq Ready for review \u2014 2-seed mean 1.16592 BPB, third seed comin when credits allow\r\n\r\n  Key points:\r\n  - Every rule met: 15.8MB artifact (under 16MB), 600s training, 341s eval (under 600s), 8xH100 SXM\r\n  - Honest eval: We fixed the sliding-window double-counting bug that inflates other submissions' scores. Each validation token is scored exactly once\r\n  - Full reproducibility: Complete training logs for both seeds included, single command to reproduce\r\n  - Two orthogonal improvements stacked: architectural (int6, 3x MLP, SmearGate, BigramHash, SWA) + test-time training \u2014 no other submission combines both",
+      "created_at": "2026-03-20T06:39:11Z",
+      "updated_at": "2026-03-20T06:39:11Z"
+    },
+    {
+      "user": "timowhite88",
+      "body": "3-seed submission complete! Added seed 7 (val_bpb=1.17091).\n\n**3-seed results:**\n| Seed | val_bpb | val_loss | Steps | ms/step |\n|------|---------|----------|-------|---------|\n| 1337 | **1.16516** | 1.96733 | 7248 | 83.06 |\n| 2884431328 | 1.16668 | 1.96988 | 7009 | 85.60 |\n| 7 | 1.17091 | 1.97704 | 6466 | 92.79 |\n\n**Mean BPB: 1.16759** | Best: 1.16516 (seed 1337)\nArtifact: 15.8MB (int6+zstd) | All runs 8xH100 SXM\n\n@0hq Ready for review!",
+      "created_at": "2026-03-20T13:27:21Z",
+      "updated_at": "2026-03-20T13:27:21Z"
+    },
+    {
+      "user": "timowhite88",
+      "body": "Superseded by #254 (FarnsworthEngine v1 \u2014 1.1303 BPB with 3-seed validation). Closing this one.",
+      "created_at": "2026-03-20T19:59:21Z",
+      "updated_at": "2026-03-20T19:59:21Z"
+    }
+  ]
 }

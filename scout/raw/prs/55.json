@@ -9,5 +9,6 @@
   "body": "- Concrete model architecture and training pipeline implemented\r\n- Non-record submission folder added\r\n- Run scripts and experiment tracker included\r\n- Benchmark logs will be added after first H100 runs",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/55",
-  "draft": true
+  "draft": true,
+  "comments": []
 }

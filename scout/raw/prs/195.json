@@ -9,5 +9,6 @@
   "body": "## Summary\n\n- 9-layer 512-dim transformer, 1024 vocab (SentencePiece BPE), GQA (8 heads / 4 KV heads)\n- Trained on 80 FineWeb shards (~8B tokens), ~580s on 8xH100s\n- Final **val_bpb: 1.2355**, model size: 15.87MB (int8+zlib)\n\n## Test plan\n\n- [x] Model fits within 16MB limit (15.87MB)\n- [x] Training completed within 10 min wallclock cap\n- [x] int8+zlib roundtrip validation confirmed\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/195",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

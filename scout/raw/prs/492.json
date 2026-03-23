@@ -9,5 +9,6 @@
   "body": "## Summary\n\nThis PR adds a new `track_10min_16mb` submission at:\n\n- `records/track_10min_16mb/2026-03-22_11L_XSA4_EMA_PartialRoPE_LNScale_Entropy_LongDocTTT`\n\nThe stack is PR315-derived and includes:\n\n- 11 layers\n- XSA on the last 4 layers\n- EMA\n- Partial RoPE\n- layerwise LN scale\n- mixed int6/int8 export with `zstd`\n- integrated long-document LoRA TTT hooks\n\n## Claimed Result\n\nRecovered seed-42 `8xH100` run:\n\n- `final_quant_roundtrip_exact val_bpb: 1.15910316`\n- `final_quant_roundtrip_exact val_loss: 1.95709714`\n- total submission size: `15,528,215` bytes\n- train stop: `step 5248/9000` at the `600s` cap\n\nThis is intended as a non-SOTA leaderboard submission, not a new-record claim.\n\n## Important Note\n\nThe attached log contains the completed exact roundtrip metric. The Runpod container disappeared after that line, before longer post-train eval variants could be recovered. Because of that, this PR only claims the exact roundtrip result present in `train_seed42.log` and does **not** claim a sliding-window exact or adaptive-TTT exact score.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/492",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

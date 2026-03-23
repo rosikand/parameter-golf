@@ -9,5 +9,6 @@
   "body": " Mean TTT LoRA val_bpb: 1.1925 (3 seeds: 1337, 42, 7)\r\n\r\n  Techniques added on top of the baseline:\r\n  - WARMDOWN_ITERS=20000: always-decaying LR schedule for better int8 quantization\r\n  - Sliding window evaluation (EVAL_STRIDE=64): every token scored with 960+ context\r\n  - Block AttnRes: learned attention over previous block outputs at block boundaries\r\n  - PhiAlpha Simple: per-layer learnable scale on relu\u00b2 activation\r\n\r\n  Built with help from ChatGPT(OpenAI) and Claude (Anthropic). I'm a high school student \u2014 this is my first ML competition submission, and first time using that many compute in a project ",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/500",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

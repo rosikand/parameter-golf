@@ -9,5 +9,6 @@
   "body": "  ## Summary\r\n\r\n  Stride-32 sliding window eval + warmdown/momentum tuning on the 10L Int5MLP BigramHash SWA\r\n  base. Mean val_bpb = 1.1403 across 3 seeds.\r\n\r\n  ## 3-Seed Results\r\n\r\n  | Seed | val_loss (nats) | val_bpb | artifact_bytes |\r\n  |------|----------------|---------|---------------|\r\n  | 42 | 1.92354186 | 1.13923361 | 15,817,986 |\r\n  | 1337 | 1.92776687 | 1.14173591 | 15,676,104 |\r\n  | 7 | 1.92484360 | 1.14000458 | 15,723,922 |\r\n  | **Mean** | **1.92538** | **1.14032** | |\r\n\r\n  Improvement over SOTA #1 (1.1428 BPB / 1.942 nats): **-0.017 nats** (3.4x the 0.005 threshold).\r\n\r\n  ## Changes from SOTA #1\r\n\r\n  Training (env var overrides only \u2014 unmodified train_gpt.py):\r\n  - `EVAL_STRIDE=32` (from 64): 2x context overlap at eval\r\n  - `WARMDOWN_ITERS=5000` (from 3000): extended warmdown\r\n  - `MUON_MOMENTUM=0.95` (from 0.99): faster gradient adaptation\r\n  - `TRAIN_BATCH_TOKENS=524288` (from 786432): more gradient steps\r\n\r\n  All artifacts under 16MB (int6+zstd-22). All runs under 600s on 8xH100 SXM.\r\n\r\n  Note: The record submission is in\r\n  `records/track_10min_16mb/2026-03-20_Stride32_WarmdownTuned_MuonTuned/`. Other folders in this\r\n  PR are from earlier non-record iterations.\r\n\r\n  Hardware: 8x NVIDIA H100 80GB HBM3 (SXM), RunPod.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/274",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

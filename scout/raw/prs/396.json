@@ -9,5 +9,55 @@
   "body": "",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/396",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "The script changes into the cloned `parameter-golf` directory but never copies `train_gpt.py` from the submission folder into that repo, so `setup_code()` will fail unless the user manually pre-copies the file. Consider copying `../train_gpt.py` (relative to the script location) into the cloned repo, or accept a `--train_gpt_path`/env var and copy/symlink before continuing.",
+      "created_at": "2026-03-22T04:15:28Z",
+      "updated_at": "2026-03-22T04:15:30Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "After `cd parameter-golf`, the script expects `train_gpt.py` to already exist in the cloned repo, but it never copies it there. As written, running this from the submission directory will almost always fail at the `train_gpt.py not found` check. Suggest copying `../train_gpt.py` (or using the script directory) into `parameter-golf/` before running syntax checks/training.",
+      "created_at": "2026-03-22T04:15:28Z",
+      "updated_at": "2026-03-22T04:15:30Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Same issue as the other automation scripts: after `cd parameter-golf`, this expects `train_gpt.py` to be present in the cloned repo but never copies it, so it will fail for typical usage. Also, the size check uses `lss 16000000` (strictly less than), but the constraint is \u2264 16,000,000 bytes; use an inclusive comparison to avoid rejecting an exactly-at-limit artifact.",
+      "created_at": "2026-03-22T04:15:28Z",
+      "updated_at": "2026-03-22T04:15:30Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The GPU verification is incorrect: `nvidia-smi --query-gpu=count` returns one line per GPU (usually `1`), so `grep -q \"8\"` will fail even when 8 GPUs are present. Use a real count (e.g., number of lines from `nvidia-smi -L` or `--query-gpu=name | wc -l`) to validate 8 GPUs.\n```suggestion\nGPU_COUNT=$(nvidia-smi -L 2>/dev/null | wc -l || echo 0)\nif [ \"$GPU_COUNT\" -lt 8 ]; then\n    echo \"ERROR: Need 8 GPUs (found $GPU_COUNT)\"\n    exit 1\nfi\n```",
+      "created_at": "2026-03-22T04:15:28Z",
+      "updated_at": "2026-03-22T04:15:30Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This script assumes it is being run from the official `parameter-golf` repo root (uses `data/cached_challenge_fineweb.py` and `train_gpt.py` paths) but it lives in the submission folder. Either add logic to clone/cd into the official repo (and copy `train_gpt.py` in), or document explicitly that users must run it from inside the official repo after copying files.",
+      "created_at": "2026-03-22T04:15:29Z",
+      "updated_at": "2026-03-22T04:15:30Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The instructions show running `train_gpt.py` with `--data_dir`/`--output` CLI flags, but `train_gpt.py` in this submission appears to be configured via environment variables (no argparse/sys.argv usage). Update these commands to match the actual interface so reproduction steps don't fail.",
+      "created_at": "2026-03-22T04:15:29Z",
+      "updated_at": "2026-03-22T04:15:30Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The architecture table uses `||` at the start of rows, which renders as an empty leading column in Markdown tables. Use single-pipe table syntax (`| ... |`) so the table formats correctly across renderers.",
+      "created_at": "2026-03-22T04:15:29Z",
+      "updated_at": "2026-03-22T04:15:30Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "In distributed mode the model is wrapped with DDP (which already all-reduces and averages gradients), but Muon.step() performs an additional `dist.all_reduce(..., SUM)` over the computed updates without dividing by `world_size`. This will scale updates by the number of GPUs and make training behavior depend on world size (and likely overshoot on 8 GPUs). Consider removing this extra all-reduce when using DDP, or convert it to an average (`SUM` then divide by `world_size`).",
+      "created_at": "2026-03-22T04:15:29Z",
+      "updated_at": "2026-03-22T04:15:30Z"
+    }
+  ]
 }

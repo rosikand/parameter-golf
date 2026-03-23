@@ -9,5 +9,37 @@
   "body": "## Current Finding\n\nI implemented QAT with STE in the MLX training stack to reduce degradation from post-training quantization. Early baseline runs suggest the pre-quant vs post-quant val_bpb gap widens over longer training, reaching 0.0325 BPB in a 4-hour baseline, which makes deployment-aware training increasingly important for competitive runs.\n\n### Implementation\n\n- Adds `fake_quantize_per_row()` to simulate int8 per-row quantization during training\n- Threads training flag through `CastedLinear` -> `CausalSelfAttention` -> `MLP` -> `Block` -> `GPT` -> `loss`\n- Evaluation uses unquantized weights; only the training forward pass sees simulated quantization\n\n## Hypothesis\n\nTraining with fake quantization in the loop should reduce the final quantization gap and improve the deployed model's post-quantized validation BPB under the 16MB artifact constraint.\n\n## Why Compute Is Needed\n\nMeaningful validation requires full 10-minute 8xH100 runs and multi-seed significance testing. Local Apple Silicon is sufficient for correctness checks and short smoke tests, but not for the training scale needed to validate small BPB gains.\n\n## Planned Extensions\n\n- SEQUENCE parameter sharing (Takase & Kiyono 2023) for wider models with shared depth\n- BitNet b1.58 ternary quantization exploration\n- NorMuon optimizer, value embeddings, vocabulary tuning\n\n## Test Plan\n\n- [x] Module imports without errors (`from train_gpt_mlx import GPT`)\n- [x] QAT code passes spec compliance review\n- [x] QAT code passes code quality review\n- [ ] Full 10-min 8xH100 run validates improvement\n- [ ] 3-seed significance test (p < 0.01)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/20",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Split the fake-quant training loss from evaluation**\n\nBecause `compiled_loss` is the function that `eval_val()` and the final `final_int8_zlib_roundtrip` check call, hard-wiring `training=True` here makes every validation pass run through `fake_quantize_per_row()` too. That means the logged `val_loss`/`val_bpb` no longer represent the full-precision model during training, and after reloading the dequantized int8 checkpoint the round-trip check fake-quantizes those weights a second time. If the intent is \u201ctrain with QAT, evaluate without it\u201d, this needs a separate eval path.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-18T21:28:12Z",
+      "updated_at": "2026-03-18T21:28:12Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Fake-quantize the tied embedding matrix too**\n\nThe new QAT path only wraps `CastedLinear.weight`, but the tied `tok_emb.weight` is still used in full precision for both the input embedding lookup and the LM-head projection. `quantize_state_dict_int8()` will nevertheless export that tensor as int8 whenever it exceeds `INT8_KEEP_FLOAT_MAX_NUMEL` (the default 1024\u00d7512 table already does), so a large chunk of the deployed quantization error is never present in the training objective. In practice the post-export gap can stay dominated by the embedding table even though the linear layers were trained with QAT.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-18T21:28:12Z",
+      "updated_at": "2026-03-18T21:28:12Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Fake-quantize the input embedding path too**\n\nThis change now fake-quantizes `tok_emb.weight` only for the LM-head reuse here, but `GPT.__call__()` still starts from `self.tok_emb(input_ids)` in full precision. Because `quantize_state_dict_int8()` exports that same tied tensor as int8 for the default 1024\u00d7512 table, the deployed model sees quantization error on every input lookup as well as on the logits projection. Training therefore still omits a large, always-on source of post-export distortion, so the measured QAT gain can remain overly optimistic even after this partial fix.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-18T21:49:17Z",
+      "updated_at": "2026-03-18T21:49:17Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Skip fake-quantizing matrices that stay float at export**\n\nFor smaller architecture sweeps, this branch fake-quantizes every `CastedLinear` weight unconditionally, but `quantize_state_dict_int8()` only converts tensors larger than `INT8_KEEP_FLOAT_MAX_NUMEL` and writes smaller matrices to `passthrough`. In configurations like `MODEL_DIM<=256`, several attention/MLP weights fall under that cutoff, so QAT trains against noise that will never exist in the serialized model. That can hurt convergence and make QAT-vs-baseline comparisons misleading for the exact exploration runs this commit introduces.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-18T21:49:17Z",
+      "updated_at": "2026-03-18T21:49:17Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Use exporter clipping in fake_quantize_per_row**\n\n`quantize_float_array()` clips each 2D row at `INT8_CLIP_Q` before computing its int8 scale, but this new training path derives `scale` from the absolute row max and never clips. When a row contains even one large outlier (a realistic case for embeddings and projection weights), QAT trains against a much coarser quantizer than `quantize_state_dict_int8()` will actually serialize, so the measured pre/post-quantization gap no longer reflects the deployed model. If this experiment is intended to validate deployment-aware training, the fake-quant path needs to mirror the exporter\u2019s clipping rule.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-18T22:06:40Z",
+      "updated_at": "2026-03-18T22:06:40Z"
+    }
+  ]
 }

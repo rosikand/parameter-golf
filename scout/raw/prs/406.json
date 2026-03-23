@@ -9,5 +9,6 @@
   "body": "## Summary\n\n**Mean val_bpb = 1.1287** (3-seed verified, sliding window stride=64)\n\nThird progressive submission. Uses PR #379 architecture with Self-Distillation TTT.\n\n| Seed | val_bpb (sliding) | Artifact |\n|------|-------------------|----------|\n| **1337** | **1.1280** | 15.7MB |\n| 42 | 1.1287 | 15.7MB |\n| 7 | 1.1294 | 15.7MB |\n| **Mean** | **1.1287** | |\n\nStd: 0.0007 | All under 16MB\n\n## Progression (4 days, $150 total compute)\n\n| PR | BPB | What changed |\n|----|-----|-------------|\n| #273 | 1.1575 | Baseline, 10L |\n| #385 | 1.1488 | WD+SWA tuning, 11L |\n| **This** | **1.1287** | XSA4 + EMA + SDTTT |\n\nRunning on stock PyTorch SDPA (no FA3, no custom kernels). 99ms/step vs SOTA's 55ms.\n\n## Submission checklist\n\n- [x] 3-seed verification (mean=1.1287, std=0.0007)\n- [x] All artifacts < 16MB\n- [x] Wallclock < 600s on 8\u00d7H100\n- [x] Train logs included (3 seeds)\n- [x] Reproducible train_gpt.py included",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/406",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

@@ -11,5 +11,13 @@
     "invalid"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/317",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "cocohearts",
+      "body": "ah nice try, test time training unfortunately is not in \"the spirit of the challenge\"",
+      "created_at": "2026-03-22T01:08:30Z",
+      "updated_at": "2026-03-22T01:08:30Z"
+    }
+  ]
 }

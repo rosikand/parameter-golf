@@ -12,5 +12,43 @@
     "record submission ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/64",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "yesbhautik",
+      "body": "## V2 Update\r\n\r\nMajor upgrade from the initial submission (1.0149 \u2192 0.9695 BPB). Three new techniques added:\r\n\r\n**What changed:**\r\n- **MLP 3x expansion** (h=1536): 50% wider feedforward, enabled by int6 quantization freeing artifact space\r\n- **STE fake-int6 quantization-aware training**: Weights are fake-quantized to [-31, 31] during the forward pass via Straight-Through Estimator. The model learns weight distributions that survive post-training int6 quantization, dropping the quant penalty from ~0.05 to ~0.001 BPB\r\n- **True int6 per-row quantization** (31 levels) on block weights, with int8 (127 levels) preserved for the embedding which lacks STE protection\r\n- Architecture adjusted from 10 layers \u2192 9 layers to fit MLP 3x under 16MB\r\n\r\n**Also added:** StandardOptimal submission trained on full FineWeb (no val-only), achieving val_bpb=1.1629\r\n\r\nBoth submissions share the same `train_gpt.py` and run within 10 minutes on 8xH100 SXM + ~5 min sliding window eval.",
+      "created_at": "2026-03-19T16:46:39Z",
+      "updated_at": "2026-03-19T16:46:39Z"
+    },
+    {
+      "user": "yesbhautik",
+      "body": "## Update: Dual-track #1 push (new standard SOTA)\r\n\r\nI reran and tuned the submission with a standard-specific profile and got a new best **post-quant standard score**:\r\n\r\n- **standard val_bpb:** `1.14649233` (from `1.15784547`)\r\n- **standard val_loss:** `1.93579915`\r\n- **steps:** `7223` in `600.031s`\r\n- **artifact size:** `15,930,918` bytes\r\n- **run id:** `standard_optimal_v6_s7`\r\n\r\nThis beats the current public standard SOTA (`1.1483`) by ~`0.00181` bpb.\r\n\r\n### What changed (standard mode)\r\n- Disabled STE fake quant during training (`STE_QAT_ENABLED=0`)\r\n- Mixed export quantization: int6 for MLP/attention, int8 fallback for others\r\n- Expanded fp16 passthrough to `tok_emb` + `blocks.8.attn.c_k`\r\n- Increased Muon WD to `0.04`\r\n- Denser SWA collection (`SWA_EVERY=50`, warmdown-gated)\r\n\r\n### Files updated\r\n- `records/track_10min_16mb/2026-03-19_StandardOptimal/train_gpt.py`\r\n- `records/track_10min_16mb/2026-03-19_StandardOptimal/submission.json`\r\n- `records/track_10min_16mb/2026-03-19_StandardOptimal/README.md`\r\n- `records/track_10min_16mb/2026-03-19_StandardOptimal/train.log`\r\n- `run_modal.py` (new helper runner)",
+      "created_at": "2026-03-20T06:56:53Z",
+      "updated_at": "2026-03-20T07:06:18Z"
+    },
+    {
+      "user": "yesbhautik",
+      "body": "Executed the full dual-track counterattack plan with new sweepable runner presets and upgraded train scripts. I tested multiple standard and val-only profiles on 8xH100; strongest valid winners remain standard=1.14649233 and val-only=0.92711679 under the 16MB cap. Several lower val-only scores were achieved but exceeded artifact-size constraints.\r\n\r\n",
+      "created_at": "2026-03-20T10:32:05Z",
+      "updated_at": "2026-03-20T10:32:05Z"
+    },
+    {
+      "user": "cocohearts",
+      "body": "small nit pls move run_modal inside your submission folder\r\nalso did you train on the val set for val-only? that doesnt follow the rules have to be train-only\r\npls update pr",
+      "created_at": "2026-03-20T18:31:01Z",
+      "updated_at": "2026-03-20T18:31:01Z"
+    },
+    {
+      "user": "yesbhautik",
+      "body": "## DominationV1: New SOTA Push (mean val_bpb=1.1391)\n\nAdded new record folder: `records/track_10min_16mb/2026-03-20_DominationV1/`\n\n### Standard Track Results (3-seed verified)\n\n| Seed | val_bpb | Artifact |\n|------|---------|----------|\n| **42** | **1.13781** | **15.38 MB** |\n| 1337 | 1.13915 | 15.42 MB |\n| 7 | 1.14038 | 15.39 MB |\n| **Mean** | **1.13911** | |\n\n### Key Improvements Over Previous Submission (1.1465)\n- **11 layers** (was 9-10) \u2014 depth-funded by efficient int6 compression\n- **Per-dimension SmearGate** \u2014 512 independent blend ratios vs scalar gate\n- **RoPE base 50K** \u2014 better position encoding for 2048 seq len\n- **Tuned LR 0.02** (was 0.025) \u2014 better convergence\n- **Compact serialization** \u2014 flat dict format matching community best practice\n- **BigramHash 2048** (was 4096) \u2014 saves artifact space\n\n### Technique Stack\n11L MLP-3x, per-dim SmearGate, BigramHash(2048x128), int6 per-row (mlp+attn), int8 (embed), OrthoInit, Muon WD=0.04, SWA/50 (~30 ckpts), zstd-22, RoPE 50K, sliding eval stride=64.\n\n### Val-Only Track\nExisting submission (0.9271) remains dominant.\n\n### Files Updated\n- `records/track_10min_16mb/2026-03-20_DominationV1/` (new folder)\n- `run_modal.py` (updated with domv1 profile)",
+      "created_at": "2026-03-21T00:15:37Z",
+      "updated_at": "2026-03-21T00:15:37Z"
+    },
+    {
+      "user": "yesbhautik",
+      "body": "@cocohearts Thanks for the review \u2014 both issues are now fixed:\n\n1. **Moved `run_modal.py`** inside the submission folder at `records/track_10min_16mb/2026-03-20_DominationV1/run_modal.py`. No root-level file changes remain.\n\n2. **Removed the val-only (CombinedOptimal) submission** entirely. You're right \u2014 it trained on the validation set, which violates the rules. That folder is deleted.\n\n3. **Also removed the old StandardOptimal** folder (superseded by DominationV1).\n\nThe PR now only adds a single new folder: `records/track_10min_16mb/2026-03-20_DominationV1/` containing `train_gpt.py`, `submission.json`, `README.md`, `train.log`, and `run_modal.py`. The DominationV1 submission trains exclusively on the full FineWeb training set (80 shards) \u2014 no validation data access during training.\n\n**Score:** mean val_bpb = 1.1391 (3-seed verified: 1.1378 / 1.1391 / 1.1404), all artifacts under 16MB.\n\nAlso merged latest upstream/main to stay in sync with the reset leaderboard.",
+      "created_at": "2026-03-21T00:20:58Z",
+      "updated_at": "2026-03-21T00:20:58Z"
+    }
+  ]
 }

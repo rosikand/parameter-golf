@@ -9,5 +9,6 @@
   "body": "## Summary\n\nNon-record submission stacking 8 techniques on PR #315 (1.1248):\n\n- Working QAT fix (PR #315's was dead code due to torch.compile)\n- Mixed int5 (MLP) / int6 (attention) quantization + 3% magnitude pruning\n- Test-time training (3 epochs SGD post-quant, 83s on 8xH100)\n- BigramHash 10240 (up from 2048)\n- 64 learnable memory tokens\n- Backout connection (1 scalar param)\n- Per-head temperature (88 params)\n- Eval stride 32\n\n**val_bpb = 1.1466** on 8xH100 SXM. Ran with PyTorch SDPA instead of FA3 (110ms/step, 5129 steps instead of ~7000). Artifact: 14.7MB.\n\n## Test plan\n\n- [x] Smoke test on 1xH100 (completed)\n- [x] Full run on 8xH100 SXM (completed, 605s training + 340s eval)\n- [ ] Rerun with FlashAttention 3 for improved score\n- [ ] 3-seed reproducibility (single seed so far)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/421",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

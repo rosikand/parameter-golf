@@ -11,5 +11,19 @@
     "not ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/51",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Keep LAWA averaging off the CPU hot path**\n\nOnce warmdown starts, this code copies the entire `state_dict()` from GPU to CPU and casts it to `float` on every step. For the default 13M-parameter model that is tens of MB of host transfer per step, and over a 400-step warmdown it turns into many GB of extra PCIe traffic and Python-side work on every rank. In the challenge\u2019s 10-minute setting, that overhead can easily consume the remaining wallclock budget and force an earlier stop or a worse final score.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-19T05:57:02Z",
+      "updated_at": "2026-03-19T05:57:02Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Make `SKIP_COMPILE` disable all `torch.compile` calls**\n\nThis branch suggests `SKIP_COMPILE=1` is enough to bypass Inductor, but `main()` still unconditionally runs `torch.compile(zeropower_via_newtonschulz5)` earlier at line 789. On the smoke-test machines where people set `SKIP_COMPILE` because compile is slow or unsupported, the script can still fail or spend a long time compiling before it ever reaches this branch, so the escape hatch is incomplete.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-19T05:57:02Z",
+      "updated_at": "2026-03-19T05:57:02Z"
+    }
+  ]
 }

@@ -9,5 +9,6 @@
   "body": "## Summary\n\nNon-record submission exploring automated architecture search for Parameter Golf.\n\nBuilt on the current SOTA (10L, int5/int6, BigramHash, SmearGate, SWA) with **75+ automated experiments** across Mac MLX and 1xH100 CUDA using an autoresearch loop inspired by Karpathy's autoresearch methodology.\n\n## Key Findings\n\n| Technique | Relative BPB Change | Notes |\n|-----------|-------------------|-------|\n| NUM_HEADS=4, head_dim=128 | **-0.095** | Fewer, larger heads |\n| Step-based LR schedule | **-0.483** | vs wallclock-based warmdown |\n| BigramHash(16384) | -0.025 | vs 10240 |\n| MATRIX_LR=0.03 | -0.003 | vs 0.02 |\n\n## Results (1xH100, 800 steps)\n\n- Pre-quant val_bpb: 1.2913\n- Post-quant val_bpb (sliding window stride=256): **1.2756**\n- Artifact size: 17.4MB (over 16MB \u2014 needs int4/int5 MLP compression)\n\n## Known Issues\n\n- Artifact exceeds 16MB due to head_dim=128 increasing param count. Compression optimization (int4/int5 MLP weights) needed to fit budget.\n- Tested on 1xH100 only. Requesting compute grant for 8xH100 validation.\n\n## Negative Results (also valuable)\n\n- LoRA test-time training: worse (-0.09 BPB)\n- Block-wise weight sharing: worse + 2x slower\n- SwiGLU activation: worse than relu^2\n- MQA (NUM_KV_HEADS=1): worse quality\n- seq_len=4096: too slow per step",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/344",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

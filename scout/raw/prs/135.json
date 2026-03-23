@@ -9,5 +9,13 @@
   "body": "# OrthoInit + Int6 MLP3x + BigramHash + SmearGate\r\n\r\n## Score: val_bpb = 1.1539 (sliding window, stride=64)\r\n\r\n## Approach\r\n\r\nSix orthogonal improvements stacked on the baseline 9-layer, 512-dim GPT:\r\n\r\n### 1. Orthogonal + muP-scaled Weight Initialization\r\n- All large weight matrices initialized with orthogonal init (gain=1.0)\r\n- Output projections (attn.proj, mlp.proj) scaled by `1/sqrt(2 * num_layers)` following muP\r\n- Accelerates early convergence \u2014 the model starts closer to a well-conditioned point, giving Muon a head start\r\n\r\n### 2. Int6 Mixed Quantization + zstd-22\r\n- Per-row int6 quantization ([-32,31]) on MLP and attention weight matrices\r\n- FP16 passthrough for tied embeddings and last 2 layers' Key projections (quantization-sensitive)\r\n- zstd level 22 compression (better ratio than zlib-9 on int6 data)\r\n\r\n### 3. 3x MLP Expansion\r\n- MLP hidden dimension 1536 (3x model_dim), up from baseline 1024 (2x)\r\n- Budget freed by int6 quantization pays for the extra parameters\r\n\r\n### 4. Tuned Optimizer Hyperparameters\r\n- `matrix_lr=0.02, scalar_lr=0.02, tied_embed_lr=0.03` (halved from baseline)\r\n- `muon_momentum=0.99` with warmup from 0.92 over 1500 steps\r\n- `warmdown_iters=3000`, `grad_clip_norm=0.3`\r\n- `AdamW` with `weight_decay=0.01` for embedding/scalar params\r\n- `beta1=0.9, beta2=0.95`\r\n\r\n### 5. SmearGate + Bigram Hash Embedding\r\n- SmearGate: learned gate blending each token's embedding with the previous token's (~512 params)\r\n- Bigram Hash: 4096-bucket hash table (dim=128, projected to 512) injecting token-pair info\r\n\r\n### 6. Training + Evaluation Setup\r\n- `train_seq_len=2048, train_batch_tokens=786432`\r\n- Sliding window evaluation with stride=64 at 2048-token windows\r\n\r\n## Configuration\r\n\r\n```bash\r\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\r\n```\r\n\r\n## Key Metrics\r\n\r\n- Training: 7201 steps in 600s (83.33ms/step)\r\n- Model params: 22,368,841\r\n- Pre-quant: `val_bpb: 1.1696`\r\n- Int6+zstd roundtrip: `val_bpb: 1.1748`\r\n- **Sliding window (stride=64): `val_bpb: 1.1539`**\r\n- Artifact: 15,162,375 bytes (under 16MB by 837,625 bytes)\r\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/135",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "saml212",
+      "body": "This is cool. good werk",
+      "created_at": "2026-03-19T22:19:53Z",
+      "updated_at": "2026-03-19T22:19:53Z"
+    }
+  ]
 }

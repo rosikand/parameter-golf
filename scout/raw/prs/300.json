@@ -9,5 +9,6 @@
   "body": "This PR adds a non-record 16MB submission folder for a shared-core recurrent transformer validated on 1xH100 SXM.\n\nSummary:\n- primary run: `final_int8_zlib_roundtrip_exact val_bpb 1.99975632`\n- repeat run: `final_int8_zlib_roundtrip_exact val_bpb 1.99970894`\n- total submission size: `12,960,324` bytes on the primary run\n- track: `non-record`, since this was validated on `1xH100` rather than the final `8xH100 / 10 minute` setting\n\nIncluded artifacts:\n- `README.md`\n- `submission.json`\n- `train.log`\n- `train_repeat.log`\n- `train_gpt.py`\n\nNo extra dependencies were used beyond the base repo stack for this run.\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/300",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

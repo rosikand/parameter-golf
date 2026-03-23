@@ -9,5 +9,6 @@
   "body": "Internal draft PR for TPI-001. This branch tests a minimal eval-first sliding-window policy and remains in continue_sharpening status pending a real baseline/candidate run.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/308",
-  "draft": true
+  "draft": true,
+  "comments": []
 }

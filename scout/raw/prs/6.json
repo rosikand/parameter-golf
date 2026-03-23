@@ -9,5 +9,37 @@
   "body": "Opened by mistake by an automated agent. Please delete this PR and its branch. Apologies for the noise.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/6",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "The hyperparameter table uses `||` at the start of rows (e.g., `|| Parameter | ...`), which breaks GitHub table rendering. Replace the double leading pipes with a single `|` per row so the table formats correctly.",
+      "created_at": "2026-03-18T18:31:24Z",
+      "updated_at": "2026-03-18T18:31:26Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The STE quantizer clamps to [-128, 127], but the export-time int8 quantization (`quantize_float_tensor`) clamps to [-127, 127]. This mismatch means QAT is training against a different rounding/saturation behavior than what you actually serialize, reducing the likelihood that QAT closes the post-quant gap. Align the STE clamp range (and ideally scale definition) with the export quantizer so training matches the deployed artifact.\n",
+      "created_at": "2026-03-18T18:31:25Z",
+      "updated_at": "2026-03-18T18:31:26Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The STE quantizer uses per-row `amax` scaling, while the actual post-training quantizer uses percentile clipping (`INT8_CLIP_Q` via `torch.quantile`) before scaling. Since the training simulation doesn't match the export quantization scheme, QAT may optimize for the wrong error model. Consider reusing the same clipping + scaling logic as `quantize_float_tensor` inside the STE (no-grad) path so QAT more directly targets the final int8+zlib roundtrip metric.",
+      "created_at": "2026-03-18T18:31:25Z",
+      "updated_at": "2026-03-18T18:31:26Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`submission.json` has placeholder metrics (`val_loss`, `val_bpb`, `bytes_total`, `bytes_code` all set to 0). Other record submissions in this track include the measured final int8+zlib roundtrip metrics and byte counts; leaving these as 0 makes the record entry misleading and hard to validate. Please populate these fields with the actual run results (and keep the date consistent with the run).\n",
+      "created_at": "2026-03-18T18:31:25Z",
+      "updated_at": "2026-03-18T18:31:26Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The markdown list under \u201cQAT is applied to:\u201d is written as `|- ...`, which doesn\u2019t render as a proper bullet list in standard Markdown. Use a normal list (blank line followed by `- ...`) so it renders correctly on GitHub.\n",
+      "created_at": "2026-03-18T18:31:25Z",
+      "updated_at": "2026-03-18T18:31:26Z"
+    }
+  ]
 }

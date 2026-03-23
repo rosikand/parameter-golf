@@ -9,5 +9,31 @@
   "body": "## Summary\n\nNon-record submission exploring architecture and training optimizations on 1xH100 SXM 80GB (10 min wallclock).\n\n**Key result:** 1.3043 val_bpb on 1xH100 (4661 steps, 262K batch). Architecture beats baseline by 0.032 bpb at matched wallclock time.\n\n### Changes from baseline\n- **Architecture:** 4 layers x 768 dim (wider + shallower) with GQA (12h/4kv)\n- **QK gain:** 2.5 (up from 1.5) for sharper attention\n- **Optimizer:** Muon lr=0.06 with grad clip 0.5, beta2=0.99\n- **QAT:** Straight-through estimator quantization-aware training after 0.5% warmup, reducing int8 gap from ~0.03 to 0.0016 bpb\n\n### Methodology\n- 51 hyperparameter experiments on A40 (5-30 min each)\n- 4 validation runs on 1xH100 (10 min each) sweeping batch size\n- 262K batch optimal on single GPU (balances gradient quality vs step count)\n\n### 8xH100 projection\nExtrapolated performance at 20K steps: ~1.19 bpb (pending compute grant for official leaderboard run).\n\n## Files\n- `train_gpt.py` \u2014 modified training script\n- `submission.json` \u2014 metadata\n- `README.md` \u2014 detailed approach description",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/185",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "`eval_val_sliding` is currently not scoring the full validation stream:\n- `all_starts = range(0, total_tokens - seq_len, stride)` excludes the final valid start index (`total_tokens - seq_len`), so the tail tokens are never evaluated.\n- Scoring only the last `stride` tokens for *every* window means the first `(seq_len - stride)` tokens of the validation set are never scored at all (there is no earlier window that covers them), which can bias/optimistically shift the reported BPB.\n- `score_start = seq_len - stride` behaves incorrectly if `EVAL_STRIDE > seq_len` (negative indexing will silently score an unexpected slice).\nConsider generating window starts up to and including the last valid window (and optionally allowing a final partial window), scoring the entire first window (then only the last `stride` tokens for subsequent windows), and clamping `score_len` to `<= seq_len`. The established sliding-window eval in `records/track_10min_16mb/2026-03-19_SlidingWindowEval/train_gpt.py` shows one safe way to do this.\n```suggestion\n                # Allow a final partial window instead of skipping the tail entirely.\n                end = val_tokens.numel()\n                # If there are not enough tokens to form at least one target, skip.\n                if end - start <= 1:\n                    continue\n\n            chunk = val_tokens[start:end].to(device=device, dtype=torch.int64)\n            x = chunk[:-1].unsqueeze(0)  # [1, current_seq_len]\n            y = chunk[1:].unsqueeze(0)   # [1, current_seq_len]\n\n            with torch.autocast(device_type=\"cuda\", dtype=torch.bfloat16, enabled=True):\n                logits = base_model.forward_logits(x)  # [1, current_seq_len, vocab]\n\n            # Determine scoring region for this window.\n            current_seq_len = x.size(1)\n            effective_score_len = min(score_len, current_seq_len)\n\n            # Score the full first window, then only the last `effective_score_len` positions.\n            if start == my_starts[0]:\n                score_start = 0\n                effective_score_len = current_seq_len\n            else:\n                score_start = current_seq_len - effective_score_len\n\n            score_end = score_start + effective_score_len\n            logits_scored = logits[:, score_start:score_end, :].reshape(-1, logits.size(-1))\n            targets_scored = y[:, score_start:score_end].reshape(-1)\n\n            per_token_loss = F.cross_entropy(logits_scored.float(), targets_scored, reduction=\"none\")\n            val_loss_sum += per_token_loss.to(torch.float64).sum()\n            val_token_count += per_token_loss.numel()\n\n            # BPB byte counting for scored positions.\n            prev_ids = x[:, score_start:score_end].reshape(-1)\n```",
+      "created_at": "2026-03-20T07:20:29Z",
+      "updated_at": "2026-03-20T07:20:30Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`SWAHelper`'s docstring says \"Exponential moving average\", but the update logic is a simple running arithmetic mean (`alpha = 1/n`) over snapshots. Please either adjust the docstring to reflect that this is SWA-style averaging, or change the implementation to a true EMA if that\u2019s what is intended.\n```suggestion\n    \"\"\"Stochastic Weight Averaging (running mean) of model weights over the training tail.\"\"\"\n```",
+      "created_at": "2026-03-20T07:20:29Z",
+      "updated_at": "2026-03-20T07:20:30Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The example command references `train_gpt_qat.py`, but this record directory only includes `train_gpt.py`. This makes the reproduction instructions ambiguous; please update the command to use the actual filename (or add the referenced script).\n```suggestion\ntorchrun --standalone --nproc_per_node=1 train_gpt.py\n```",
+      "created_at": "2026-03-20T07:20:30Z",
+      "updated_at": "2026-03-20T07:20:30Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "> [!NOTE]\n> You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/settings/usage).",
+      "created_at": "2026-03-20T07:15:17Z",
+      "updated_at": "2026-03-20T07:15:17Z"
+    }
+  ]
 }

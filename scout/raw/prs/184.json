@@ -9,5 +9,6 @@
   "body": "## Summary\r\n  - **val_bpb: 1.1855** (sliding window eval, stride=64)\r\n  - **Artifact size: 15.75MB** (under 16MB cap)\r\n  - 8xH100, 8004 steps in 600s, 10 layers, 512d\r\n\r\n  ## Key Architecture\r\n  1. **GELU Pre-enrichment**: Two linear projections with GELU before transformer blocks\r\n  2. **2x Encoder Recurrence**: Encoder blocks run twice with RMS norm between passes. 15 effective layers from 10\r\n  physical blocks. A/B data shows depth advantage beats 50% more training steps.\r\n\r\n  ## Additional Techniques\r\n  Overtone embedding init, decoupled Muon weight decay, batched sliding window eval (stride=64), MATRIX_LR=0.06,\r\n  TIED_EMBED_LR=0.1.\r\n\r\n  See [README](records/track_10min_16mb/2026-03-20_PreEnrich_EncoderRecurrence/README.md) for ablations and what didn't\r\n  work.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/184",
-  "draft": true
+  "draft": true,
+  "comments": []
 }

@@ -9,5 +9,6 @@
   "body": "## Summary\n\n- **Best result: val_bpb = 1.3267** (sliding window stride=64, post int6 quantization, 1xH100 600s)\n- 11 layers, MLP3x, GQA 8/4 heads, 26.5M params, 13.3 MB submission size\n- Systematic ablation study with 6 candidate scripts\n\n## Techniques\n\n- **Int6 grouped quantization** (group_rows=8) for all weights\n- **QAT**: STE fake-quantization in last 15% of wallclock, halves quant gap\n- **zstd-22** compression (saves ~1 MB vs zlib)\n- **Wallclock-fraction warmdown** (last 15%): fixes the buggy iter-based formula that breaks with torch.compile overhead\n- **SWA**: 7 checkpoints during warmdown, properly guarded against premature collection\n- **Sliding window eval** stride=64\n- **Muon optimizer** with WD=0.04, momentum warmup 0.92\u21920.99\n\n## Ablation results (1xH100, 600s wallclock)\n\n| Variant | Sliding bpb | Size |\n|---------|------------|------|\n| Clean 11L Int6 QAT (baseline A) | 1.3761 | 14.0 MB |\n| A + BigramHash + SmearGate | 1.3796 | 14.4 MB |\n| A + Mixed Int5/Int6 | 1.3874 | 11.6 MB |\n| **A + Warmdown + SWA** | **1.3267** | **13.3 MB** |\n| A + Warmdown + Late EMA | 1.3436 | 13.2 MB |\n\n## Test plan\n\n- [ ] Verify on 8xH100 with `torchrun --nproc_per_node=8`\n- [ ] Confirm submission size < 16 MB\n- [ ] Validate sliding window bpb matches reported numbers\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/488",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

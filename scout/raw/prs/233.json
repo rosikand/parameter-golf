@@ -9,5 +9,6 @@
   "body": "## Summary\n- add sliding-window evaluation support to the MLX trainer behind EVAL_STRIDE and EVAL_BATCH_SEQS\n- add GPT.forward_logits so MLX eval can score per-token NLL over overlapping windows\n- add focused tests for sliding window coverage and scoring behavior\n\n## Why\nThe public record shows that evaluation strategy alone can materially improve val_bpb by scoring each token with richer context. This brings the same idea to train_gpt_mlx.py for local Apple Silicon experimentation.\n\n## Testing\n- .venv/bin/python -m unittest tests.test_train_gpt_mlx_quantization tests.test_train_gpt_mlx_model_config tests.test_train_gpt_mlx_sliding_eval\n- tiny end-to-end MLX smoke run with EVAL_STRIDE=64 completed successfully",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/233",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

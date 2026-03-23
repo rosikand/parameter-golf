@@ -9,5 +9,6 @@
   "body": "## Summary\n\n- **val_bpb: 1.1502** (single seed 1337), 15.50MB artifact\n- 11-layer GPT with int6 QAT (STE), SmearGate, decoupled Muon WD=0.038\n- Int6-in-int8 containers + zstd-22 compression\n- Sliding window eval (stride=64, batch=32)\n- 7,723 steps at 77ms/step on 8\u00d7H100 SXM\n\n## Key Techniques\n\n1. **11 layers** (512 dim, 8 heads, 4 KV heads, MLP 3x) \u2014 more depth enabled by int6 compression\n2. **Int6 QAT**: STE fake quantization during forward pass, nearly eliminates post-quant degradation\n3. **SmearGate**: Learned gate blending current + previous token embedding (~513 params)\n4. **Decoupled Muon WD=0.038**: Keeps weights small for better int6 quantization\n5. **Int6-in-int8 + zstd-22**: 26.5M params compressed to 15.5MB\n\n## Test plan\n\n- [x] Single seed run (1337) completed\n- [ ] Additional seeds for statistical significance\n- [x] Artifact under 16MB (15,495,792 bytes)\n- [x] Training under 10 minutes (600s wall clock)\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/192",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

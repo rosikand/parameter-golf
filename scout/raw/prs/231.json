@@ -9,5 +9,6 @@
   "body": "Combines the current SOTA recipe with long-context training.\r\n\r\nChanges:\r\n\r\n- TRAIN_SEQ_LEN=4096, TRAIN_BATCH_TOKENS=393216 (3/4 batch for more optimizer steps/sec)\r\n- Muon momentum 0.99, extended warmup (1500 steps), lower LR (0.02)\r\n- Sliding window eval (EVAL_STRIDE=64), FP16 tied embedding, overtone init, phase-transition resid_mix, NTK-aware RoPE\r\n- Optional LOWBIT_LAYERS+LOWBIT_STEP for mixed-bit export (enables 11L configs)\r\n- Partial result (run cut short ~570s/600s): val_bpb=1.2036 at step 8000 (non-sliding). Full run with sliding eval expected ~1.168, potentially below SOTA 1.1748.\r\n\r\nStatus: Pending complete (waiting for more compute grant) run log with final_int8_zlib_roundtrip BPB.\r\n\r\nSummary:\r\nStep | val_bpb (non-sliding) | Train time\r\n-- | -- | --\r\n0 | 4.1068 | -\r\n1000 | 1.3695 | 58s\r\n3000 | 1.2830 | 198s\r\n5000 | 1.2583 | 339s\r\n7000 | 1.2334 | 482s\r\n8000 | 1.2036 | 554s\r\n(cut off) | \u2014 | ~570s",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/231",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

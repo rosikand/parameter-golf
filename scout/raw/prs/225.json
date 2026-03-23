@@ -9,5 +9,6 @@
   "body": "**Non-record submission \u2014 Int6 QAT + 11L 512d + Sliding Window**\r\nval_bpb: 1.2089 (post-roundtrip sliding window)\r\nArtifact: 15,190,812 bytes \r\nHardware: 8\u00d7H100, 10 minutes (6,619 steps)\r\n\r\n**What I implemented**\r\nFull stack from scratch: int6 quantisation with flat tensor storage (int6_mixed_per_row_v2 format), STE fake-int6 QAT activating at step 200, sliding window eval (ctx=4096, chunk=512, stride=64), seq_len=4096, tuned Muon (momentum=0.99, warmdown=3000).\r\nArchitecture: 11L \u00d7 512d \u00d7 mlp1024. Originally targeting mlp1536 but Muon-trained weights are near-orthogonal (~0.91\u00d7 zlib compression) which forced a smaller model to stay under 16MB.\r\n\r\n\r\n**Key finding**\r\nMore training steps worsen compression \u2014 near-orthogonal weights are higher entropy. This is the central problem to solve and motivates moving toward ternary training or structured weight matrices where compression is architectural rather than a fight against the optimiser.\r\n\r\n\r\n**What went wrong along the way**\r\n\r\n- scale variable collision crashing QAT at step 200\r\n- load_quant_artifact only handling v1 format, crashing roundtrip with KeyError: 'quantized'\r\n- SW_CTX=1024 with seq_len=4096 model giving 2.16 bpb (worse than flat)\r\n- 73 separate int6 tensors giving 0.90\u00d7 zlib \u2014 fixed by flat tensor concatenation\r\n\r\nFull write-up in README.md in the PR files.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/225",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

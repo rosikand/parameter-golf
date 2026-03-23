@@ -9,5 +9,13 @@
   "body": "## Summary\n\n- **NEW SOTA: 1.1299 val_bpb** (3-seed mean), beating current record of 1.1428 by 0.0129 nats\n- Built on [PR #374](https://github.com/openai/parameter-golf/pull/374) by @unnir (v38: Tight SWA + VE128 + XSA4, 1.1246 single-seed) with added test-time training (TTT)\n- All 3 seeds verified: artifacts < 16MB, training < 10min on 8xH100s\n\n## Results\n\n| Seed | Sliding Window BPB | Artifact Size |\n|------|-------------------:|--------------:|\n| 1337 | **1.1291** | 15,787,610 |\n| 7 | **1.1309** | 15,659,426 |\n| 99 | **1.1296** | 15,688,657 |\n| **Mean** | **1.1299** | 15,711,898 |\n\n## Key techniques\n\n- **Tight SWA**: 12 checkpoints from last ~600 steps (scale<0.2), zero SWA penalty\n- **Test-Time Training**: 3 epochs SGD on already-evaluated val tokens (~51s)\n- **Late QAT**: STE int6 fake-quant during warmdown (scale<0.1)\n- **Sliding window eval**: stride=64, context=2048 (~100s)\n- 11L, 512-dim, GQA 8/4, XSA last 4 layers, Partial RoPE, Shared VE128, SmearGate+BigramHash\n\n## Test plan\n\n- [x] 3 seeds verified (1337, 7, 99) \u2014 all beat SOTA by \u22650.012\n- [x] All artifacts < 16,000,000 bytes\n- [x] `train_gpt.py` compiles (`ast.parse` passes)\n- [x] Script runs from within records folder (logs confirm path)\n- [x] PR only adds files to one new folder",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/455",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "mohosy",
+      "body": "tight swa with ve128 is clean, the 3 seed mean at 1.1299 is solid. how many checkpoints are you averaging and whats the interval",
+      "created_at": "2026-03-23T00:23:11Z",
+      "updated_at": "2026-03-23T00:23:11Z"
+    }
+  ]
 }

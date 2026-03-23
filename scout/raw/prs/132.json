@@ -9,5 +9,13 @@
   "body": "This is re Proposal 1 in https://github.com/openai/parameter-golf/issues/129\r\n\r\nThis line seemed to imply participants only needed to submit one training log.\r\n\r\ncc @0hq ",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/132",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "0hq",
+      "body": "Fixed",
+      "created_at": "2026-03-19T22:03:14Z",
+      "updated_at": "2026-03-19T22:03:14Z"
+    }
+  ]
 }

@@ -9,5 +9,6 @@
   "body": "## Summary\r\n- add a non-record / negative-result submission for a 10-layer 4K-context run\r\n- document that the run only covered about 4.01B training tokens within the 10-minute budget\r\n- include README, submission metadata, train log excerpt, and the run script\r\n\r\n## Notes\r\nThis PR is intentionally framed as a negative result rather than a competitive record.\r\n\r\nThis was effectively a one-shot practice submission under tight credit constraints, so I was only able to run a single 8xH100 attempt.\r\n\r\nThe main takeaway is that the 4K setup reduced training coverage too much under the 10-minute budget, leading to substantially worse `val_bpb` than the public baselines.\r\n\r\nSelected reported score in `submission.json`:\r\n- post-quant TTT `val_bpb = 1.8389`\r\n\r\nAlso included for reference in the README and log:\r\n- post-quant sliding `val_bpb = 2.50893917`",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/237",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

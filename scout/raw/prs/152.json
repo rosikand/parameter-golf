@@ -9,5 +9,61 @@
   "body": "Full-model SGD adaptation during eval phase improves BPB by 3.0% over static inference with zero architecture changes.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/152",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "leloykun",
+      "body": "Hi @timowhite88 ! Are you certain you're not leaking future tokens during your TTT adaptation? From the looks of it, `epochs=1` already leaks information as you do it _before_ doing any evals, not during evals as you go. `epochs=2` seems to make it worse.",
+      "created_at": "2026-03-20T02:28:46Z",
+      "updated_at": "2026-03-20T02:28:46Z"
+    },
+    {
+      "user": "timowhite88",
+      "body": "Hey @leloykun \u2014 no leakage. TTT adaptation uses causal masking ",
+      "created_at": "2026-03-20T04:28:25Z",
+      "updated_at": "2026-03-20T04:28:25Z"
+    },
+    {
+      "user": "timowhite88",
+      "body": "@0hq Ready for review \u2014 3-seed mean now 1.17358 BPB with all logs included.",
+      "created_at": "2026-03-20T04:32:40Z",
+      "updated_at": "2026-03-20T04:32:40Z"
+    },
+    {
+      "user": "leloykun",
+      "body": "No, information still leaks because you get to update the model on data from `> t` _before_ you eval it at `t`. Your model isn't autoregressive anymore.",
+      "created_at": "2026-03-20T04:50:55Z",
+      "updated_at": "2026-03-20T04:50:55Z"
+    },
+    {
+      "user": "timowhite88",
+      "body": "  The competition rules explicitly allow test-time training and creative evaluation methods. What you're describing isn't \"leakage\" in the traditional sense.... the model doesn't memorize or look up specific tokens. It adapts its weight distribution to better fit the validation data's statistics, the same way adaptive compression algorithms (LZ77, PPM, arithmetic coding) update their models as they process data. The causal attention mask is never bypassed every forward pass is still autoregressive. The weights just happen to be better suited to this particular data distribution after adaptation. If updating weights on data before scoring it were disallowed, then the entire training phase would also be \"leakage\" since we train on FineWeb before evaluating on FineWeb val.  @leloykun ",
+      "created_at": "2026-03-20T05:04:18Z",
+      "updated_at": "2026-03-20T05:04:46Z"
+    },
+    {
+      "user": "leloykun",
+      "body": "Hmmm... I'm hoping I'm not sounding too critical here. I was actually one of the speedrunners in the original `modded-nanogpt` repo, and we had a lot of convos like this back then too.\r\n\r\nThat said, no, this is still leakage. Even when we're evaluating those compression algorithms, we still typically don't allow them to use statistics from the 'hidden' validation set. At most, we only allow them to update their 'cache' online only on information they've already 'seen' so far. And besides, if the goal is to just compress both the training and validation sets, why don't we just use gzip? It's cheaper and lossless.\r\n\r\nI also want you to look at this from a practical perspective during inference: even if the model is getting fed with external information (from, say, camera feeds of a self-driving car), the model still cannot use information past time `t`! It can only adapt to the distribution of the things it has seen so far.\r\n\r\nSo, the non-leaky version of TTT goes something like:\r\n1. Adapt to information at time `t-1` (and backwards);\r\n2. Do inference at time `t`;\r\n3. Score predictions at time `t`;\r\n4. Repeat.\r\n\r\nWdyt @0hq ?\r\n",
+      "created_at": "2026-03-20T05:39:46Z",
+      "updated_at": "2026-03-20T05:40:55Z"
+    },
+    {
+      "user": "timowhite88",
+      "body": "The competition README explicitly lists \"test-time training\" as one of the creative approaches they're excited to see. It's right there in the intro\r\n  \r\n\r\n                        \"\"\"\"!alongside \"test-time compute, aggressive parameter tying, depth recurrence.\"!\"\"\"\"\r\n\r\n  A few points:\r\n\r\n  Causal masking is never broken. Every forward pass during TTT is fully autoregressive \u2014 the model only sees tokens before position t. We don't peek at future tokens. The causal mask is identical to normal inference.\r\n\r\n  This is how compression works. The competition measures bits per byte \u2014 a compression metric. Every adaptive compressor (LZ77, PPM, arithmetic coding)\r\n  updates its model while processing the stream. TTT is the neural network equivalent. Calling it \"leakage\" would be like saying gzip cheats because it builds a dictionary from the data it's compressing.\r\n\r\n  There's already a TTT submission on the leaderboard. samacqua's LoRA TTT entry (#77) was merged and accepted by the maintainers at 1.1928 BPB. The technique has been reviewed and validated.\r\n\r\n  Weight adaptation \u2260 memorization. SGD over 3 epochs with momentum doesn't memorize sequences \u2014 it shifts the loss landscape slightly toward the validation distribution. The model still has to predict each token autoregressively using only prior context.\r\n\r\n  The 10-minute eval budget exists precisely for techniques like this. If the organizers only wanted static inference, they wouldn't give us 10 minutes of GPU compute for evaluation.",
+      "created_at": "2026-03-20T19:39:26Z",
+      "updated_at": "2026-03-20T19:39:26Z"
+    },
+    {
+      "user": "timowhite88",
+      "body": "Superseded by #254 (FarnsworthEngine v1 \u2014 1.1303 BPB with 3-seed validation). Closing this one.",
+      "created_at": "2026-03-20T19:58:52Z",
+      "updated_at": "2026-03-20T19:58:52Z"
+    },
+    {
+      "user": "0hq",
+      "body": "@timowhite88 this violates our rules on evaluation. You can't train on the validation tokens before you evaluate on those same tokens. It doesn't matter if you causal mask, you basically just added the val set to your training dataset. ",
+      "created_at": "2026-03-21T01:16:58Z",
+      "updated_at": "2026-03-21T01:16:58Z"
+    }
+  ]
 }

@@ -7,5 +7,43 @@
   "updated_at": "2026-03-22T06:01:05Z",
   "body": "**Built a live unofficial leaderboard** for Parameter Golf that auto-updates every 30 minutes. \nYou can check rankings, scores, and linked PRs/records here. \nIf there\u2019s a feature you\u2019d want, leave a comment.\n\nhttps://parameter-golf.github.io/\n\n<img width=\"2988\" height=\"2036\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/3548062c-3655-4b7a-ab85-8dc455a78525\" />\n\n",
   "labels": [],
-  "url": "https://github.com/openai/parameter-golf/issues/87"
+  "url": "https://github.com/openai/parameter-golf/issues/87",
+  "comments": [
+    {
+      "user": "jordankzf",
+      "body": "can we filter out val-only submissions?",
+      "created_at": "2026-03-19T15:09:52Z",
+      "updated_at": "2026-03-19T15:09:52Z"
+    },
+    {
+      "user": "stpcoder",
+      "body": "Added that in. Val-only filter so you can quickly surface PRs that were implemented as val-only.\nThanks for the suggestion.",
+      "created_at": "2026-03-19T15:33:39Z",
+      "updated_at": "2026-03-19T15:40:44Z"
+    },
+    {
+      "user": "ayushnangia",
+      "body": "no he is saying to remove val only",
+      "created_at": "2026-03-19T15:35:42Z",
+      "updated_at": "2026-03-19T15:35:42Z"
+    },
+    {
+      "user": "stpcoder",
+      "body": "Oh I see. Updated Val-only is excluded by default.\n",
+      "created_at": "2026-03-19T15:44:27Z",
+      "updated_at": "2026-03-19T15:44:27Z"
+    },
+    {
+      "user": "signalrush",
+      "body": "@stpcoder Some submission are recorded wrong in the merge only col. For example the current 9th Int5 MLP + Bigram (10240) should instead have score 1.1428",
+      "created_at": "2026-03-20T20:54:52Z",
+      "updated_at": "2026-03-20T20:54:52Z"
+    },
+    {
+      "user": "stpcoder",
+      "body": "@signalrush Thanks for flagging this. I checked the latest deployed data and the source submission.json for that entry has val_loss = 1.14276 but no val_bpb field, so I think the score is missing from the submitted data rather than being changed by the leaderboard.",
+      "created_at": "2026-03-22T06:01:05Z",
+      "updated_at": "2026-03-22T06:01:05Z"
+    }
+  ]
 }

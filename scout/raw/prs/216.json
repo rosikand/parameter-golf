@@ -9,5 +9,6 @@
   "body": "68M-param Universal Transformer with ternary weights {-1,0,+1}, Muon optimizer, QK-Norm, RoPE, FlashAttention-2, bfloat16. NB=4 blocks x NR=6 recurrences = 24 effective layers. Artifact size: ~15.6MB. Test run val_bpb ~0.810 on 1xH100.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/216",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

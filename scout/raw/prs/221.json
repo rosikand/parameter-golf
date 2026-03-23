@@ -9,5 +9,6 @@
   "body": "\r\n**Key idea:** \r\nThe model was like a student who studied short paragraphs but was being tested on long chapters \u2014 so we asked: what if it practiced on long text too? We changed one line (train_seq_len = 4096) so it trained on 4096-token passages instead of 1024, teaching it real long-range patterns, then evaluated it with overlapping windows (stride=64) so every word gets maximum context during scoring. We ran it on Modal 8\u00d7H100 GPUs, got a consistent mean of 1.1899 across 3 random seeds (1337, 42, 7)\r\n\r\nCombine `train_seq_len=4096` with 10 layers and sliding window evaluation (stride=64)\r\n## Seed results\r\n\r\n| Seed | val_bpb | Artifact size |\r\n|------|---------|--------------|\r\n| 1337 | 1.1900 | 15,115,793 B |\r\n| 42   | 1.1908 | 15,128,724 B |\r\n| 7    | 1.1888 | 15,154,068 B |\r\n| **mean** | **1.1899** | \u2264 16MB \u2713 |\r\n| **std**  | **0.0008** | |\r\n\r\n## Config\r\n\r\n```\r\nnum_layers     = 10\r\ntrain_seq_len  = 4096\r\neval_stride    = 64  (sliding window)\r\nwarmdown_iters = 3600\r\nmatrix_lr      = 0.04\r\nmuon_momentum  = 0.95\r\n```\r\n\r\n## Hardware\r\n\r\nModal 8\u00d7H100 SXM, `torchrun --standalone --nproc_per_node=8`, `MAX_WALLCLOCK_SECONDS=600`",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/221",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

@@ -9,5 +9,43 @@
   "body": "",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/254",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "timowhite88",
+      "body": "\r\n\r\n  ---\r\n  @0hq Ready for review \u2014 3 seeds complete with tight reproducibility:\r\n\r\n  - Seed 1337: 1.1303\r\n  - Seed 42: 1.1312\r\n  - Seed 7: 1.1323\r\n  - Mean: 1.1313\r\n\r\n  15.88 MB artifact, 600s train, 129s eval. Full logs for all 3 seeds included. This supersedes our earlier PRs #152 and #178.\r\n\r\n\r\n",
+      "created_at": "2026-03-20T19:46:08Z",
+      "updated_at": "2026-03-20T19:46:08Z"
+    },
+    {
+      "user": "timowhite88",
+      "body": "@notapplica 3 seeds submitted now, Mean is posted , all logs contained, Ready for @0hq review",
+      "created_at": "2026-03-20T20:00:39Z",
+      "updated_at": "2026-03-20T20:00:39Z"
+    },
+    {
+      "user": "himanalot",
+      "body": "this is aura",
+      "created_at": "2026-03-20T20:24:30Z",
+      "updated_at": "2026-03-20T20:24:30Z"
+    },
+    {
+      "user": "mohosy",
+      "body": "interesting that freezing early blocks during ttt helps stability, have you experimented with freezing more or less blocks to see where the sweet spot is",
+      "created_at": "2026-03-20T23:59:31Z",
+      "updated_at": "2026-03-20T23:59:31Z"
+    },
+    {
+      "user": "sharpobject",
+      "body": "\"If it isn't abundantly obvious: You can't cheat on your test loss. You can't cheat by training on the validation set before you evaluate on the validation set. The validation language around test-time training has been confusing people: you are only allowed to test-time train on validation set tokens you've already evaluated your model on, since those tokens have already been graded!\"",
+      "created_at": "2026-03-21T17:55:33Z",
+      "updated_at": "2026-03-21T17:55:47Z"
+    },
+    {
+      "user": "himanalot",
+      "body": "newjordan just out here blatantly copying people lol",
+      "created_at": "2026-03-21T19:52:11Z",
+      "updated_at": "2026-03-21T19:52:11Z"
+    }
+  ]
 }

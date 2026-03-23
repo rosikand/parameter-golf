@@ -9,5 +9,13 @@
   "body": "## Summary\n\nSystematic hyperparameter optimization across **111 experiments** on single GPU, achieving **1.2417 BPB** on 1x H100 SXM in 10 minutes (15.5MB artifact).\n\n## Key Contributions\n\n- **Hyperparameter scaling laws**: LR, WD, and batch size must co-scale with GPU speed and step count\n- **Batch size as a lever**: 131K tokens/step (2x default) gives -0.024 BPB on H100\n- **BigramHash dim=128 projection**: Saves 3.7MB artifact space with <0.002 BPB loss, enabling deeper models within 16MB\n- **WD improves compression**: Higher WD = smaller weights = better int8+zlib (15.5MB vs 17.2MB for same model)\n\n## Architecture\n\n7 layers, 512-dim, 4x MLP (relu^2), BigramHash 8192 with dim=128 projection, RoPE base=50000, Muon optimizer with LR=0.035, WD=0.025, batch=131K tokens.\n\n## Negative Results (from 111 experiments)\n\n- EMA: catastrophic for <5k steps\n- SWA: no benefit at <7k steps\n- SmearGate: throughput penalty > quality gain on single GPU\n- Orthogonal init: hurts at <5k steps\n- Magnitude pruning: barely helps int8+zlib compression\n\n## Hardware\n\n1x H100 SXM 80GB (non-record: not 8xH100). 4,781 steps in 600s.\n\n## Test plan\n\n- [x] Runs successfully on 1x H100 SXM\n- [x] Artifact under 16MB (15.5MB)\n- [x] val_bpb verified: 1.2417\n- [ ] Scale to 8xH100 for record submission (planned)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/393",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "CrimsonSithria",
+      "body": "Closing \u2014 will resubmit with improved results after more experimentation.",
+      "created_at": "2026-03-22T03:36:00Z",
+      "updated_at": "2026-03-22T03:36:00Z"
+    }
+  ]
 }

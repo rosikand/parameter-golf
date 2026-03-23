@@ -9,5 +9,13 @@
   "body": "## Summary\n\nNon-record submission testing TTT on the XSA+EMA base (PR #287). **Key finding: TTT hurts by 0.016 BPB.**\n\n### Results\n\n| Configuration | val_bpb |\n|---|---|\n| XSA + EMA (PR #287, no TTT) | **1.1280** |\n| **XSA + EMA + TTT (this)** | **1.1436** (+0.016 worse) |\n| SmearGate + TTT (PR #254) | 1.1313 |\n\nTTT makes the XSA+EMA model worse, confirming the mechanism redundancy pattern from #290 and #296.\n\n### Why TTT hurts XSA models\n\nXSA and TTT both target local context modeling. XSA removes self-information from attention outputs; TTT adapts weights to local validation patterns. Stacking them double-counts the same signal, while TTT's SGD updates disrupt the smooth EMA weight landscape.\n\n### Reproducibility (2 seeds)\n\n| Seed | val_bpb |\n|------|---------|\n| 1337 | 1.1436 |\n| 42 | 1.1441 |\n| Mean | 1.1439 |\n\nArtifact: 15.3MB. Training: 6,001 steps @ 100ms/step. TTT: 67s. Used FA2 (not FA3).\n\nSee README for full analysis.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/303",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "mohosy",
+      "body": "this is really good data, was literally about to stack ttt on ema+xsa and you saved me the compute lol. do you think theres any eval time trick that does work with ema or is it just fundamentally incompatible with adaptation",
+      "created_at": "2026-03-21T04:18:39Z",
+      "updated_at": "2026-03-21T04:18:39Z"
+    }
+  ]
 }

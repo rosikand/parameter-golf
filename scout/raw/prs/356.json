@@ -9,5 +9,6 @@
   "body": "## Summary\r\n- Based on PR #315 recipe (XSA+EMA+PartialRoPE+LateQAT), adapted for 1xH100 PCIe\r\n- Flash Attention 2 instead of FA3\r\n- Training schedule adjusted for 1GPU (WARMDOWN_ITERS=400, MOMENTUM_WARMUP=200)\r\n- Sliding-window val_bpb=1.8338, artifact 10.0MB (int6+zstd)\r\n\r\n## Notes\r\n- 1GPU limits to ~492 steps (vs ~6200 on 8xH100)\r\n- QAT had only ~40 steps of adaptation due to limited training budget\r\n\r\n## Test plan\r\n- [x] Training completes within 10min wallclock\r\n- [x] Artifact under 16MB (10.0MB)\r\n- [x] int6+zstd roundtrip eval passes\r\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/356",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

@@ -11,5 +11,31 @@
     "record submission ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/61",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "0hq",
+      "body": "Confused, your title says 1.1574 but your header says \"val_bpb = 1.2154 (baseline: 1.2244, improvement: 0.009 BPB / 0.017 nats)\"",
+      "created_at": "2026-03-19T21:16:37Z",
+      "updated_at": "2026-03-19T21:16:37Z"
+    },
+    {
+      "user": "0hq",
+      "body": "Before I officially add to leaderboard, mind running again to verify that the 1.1574 result is within noise? 1-2 more runs that show the same result would be great.",
+      "created_at": "2026-03-19T21:35:23Z",
+      "updated_at": "2026-03-19T21:35:23Z"
+    },
+    {
+      "user": "0hq",
+      "body": "Ah sorry I see that this is no longer the latest PR, moving there.",
+      "created_at": "2026-03-19T21:36:28Z",
+      "updated_at": "2026-03-19T21:36:28Z"
+    },
+    {
+      "user": "saml212",
+      "body": "Hey Will sorry about the confusion on the documentation here. I saw people updating their PR's and I thought that would be a good idea so I went back to update this then changed my mind and reverted it but didn't update the title and comment since I thought nobody would be looking this far back. Missed the title updated now.",
+      "created_at": "2026-03-20T02:28:41Z",
+      "updated_at": "2026-03-20T02:28:56Z"
+    }
+  ]
 }

@@ -7,5 +7,37 @@
   "updated_at": "2026-03-18T23:33:21Z",
   "body": "From what I see on the readMe submissions are limited to 10 min for reproducibility.\nAt first I understood it as 10 min for training and 10 for inferencing but after reading carefullt it seems it is 10 min in total to reproduce.\n\nIt would be great to just clarify that on the ReadMe to avoid confusion",
   "labels": [],
-  "url": "https://github.com/openai/parameter-golf/issues/12"
+  "url": "https://github.com/openai/parameter-golf/issues/12",
+  "comments": [
+    {
+      "user": "mikeapedia",
+      "body": "+1 I had the same question. Is it 10 minutes total for train + eval, or is it 10 minutes for each? ",
+      "created_at": "2026-03-18T21:02:26Z",
+      "updated_at": "2026-03-18T21:02:26Z"
+    },
+    {
+      "user": "berniwal",
+      "body": "+1 - I would also assume its 10 mins in total (train + eval), since they probably don't want to run everyones script for longer than 10 minutes.(+ they mention test-time compute)\ud83d\ude3a But I think they measure it in two different ways in the scripts - in train_gpt_mlx.py they measure with eval vs in train_gpt.py its without eval: https://github.com/openai/parameter-golf/pull/18",
+      "created_at": "2026-03-18T21:21:30Z",
+      "updated_at": "2026-03-18T21:53:49Z"
+    },
+    {
+      "user": "0hq",
+      "body": "10 minutes for each!",
+      "created_at": "2026-03-18T23:31:09Z",
+      "updated_at": "2026-03-18T23:31:09Z"
+    },
+    {
+      "user": "0hq",
+      "body": "I'll clarify in the README",
+      "created_at": "2026-03-18T23:31:17Z",
+      "updated_at": "2026-03-18T23:31:17Z"
+    },
+    {
+      "user": "0hq",
+      "body": "Clarified!",
+      "created_at": "2026-03-18T23:33:21Z",
+      "updated_at": "2026-03-18T23:33:21Z"
+    }
+  ]
 }

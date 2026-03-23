@@ -11,5 +11,13 @@
     "not ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/14",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "jordankzf",
+      "body": " Training run on my AMD 7840U. Results from the smoke test:\r\n  - 5 training steps: 27 seconds (~5.4s/step)\r\n  - Validation (1M token subset): ~2.5 minutes\r\n  - Final int8 quantized model: 4.96MB\r\n  - Loss 6.94 \u2192 6.89 (I know, I know)\r\n  \r\n  Mainly a POC, go ahead and ask OpenAI for that $25 Runpod credits.",
+      "created_at": "2026-03-18T20:11:07Z",
+      "updated_at": "2026-03-18T20:11:07Z"
+    }
+  ]
 }

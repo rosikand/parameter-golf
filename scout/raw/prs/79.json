@@ -9,5 +9,6 @@
   "body": "## Summary\n- Non-record submission exploring **depth recurrence**: 3 unique transformer blocks repeated 3 times (effective depth 9) at dim=1024\n- Trades architectural diversity for width \u2014 same parameter budget allows dim=1024 instead of baseline's 512\n- 23.1M params \u2192 ~14.7MB post-training compressed (92% of 16MB budget)\n- Pending H100 compute credits for official validation run\n\n## Approach\nSystematically evaluated 6 strategies (shape, attention, MLP expansion, depth recurrence, layer sharing, SwiGLU) across 40+ configurations. Depth recurrence won decisively. Then optimized across 5 architecture axes and 4 hyperparameters.\n\n## Key changes from baseline\n- Recurrent forward pass: blocks are reused across repeats (no U-Net skip connections)\n- Tuned hyperparameters: matrix_lr=0.02, muon_momentum=0.85, logit_softcap=15, muon_backend_steps=7, qk_gain_init=2.0\n- Lower LR compensates for gradient amplification through repeated block application\n\n## Local results (Apple Silicon, not comparable to leaderboard)\n- 1000-step benchmark: val_bpb 1.8698 vs baseline 1.9743 (+0.105 relative improvement)\n- Full H100 run needed for absolute BPB comparison\n\n## Test plan\n- [ ] Obtain H100 compute credits\n- [ ] Run full 10-minute training on 8xH100\n- [ ] Verify post-training compressed size < 16MB\n- [ ] Report final val_bpb",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/79",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

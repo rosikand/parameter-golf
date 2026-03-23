@@ -9,5 +9,6 @@
   "body": "## Summary\r\n\r\n  - Optimizer tuning (warmdown=10000, muon_backend_steps=10, grad_clip=1.0, beta2=0.99, scalar_lr=0.02) + seq2048 training +\r\n  sliding window evaluation (stride=64)\r\n  - Same 9-layer 512dim ReLU\u00b2 architecture as baseline \u2014 no model architecture changes\r\n  - Post-quant int8+zlib artifact under 16,000,000-byte cap\r\n\r\n  ## Results (8xH100 SXM)\r\n\r\n  | Seed | Steps | val_loss | val_bpb | Artifact |\r\n  |------|-------|----------|---------|----------|\r\n  | 1337 | 11,520 | 2.00321 | 1.18642 | 15,861,337 |\r\n  | 1338 | 11,520 | 2.00428 | 1.18705 | 15,859,751 |\r\n  | 1339 | 11,523 | 2.00667 | 1.18847 | 15,867,480 |\r\n\r\n  Mean val_loss: 2.00472 vs SOTA 2.01348 \u2192 improvement of 0.00876 nats\r\n  t=8.57, df=2, p < 0.01",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/321",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

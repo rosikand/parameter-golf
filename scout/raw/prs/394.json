@@ -9,5 +9,31 @@
   "body": "\ufeff## Summary\n- add a non-record 10-minute-track submission folder for a faithful RunPod `8xH100 SXM` PR315-style run plus Backout\n- include the exact training log, self-contained `train_gpt.py`, `requirements.txt`, `submission.json`, and README\n- package this as a non-record entry because the current live public frontier is already slightly below this score and this submission does not include a significance set for a new record claim\n\n## Result\n- exact sliding-window metric: `val_bpb = 1.12467423`\n- exact sliding-window loss: `1.89896029`\n- total artifact bytes in this packaged folder: `15,545,662`\n- hardware: `8xH100 SXM` on RunPod with native Hopper FlashAttention and `torch.compile`\n\n## Notes\n- the original experiment used a sibling `flash_attn_interface.py`; for this submission folder that helper is inlined into `train_gpt.py` so the package is self-contained and closer to the repo guidance that counted code should live in `train_gpt.py`\n- this is intentionally filed under `records/track_non_record_16mb/...`\r\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/394",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "`late_k_layers` is computed but never used, which makes the quantization logic harder to follow and suggests a partially removed feature. Consider deleting it or wiring it into the intended \u201clate-K passthrough\u201d behavior so the code matches the stated design.\n```suggestion\n\n```",
+      "created_at": "2026-03-22T03:48:55Z",
+      "updated_at": "2026-03-22T03:48:56Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The module docstring refers to `train_gpt_submit.py` and lists features (e.g., \u201cfp16 embed\u201d, \u201cMTP\u201d) that don\u2019t clearly match the actual defaults/implementation in this file. This can be confusing when someone audits the submission; consider updating the docstring to reflect the actual filename and the concrete features enabled in this snapshot (or remove the feature list).\n```suggestion\nTraining script for GPT models used in parameter-golf submissions.\n\nThis module's behavior is defined by the hyperparameters and options below; refer to\nthe code and configuration flags instead of this docstring for an authoritative list\nof enabled features.\n```",
+      "created_at": "2026-03-22T03:48:56Z",
+      "updated_at": "2026-03-22T03:48:56Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`_load_system_flash_attn_interface()` dynamically locates and executes an arbitrary `flash_attn_interface.py` from `sys.path`. This is a code-execution footgun (and can make runs non-reproducible if `sys.path` differs). Consider removing this path-walk entirely, or gating it behind an explicit env var that points to a known file and validating it\u2019s in an expected location (e.g., site-packages) before importing.",
+      "created_at": "2026-03-22T03:48:56Z",
+      "updated_at": "2026-03-22T03:48:57Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "In `_load_system_flash_attn_interface`, the check `candidate.resolve() == here` will never be true because `candidate` is `flash_attn_interface.py` while `here` is `train_gpt.py`. If the intent is to avoid importing a repo-local helper, consider removing this condition (the subsequent `repo_root` parent check already covers it) or comparing against the actual helper path.\n```suggestion\n        if not candidate.exists():\n```",
+      "created_at": "2026-03-22T03:48:56Z",
+      "updated_at": "2026-03-22T03:48:57Z"
+    }
+  ]
 }

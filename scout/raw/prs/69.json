@@ -11,5 +11,25 @@
     "not ready for review"
   ],
   "url": "https://github.com/openai/parameter-golf/pull/69",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Coordinate rank shutdown on artifact-size failure**\n\nWhen `WORLD_SIZE > 1` and the artifact exceeds 16,000,000 bytes, rank 0 calls `sys.exit(1)` before the distributed barrier, but other ranks keep running and then block forever at the later `dist.barrier()`. This causes a hang instead of a clean failure for oversized submissions in multi-GPU runs; the failure path needs a synchronized abort signal so all ranks exit together.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-20T02:52:07Z",
+      "updated_at": "2026-03-20T02:52:08Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Update compression tests to import existing APIs**\n\nThis test module imports `pack_ternary`, `unpack_ternary`, and ternary quantization helpers from `train_gpt`, but those symbols are not defined in the current script, so test collection fails with `ImportError` once dependencies are present. That makes the new test suite fail immediately and prevents meaningful CI feedback; the test should target the current int8 quantization API or the missing functions must be restored.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-20T02:52:08Z",
+      "updated_at": "2026-03-20T02:52:08Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Validate sliding-window stride before scoring**\n\nThe sliding evaluator computes `s = seq_len - stride` for all non-first windows without bounding `stride`. If `EVAL_STRIDE > seq_len`, `s` becomes negative and the code scores only tail slices; when stride does not tile the sequence, final targets can be skipped entirely. Both cases silently distort `val_loss`/`val_bpb`, so this path should validate stride constraints or explicitly score remainder tokens.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-20T02:52:08Z",
+      "updated_at": "2026-03-20T02:52:08Z"
+    }
+  ]
 }

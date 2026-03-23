@@ -9,5 +9,25 @@
   "body": "## Record: 11L XSA4 + EMA + Batch524K + zstd fallback (val_bpb: 1.1357)\n\n**val_bpb: 1.1357** (sliding window, stride=64) | **15.67 MB** | 8xH100 SXM, 600s\n\n### Key changes\n\n| Change | Impact |\n|--------|--------|\n| `TRAIN_BATCH_TOKENS=524288` | Better fixed-budget step count than the larger-batch 11-layer XSA+EMA setting |\n| SDPA fallback for `flash_attn_interface` | Runs cleanly when FA3 Python bindings are unavailable in the official image |\n| `torch.compile` behind an env flag | Reliable eager smoke tests, faster compiled full run |\n| `zstd` Python-or-CLI fallback | Keeps int6 export under 16MB without depending on a specific Python package in the image |\n\n### Results\n\n| Metric | Value |\n|--------|-------|\n| Pre-quant val_bpb | 1.1529 |\n| Int6 roundtrip val_bpb | 1.1580 |\n| **Int6 sliding val_bpb (s64)** | **1.1357** |\n| Steps completed (600s cap) | 8,202 |\n| Step time | 73.37ms |\n| Model params | 26,829,913 |\n| Artifact size | 15,669,953 bytes |\n\nSingle-seed run. Below the current merged README SOTA (`1.1428`).\n\n### Run command\n\n```bash\nNUM_LAYERS=11 MODEL_DIM=512 NUM_HEADS=8 NUM_KV_HEADS=4 MLP_MULT=3 \\\nTRAIN_BATCH_TOKENS=524288 TRAIN_SEQ_LEN=2048 EVAL_SEQ_LEN=2048 EVAL_STRIDE=64 \\\nBIGRAM_VOCAB_SIZE=2048 BIGRAM_DIM=128 \\\nXSA_LAST_N=4 EMA_ENABLED=1 EMA_DECAY=0.997 SWA_ENABLED=0 TTT_ENABLED=0 \\\nMUON_WD=0.04 ADAM_WD=0.04 MATRIX_LR=0.025 SCALAR_LR=0.025 TIED_EMBED_LR=0.035 \\\nMUON_MOMENTUM=0.99 MUON_MOMENTUM_WARMUP_START=0.92 MUON_MOMENTUM_WARMUP_STEPS=1500 \\\nWARMDOWN_ITERS=3000 WARMUP_STEPS=20 ENABLE_TORCH_COMPILE=1 \\\nITERATIONS=9000 MAX_WALLCLOCK_SECONDS=600 \\\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/307",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "mohosy",
+      "body": "nice score, the zstd fallback is smart for portability. how many steps did you get in 600s? trying to see if theres a speed difference between fa2 and fa3 setups",
+      "created_at": "2026-03-21T04:18:41Z",
+      "updated_at": "2026-03-21T04:18:41Z"
+    },
+    {
+      "user": "dennisimoo",
+      "body": "8202 steps in ~600s, 73.37 ms/step avg from the training loop. I didn\u2019t do a clean FA2 vs FA3 benchmark here, so I wouldn\u2019t read too much into it beyond that.\r\n",
+      "created_at": "2026-03-21T04:21:54Z",
+      "updated_at": "2026-03-21T04:21:54Z"
+    },
+    {
+      "user": "mohosy",
+      "body": "@dennisimoo 73ms per step on 8x is solid, we were geting similar numbers. good to know fa2 isnt holding us back much",
+      "created_at": "2026-03-23T00:25:29Z",
+      "updated_at": "2026-03-23T00:25:29Z"
+    }
+  ]
 }

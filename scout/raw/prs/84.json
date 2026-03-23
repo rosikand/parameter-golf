@@ -9,5 +9,19 @@
   "body": "Adds a non-record mirrored-recurrence submission under records/track_non_record_16mb/2026-03-19_MirrorRecurrence_MLX_M5Max_sp1024.\n\nSummary:\n- Apple Silicon MLX local run on M5 Max\n- 18 logical layers with 9 unique transformer blocks via mirrored recurrence\n- Intended as an interesting non-record experiment under the 16MB cap\n- Includes submission materials in the record folder\n\nThis PR only adds the new records folder for the submission.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/84",
-  "draft": false
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Specify the exact single training shard used**\n\nThis README says the run used the published `fineweb10B_sp1024` export with `1/195` train shards, but it never identifies which shard was kept or how `DATA_PATH` was prepared. The checked-in `train.log` shows the actual run only saw one shard (`train_shards:1/195`), so rerunning the documented command against a normal `fineweb10B_sp1024` export will train on all 195 shards and produce a materially different experiment. As written, the submission is not reproducible.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-19T13:52:11Z",
+      "updated_at": "2026-03-19T13:52:11Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Reject UNIQUE_LAYERS settings that leave blocks unused**\n\nThis schedule only uses every allocated block when `UNIQUE_LAYERS <= NUM_LAYERS // 2` or `UNIQUE_LAYERS == NUM_LAYERS`. For configurations that the constructor currently accepts in between those ranges\u2014for example `NUM_LAYERS=18, UNIQUE_LAYERS=12`\u2014`encoder_schedule` is still `0..8` and `decoder_schedule` becomes `8..0`, so `blocks[9:]` are dead parameters that never participate in the forward pass but still count toward the 16 MB budget. Either the schedule needs to cover all unique blocks or those settings should be rejected.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-19T13:52:11Z",
+      "updated_at": "2026-03-19T13:52:11Z"
+    }
+  ]
 }

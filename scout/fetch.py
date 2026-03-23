@@ -14,7 +14,6 @@ from config import (
     RAW_ISSUES_DIR,
     RAW_PRS_DIR,
     STATE_DIR,
-    MAX_PR_BODY_CHARS,
 )
 
 
@@ -65,9 +64,43 @@ def _save_state(state):
         json.dump(state, f, indent=2)
 
 
+def _fetch_comments(number, item_type="pr"):
+    """Fetch all comments for a PR or issue."""
+    if item_type == "pr":
+        # PR review comments + issue-style comments
+        urls = [
+            f"{GITHUB_API}/repos/{GITHUB_REPO}/pulls/{number}/comments",
+            f"{GITHUB_API}/repos/{GITHUB_REPO}/issues/{number}/comments",
+        ]
+    else:
+        urls = [f"{GITHUB_API}/repos/{GITHUB_REPO}/issues/{number}/comments"]
+
+    all_comments = []
+    for url in urls:
+        comments = _get_paginated(url, max_pages=5)
+        for c in comments:
+            all_comments.append({
+                "user": c["user"]["login"],
+                "body": c.get("body", ""),
+                "created_at": c["created_at"],
+                "updated_at": c.get("updated_at"),
+            })
+
+    # Deduplicate by body+user (PR can have overlap between endpoints)
+    seen = set()
+    deduped = []
+    for c in all_comments:
+        key = (c["user"], c["body"][:200])
+        if key not in seen:
+            seen.add(key)
+            deduped.append(c)
+
+    return deduped
+
+
 def _slim_pr(pr):
     """Extract the fields we care about from a raw PR object."""
-    body = (pr.get("body") or "")[:MAX_PR_BODY_CHARS]
+    body = pr.get("body") or ""
     return {
         "number": pr["number"],
         "title": pr["title"],
@@ -85,7 +118,7 @@ def _slim_pr(pr):
 
 def _slim_issue(issue):
     """Extract fields from a raw issue (excluding PRs which also show as issues)."""
-    body = (issue.get("body") or "")[:MAX_PR_BODY_CHARS]
+    body = issue.get("body") or ""
     return {
         "number": issue["number"],
         "title": issue["title"],
@@ -117,8 +150,12 @@ def fetch_prs(since=None):
 
     slim = [_slim_pr(p) for p in all_prs]
 
-    # Cache raw data
-    for pr in slim:
+    # Fetch comments and cache
+    print(f"  Fetching comments for {len(slim)} PRs...")
+    for i, pr in enumerate(slim):
+        if (i + 1) % 50 == 0:
+            print(f"    ...{i + 1}/{len(slim)} PRs")
+        pr["comments"] = _fetch_comments(pr["number"], item_type="pr")
         path = os.path.join(RAW_PRS_DIR, f"{pr['number']}.json")
         with open(path, "w") as f:
             json.dump(pr, f, indent=2)
@@ -146,7 +183,10 @@ def fetch_issues(since=None):
 
     slim = [_slim_issue(i) for i in all_issues]
 
+    # Fetch comments and cache
+    print(f"  Fetching comments for {len(slim)} issues...")
     for issue in slim:
+        issue["comments"] = _fetch_comments(issue["number"], item_type="issue")
         path = os.path.join(RAW_ISSUES_DIR, f"{issue['number']}.json")
         with open(path, "w") as f:
             json.dump(issue, f, indent=2)

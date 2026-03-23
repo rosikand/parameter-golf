@@ -9,5 +9,6 @@
   "body": "## Summary\n\n- val_bpb = 1.1520 (single seed, 8xH100 SXM, 15.1 MB artifact)\n- Built on #198, #180, #162, #164, #265, #254\n\nThree things are new:\n\n1. **Pre-Q/K RMSNorm** - extra rms_norm on attention input before Q and K projections only (V gets raw input). Stabilizes the RoPE-facing path under int5/int6.\n\n2. **Online causal TTT with decay prior** - full-weight SGD adaptation during eval with Krause-style decay (p += \u03bb(p\u2080 - p)) to prevent drift. Adapts MLP weights in last 3 blocks only, per TTT-E2E.\n\n3. **Reptile meta-learning (last 10%)** - K=1 inner step + Reptile interpolation to improve eval-time TTT adaptation.\n\nAlso uses XSA in last 3 layers (#265), int5-MLP/int6-attn (#180), BigramHash(10240) (#180), and the standard SOTA stack.\n\nSingle seed, posting as non-record to share the TTT+decay approach.\n\n| Seed | val_bpb (TTT+sliding) | Artifact |\n|------|-----------------------|----------|\n| 1337 | 1.1520 | 15.1 MB |",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/302",
-  "draft": false
+  "draft": false,
+  "comments": []
 }

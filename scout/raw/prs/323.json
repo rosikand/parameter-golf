@@ -9,5 +9,6 @@
   "body": "This is a non-record submission.\r\n\r\n## Summary\r\n\r\nThis submission introduces a minimal recurrent motif architecture that achieves improved compression under the 16MB constraint by emphasizing structural reuse over explicit depth.\r\n\r\nThe model uses a single shared block (`shared_block_size=1`) with limited recurrence (`recurrence_steps=2`) and soft gating (`recurrence_gate_init=0.18`). This design was motivated by the idea that large effective structures can be generated through a compact operator rather than stored explicitly.\r\n\r\n## Results\r\n\r\nFinal (roundtrip):\r\n- val_loss: 4.7062\r\n- val_bpb: 2.7873\r\n\r\nArtifact:\r\n- compressed size: ~1.92 MB\r\n- raw size: ~8.47 MB\r\n\r\nThis configuration outperformed larger motif variants in both compression and efficiency.\r\n\r\n## Approach\r\n\r\nThe architecture explores recurrence as a structural closure mechanism. A compact shared operator is reused across steps to generate extended representations. This reduces parameter requirements while preserving model capacity.\r\n\r\n## Notes\r\n\r\n- Validation timing on local hardware reflects evaluation chunking and logging cadence, but does not affect correctness of metrics.\r\n- The submission is fully self-contained and reproducible.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/323",
-  "draft": false
+  "draft": false,
+  "comments": []
 }
