@@ -27,11 +27,14 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fetch import fetch_all, fetch_diff
 from analyze import (
     analyze_all,
+    extract_pr_data,
     generate_briefing,
-    _load_json,
+    update_leaderboard,
+    update_techniques,
     update_history,
+    _load_json,
 )
-from config import STATE_DIR
+from config import STATE_DIR, RAW_PRS_DIR
 
 
 def main():
@@ -39,7 +42,42 @@ def main():
     parser.add_argument("--fetch-only", action="store_true", help="Only fetch data, skip analysis")
     parser.add_argument("--brief-only", action="store_true", help="Regenerate briefing from existing state")
     parser.add_argument("--diff", type=int, nargs="+", metavar="PR", help="Fetch diff for specific PR(s)")
+    parser.add_argument("--reprocess", action="store_true", help="Re-analyze PRs missing from leaderboard")
     args = parser.parse_args()
+
+    if args.reprocess:
+        print("=== Parameter Golf Scout (reprocess missing) ===\n")
+        import json
+        leaderboard = _load_json("leaderboard.json", default=[])
+        lb_numbers = {e["number"] for e in leaderboard}
+
+        # Find PRs in raw/ but not in leaderboard
+        raw_files = [f for f in os.listdir(RAW_PRS_DIR) if f.endswith(".json")]
+        missing = []
+        for f in raw_files:
+            pr_num = int(f.replace(".json", ""))
+            if pr_num not in lb_numbers:
+                with open(os.path.join(RAW_PRS_DIR, f)) as fh:
+                    missing.append(json.load(fh))
+
+        if not missing:
+            print("No missing PRs. Leaderboard is complete.")
+            return
+
+        print(f"Found {len(missing)} PRs missing from leaderboard. Re-extracting...")
+        pr_records = extract_pr_data(missing)
+        print(f"  Extracted {len(pr_records)} records")
+
+        leaderboard = update_leaderboard(pr_records)
+        techniques = update_techniques(pr_records)
+        issues = _load_json("issues.json", default=[])
+        history = update_history(leaderboard)
+
+        print("\nRegenerating briefing...")
+        generate_briefing(leaderboard, techniques, issues, history, len(pr_records), 0)
+
+        print(f"\nDone. {len(pr_records)} missing PRs added to leaderboard.")
+        return
 
     if args.diff:
         for pr_num in args.diff:

@@ -72,14 +72,13 @@
     "num_layers": 11,
     "techniques": [
       "Int6",
-      "LoRA",
       "TTT",
       "Depth-scaled residual"
     ],
-    "technique_details": "INT6 uniform quantization on all weight matrices with quant gap 0.012-0.014. Depth-scaled residuals (1/sqrt(layer+1)) for stability. Backward-looking per-document per-chunk LoRA TTT with multi-epoch adaptation passes; LoRA reset between documents; standard eval for docs <512 tokens. Fresh model copy used for TTT to avoid torch.compile graph caching issues.",
+    "technique_details": "INT6 uniform quantization on all weight matrices (quant gap 0.012\u20130.014). Depth-scaled residuals (1/sqrt(layer+1)) for stability. LoRA TTT is backward-looking, per-document, per-chunk with multi-epoch adaptation passes; LoRA reset between documents; fresh model copy used to avoid torch.compile caching. Short documents (<512 tokens) use standard eval.",
     "hardware_notes": "RunPod 8\u00d7H100 SXM, PyTorch 2.8.0+cu128",
     "status": "open",
-    "key_findings": "Achieves a striking mean val_bpb of 0.9968 via aggressive multi-epoch LoRA TTT, though per-seed TTT BPB variance is very high (0.9516\u20131.0854), suggesting instability in the TTT procedure. The sub-1.0 BPB claim warrants close scrutiny of TTT rule compliance."
+    "key_findings": "Claims sub-1.0 BPB with mean 0.9968 across 3 seeds using INT6 quantization and multi-epoch LoRA TTT, though a reviewer flagged the unusually high variance between seeds (0.9516\u20131.0854)."
   },
   {
     "number": 168,
@@ -245,6 +244,36 @@
     "key_findings": "Combines paid prefix (storing 10% of val tokens as compressed blob) with a strong 8L architecture to claim 1.0539 BPB, but was rejected by maintainers because using val tokens is not allowed \u2014 submissions must not have any access to validation data."
   },
   {
+    "number": 462,
+    "title": "Record: SwiGLU + XSA4 + U-Net + AdamW TTT (3-seed mean val_bpb=1.0672)",
+    "user": "JoeProAI",
+    "is_record_attempt": true,
+    "bpb_score": 1.06715285,
+    "bpb_is_mean": true,
+    "num_seeds": 3,
+    "validated": null,
+    "uses_ttt": true,
+    "num_layers": 11,
+    "techniques": [
+      "SwiGLU",
+      "XSA",
+      "U-Net",
+      "AdamW TTT",
+      "EMA",
+      "Partial RoPE",
+      "BigramHash",
+      "SmearGate",
+      "Late QAT",
+      "Int6",
+      "Zstd",
+      "Muon"
+    ],
+    "technique_details": "Novel SwiGLU FFN with Star-ReLU activation and U-Net skip connections with learned gating discovered via GEPA (Gemini-driven Evolutionary Parameter Architecture search). AdamW TTT (lr=0.0005, 10 epochs, wd=0.0) produces 0.053 BPB improvement vs 0.019 on standard architecture \u2014 attributed to smoother loss landscape from gated residual paths. EMA decay=0.9985, BigramHash 8192 buckets, warmdown 6000 steps.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "SwiGLU + U-Net skip connections create a loss landscape where AdamW TTT yields ~2.8x more improvement (0.053 BPB) than on the standard architecture stack (0.019 BPB), achieving a claimed 3-seed mean of 1.0672 \u2014 a very large jump from prior submissions. Architecture was discovered via AI-driven evolutionary search."
+  },
+  {
     "number": 490,
     "title": "Record: 11L Value Residual + Gated Attention + AdamW TTT (val_bpb=1.0891)",
     "user": "amaljithkuttamath",
@@ -266,6 +295,30 @@
     "hardware_notes": "8xH100 SXM, 600s; additional seeds pending compute credits",
     "status": "open",
     "key_findings": "First validation of Value Residual + Gated Attention combined with AdamW TTT achieves 1.0891 BPB (single seed, sliding window), claiming improvement over prior SOTA PR #442 (1.0992) and PR #481 (1.0959), though multi-seed confirmation is pending."
+  },
+  {
+    "number": 481,
+    "title": "Record: Cosine TTT scheduling with per-layer lr \u2014 mean val_bpb=1.0970 (3 seeds)",
+    "user": "mrdavtan",
+    "is_record_attempt": true,
+    "bpb_score": 1.097,
+    "bpb_is_mean": true,
+    "num_seeds": 3,
+    "validated": null,
+    "uses_ttt": true,
+    "num_layers": null,
+    "techniques": [
+      "AdamW TTT",
+      "cosine scheduling",
+      "sliding window eval",
+      "Partial RoPE",
+      "XSA",
+      "Muon"
+    ],
+    "technique_details": "Two TTT modifications over AdamW TTT baseline: (1) cosine lr decay over 30 epochs to handle large-scale quantization damage early then refine without overshooting; (2) per-layer lr groups based on quantization damage \u2014 MLP output projections receive 3x base lr, input projections 0.5x, rest 1x (based on observed 3.4x higher relative quantization error in output projections). 30 epochs at ~15.5s/epoch = ~465s TTT total. Uses FA2 rather than FA3.",
+    "hardware_notes": "Uses FA2 (Flash Attention 2) instead of FA3; notes FA3 Hopper would improve pre-TTT quality. Hardware: 8xH100 SXM via RunPod.",
+    "status": "open",
+    "key_findings": "Cosine lr scheduling and per-layer lr groups for AdamW TTT improve over flat-lr AdamW TTT, achieving 3-seed mean of 1.0970; per-layer lr assignment is guided by measured quantization damage per layer, with MLP output projections showing 3.4x higher relative error requiring higher TTT lr."
   },
   {
     "number": 442,
@@ -336,6 +389,115 @@
     "hardware_notes": "8xH100 SXM, 600s",
     "status": "open",
     "key_findings": "Three novel additions (TrigramHash, Value Residual, adaptive GradQuant) over an 11L EMA+AdamW TTT baseline yield -0.023 BPB improvement despite 22% fewer training steps due to compute overhead. Mean BPB of 1.1132 across 3 seeds with best seed achieving 1.1101."
+  },
+  {
+    "number": 509,
+    "title": "Non-record: Cosine TTT 30ep on SwiGLU + U-Net (1xH100, val_bpb=1.1175)",
+    "user": "andrewbaggio1",
+    "is_record_attempt": false,
+    "bpb_score": 1.1175,
+    "bpb_is_mean": false,
+    "num_seeds": 1,
+    "validated": false,
+    "uses_ttt": true,
+    "num_layers": 11,
+    "techniques": [
+      "TTT",
+      "SwiGLU",
+      "BigramHash",
+      "SmearGate",
+      "EMA",
+      "QAT",
+      "Partial RoPE",
+      "Int6 quantization",
+      "Zstd"
+    ],
+    "technique_details": "Single change from PR #462 baseline: TTT_EPOCHS increased from 10 to 30 with cosine LR decay. Architecture: 11L SwiGLU (hidden=1792), U-Net gated skips, BigramHash(8192), SmearGate, EMA(0.9985), Late QAT, Partial RoPE, LN Scale, Int6+zstd. Negative results noted for depth recurrence, MLP-only TTT, earlier QAT, mixed int5/int6 post-training.",
+    "hardware_notes": "1xH100 SXM (non-standard; competition standard is 8\u00d7H100); 8xH100 verification pending",
+    "status": "open",
+    "key_findings": "Shows 30-epoch cosine TTT improves val_bpb by 10.8% over 10-epoch on 1xH100, consistent with prior findings; needs 8xH100 verification and notes ~7 min eval budget for 30 TTT epochs at seq_len=2048."
+  },
+  {
+    "number": 505,
+    "title": "Record: SwiGLU+VE128+NoTTT val_bpb=1.1181 (3-seed mean)",
+    "user": "JoeProAI",
+    "is_record_attempt": true,
+    "bpb_score": 1.11807945,
+    "bpb_is_mean": true,
+    "num_seeds": 3,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": 11,
+    "techniques": [
+      "SwiGLU",
+      "XSA",
+      "Value Residual",
+      "BigramHash",
+      "EMA",
+      "Partial RoPE",
+      "QAT",
+      "GPTQ",
+      "Zstd"
+    ],
+    "technique_details": "11L SwiGLU FFN with Star-ReLU (hidden=1792), U-Net skip gates (5 encoder + 6 decoder with learned gating), XSA on last 4 layers, VE128 shared embedding with per-layer scales on layers 9-10, BigramHash(8192), EMA(0.997), Partial RoPE(16 dims), Late QAT@0.15, Int6+GPTQ-lite+zstd-22. Key ablation: seq_len=2048 vs 1024 gives \u22120.00862 BPB. No TTT.",
+    "hardware_notes": "~18 min/seed on 8xH100 SXM (Modal) \u2014 exceeds standard 10-min training budget",
+    "status": "open",
+    "key_findings": "Achieves 1.1181 mean BPB with no TTT, with seq_len=2048 identified as the largest single contributor (\u22120.00862 BPB vs seq_len=1024); training time of ~18 min/seed exceeds the standard 10-min competition budget."
+  },
+  {
+    "number": 398,
+    "title": "Non-record: 11L EMA + TTT(20ep,freeze=0) + 15-run ablation study \u2014 val_bpb=1.1213 (3-seed)",
+    "user": "felipe-parodi",
+    "is_record_attempt": false,
+    "bpb_score": 1.1213,
+    "bpb_is_mean": false,
+    "num_seeds": 3,
+    "validated": null,
+    "uses_ttt": true,
+    "num_layers": 11,
+    "techniques": [
+      "EMA",
+      "TTT",
+      "BigramHash",
+      "Partial RoPE",
+      "Muon",
+      "sliding window eval",
+      "Zstd"
+    ],
+    "technique_details": "EMA(0.997) weight averaging with aggressive TTT (20 epochs SGD, lr=0.008, all blocks unfrozen \u2014 TTT_FREEZE_BLOCKS=0). XSA removed to save ~1.4ms/step. Late QAT found counterproductive with aggressive TTT. 15-run ablation documents negative results for memory tokens, causal TTT, PPM-C blending, gradient-guided quant, aggressive warmdown.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Converted to non-record per TTT ruling (Issue #402); key finding is that TTT_FREEZE_BLOCKS=0 is essential for aggressive TTT as freezing early blocks creates internal inconsistency with 5x worse quantization gap. Extensive 15-run ablation documents frontier negative results."
+  },
+  {
+    "number": 508,
+    "title": "GPTQ + Early QAT + Legal TTT \u2014 3-seed mean val_bpb 1.1215",
+    "user": "newjordan",
+    "is_record_attempt": true,
+    "bpb_score": 1.1215,
+    "bpb_is_mean": true,
+    "num_seeds": 3,
+    "validated": null,
+    "uses_ttt": true,
+    "num_layers": 11,
+    "techniques": [
+      "GPTQ",
+      "QAT",
+      "TTT",
+      "EMA",
+      "XSA",
+      "BigramHash",
+      "Partial RoPE",
+      "SmearGate",
+      "Value Residual",
+      "SwiGLU",
+      "Int6 quantization",
+      "Zstd"
+    ],
+    "technique_details": "GPTQ with 256-sample Hessian calibration, per-row scale search, column reordering by ascending Hessian diagonal, block-128 quantization with Cholesky error compensation \u2014 reduces quant tax from 0.0082 to 0.0058 BPB. Early QAT with threshold 0.15\u21920.5 giving ~3x more QAT steps. Legal score-first TTT using EMA (decay=0.995) for eval weights, frozen embeddings, SGD+momentum 0.9, 3 epochs/chunk, cosine LR over 200-chunk window. 11L/512d/8H/4KV/3xMLP relu\u00b2.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Combines GPTQ quantization (reducing quant tax by 32%), extended QAT, and legal EMA-scored TTT into a stack achieving 1.1215 mean BPB; GPTQ is identified as the largest single contributor at \u22120.0027 BPB."
   },
   {
     "number": 415,
@@ -560,6 +722,28 @@
     "hardware_notes": null,
     "status": "open",
     "key_findings": "Introduces GPTQ-lite per-row optimal clipping percentile search at zero training cost (-0.0006 BPB) and EMA decay=0.997 combined with Tight SWA (-0.0006 BPB), achieving 3-seed mean of 1.1233 BPB with std=0.0005."
+  },
+  {
+    "number": 445,
+    "title": "Late Training Replay + EMA + GPTQ-lite (val_bpb=1.1236, 2-seed, no TTT on eval)",
+    "user": "newjordan",
+    "is_record_attempt": true,
+    "bpb_score": 1.1236,
+    "bpb_is_mean": true,
+    "num_seeds": 2,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": null,
+    "techniques": [
+      "Late Training Replay",
+      "EMA",
+      "Int6",
+      "Sliding Window Eval"
+    ],
+    "technique_details": "Late Training Replay: buffers last 100 training batches during warmdown, replays them for 2 epochs at 10% LR before EMA finalization \u2014 strictly training-data-only, no eval tokens seen. Explicitly compliant with issue #402 (no TTT on validation data). Seed 42 artifact exceeded 16MB due to compression variance; mean reported over seeds 1337+2024 only.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Introduces Late Training Replay as a TTT-compliant alternative: replaying recent training batches at reduced LR before EMA averaging effectively extends training without touching validation tokens. One of three seeds exceeded the 16MB artifact cap due to compression variance."
   },
   {
     "number": 374,
@@ -875,6 +1059,34 @@
     "key_findings": "Applying XSA to all 11 layers (not just last 3-4) yields ~0.006 BPB improvement over XSA on last 4 layers, with only 3ms/step overhead. GPTQ-lite clip percentile search is a near-free ~0.0006 BPB gain."
   },
   {
+    "number": 287,
+    "title": "Record: 11L XSA + EMA + Int6 MLP3x + WD=0.04 (val_bpb: 1.1271)",
+    "user": "jfprincz",
+    "is_record_attempt": true,
+    "bpb_score": 1.1271,
+    "bpb_is_mean": false,
+    "num_seeds": 3,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": 11,
+    "techniques": [
+      "XSA",
+      "EMA",
+      "Int6",
+      "MLP expansion",
+      "Zstd",
+      "SmearGate",
+      "BigramHash",
+      "OrthoInit",
+      "Muon",
+      "sliding window eval"
+    ],
+    "technique_details": "XSA on last 4 layers removes self-value bias via orthogonal projection with zero new parameters. EMA (decay=0.997) replaces SWA \u2014 exponential moving average every step for smoother weight averaging. Builds on PR #198's 11-layer stack with 3x MLP, int6 mixed quant + zstd-22, WD=0.04, SmearGate, BigramHash(2048), FA3, muP.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Introduces XSA and EMA (replacing SWA) on top of established 11-layer stack, achieving 1.1271 single-seed with 3-seed mean of 1.1280; EMA decay of 0.997 was tuned \u2014 0.999 averaged too slowly and hurt BPB."
+  },
+  {
     "number": 406,
     "title": "Non-record: 11L XSA4 + EMA + SDTTT (3-seed mean val_bpb=1.1287)",
     "user": "dentity007",
@@ -896,6 +1108,31 @@
     "hardware_notes": null,
     "status": "open",
     "key_findings": "Self-Distillation TTT combined with XSA and EMA achieves mean 1.1287 BPB (3-seed) on 11L architecture, a progression from 1.1575 baseline over 4 days. Notably slower per step than SOTA due to no FA3."
+  },
+  {
+    "number": 390,
+    "title": "Record: Sponge Bath \u2014 TTT 8ep eval-only improvement (val_bpb: 1.1295)",
+    "user": "newjordan",
+    "is_record_attempt": true,
+    "bpb_score": 1.1295,
+    "bpb_is_mean": false,
+    "num_seeds": 2,
+    "validated": false,
+    "uses_ttt": true,
+    "num_layers": 11,
+    "techniques": [
+      "TTT",
+      "SmearGate",
+      "BigramHash",
+      "Int6 quantization",
+      "QAT",
+      "Zstd",
+      "Muon optimizer"
+    ],
+    "technique_details": "Pure eval-time change on SOTA254 base: TTT epochs increased from 3 to 8, eval stride reduced from 64 to 32. No architecture or training changes. TTT adaptation costs ~115s, sliding window eval ~170s, total ~285s of 600s budget. Closed by author due to invalid TTT protocol (adapt-then-score on validation tokens constitutes information leakage per issue #402).",
+    "hardware_notes": null,
+    "status": "closed",
+    "key_findings": "Demonstrated eval-only gains from more TTT epochs (3\u21928) and finer stride (64\u219232), but was self-closed because the adapt-then-score pattern leaks validation information, violating competition rules per issue #402."
   },
   {
     "number": 400,
@@ -924,6 +1161,34 @@
     "hardware_notes": null,
     "status": "open",
     "key_findings": "CANON AC layers on last 5 blocks with a learned delta gate achieves 1.1296 BPB, a large improvement from 1.1668 in prior PR #312. The delta gate's near-identity initialization allows the model to gradually learn CANON pathway strength."
+  },
+  {
+    "number": 455,
+    "title": "Record: 11L Tight SWA + VE128 + XSA4 + TTT (3-seed mean val_bpb=1.1299)",
+    "user": "kasimte",
+    "is_record_attempt": true,
+    "bpb_score": 1.1299,
+    "bpb_is_mean": true,
+    "num_seeds": 3,
+    "validated": null,
+    "uses_ttt": true,
+    "num_layers": 11,
+    "techniques": [
+      "SWA",
+      "XSA",
+      "TTT",
+      "QAT",
+      "sliding window eval",
+      "Partial RoPE",
+      "SmearGate",
+      "BigramHash",
+      "GQA",
+      "Int6"
+    ],
+    "technique_details": "Tight SWA with 12 checkpoints from last ~600 steps (scale<0.2), TTT using 3 epochs SGD on val tokens (~51s), late QAT with STE int6 fake-quant during warmdown (scale<0.1), shared VE128, XSA on last 4 layers, sliding window eval stride=64 context=2048",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Combines Tight SWA + VE128 + XSA4 from PR #374 with test-time training to achieve 3-seed mean of 1.1299, claiming to beat prior record of 1.1428 by 0.0129 nats. All 3 seeds individually beat the prior SOTA."
   },
   {
     "number": 265,
@@ -1099,6 +1364,36 @@
     "key_findings": "Novel gradient-guided adaptive quantization uses per-tensor gradient sensitivity to allocate precision (int5/6/7), saving ~1MB to fund a 12th transformer layer while staying under 16MB, achieving 1.1320 mean BPB across 3 seeds."
   },
   {
+    "number": 489,
+    "title": "Record: 7L MLP3x + BigramHash + SmearGate + TTT 5ep (mean val_bpb=1.1327)",
+    "user": "sofiabod",
+    "is_record_attempt": true,
+    "bpb_score": 1.1327,
+    "bpb_is_mean": true,
+    "num_seeds": 3,
+    "validated": null,
+    "uses_ttt": true,
+    "num_layers": 7,
+    "techniques": [
+      "BigramHash",
+      "SmearGate",
+      "Partial RoPE",
+      "LN Scale Depth Damping",
+      "MLP 3x",
+      "AdamW TTT",
+      "Int8",
+      "Muon",
+      "Sliding Window Eval",
+      "Tied Embeddings",
+      "Logit Softcap",
+      "Warmdown"
+    ],
+    "technique_details": "AdamW TTT for 5 epochs on validation tokens (lr=0.0005, wd=0.0), DDP-synced. BigramHash(2048, dim=128) additive before RMSNorm. SmearGate per-dimension learned blending. Partial RoPE 16/64 dims. LN scale depth damping 1/sqrt(layer_idx+1). Muon optimizer with momentum 0.99, warmdown 6000 iters. Int8+zlib compression.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Achieves strong BPB with only 7 layers by combining AdamW TTT (5 epochs on validation data) with BigramHash and SmearGate; claims to beat prior SOTA 1.1428 by -0.010 BPB using a shallower architecture than competitors."
+  },
+  {
     "number": 369,
     "title": "Submission: 11L NTK-RoPE + FA3 + Batch524K + XSA4 + EMA (val_bpb=1.1328)",
     "user": "signalrush",
@@ -1161,6 +1456,49 @@
     "key_findings": "Comprehensive negative-findings submission documenting 25 experiments; key results show codebook quantization compresses worse than int6 under zstd, magnitude pruning increases artifact size, and multi-token prediction slightly hurts BPB, providing useful guidance for the community."
   },
   {
+    "number": 483,
+    "title": "Track 10min_16mb: PR #287 family rerun at 585s wallclock (mean val_bpb=1.1346)",
+    "user": "tmustier",
+    "is_record_attempt": false,
+    "bpb_score": 1.13457748,
+    "bpb_is_mean": true,
+    "num_seeds": 3,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": null,
+    "techniques": [
+      "XSA",
+      "EMA"
+    ],
+    "technique_details": "3-seed rerun of the PR #287 family (XSA 4-layer, EMA) with FA3 under a 585s wallclock cap to keep all seed artifacts within the 16MB limit. No novel techniques beyond the PR #287 baseline.",
+    "hardware_notes": "8\u00d7H100 SXM",
+    "status": "closed",
+    "key_findings": "Numerically strong rerun (mean 1.1346, p=0.0032 vs 1.1428 baseline) but closed by the author for lacking novelty beyond prior PR #287 family work."
+  },
+  {
+    "number": 466,
+    "title": "Record: 11L EMA + BigramHash(12288) + Mixed Int5 + FA3 (1.1354)",
+    "user": "simonbissonnette",
+    "is_record_attempt": true,
+    "bpb_score": 1.135366,
+    "bpb_is_mean": true,
+    "num_seeds": 3,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": 11,
+    "techniques": [
+      "EMA",
+      "BigramHash",
+      "Int5",
+      "Sliding Window Eval",
+      "FA3"
+    ],
+    "technique_details": "EMA decay 0.997, BigramHash(12288, dim=128) \u2014 larger than typical 10240 bucket size, mixed low-bit quantization with int5. Uses FA3 kernel fetched at runtime from kernels-community/flash-attn3 (disclosed). Stride-64 sliding window evaluation.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Pushes BigramHash vocabulary to 12288 buckets (up from common 10240), finding it fits within 16MB artifact budget while improving BPB. FA3 runtime kernel acquisition is explicitly disclosed as a potential compliance concern."
+  },
+  {
     "number": 290,
     "title": "Record: 11L + Partial XSA + TTT + BatchOpt (val_bpb=1.1354)",
     "user": "ibarrajo",
@@ -1185,6 +1523,34 @@
     "hardware_notes": "PyTorch SDPA fallback used instead of FA3 (FA3 not available in RunPod image); estimated ~600 additional steps possible with FA3",
     "status": "open",
     "key_findings": "Stacks Partial XSA (last 3 layers), eval-time TTT (SGD), and larger batch size on an 11-layer base, achieving 1.1354 BPB sliding window; single-seed only due to budget constraints, with FA3 expected to improve results further."
+  },
+  {
+    "number": 307,
+    "title": "Record: 11L XSA4 + EMA + Batch524K + zstd fallback (val_bpb: 1.1357)",
+    "user": "dennisimoo",
+    "is_record_attempt": true,
+    "bpb_score": 1.1357,
+    "bpb_is_mean": false,
+    "num_seeds": 1,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": 11,
+    "techniques": [
+      "XSA",
+      "EMA",
+      "Int6",
+      "Zstd",
+      "BigramHash",
+      "MLP 3x",
+      "Partial RoPE",
+      "Muon",
+      "Sliding Window Eval",
+      "GQA"
+    ],
+    "technique_details": "XSA on last 4 layers, EMA decay 0.997, batch size 524288 tokens. SDPA fallback for flash_attn_interface when FA3 bindings unavailable. torch.compile behind env flag. zstd Python-or-CLI fallback for portability. BigramHash(2048, dim=128). GQA 8 heads / 4 KV heads. Pre-quant BPB 1.1529, int6 roundtrip 1.1580, sliding window s64 1.1357.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Demonstrates that batch size 524288 tokens is a better fixed-budget choice for 11L+XSA+EMA than larger batch sizes, while adding robust FA3/zstd fallbacks for portability. Single-seed result below then-current merged SOTA of 1.1428."
   },
   {
     "number": 372,
@@ -1884,6 +2250,32 @@
     "key_findings": "Extends the 10L Int5 MLP pipeline with larger BigramHash (12288) and tighter eval stride (32 vs 64), achieving 1.1444 BPB. Copilot flagged a discrepancy between README claiming SWA every 25 steps and code defaulting to 50 steps."
   },
   {
+    "number": 461,
+    "title": "Non-record: 11L Depth Recurrence + High-Yield Legal TTT (1.14458 BPB)",
+    "user": "Christopher-Lee-McClendon",
+    "is_record_attempt": false,
+    "bpb_score": 1.14458,
+    "bpb_is_mean": false,
+    "num_seeds": 1,
+    "validated": false,
+    "uses_ttt": true,
+    "num_layers": 11,
+    "techniques": [
+      "TTT",
+      "Partial RoPE",
+      "XSA",
+      "BigramHash",
+      "SmearGate",
+      "Value Residual",
+      "Int6 quantization",
+      "Zstd"
+    ],
+    "technique_details": "Depth recurrence: 11 logical layers from 10 unique BlockCores (one core reused at two depths with independent LN). Legal score-first TTT: score chunk in inference_mode, then train with SGD+momentum(0.9) for 3 epochs per 32K chunk while freezing first 2 blocks. LN depth scaling 1/sqrt(layer+1). Value embeddings 128d on layers 9-10. Partial RoPE 16/64 dims with NTK scaling. Trained on 4\u00d7A100-40GB (non-standard).",
+    "hardware_notes": "4\u00d7A100-40GB (non-standard; competition standard is 8\u00d7H100)",
+    "status": "open",
+    "key_findings": "Demonstrates that selective-freeze SGD TTT (3 epochs/chunk, freeze early blocks) yields 2.4\u00d7 more BPB improvement (\u22120.0165) than single-epoch AdamW TTT (\u22120.0068); depth recurrence provides 11-layer capacity at 10-layer parameter cost."
+  },
+  {
     "number": 306,
     "title": "Non-record: QAT Int5/Int6 on #1 architecture (1.14476 BPB)",
     "user": "xuafeng",
@@ -2015,6 +2407,28 @@
     "hardware_notes": null,
     "status": "open",
     "key_findings": "Combining Int5 MLP quantization with full-model SGD TTT yields 1.1455 BPB on a single seed; the int5/TTT combination is novel and the eval pipeline (TTT 422s + sliding eval 273s) fits within the 10-min eval budget."
+  },
+  {
+    "number": 480,
+    "title": "Non-record: MoE exploration + multi-bit quantization analysis",
+    "user": "imyesung",
+    "is_record_attempt": false,
+    "bpb_score": 1.1456,
+    "bpb_is_mean": false,
+    "num_seeds": 1,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": null,
+    "techniques": [
+      "MoE",
+      "Int4",
+      "Int5",
+      "Int6"
+    ],
+    "technique_details": "2-expert soft-routing MoE (2\u00d71.5x MLP) compared against dense control; MoE run terminated at step 2000 due to pod failure (preliminary). Multi-bit quantization sweep on dense control: int6/int6 baseline 1.1456, int6/int5 +0.0068, int6/int4 +0.0655, int5/int5 +0.0103, int5/int4 +0.0727 BPB. Dense control reached 1.1456 BPB.",
+    "hardware_notes": "RunPod pod \u2014 run terminated early at step 2000",
+    "status": "open",
+    "key_findings": "Provides quantification evidence that aggressive MLP quantization below int5 is costly at this scale (int4 costs +0.0655 BPB), and presents preliminary (incomplete) evidence that soft-routing MoE underperforms dense at equivalent parameter budget."
   },
   {
     "number": 162,
@@ -2163,6 +2577,31 @@
     "hardware_notes": "8xH100 SXM",
     "status": "open",
     "key_findings": "Extends the XSA+EMA pipeline with uniform int5 quantization across all weight types and magnitude pruning, reducing artifact size to 14.8MB. However, the 1.1466 BPB score is notably worse than the current frontier (~1.1231-1.1247), and a comment from ElliotSlusky notes this is not a record."
+  },
+  {
+    "number": 450,
+    "title": "Record: 12L + Catalytic Residuals + BigramHash(10240) + SWA + Late QAT (val_bpb=1.1466, mean 3 seeds)",
+    "user": "zachgoldfine44",
+    "is_record_attempt": true,
+    "bpb_score": 1.14662,
+    "bpb_is_mean": true,
+    "num_seeds": 3,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": 12,
+    "techniques": [
+      "Catalytic Residuals",
+      "BigramHash",
+      "SWA",
+      "QAT",
+      "Int6",
+      "Zstd",
+      "Sliding Window Eval"
+    ],
+    "technique_details": "Novel catalytic residual connections replace x+f(x) with x+c*f(x) where c is a learned per-dimension vector (~11K extra params, -0.024 BPB). BigramHash(10240). Late QAT with STE int6 quantization at threshold=0.25. SWA from last 20% of warmdown. 12 layers identified as depth sweet spot (-0.023 BPB vs 11L).",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Introduces catalytic residual connections (learned per-dimension scale on residual branch) for near-zero parameter cost with meaningful BPB reduction. 12-layer depth found to outperform 11-layer despite tighter parameter budget."
   },
   {
     "number": 179,
@@ -2391,6 +2830,27 @@
     "hardware_notes": null,
     "status": "open",
     "key_findings": "Two small hyperparameter tweaks (SWA_START_FRAC=0.4, WD=0.04) reduce the quantization gap and yield mean BPB 1.1488 with notably tight std=0.0006 across 3 seeds, compared to SOTA's std=0.0024."
+  },
+  {
+    "number": 459,
+    "title": "Weight Entropy Regularization: Improved SWA Averaging (+0.028 BPB)",
+    "user": "mer2234",
+    "is_record_attempt": false,
+    "bpb_score": 1.149,
+    "bpb_is_mean": false,
+    "num_seeds": null,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": null,
+    "techniques": [
+      "SWA",
+      "weight entropy regularization",
+      "QAT"
+    ],
+    "technique_details": "Adds weight entropy regularization loss term (loss += \u03bb * weight_entropy) computed via torch.histc over all weight tensors every step; zero effect during normal training but improves SWA averaging by 0.028 BPB; ~12% training overhead. Run incomplete \u2014 interrupted at step 8500.",
+    "hardware_notes": "Run on 1xH100 with 20 shards; seeking 8xH100 for full run",
+    "status": "open",
+    "key_findings": "Weight entropy regularization has no impact during normal training but significantly improves SWA checkpoint averaging, with a growing gap of 0.028 BPB at step 8500; mechanism is that entropy-regularized weights are more consistent across checkpoints. Run incomplete and not yet at SOTA."
   },
   {
     "number": 364,
@@ -2624,6 +3084,66 @@
     "hardware_notes": null,
     "status": "closed",
     "key_findings": "Introduces a corpus-statistics-initialized bigram logit head as a strong Markov prior from step 0, allowing the neural network to only refine beyond bigram predictions; int4 nibble packing halves the table's storage cost."
+  },
+  {
+    "number": 482,
+    "title": "Record: 10L CountInitBigram + XSA + PartialRoPE (val_bpb=1.1522)",
+    "user": "harsha-gouru",
+    "is_record_attempt": true,
+    "bpb_score": 1.1522,
+    "bpb_is_mean": false,
+    "num_seeds": 1,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": 10,
+    "techniques": [
+      "XSA",
+      "Partial RoPE",
+      "SmearGate",
+      "SWA",
+      "Int5 quantization",
+      "Int6 quantization",
+      "Zstd",
+      "QAT",
+      "OrthoInit"
+    ],
+    "technique_details": "Count-initialized exact bigram logit head (1024x1024 LUT from corpus bigram transition probabilities, B[a,b]=log p(b|a)-log p(b)), applied before logit softcap. Int4 nibble packing halves bigram table storage to ~524KB. XSA on last 4 layers, Partial RoPE 16/64 dims, LN scale 1/sqrt(layer+1), higher LR 0.025, U-Net skips. Reproducibility issue flagged by Copilot: BIGRAM_LOGIT_HEAD defaults to 0 but submission claims it active by default.",
+    "hardware_notes": null,
+    "status": "closed",
+    "key_findings": "Introduces a count-initialized bigram logit head providing a strong Markov prior from step 0, combined with Int4 nibble packing for compact storage; reproducibility concerns raised by automated review regarding default hyperparameter not matching documented run command."
+  },
+  {
+    "number": 485,
+    "title": "Record: 10L CountInitBigram + XSA + PartialRoPE (val_bpb=1.1522)",
+    "user": "harsha-gouru",
+    "is_record_attempt": true,
+    "bpb_score": 1.1522,
+    "bpb_is_mean": false,
+    "num_seeds": 1,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": 10,
+    "techniques": [
+      "CountInitBigram",
+      "Int4",
+      "XSA",
+      "Partial RoPE",
+      "LN Scale Depth Damping",
+      "SmearGate",
+      "OrthoInit",
+      "U-Net Skips",
+      "SWA",
+      "Int5",
+      "Int6",
+      "Zstd",
+      "GQA",
+      "Tied Embeddings",
+      "MLP 3x"
+    ],
+    "technique_details": "Novel count-initialized exact bigram logit head: 1024x1024 lookup table initialized from corpus bigram transition probabilities, Int4 nibble-packed (524KB). XSA on last 4 layers. Partial RoPE 16/64 dims. LN scale 1/sqrt(layer+1). Leaky ReLU squared activation (negative_slope=0.5). Post-SWA int5/int6+zstd-22 quantization.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Introduces a count-initialized bigram logit head using corpus transition probabilities as a strong Markov prior from step 0, stored as an Int4 nibble-packed 1024x1024 table. Reproducibility concerns noted: BIGRAM_LOGIT_HEAD defaults to disabled and warmdown iters mismatch between README and code."
   },
   {
     "number": 164,
@@ -2917,6 +3437,37 @@
     "hardware_notes": null,
     "status": "open",
     "key_findings": "Weight analysis reveals Q projection matrices operate in a low-dimensional subspace (extreme condition numbers), enabling r=192 low-rank factorization that cuts step time 22% and fits 2 extra layers in budget; K, V, O matrices are full-rank and do not benefit from the same treatment."
+  },
+  {
+    "number": 507,
+    "title": "Record: 1.1558 BPB \u2014 11L U-Net + Catalytic + SwiGLU + SW64",
+    "user": "skarakulak",
+    "is_record_attempt": true,
+    "bpb_score": 1.1558,
+    "bpb_is_mean": false,
+    "num_seeds": 1,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": 11,
+    "techniques": [
+      "U-Net",
+      "SwiGLU",
+      "MLP expansion",
+      "Value Residual",
+      "XSA",
+      "Gated Attention",
+      "EMA",
+      "Partial RoPE",
+      "BigramHash",
+      "Int6",
+      "Zstd",
+      "sliding window eval",
+      "Muon"
+    ],
+    "technique_details": "Gated U-Net skip connections (sigmoid-gated encoder\u2192decoder blending), catalytic residuals (learned per-dim gates on attn/MLP outputs init=1.0), SwiGLU with 3x expansion, value residual blending first-layer V into all subsequent layers, LN scale dampening 1/sqrt(layer_idx+1), decoder LR multiplier 2x for Muon and Adam, Int5/Int6 mixed quantization + zstd-22, BigramHash 4096 buckets, partial RoPE 25%, XSA last 4 layers, EMA decay=0.9985.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Combines U-Net skip connections, catalytic residuals, SwiGLU, and value residual in a single 11-layer model achieving 1.1558 BPB; uses Int5/Int6 mixed quantization and a decoder LR multiplier to boost the U-Net decoder pathway."
   },
   {
     "number": 333,
@@ -4018,6 +4569,35 @@
     "key_findings": "Combines architectural improvements (Int6, 3x MLP, SmearGate, BigramHash, SWA) with TTT in a single submission, claiming this orthogonal stacking is novel; ultimately superseded by the submitter's own PR #254 with 1.1303 BPB."
   },
   {
+    "number": 474,
+    "title": "Non-record: 6-Technique Stack \u2014 Catalytic Residuals + Value Residual + Gated Attention + BigramHash(10240) + 12L (val_bpb=1.1690)",
+    "user": "joshuaswarren",
+    "is_record_attempt": false,
+    "bpb_score": 1.169,
+    "bpb_is_mean": false,
+    "num_seeds": null,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": 12,
+    "techniques": [
+      "Value Residual",
+      "Gated Attention",
+      "BigramHash",
+      "MLP expansion",
+      "SWA",
+      "Late QAT",
+      "Int6",
+      "Zstd",
+      "OrthoInit",
+      "Muon",
+      "sliding window eval"
+    ],
+    "technique_details": "First submission stacking catalytic residuals, value residual (ResFormer), gated attention, BigramHash(10240 buckets), 12 layers, and 3x MLP together. Also includes OrthoInit, logit softcap 30.0, Muon WD=0.04, SWA (last 20%), Late QAT (threshold 0.25). Individual technique impacts documented from ablations.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "First submission combining catalytic residuals, value residual, and gated attention together on a 12-layer model; BigramHash scaling to 10240 buckets alone claimed -0.070 BPB vs 2048 buckets. Whole-stack result of 1.1690 is above current SOTA, suggesting not all techniques compose cleanly."
+  },
+  {
     "number": 299,
     "title": "[Non-record] LoRA TTT + HParams (val_bpb=1.16973333)",
     "user": "Mistobaan",
@@ -4231,6 +4811,35 @@
     "key_findings": "Novel WWW architecture using ternary MLP weights with VQ compression at ~1 bit/param achieves val_bpb=1.1719 across 12 layers."
   },
   {
+    "number": 487,
+    "title": "Non-record: Value Residual (-0.015 BPB) + Gated Attention (-0.003 BPB) on 11L Production Stack",
+    "user": "anantdgoel",
+    "is_record_attempt": false,
+    "bpb_score": 1.172,
+    "bpb_is_mean": false,
+    "num_seeds": 1,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": 11,
+    "techniques": [
+      "Value Residual",
+      "Gated Attention",
+      "MLP 3x",
+      "SmearGate",
+      "BigramHash",
+      "OrthoInit",
+      "XSA",
+      "EMA",
+      "Partial RoPE",
+      "LN Scale Depth Damping",
+      "Logit Softcap"
+    ],
+    "technique_details": "Value Residual (ResFormer arXiv:2410.17897): caches layer-0 V vectors, mixes into subsequent layers via learnable scalars (-0.015 BPB, 22 params). Gated Attention (arXiv:2505.06708): per-head sigmoid gate after SDPA, eliminates attention sinks (-0.003 BPB, ~37K params). Techniques stack additively (-0.0172 combined), validated via controlled 9L ablation. Artifact exceeds 16MB (19.4MB) due to single-GPU exploratory run.",
+    "hardware_notes": "1xA6000, 9500 steps, 14.5hr \u2014 non-standard hardware, artifact 19.4MB exceeds 16MB limit",
+    "status": "open",
+    "key_findings": "Provides clean ablation evidence for Value Residual (+ResFormer) and Gated Attention as independently beneficial and additively stackable techniques, both subsequently adopted by multiple community submissions including a reported 1.1101 BPB record-tier entry."
+  },
+  {
     "number": 329,
     "title": "Add lzma6 submission (1.172 bpb, 10min_16mb)",
     "user": "lee101",
@@ -4362,6 +4971,29 @@
     "hardware_notes": null,
     "status": "open",
     "key_findings": "Extending warmdown from 2500 to 20000 iterations on the 10L FP16-embed baseline yields post-roundtrip BPB of 1.1739, a modest improvement, with artifact size 14.1MB well under the 16MB limit."
+  },
+  {
+    "number": 484,
+    "title": "Non-record: SwiGLU + EMA + AdamW TTT + EBLS Findings (val_bpb=1.1746 on H100 NVL)",
+    "user": "Robby955",
+    "is_record_attempt": false,
+    "bpb_score": 1.1746,
+    "bpb_is_mean": false,
+    "num_seeds": 1,
+    "validated": false,
+    "uses_ttt": true,
+    "num_layers": null,
+    "techniques": [
+      "SwiGLU",
+      "EMA",
+      "TTT",
+      "Int5 quantization",
+      "Int6 quantization"
+    ],
+    "technique_details": "SwiGLU MLP (swiglu_mult=2.0, iso-parametric to mlp_mult=3.0), EMA (decay=0.9985) replacing SWA, eval-time AdamW TTT on MLP weights (10 steps/window, weights restored after), mixed int5/int6 with 5% magnitude pruning. EBLS exploration: 3 shared blocks x 3 virtual layers with per-layer LoRA deviations gated by learned shrinkage gammas \u2014 finds MLP gammas collapse to 0 (fully shared) while attention retains trace specialization. Hardware is 8xH100 NVL (slower than SXM); estimated ~1.15 BPB on SXM.",
+    "hardware_notes": "8xH100 NVL (170ms/step vs ~91ms/step on SXM); estimated 1.15 BPB if run on SXM",
+    "status": "open",
+    "key_findings": "EBLS exploration reveals MLP weights are more layer-invariant than attention (gammas collapse to 0 for MLP, persist for attention), and depth-recurrent architectures show 0.19 BPB gap between torch.compile and eager mode due to quantization error amplification through shared weights."
   },
   {
     "number": 60,
@@ -6004,6 +6636,27 @@
     "key_findings": "Duplicate of PR #395, closed in favor of resubmission. Explores 6-layer architecture with faster training steps to compensate for reduced depth under fixed wallclock budget."
   },
   {
+    "number": 506,
+    "title": "Non-record: 2026-03-22_SuperchunkBPE_SP1024",
+    "user": "eshansinghal14",
+    "is_record_attempt": false,
+    "bpb_score": 1.23893525,
+    "bpb_is_mean": false,
+    "num_seeds": 1,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": null,
+    "techniques": [
+      "Superchunk BPE",
+      "Int8",
+      "Zlib"
+    ],
+    "technique_details": "Superchunk BPE: two-phase tokenization where phase-1 learns intra-chunk merges (standard BPE), phase-2 learns cross-chunk merges on sequences of phase-1 tokens, then interleaves both by frequency into one merge table. Vocab size 1024. Rust BPE implementation. Int8+zlib post-training quantization. Pre-quant val_bpb 1.2294 vs post-quant 1.2389.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Exploratory test of superchunk BPE tokenization (cross-chunk merge learning) against stock 1024-vocab recipe; achieves 1.2389 post-quant BPB, significantly above current SOTA, suggesting cross-chunk merges do not provide meaningful gains over standard BPE at this vocabulary size."
+  },
+  {
     "number": 441,
     "title": "Add BigramHash: hashed bigram embeddings with optional dim projection",
     "user": "CrimsonSithria",
@@ -6553,6 +7206,29 @@
     "key_findings": "FP16 embedding passthrough during int8 export improved BPB from 1.32172 to 1.32078 on 1xH200, outperforming more complex objective-side changes like multi-token prediction variants."
   },
   {
+    "number": 488,
+    "title": "Record: 11L Int6 QAT + Warmdown (val_bpb=1.3267, 1xH100)",
+    "user": "pkim02",
+    "is_record_attempt": true,
+    "bpb_score": 1.3267,
+    "bpb_is_mean": false,
+    "num_seeds": 1,
+    "validated": false,
+    "uses_ttt": false,
+    "num_layers": 11,
+    "techniques": [
+      "Int6 quantization",
+      "QAT",
+      "Zstd",
+      "SWA",
+      "Muon optimizer"
+    ],
+    "technique_details": "Int6 grouped quantization (group_rows=8). QAT with STE fake-quantization in last 15% of wallclock. Wallclock-fraction warmdown (last 15%) fixing buggy iter-based formula. SWA with 7 checkpoints during warmdown guarded against premature collection. Sliding window eval stride=64. Muon WD=0.04, momentum warmup 0.92\u21920.99. 6-variant ablation study on 1xH100.",
+    "hardware_notes": "1xH100 (non-standard; competition standard is 8\u00d7H100); 8xH100 verification pending",
+    "status": "open",
+    "key_findings": "Systematic 6-variant ablation shows wallclock-fraction warmdown + SWA is the dominant improvement (1.3761\u21921.3267), outperforming BigramHash+SmearGate and mixed Int5/Int6 additions; fixes a wallclock warmdown bug from prior iter-based approach."
+  },
+  {
     "number": 292,
     "title": "Add baseline H100 training report and process docs",
     "user": "xuafeng",
@@ -7081,6 +7757,27 @@
     "hardware_notes": "1xH100 (non-standard)",
     "status": "open",
     "key_findings": "Negative result showing that aggressive int6 export policies on short 1xH100 runs preserve size but create a large quantization gap (val_bpb=1.5248), useful for pruning dead-end search directions before expensive 8x attempts."
+  },
+  {
+    "number": 504,
+    "title": "Non-record: TrigramHash \u2014 iso-parametric bigram(96)+trigram(32), val_bpb=1.5275 (1xH100)",
+    "user": "fleeb83",
+    "is_record_attempt": false,
+    "bpb_score": 1.5275,
+    "bpb_is_mean": false,
+    "num_seeds": 1,
+    "validated": false,
+    "uses_ttt": false,
+    "num_layers": null,
+    "techniques": [
+      "TrigramHash",
+      "BigramHash",
+      "Zstd"
+    ],
+    "technique_details": "Iso-parametric split of BigramHash(10240, dim=128) into BigramHash(10240, dim=96) + TrigramHash(10240, dim=32) with identical total params. Hash function uses three prime multipliers (36313, 27191, 18731) for orthogonal bit patterns per token position. Tested on 1xH100 with ~8x fewer steps than standard run.",
+    "hardware_notes": "1xH100 (non-standard; competition standard is 8xH100)",
+    "status": "open",
+    "key_findings": "Explores whether 3-token co-occurrence (TrigramHash) adds signal beyond BigramHash in an iso-parametric budget split; result of 1.5275 is not directly comparable to SOTA due to reduced compute on 1xH100."
   },
   {
     "number": 54,
@@ -10587,21 +11284,96 @@
     "is_record_attempt": false,
     "bpb_score": null,
     "bpb_is_mean": null,
-    "num_seeds": null,
+    "num_seeds": 3,
     "validated": null,
     "uses_ttt": true,
     "num_layers": 10,
     "techniques": [
-      "TrigramHash",
-      "BigramHash",
+      "SwiGLU",
+      "Value Residual",
+      "Gated Attention",
       "XSA",
+      "EMA",
       "TTT",
-      "Int5",
-      "SWA"
+      "BigramHash",
+      "SWA",
+      "Zstd",
+      "Muon",
+      "SmearGate",
+      "Partial RoPE"
     ],
-    "technique_details": "TrigramHash(20480, dim=32) added alongside BigramHash reduced from 10240 to 4096 buckets. XSA applied to last 4 layers via orthogonal projection. TTT uses 3-epoch SGD (lr=0.002, momentum=0.9) with bottom 6 layers frozen, weights restored post-eval (~47s budget). QAT was evaluated and dropped as negative result.",
+    "technique_details": "SwiGLU replaces ReLU\u00b2 with 2/3 hidden scaling (hidden=938). Value Residual adds learned scalar lambda_v from raw token embedding. Gated Attention uses per-layer scalar gate init=1. XSA applied to last 4 layers. EMA decay=0.9999 updated every 10 steps. AdamW TTT with 3 epochs over validation tokens, bottom 6 layers frozen, original weights restored after eval. U-Net skips, OrthoInit, GQA (8H/4KV), sliding window eval stride=64, zstd-22.",
+    "hardware_notes": "1xH100 smoke run confirmed; awaiting 8xH100 compute credits",
+    "status": "open",
+    "key_findings": "Stacks multiple complementary techniques (Value Residual, Gated Attention, XSA, EMA, AdamW TTT) on top of a strong 10-layer base; all ablation BPB scores are still pending the full 8xH100 run."
+  },
+  {
+    "number": 479,
+    "title": "Record: 10L QAT + SwiGLU + BigramHash(10240) (val_bpb=TBD)",
+    "user": "chirag-bajaj",
+    "is_record_attempt": true,
+    "bpb_score": null,
+    "bpb_is_mean": null,
+    "num_seeds": null,
+    "validated": null,
+    "uses_ttt": false,
+    "num_layers": 10,
+    "techniques": [
+      "QAT",
+      "SwiGLU",
+      "BigramHash",
+      "Int5",
+      "Int6",
+      "Zstd",
+      "SmearGate",
+      "SWA",
+      "OrthoInit",
+      "GQA"
+    ],
+    "technique_details": "STE-based QAT during training with int5 clip for MLP, int6 clip for attention to eliminate quantization gap. SwiGLU replaces ReLU\u00b2, parameter-matched to 2/3 \u00d7 mlp_mult \u00d7 model_dim. BigramHash(10240). SmearGate. SWA start_frac=0.4. OrthoInit + muP-scaled projections. Pending 3-seed validation on 8xH100.",
     "hardware_notes": null,
     "status": "open",
-    "key_findings": "Draft submission combining TrigramHash with XSA and TTT on top of thwu1's SOTA stack; validation is pending and no BPB score is reported yet. Notable for its explicit negative result on QAT and the budget-constrained trade-off between bigram and trigram embedding table sizes."
+    "key_findings": "Combines QAT (eliminating quantization gap at inference) with SwiGLU activation on a 10-layer stack; BPB score not yet available as 3-seed validation was still pending at submission time."
+  },
+  {
+    "number": 514,
+    "title": "[Non-record] ParGolf-Zero v2 \u2014 6-layer joint optimization + BigramHash + SWA + zstd",
+    "user": "sanjith3057",
+    "is_record_attempt": false,
+    "bpb_score": null,
+    "bpb_is_mean": null,
+    "num_seeds": null,
+    "validated": null,
+    "uses_ttt": true,
+    "num_layers": 6,
+    "techniques": [
+      "BigramHash",
+      "SWA",
+      "Zstd",
+      "TTT",
+      "Int8",
+      "QAT"
+    ],
+    "technique_details": "Joint compression-aware training with per-row weight range penalty to minimize Int8 quantization error during every gradient step. BigramHash(10240), SWA, zstd-22, TTT combined. Tested on Kaggle T4; awaiting H100 for scored run.",
+    "hardware_notes": "Confirmed on Kaggle T4; awaiting H100 compute grant for final scored run",
+    "status": "open",
+    "key_findings": "Proposes joint compression-aware training where quantization error is minimized during gradient steps rather than post-hoc. No final BPB score yet as H100 compute is pending."
+  },
+  {
+    "number": 513,
+    "title": "[WIP] Cross-Layer Reciprocal Basis Sharing (CRBS)",
+    "user": "Musabnouman",
+    "is_record_attempt": false,
+    "bpb_score": null,
+    "bpb_is_mean": null,
+    "num_seeds": null,
+    "validated": null,
+    "uses_ttt": null,
+    "num_layers": null,
+    "techniques": [],
+    "technique_details": "Documentation-only WIP PR describing Cross-Layer Reciprocal Basis Sharing (CRBS) concept including core ideas, compression strategy, and expected gains. No implementation or results provided.",
+    "hardware_notes": null,
+    "status": "open",
+    "key_findings": "Draft documentation submission introducing CRBS, a proposed cross-layer weight sharing/compression concept; no code or empirical results are included."
   }
 ]

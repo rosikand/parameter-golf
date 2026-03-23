@@ -1,0 +1,14 @@
+{
+  "number": 513,
+  "title": " [WIP] Cross-Layer Reciprocal Basis Sharing (CRBS)",
+  "state": "open",
+  "user": "Musabnouman",
+  "created_at": "2026-03-23T08:19:09Z",
+  "updated_at": "2026-03-23T08:19:09Z",
+  "merged_at": null,
+  "body": "Added documentation for Cross-Layer Reciprocal Basis Sharing (CRBS) including core ideas, techniques, compression strategy, and expected gains.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/513",
+  "draft": true,
+  "comments": []
+}

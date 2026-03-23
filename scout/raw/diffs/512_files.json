@@ -1,0 +1,38 @@
+[
+  {
+    "filename": "records/track_10min_16mb/2026-03-23_PROTEUS_v7/README.md",
+    "status": "added",
+    "additions": 106,
+    "deletions": 0
+  },
+  {
+    "filename": "records/track_10min_16mb/2026-03-23_PROTEUS_v7/submission.json",
+    "status": "added",
+    "additions": 18,
+    "deletions": 0
+  },
+  {
+    "filename": "records/track_10min_16mb/2026-03-23_PROTEUS_v7/train_gpt.py",
+    "status": "added",
+    "additions": 1493,
+    "deletions": 0
+  },
+  {
+    "filename": "records/track_10min_16mb/2026-03-23_PROTEUS_v7/train_seed1337.log",
+    "status": "added",
+    "additions": 351,
+    "deletions": 0
+  },
+  {
+    "filename": "records/track_10min_16mb/2026-03-23_PROTEUS_v7/train_seed2024.log",
+    "status": "added",
+    "additions": 353,
+    "deletions": 0
+  },
+  {
+    "filename": "records/track_10min_16mb/2026-03-23_PROTEUS_v7/train_seed42.log",
+    "status": "added",
+    "additions": 346,
+    "deletions": 0
+  }
+]

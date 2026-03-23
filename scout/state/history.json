@@ -1,8 +1,8 @@
 [
   {
     "date": "2026-03-23",
-    "total_submissions": 461,
-    "submissions_with_score": 329,
+    "total_submissions": 491,
+    "submissions_with_score": 356,
     "best_bpb": 0.5,
     "top10": [
       {
@@ -38,7 +38,6 @@
         "bpb": 0.9968,
         "techniques": [
           "Int6",
-          "LoRA",
           "TTT",
           "Depth-scaled residual"
         ]
