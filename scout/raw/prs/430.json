@@ -1,10 +1,10 @@
 {
   "number": 430,
-  "title": "TrigramHash + XSA + TTT on thwu1 SOTA stack - val_bpb pending H100",
+  "title": "Value Residual + Gated Attention + XSA + EMA + AdamW TTT \u2014 val_bpb pending H100",
   "state": "open",
   "user": "sahiee-dev",
   "created_at": "2026-03-22T15:12:45Z",
-  "updated_at": "2026-03-23T03:01:51Z",
+  "updated_at": "2026-03-23T05:55:32Z",
   "merged_at": null,
   "body": "## TrigramHash + XSA + TTT on thwu1 SOTA stack\r\n\r\n**Base:** 10L Int5 MLP + BigramHash(10240) + SWA(0.4) + WD=0.04 by thwu1 \u2014> 1.1428 val_bpb\r\n\r\n### Novel additions\r\n\r\n**TrigramHash(20480, dim=32)**\r\nAdds trigram (t-2, t-1, t) embedding signal alongside BigramHash.\r\nCaptures 3 token phrase patterns and morphological structure that\r\nbigrams cannot represent. Budget: bigram reduced 10240\u21924096 to fund\r\ntrigram within 16MB. Zero runtime overhead pure embedding table lookup.\r\n\r\n**XSA \u2014 Exclusive Self Attention (last 4 layers)**\r\nRemoves self value bias from attention output via orthogonal projection.\r\nGQA aware implementation from PR #287, adapted for our transposed layout.\r\nZero parameter cost. Enables last 4 layers to attend more purely to\r\ncontext rather than self reinforcing their own value vectors.\r\n\r\n**TTT \u2014 Test Time Training**\r\n3 epoch SGD (lr=0.002, momentum=0.9) over validation tokens before\r\neval, with bottom 6 layers frozen. Runs identically on all 8 ranks \u2014\r\ndeterministic in order SGD on identical data, no broadcast needed.\r\nOriginal weights restored after evaluation. Budget: ~47 seconds.\r\nQAT was evaluated and dropped \u2014 confirmed negative result (PR #360),\r\n8% throughput penalty outweighs regularization within 600s budget.\r\n\r\n**Artifact:** ~15.64MB | **Status:** Draft \u2014 H100 validation pending\r\nSmoke tests passing. 3 seed results and ablation table to be added\r\nbefore marking ready for review.",
   "labels": [],

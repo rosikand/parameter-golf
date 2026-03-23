@@ -9,8 +9,8 @@ GITHUB_API = "https://api.github.com"
 
 # Claude
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
-CLAUDE_MODEL = "claude-sonnet-4-20250514"  # fast + cheap for extraction
-CLAUDE_ANALYSIS_MODEL = "claude-sonnet-4-20250514"  # for daily briefing synthesis
+CLAUDE_MODEL = "claude-sonnet-4-6"  # fast + cheap for extraction
+CLAUDE_ANALYSIS_MODEL = "claude-sonnet-4-6"  # for daily briefing synthesis
 
 # Paths
 SCOUT_DIR = os.path.dirname(os.path.abspath(__file__))

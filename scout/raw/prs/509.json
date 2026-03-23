@@ -1,0 +1,14 @@
+{
+  "number": 509,
+  "title": "Non-record: Cosine TTT 30ep on SwiGLU + U-Net (1xH100, val_bpb=1.1175)",
+  "state": "open",
+  "user": "andrewbaggio1",
+  "created_at": "2026-03-23T06:19:00Z",
+  "updated_at": "2026-03-23T06:19:00Z",
+  "merged_at": null,
+  "body": "## Summary\n\nNon-record 1xH100 submission extending PR #462's SwiGLU + U-Net architecture with **30-epoch cosine TTT** (vs default 10 epochs).\n\n**val_bpb = 1.1175** (sliding window stride=64) | **7.5 MB** artifact | 1xH100 SXM\n\n## Key Finding\n\nIncreasing TTT epochs from 10 to 30 (with cosine lr decay already enabled) improves val_bpb from 1.2531 to 1.1175 on 1xH100 (-10.8%). This is consistent with PR #481's cosine TTT findings and PR #486's confirmation of 30-epoch TTT improving their stack from 1.1132 to 1.0887 on 8xH100.\n\n## Results (1xH100 SXM, seed 1337)\n\n| Metric | Value |\n|--------|-------|\n| Training steps | 936 (wallclock capped) |\n| Pre-quant val_bpb | 1.3646 |\n| Post-quant roundtrip val_bpb | 1.0684 |\n| **Sliding window val_bpb** | **1.1175** |\n| Artifact size | 7.5 MB |\n\n## What We Tried (Negative Results)\n\n| Experiment | Result |\n|-----------|--------|\n| Depth recurrence (Huginn-style) | Not competitive \u2014 compute overhead > param savings |\n| MLP-only TTT (TTT-E2E paper) | -0.062 BPB worse without meta-learning |\n| Earlier QAT onset | Slightly worse |\n| Mixed int5/int6 post-training | Catastrophic without training-time adaptation |\n\n## Architecture\n\nPR #462's full stack: 11L SwiGLU (hidden=1792), U-Net gated skips, BigramHash (8192), SmearGate, EMA (0.9985), Late QAT, Partial RoPE, LN Scale, Int6+zstd. Only change: `TTT_EPOCHS=30`.\n\n## Limitation\n\nNeeds 8xH100 verification. 30 TTT epochs at seq_len=2048 is estimated at ~7 min on 8xH100, within the 10-min eval budget.\n\n## Credits\n\nPR #462 (JoeProAI), PR #481 (mrdavtan), PR #442 (sjp611), PR #398 (felipe-parodi)\n\n## Test plan\n\n- [x] train_gpt.py compiles and runs\n- [x] Artifact under 16 MB (7.5 MB)\n- [x] PR only adds files to one new folder\n- [ ] Pending: 8xH100 verification\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/509",
+  "draft": false,
+  "comments": []
+}
