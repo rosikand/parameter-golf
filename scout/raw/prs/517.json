@@ -1,0 +1,33 @@
+{
+  "number": 517,
+  "title": "Record*: val_bpb=0.978 BPB \u2014 Goldfish ML Autonomous Research (100ep Cosine *leaky* TTT)",
+  "state": "closed",
+  "user": "lukacf",
+  "created_at": "2026-03-23T09:13:28Z",
+  "updated_at": "2026-03-23T20:14:25Z",
+  "merged_at": null,
+  "body": "Edit: Record* = Yes, but uses suspect leaky TTT, so not a clean solution. \r\n\r\n## Summary\r\n\r\n- **val_bpb = 0.9789** (3-seed mean, sliding window stride=64, std=0.0015)\r\n- **15.51 MB** artifact, 8xH100 SXM\r\n- Built on PR #398/#442 baseline\r\n- Training: 600s. TTT: 1463s (100 epochs, CosineAnnealingLR)\r\n\r\n## Technique\r\n\r\nCosineAnnealingLR applied to AdamW TTT optimizer, decaying lr from 0.001 to 0.00001 over 100 epochs. Prevents position-specific overfitting that limits constant-lr TTT to ~30 epochs. Three lines of code.\r\n\r\n## Methodology\r\n\r\nExperiments were run autonomously by an AI coding agent using [Goldfish ML](https://github.com/lukacf/goldfish) for experiment orchestration and provenance tracking. The agent executed the full research loop \u2014 hypothesis, implementation, launch, monitoring, analysis, iteration \u2014 without human intervention on the training code.\r\n\r\nSeven experiments were completed in ~2 hours wall-clock time, progressing from baseline replication (1.085 BPB) through the cosine LR discovery (1.018) to the final result (0.978). Dead ends (weight decay, BigramHash scaling, Value Residual) were documented automatically. Full experiment lineage and compressed timeline in the submission README.\r\n\r\n## Files\r\n\r\n- `train_gpt.py` \u2014 standalone training script\r\n- `train.log` \u2014 full log (seed 1337)\r\n- `submission.json` \u2014 3-seed results\r\n- `README.md` \u2014 detailed write-up with experiment timeline and provenance",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/517",
+  "draft": false,
+  "comments": [
+    {
+      "user": "lukacf",
+      "body": "10 min training time, but I missed the 10 min eval time limit, which I  now see this violates by a factor of 2. So goes into the \"non leaderboard\" bucket. ",
+      "created_at": "2026-03-23T09:46:19Z",
+      "updated_at": "2026-03-23T09:46:19Z"
+    },
+    {
+      "user": "lukacf",
+      "body": "I should add that the way TTT used is clearly suspect wrt. eval tokens leaking into training. Educational, but not a clean solution. ",
+      "created_at": "2026-03-23T15:31:48Z",
+      "updated_at": "2026-03-23T15:31:48Z"
+    },
+    {
+      "user": "lukacf",
+      "body": "Closing PR (TTT not valid)",
+      "created_at": "2026-03-23T20:14:25Z",
+      "updated_at": "2026-03-23T20:14:25Z"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "number": 578,
+  "title": "GPTQ + Early QAT + Legal TTT \u2014 3-seed mean val_bpb 1.1215",
+  "state": "open",
+  "user": "newjordan",
+  "created_at": "2026-03-23T22:13:56Z",
+  "updated_at": "2026-03-23T22:19:09Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **3-seed mean val_bpb: 1.1215** (std: 0.0008)\n- **Best seed: 1.1206** (seed 1337)\n- **Artifact: 15.56 MB** (int6+zstd-22)\n- **Training: 600s** on 8xH100 SXM | **Eval: ~330s**\n\n## 3-Seed Results\n\n| Seed | val_bpb |\n|------|---------|\n| 1337 | 1.12059684 |\n| 42 | 1.12178348 |\n| 7 | 1.12214237 |\n| **Mean** | **1.12150756** |\n| **Std** | **0.00082** |\n\n## Key Innovations\n\n### 1. GPTQ Quantization (biggest contributor: \u22120.0027 BPB)\n\nReplaces naive per-row int6 quantization with GPTQ (Hessian-aware error compensation):\n- 256-sample calibration on training data \u2192 per-layer `H = X^T X`\n- Optimal per-row scales via 5-percentile search\n- Column reordering by ascending Hessian diagonal\n- Block-128 column-wise quantization with Cholesky-factored error compensation\n- **Quant tax reduced from 0.0082 to 0.0058 BPB** (32% reduction)\n\n### 2. Early QAT with Matched Clipping\n\n- QAT threshold 0.15\u21920.5: ~1750 QAT steps instead of ~521 (3x more)\n- STE uses 99.95th percentile clipping (matches GPTQ export quantizer)\n\n### 3. Legal Score-First TTT with EMA + Cosine Fix\n\n- EMA scoring (decay=0.995): smoothed weights for eval, raw weights for training\n- Fixed cosine LR decay over actual training window (200 chunks)\n- Embedding freeze during TTT (tok_emb, bigram, ve_shared)\n- SGD + momentum 0.9, 3 epochs/chunk, grad clip 1.0\n\n## Architecture\n\n11L/512d/8H/4KV/3xMLP (relu\u00b2) with U-Net skip connections, Partial RoPE (16/64), XSA last 4 layers, BigramHash(2048), VE128 on layers 9-10, SmearGate, logit softcap 30, tied embeddings. 26.99M params.\n\n## Credits\n\n- Base architecture: @signalrush (PR #414)\n- Legal TTT recipe: @anantdgoel (PR #461)\n- GPTQ: Frantar et al. (2022), adapted for int6 per-row quantization\n\n## Run\n\n```bash\nSEED=1337 torchrun --standalone --nproc_per_node=8 \\\n  records/track_10min_16mb/2026-03-23_11L_GPTQ_TTT_EMA_QAT_1.1206/train_gpt.py\n```\n\nRequires Flash Attention 3 (Hopper selective build). See RUNPOD_SETUP.md.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/578",
+  "draft": false,
+  "comments": [
+    {
+      "user": "newjordan",
+      "body": "**Note:** This is a resubmission of PR #508 (originally submitted 2026-03-23T06:02:59Z). The original PR was closed when the source repository's visibility was accidentally changed. The code, results, and artifact are identical to the original submission.",
+      "created_at": "2026-03-23T22:19:08Z",
+      "updated_at": "2026-03-23T22:19:08Z"
+    }
+  ]
+}

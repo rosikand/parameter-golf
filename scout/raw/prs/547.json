@@ -1,0 +1,14 @@
+{
+  "number": 547,
+  "title": "Record: Int5/Int6+Zstd+MLP3x \u2014 mean val_bpb=1.1752 (10L, seq4096, sliding window)",
+  "state": "open",
+  "user": "shajalahamedcse",
+  "created_at": "2026-03-23T16:06:03Z",
+  "updated_at": "2026-03-23T16:09:10Z",
+  "merged_at": null,
+  "body": "## Int5/Int6 Mixed Quantization + Zstd + 3x MLP Expansion\r\n\r\n**Mean val_bpb: 1.1752** (3 seeds, std=0.0017)\r\n\r\n| Seed | val_bpb | Artifact |\r\n|------|---------|----------|\r\n| 1337 | 1.1773 | 15,708,798 B |\r\n| 42   | 1.1732 | 15,700,116 B |\r\n| 7    | 1.1750 | 15,711,843 B |\r\n| **mean** | **1.1752** | |\r\n| **std** | **0.0017** | |\r\n\r\n## Key techniques\r\n\r\n1. **Int5 quantization for MLP matrices** \u2014 5-bit packing frees ~1.5MB, enabling 3x MLP expansion\r\n2. **Int6 quantization for attention matrices** \u2014 balances precision and size\r\n3. **Zstd compression** \u2014 better ratio than zlib on quantized integer arrays\r\n4. **MLP expansion 3x** (hidden=1536 vs baseline 1024) \u2014 funded by int5 savings\r\n5. **Seq4096 training + sliding window eval** (stride=64) \u2014 full context scoring\r\n\r\n## Hardware\r\n\r\nModal 8\u00d7H100 SXM, `torchrun --standalone --nproc_per_node=8`, 600s cap\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/547",
+  "draft": false,
+  "comments": []
+}

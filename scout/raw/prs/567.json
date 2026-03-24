@@ -1,0 +1,14 @@
+{
+  "number": 567,
+  "title": "Non-record: 1.366 BPB Baseline (SmearGate + Muon, int6, zstd)",
+  "state": "open",
+  "user": "nitSubedi",
+  "created_at": "2026-03-23T19:39:49Z",
+  "updated_at": "2026-03-23T19:39:49Z",
+  "merged_at": null,
+  "body": "Model Config: 14 layers, 512 dimensions, 1.5 X MLP expansion (float)\r\nSmeargate for local context\r\nMuon with 0.02 weight decay, \r\nZSTD level 22\r\nThis request is mainly to be used as reference to my compute credit request asn my current setup fits the 20.7M parameters to about 12MB, but due to the lack of gpu resources I have not been able to increase the parameters.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/567",
+  "draft": false,
+  "comments": []
+}

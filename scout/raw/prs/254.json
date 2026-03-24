@@ -4,13 +4,19 @@
   "state": "open",
   "user": "timowhite88",
   "created_at": "2026-03-20T19:15:10Z",
-  "updated_at": "2026-03-21T19:52:11Z",
+  "updated_at": "2026-03-23T13:03:46Z",
   "merged_at": null,
   "body": "",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/254",
   "draft": false,
   "comments": [
+    {
+      "user": "hegdeadithyak",
+      "body": "I don't think this is how it should be done :)",
+      "created_at": "2026-03-23T13:03:36Z",
+      "updated_at": "2026-03-23T13:03:46Z"
+    },
     {
       "user": "timowhite88",
       "body": "\r\n\r\n  ---\r\n  @0hq Ready for review \u2014 3 seeds complete with tight reproducibility:\r\n\r\n  - Seed 1337: 1.1303\r\n  - Seed 42: 1.1312\r\n  - Seed 7: 1.1323\r\n  - Mean: 1.1313\r\n\r\n  15.88 MB artifact, 600s train, 129s eval. Full logs for all 3 seeds included. This supersedes our earlier PRs #152 and #178.\r\n\r\n\r\n",

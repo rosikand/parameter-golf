@@ -1,0 +1,14 @@
+{
+  "number": 543,
+  "title": "Non-record: 11L Partial RoPE + XSA4 + VE128 + Tight SWA + GPTQ-lite (val_bpb=1.1804)",
+  "state": "open",
+  "user": "rarce",
+  "created_at": "2026-03-23T15:37:38Z",
+  "updated_at": "2026-03-23T15:40:57Z",
+  "merged_at": null,
+  "body": "## Summary\n\n**val_bpb: 1.1804** (post-quant, single seed) | **15.95 MB** artifact | 8\u00d7H100 SXM, 615s\n\nNon-record submission documenting systematic combination of PR #374 frontier techniques with MLP width optimization and GPTQ-lite quantization.\n\n## Key Techniques\n\n| Technique | Source | Impact |\n|-----------|--------|--------|\n| Partial RoPE (16/64 dims) | PR #315 | Position-free 75% of head dims |\n| LN Scale (1/sqrt(i+1)) | PR #315 | Damps deeper layers |\n| XSA on last 4 layers | PR #265, #287 | GQA-aware self-value debiasing |\n| Shared VE128 (layers 9,10) | PR #374 | Value embedding injection |\n| Tight SWA (scale<0.2) | PR #374 | Zero-penalty weight averaging |\n| Late QAT (lr_scale<0.1) | PR #297 | Avoids Muon momentum corruption |\n| GPTQ-lite (clip search) | PR #379 | Per-tensor optimal clip ratio |\n| **MLP hidden=1408** | Novel | Faster steps \u2192 more training in 10min |\n| Int6 layers 1-9 + int8 0,10 | Reference | Mixed precision quantization |\n| zstd-22 | Standard | ~35% better than zlib |\n\n## Novel Contribution\n\n**MLP hidden=1408 vs 1536**: Narrower MLP fits in 16MB while enabling 33% more training steps (137ms vs 178ms/step). The extra 1000 steps more than compensate for reduced per-step capacity:\n- MLP 1536: 3061 steps, val_bpb 1.1958, 18MB (over limit)\n- MLP 1408: 4071 steps, val_bpb 1.1804, 15.95MB (under limit)\n\n## Metrics\n\n| Metric | Value |\n|--------|-------|\n| Pre-quant val_bpb | 1.1770 |\n| Post-quant val_bpb | **1.1804** |\n| Quant gap | +0.0034 |\n| Steps | 4,071 @ 137ms/step |\n| Parameters | 25,224,291 |\n| Artifact | 15,949,473 bytes |\n\n## Test plan\n\n- [x] Artifact under 16MB (15.95MB)\n- [x] Trains in 615s on 8\u00d7H100 SXM\n- [x] Post-quant roundtrip verified\n- [x] train_gpt.py compiles and runs from records/ folder\n- [x] Train log included\n- [ ] Multi-seed validation (single seed, budget constrained)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/543",
+  "draft": false,
+  "comments": []
+}

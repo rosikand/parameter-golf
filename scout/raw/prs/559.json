@@ -1,0 +1,14 @@
+{
+  "number": 559,
+  "title": "Non-record: TernaryRecurrentGPT - ternary 1.58-bit MLP + depth recurrence (1xL4 val_bpb=1.5348)",
+  "state": "open",
+  "user": "Parswanadh",
+  "created_at": "2026-03-23T17:23:02Z",
+  "updated_at": "2026-03-23T17:23:02Z",
+  "merged_at": null,
+  "body": "## Architecture\r\n- 7 unique layers \u00d7 2 loops = 14 effective depth\r\n- Ternary MLP weights (1.58-bit STE QAT, enabled at 85% of training)\r\n- Loop gates initialized at 1.0 (fixes failure mode in PR #319)\r\n- BigramHash 2048, SmearGate, FP16 tied embeddings\r\n- Muon (matrix) + AdamW (scalars), WD=0.04, SWA from 40%\r\n\r\n## Results (1\u00d7L4, reduced batch validation)\r\n| Metric | Value |\r\n|---|---|\r\n| val_bpb pre-quant | 2.5044 |\r\n| val_bpb post-quant | 1.5348 |\r\n| Artifact size | 12,372,468 bytes |\r\n| Quant gap | 0.002 bpb |\r\n\r\n## Notes\r\n- Local validation at reduced batch (32k tokens, seq=512)\r\n- Full 8\u00d7H100 competition-scale run pending compute grant\r\n- Neural Cache disabled \u2014 adds +0.028 bpb at this scale\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/559",
+  "draft": false,
+  "comments": []
+}

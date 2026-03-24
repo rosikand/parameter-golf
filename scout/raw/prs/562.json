@@ -1,0 +1,14 @@
+{
+  "number": 562,
+  "title": "Non-record: 1.1354 BPB \u2014 10L TTT 22ep AdamW Cosine + LeakyReLU(0.5)\u00b2 + TrigramHash",
+  "state": "open",
+  "user": "bigbag",
+  "created_at": "2026-03-23T18:05:01Z",
+  "updated_at": "2026-03-23T18:13:58Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\n- **val_bpb: 1.1354** (single seed, 8xH100 SXM)\r\n- **Artifact: 15.35 MB** (under 16MB limit)\r\n- **Training: 600s** | **Eval (TTT + sliding window): 603s**\r\n\r\n## Techniques\r\n\r\n### Architecture (10L, 512d, GQA 8/4)\r\n- Value Residual (ResFormer-style layer-0 V mixing, -0.015 BPB)\r\n- Gated Attention (per-head sigmoid gates, -0.003 BPB)\r\n- XSA on last 4 layers (-0.005 BPB)\r\n- **LeakyReLU(0.5)\u00b2** activation \u2014 preserves negative gradient flow (-0.003 BPB vs ReLU\u00b2)\r\n- **TrigramHash** \u2014 extends BigramHash to 3-token context via XOR hashing into shared embedding table\r\n- SmearGate, LN Scale (depth-scaled residuals), U-Net skip connections\r\n\r\n### Training\r\n- Muon optimizer (Newton-Schulz) for matrices, AdamW for embeddings/scalars\r\n- MATRIX_LR=0.03 (PR #530 finding)\r\n- SWA: 27 checkpoints averaged\r\n- Late QAT: threshold 0.5\r\n\r\n### Quantization\r\n- Mixed int5 (MLP) / int6 (attention) + zstd-22\r\n- 3% magnitude pruning, FP16 passthrough for embeddings\r\n\r\n### Test-Time Training (22 epochs, within eval budget)\r\n- AdamW (lr=0.0005, wd=0.0) with **per-step cosine LR decay** to 0\r\n- **Per-layer LR groups**: 3x for output projections, 0.5x for input projections\r\n- Batched 32 sequences per GPU, distributed gradient sync via all_reduce\r\n- Gradient clipping at 1.0\r\n- TTT time: 406s, eval time: 197s\r\n\r\n## Key Findings\r\n\r\n1. **Batched TTT** (32 seqs/GPU) is ~500x faster than chunk-based (1 seq \u00d7 256 tokens)\r\n2. **Per-step cosine decay** (not per-epoch) prevents overfitting at high epoch counts\r\n3. **Gradient sync per step** (all_reduce on grads) is critical for multi-GPU TTT \u2014 syncing parameters at the end causes divergence\r\n4. **Per-layer LR groups** compensate for uneven quantization damage (output projections are most affected)\r\n5. LeakyReLU(0.5)\u00b2 gives consistent -0.003 BPB improvement\r\n6. TrigramHash reuses BigramHash's embedding table for zero extra parameters",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/562",
+  "draft": false,
+  "comments": []
+}

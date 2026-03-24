@@ -1,11 +1,11 @@
 {
   "number": 287,
   "title": "Record: 11L XSA + EMA + Int6 MLP3x + WD=0.04 (val_bpb: 1.1271)",
-  "state": "open",
+  "state": "closed",
   "user": "jfprincz",
   "created_at": "2026-03-20T23:25:59Z",
-  "updated_at": "2026-03-23T00:46:29Z",
-  "merged_at": null,
+  "updated_at": "2026-03-23T17:23:10Z",
+  "merged_at": "2026-03-23T17:23:10Z",
   "body": "## Record: 11L XSA + EMA + Int6 MLP3x + WD=0.04 (val_bpb: 1.1271)\n\n**val_bpb: 1.1271** (sliding window, stride=64) | **15.5 MB** | 8xH100 SXM, 600s\n\n### Progress from prior submissions\n\n| | [PR #70](https://github.com/openai/parameter-golf/pull/70) | [PR #164](https://github.com/openai/parameter-golf/pull/164) | [PR #198](https://github.com/openai/parameter-golf/pull/198) | This | Delta vs #198 |\n|---|---|---|---|---|---|\n| **val_bpb (sliding)** | 1.1659 (s256) | 1.1524 (s256) | 1.1318 (s64) | **1.1271 (s64)** | **-0.0047** |\n| Layers | 9 | 9 | 11 | 11 | \u2014 |\n| Params | 21.8M | 22.4M | 26.8M | 26.8M | \u2014 |\n| Artifact | 14.9 MB | 15.4 MB | 15.7 MB | 15.5 MB | -0.2 MB |\n\nTwo new techniques on top of PR #198's 11-layer stack.\n\n### Key additions over PR #198\n\n| Change | Impact |\n|--------|--------|\n| **Exclusive Self Attention (XSA)** on last 4 layers | Removes self-value bias from attention output via orthogonal projection. Zero new parameters. |\n| **EMA replacing SWA** (decay=0.997) | Exponential moving average every step instead of periodic SWA checkpoints. Smoother weight averaging, better generalization and compression. |\n\nEverything else from PR #198 carries forward: 11 layers, OrthoInit + muP, 3x MLP, int6 mixed quant + zstd-22, WD=0.04, SmearGate, BigramHash(2048), FA3, seq 2048, tuned Muon.\n\n### Results\n\n| Metric | Value |\n|--------|-------|\n| Pre-quant val_bpb | 1.1427 |\n| Int6 roundtrip val_bpb | 1.1494 |\n| **Int6 sliding val_bpb (s64)** | **1.1271** |\n| Steps completed (600s cap) | 7,103 |\n| Step time | 84ms |\n| Model params | 26,829,913 |\n| Artifact size | 15,534,645 bytes |\n\n### Reproducibility (3 seeds)\n\n| Seed | Steps | Sliding s64 | Artifact |\n|------|-------|-------------|----------|\n| **1337** | **7,103** | **1.1271** | **15.53 MB** |\n| 42 | 7,094 | 1.1286 | 15.75 MB |\n| 2025 | 7,107 | 1.1284 | 15.65 MB |\n\nMean: **1.1280** | Variance: 0.0015 | Submitted: seed 1337\n\n### Run command\n\n```bash\nNUM_LAYERS=11 BIGRAM_VOCAB_SIZE=2048 XSA_LAST_N=4 \\\nEMA_ENABLED=1 EMA_DECAY=0.997 SWA_ENABLED=0 \\\nMUON_WD=0.04 ADAM_WD=0.04 \\\nMATRIX_LR=0.025 SCALAR_LR=0.025 TIED_EMBED_LR=0.035 \\\nMUON_MOMENTUM=0.99 MUON_MOMENTUM_WARMUP_START=0.92 \\\nMUON_MOMENTUM_WARMUP_STEPS=1500 WARMDOWN_ITERS=3000 \\\nITERATIONS=9000 MAX_WALLCLOCK_SECONDS=600 EVAL_STRIDE=64 \\\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n",
   "labels": [
     "record submission ready for review"

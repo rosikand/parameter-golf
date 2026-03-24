@@ -1,0 +1,33 @@
+{
+  "number": 545,
+  "title": "Record: int5 GPTQ + 33.6M model (3-seed mean val_bpb=1.1179)",
+  "state": "closed",
+  "user": "EthanYangTW",
+  "created_at": "2026-03-23T15:58:50Z",
+  "updated_at": "2026-03-23T23:07:58Z",
+  "merged_at": null,
+  "body": "## Summary\n\n33.6M parameter model quantized to **int5 with GPTQ error compensation**, fitting under 16MB. First submission to achieve int5 quantization on a 33.6M model within the artifact size limit.\n\n**Architecture:** 11L, 512d, MHA 8/8, MLP 3.5x (1792), BigramHash 8192, XSA all layers\n**Quantization:** int5 per-row GPTQ (clip_range=15) + Early QAT (threshold 0.5) + EMA 0.997\n**TTT:** Legal score-first AdamW, chunk=131072, last 2 blocks unfrozen\n\n## Results\n\n| Seed | Sliding BPB | TTT BPB | Artifact |\n|------|-------------|---------|----------|\n| 1337 | 1.1244 | **1.1170** | 15.53 MB |\n| 42 | 1.1249 | **1.1182** | 15.36 MB |\n| 7 | 1.1250 | **1.1184** | 15.28 MB |\n| **Mean** | **1.1248** | **1.1179** | |\n\n## Logs\n\nSee log files in `logs/` directory:\n- Seed 1337: `de843ef6-d0df-4872-bc96-cd4600614348.txt`\n- Seed 42: `b6560b60-85f0-4623-be20-ec366dd9e6fb.txt`\n- Seed 7: `c1c18644-a5a1-4db2-8641-31900ed8057f.txt`\n\n## Reproduction\n\n```bash\npip install --break-system-packages zstandard\npip install --break-system-packages flash-attn --no-build-isolation\npython3 data/cached_challenge_fineweb.py --variant sp1024 --train-shards 80\n\nSEED=1337 PRUNE_PCT=0.02 TTT_EPOCHS=3 TTT_LR=0.0001 \\\nTTT_OPTIMIZER=adamw TTT_FREEZE_BLOCKS=2 TTT_CHUNK_TOKENS=131072 \\\nEVAL_STRIDE=32 \\\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/545",
+  "draft": false,
+  "comments": [
+    {
+      "user": "cocohearts",
+      "body": "dont open a pr until ur submission is ready pls; mark as draft until ready for submission\r\ntrain logs are great but dont change train_gpt.py pls put everything in a self contained folder following other submissions\r\nwill merge once this is done",
+      "created_at": "2026-03-23T17:34:12Z",
+      "updated_at": "2026-03-23T17:35:19Z"
+    },
+    {
+      "user": "EthanYangTW",
+      "body": "Closing in favor of properly formatted /records submission.",
+      "created_at": "2026-03-23T23:07:44Z",
+      "updated_at": "2026-03-23T23:07:44Z"
+    },
+    {
+      "user": "EthanYangTW",
+      "body": "@cocohearts\r\n\r\n\r\n> dont open a pr until ur submission is ready pls; mark as draft until ready for submission train logs are great but dont change train_gpt.py pls put everything in a self contained folder following other submissions will merge once this is done\r\n\r\nsorry for the inconvience,i have updated the new one and closed this",
+      "created_at": "2026-03-23T23:07:58Z",
+      "updated_at": "2026-03-23T23:07:58Z"
+    }
+  ]
+}

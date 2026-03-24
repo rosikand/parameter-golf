@@ -1,0 +1,14 @@
+{
+  "number": 536,
+  "title": "Non-record: Family 1A tied blocks (1xH100 dev snapshot)",
+  "state": "open",
+  "user": "Jaksenc",
+  "created_at": "2026-03-23T14:56:05Z",
+  "updated_at": "2026-03-23T14:56:05Z",
+  "merged_at": null,
+  "body": "## Non-record submission (WIP)\r\n\r\n**Not a leaderboard / SOTA claim.** Public 8\u00d7H100 baseline is stronger on `val_bpb`. This PR adds a **reproducible snapshot** of **Family 1 / Batch 1A**: **tied transformer block weights** plus a stable training recipe (global **grad clip 1.0**, **30-step** data warmup, Muon + AdamW as in `train_gpt.py`).\r\n\r\n## Hardware / track\r\n\r\n- **1\u00d7GPU**, **600s** wallclock cap (`torchrun --nproc_per_node=1`), autoresearch **`baseline-1gpu`**-style run \u2014 **not** the official 10-minute **8\u00d7H100** record track, hence **`track_non_record_16mb`**.\r\n\r\n## Metrics (from `train.log`)\r\n\r\n- `final_int8_zlib_roundtrip_exact val_bpb`: **1.51402594** (`val_loss` **2.55636938**)\r\n- **Total submission size (int8+zlib):** **2,033,640** bytes (under 16,000,000)\r\n- Stopped at step **1258 / 20000** (wallclock cap)\r\n\r\nSame recipe has hit **~1.507** `val_bpb` on another seed locally; this folder pairs **this** log with **this** `train_gpt.py`.\r\n\r\n## Files\r\n\r\n- `README.md`, `submission.json` (`github_id`: **jaksenc**), `train.log`, `train_gpt.py` only.\r\n\r\n## Next\r\n\r\n- **Family 2A:** low-rank / factorized embedding (harness iteration continues locally).\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/536",
+  "draft": true,
+  "comments": []
+}

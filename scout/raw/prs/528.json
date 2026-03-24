@@ -1,0 +1,63 @@
+{
+  "number": 528,
+  "title": "Record: GPTQ + Legal TTT (3-seed mean val_bpb=1.1195)",
+  "state": "closed",
+  "user": "EthanYangTW",
+  "created_at": "2026-03-23T12:57:14Z",
+  "updated_at": "2026-03-23T13:03:32Z",
+  "merged_at": null,
+  "body": "## 11L XSA11 + GPTQ + Early QAT + EMA 0.997 + Legal Score-First AdamW TTT\n\n**val_bpb (3-seed mean): 1.1195** (std: 0.0005)\n\n| Seed | val_bpb | Artifact |\n|------|---------|----------|\n| 1337 | **1.1189** | 15.96 MB |\n| 42 | **1.1197** | 15.75 MB |\n| 7 | **1.1198** | 15.54 MB |\n\n### Improvements over #503 (1.1218)\n- **GPTQ quantization**: Hessian-aware error compensation with column reordering, 256-sample calibration (-0.0024 BPB quant tax reduction)\n- **Early QAT (threshold 0.5)**: ~1750 QAT steps (3x more), model adapts to quant noise longer\n- **EMA 0.997**: Tuned from 0.9985\n\n### Architecture (unchanged from #374 base)\n- 11 layers, model_dim=512, 8H/4KV (GQA), MLP 3x relu\u00b2\n- XSA on all 11 layers\n- Partial RoPE 16/64, LN Scale, SmearGate + OrthoInit\n- BigramHash 2048, Shared VE128 (layers 9,10)\n- FA3 Hopper, ~89ms/step \u2192 ~6737 steps in 600s\n- ~27M params, int6 + zstd-22, 2% magnitude pruning\n\n### Legal Score-First TTT\n- Chunks of 131072 tokens, stride=32 sliding window\n- For each chunk: **score first** (inference_mode), **then** adapt\n- AdamW (lr=0.0001, wd=0.0), 3 epochs per chunk, cosine LR\n- Last 2 blocks + norms + lm_head unfrozen (4.7M / 27M params)\n- Every token scored BEFORE any gradient update using it\n- Manual grad all_reduce (no DDP wrapper)\n\n### Quantization Pipeline\n1. Early QAT (threshold 0.5): fake int6 STE with 0.9995 percentile clipping\n2. GPTQ (post-training): 256-sample Hessian calibration, per-row optimal scales, column reordering, block-128 Cholesky error compensation\n3. int6 quantization (range [-31, 31]) stored as int8\n4. 2% magnitude pruning\n5. zstd-22 compression\n\n### Timing\n- Training: 600s (89ms/step, ~6737 steps)\n- Sliding window eval: ~151s\n- TTT (3 epochs): ~465s\n- Total eval: ~616s\n\n### Compute\n8xH100 SXM, ~20 min/seed. Three seeds for verification.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/528",
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "GPTQ calibration/quantization currently runs on every rank (gptq_calibrate + mixed_quantize_int6_gptq), then only rank 0 writes the artifact and all ranks read it back from disk. This duplicates expensive work across GPUs and can break on multi-node runs where ranks don\u2019t share a filesystem. Consider doing calibration/quantization only on rank 0 and broadcasting the resulting quant_state/dequantized state_dict to other ranks (or guard the disk roundtrip so only rank 0 performs it).",
+      "created_at": "2026-03-23T13:03:30Z",
+      "updated_at": "2026-03-23T13:03:32Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "EMA update iterates over `base_model.state_dict()` every training step. Building a full state_dict each step adds avoidable overhead and includes tensors that may not need EMA (or may be buffers). Consider precomputing a list of parameters/buffers to track (e.g., named_parameters + named_buffers) and updating those directly, which avoids reconstructing the dict each step and makes it explicit what EMA applies to.\n```suggestion\n            # Lazily build and cache the list of tensors tracked by EMA to avoid\n            # reconstructing base_model.state_dict() on every training step.\n            if not hasattr(base_model, \"_ema_tracked_tensors\"):\n                ema_tracked = []\n                # Track parameters that have corresponding EMA entries.\n                for name, param in base_model.named_parameters():\n                    if name in ema_state:\n                        ema_tracked.append((name, param))\n                # Optionally track buffers as well, if they are present in ema_state.\n                for name, buf in base_model.named_buffers():\n                    if name in ema_state:\n                        ema_tracked.append((name, buf))\n                base_model._ema_tracked_tensors = ema_tracked\n            for name, t in base_model._ema_tracked_tensors:\n```",
+      "created_at": "2026-03-23T13:03:30Z",
+      "updated_at": "2026-03-23T13:03:32Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "CastedLinear QAT fake-quant uses a clamp range of [-32, 31] while the rest of the pipeline (and PR description) treats int6 as [-31, 31] (e.g., quantize_int6_per_row default clip_range=31). This mismatch means training adapts to a different quantization noise distribution than the exported weights. Align the QAT clamp/scale with the export int6 range (or update export to match) so QAT is actually representative.\n```suggestion\n                w_q = (torch.clamp(torch.round(w32 / scale[:, None]), -31, 31) * scale[:, None]).to(x.dtype)\n```",
+      "created_at": "2026-03-23T13:03:30Z",
+      "updated_at": "2026-03-23T13:03:32Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Rotary is instantiated with train_seq_len=1024 in attention blocks, but the default TRAIN_SEQ_LEN is 2048. That causes the NTK-aware scaling path to trigger even at the training sequence length, changing behavior in a way that\u2019s disconnected from the actual training config. Consider wiring args.train_seq_len (or a dedicated ROPE_TRAIN_SEQ_LEN hyperparameter) through to Rotary instead of hardcoding 1024.",
+      "created_at": "2026-03-23T13:03:31Z",
+      "updated_at": "2026-03-23T13:03:32Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Rotary NTK scaling computes `rd / (rd - 2)`, which will divide by zero when rope_dims is set to 2 (or behave badly for rope_dims < 2). Since ROPE_DIMS is user-configurable via env, add validation (e.g., require rope_dims==0 or rope_dims>=4 and even) and raise a clear error early.",
+      "created_at": "2026-03-23T13:03:31Z",
+      "updated_at": "2026-03-23T13:03:32Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "BigramHashEmbedding.bigram_hash sets `mod = bigram_vocab_size - 1` and then uses `% mod`. If BIGRAM_VOCAB_SIZE is configured as 0/1 via env, this will crash (mod==0) or behave unexpectedly. Add a validation in __init__ (e.g., require bigram_vocab_size >= 2 when enabled) and/or handle the degenerate case explicitly.",
+      "created_at": "2026-03-23T13:03:31Z",
+      "updated_at": "2026-03-23T13:03:32Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Hyperparameters.muon_beta2 is defined but never used anywhere in the optimizer setup or training loop. This is dead configuration surface area that can confuse future tuning; either remove it or thread it into the Muon implementation if it\u2019s intended to affect the update rule.\n```suggestion\n\n```",
+      "created_at": "2026-03-23T13:03:31Z",
+      "updated_at": "2026-03-23T13:03:32Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "GPT.__init__ creates `self.value_embeds = nn.ModuleList()`, but it isn\u2019t referenced anywhere (no writes/reads after construction). Removing unused attributes helps keep the model definition easier to reason about.\n```suggestion\n\n```",
+      "created_at": "2026-03-23T13:03:31Z",
+      "updated_at": "2026-03-23T13:03:32Z"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "number": 558,
+  "title": "Overlap-aware validation with single-count tail scoring (maximal context)",
+  "state": "open",
+  "user": "nehowell",
+  "created_at": "2026-03-23T17:19:01Z",
+  "updated_at": "2026-03-23T17:22:34Z",
+  "merged_at": null,
+  "body": "This PR updates validation to score each token exactly once while allowing overlapping left-context windows.\r\n\r\n### Summary\r\n\r\nThe current validation logic evaluates disjoint fixed-length windows. This limits the effective left context available to the model, particularly at window boundaries.\r\n\r\nThis change introduces overlapping evaluation windows stepped by EVAL_STRIDE, while ensuring that each target token is scored exactly once.\r\n\r\n### Method\r\n\r\n- Windows are constructed with up to TRAIN_SEQ_LEN tokens of left context\r\n- Windows advance by EVAL_STRIDE (default = TRAIN_SEQ_LEN, preserving original behavior)\r\n- Only the newly exposed tail region contributes to:\r\n  - validation loss\r\n  - byte accounting (BPB)\r\n- Overlapping prefix tokens provide context only and are not double-counted\r\n\r\n### Properties\r\n\r\n- No change to training\r\n- No change to dataset or ordering\r\n- No future-token leakage\r\n- Each validation token contributes exactly once\r\n- Byte accounting semantics preserved\r\n\r\n### Implementation notes\r\n\r\n- Prefix loss is recomputed and subtracted for clarity and correctness\r\n- This could be optimized further by masking per-token losses in a single forward pass\r\n\r\n### Status\r\n\r\n- Not benchmarked for SOTA submission\r\n- Intended as a clean, correctness-focused evaluation improvement\r\n\r\n### Motivation\r\n\r\nProvides more realistic conditioning during evaluation by allowing each token to be predicted with maximal available left context, without inflating metrics.\r\n\r\n---\r\n\r\nHappy to iterate on implementation details if preferred.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/558",
+  "draft": false,
+  "comments": []
+}

@@ -1,0 +1,57 @@
+{
+  "number": 529,
+  "title": "Record: GPTQ + Legal TTT (3-seed mean val_bpb=1.1195)",
+  "state": "open",
+  "user": "EthanYangTW",
+  "created_at": "2026-03-23T12:59:23Z",
+  "updated_at": "2026-03-23T13:04:44Z",
+  "merged_at": null,
+  "body": "## 11L XSA11 + GPTQ + Early QAT + EMA 0.997 + Legal Score-First AdamW TTT\n\n**val_bpb (3-seed mean): 1.1195** (std: 0.0005)\n\n| Seed | val_bpb | Artifact |\n|------|---------|----------|\n| 1337 | **1.1189** | 15.96 MB |\n| 42 | **1.1197** | 15.75 MB |\n| 7 | **1.1198** | 15.54 MB |\n\n### Improvements over #503 (1.1218)\n- **GPTQ quantization**: Hessian-aware error compensation with column reordering, 256-sample calibration (-0.0024 BPB quant tax reduction)\n- **Early QAT (threshold 0.5)**: ~1750 QAT steps (3x more), model adapts to quant noise longer\n- **EMA 0.997**: Tuned from 0.9985\n\n### Architecture (unchanged from #374 base)\n- 11 layers, model_dim=512, 8H/4KV (GQA), MLP 3x relu\u00b2\n- XSA on all 11 layers\n- Partial RoPE 16/64, LN Scale, SmearGate + OrthoInit\n- BigramHash 2048, Shared VE128 (layers 9,10)\n- FA3 Hopper, ~89ms/step \u2192 ~6737 steps in 600s\n- ~27M params, int6 + zstd-22, 2% magnitude pruning\n\n### Legal Score-First TTT\n- Chunks of 131072 tokens, stride=32 sliding window\n- For each chunk: **score first** (inference_mode), **then** adapt\n- AdamW (lr=0.0001, wd=0.0), 3 epochs per chunk, cosine LR\n- Last 2 blocks + norms + lm_head unfrozen (4.7M / 27M params)\n- Every token scored BEFORE any gradient update using it\n- Manual grad all_reduce (no DDP wrapper)\n\n### Quantization Pipeline\n1. Early QAT (threshold 0.5): fake int6 STE with 0.9995 percentile clipping\n2. GPTQ (post-training): 256-sample Hessian calibration, per-row optimal scales, column reordering, block-128 Cholesky error compensation\n3. int6 quantization (range [-31, 31]) stored as int8\n4. 2% magnitude pruning\n5. zstd-22 compression\n\n### Timing\n- Training: 600s (89ms/step, ~6737 steps)\n- Sliding window eval: ~151s\n- TTT (3 epochs): ~465s\n- Total eval: ~616s\n\n### Compute\n8xH100 SXM, ~20 min/seed. Three seeds for verification.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/529",
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "`self.value_embeds` is initialized but never used (no subsequent reads/writes). If it\u2019s leftover from an earlier design, remove it; if it\u2019s intended for future per-layer VE modules, it should be populated/used to avoid dead code.\n```suggestion\n\n```",
+      "created_at": "2026-03-23T13:04:42Z",
+      "updated_at": "2026-03-23T13:04:44Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The PR removes the introductory docstring that documents the intent/constraints of `train_gpt.py`, and the file now exceeds the previously stated 1500-line hard stop (file ends at line 1579). If this script is meant to remain a newcomer-friendly baseline, consider restoring the guidance and/or moving record-grade logic into `/records` (or splitting into modules) so `train_gpt.py` stays under the line limit.\n```suggestion\n\"\"\"Baseline GPT training script.\n\nThis file is intended to remain a **newcomer-friendly baseline**: a single,\nreadable script that can be skimmed top-to-bottom to understand how the model,\ndata loading, training loop, and evaluation fit together.\n\nDesign / usage notes:\n- Configuration is driven primarily by environment variables (see\n  `Hyperparameters` below) so that this file can stay code-only and easily\n  copy-pasted.\n- The implementation favors clarity over chasing absolute record scores.\n  If you are adding highly experimental, benchmark- or record-focused logic,\n  prefer putting it into `/records` or separate modules and calling into it\n  from here instead of inlining large new subsystems.\n- As a soft guideline, keep this script to ~1500 lines by factoring out\n  heavy utilities into dedicated modules. This helps keep the baseline\n  approachable for new contributors.\n\nCurrent variant: V7, with GPTQ quantization, early QAT (0.5), and EMA 0.997.\nThis is a fork/evolution of the earlier #503 baseline.\n\"\"\"\n```",
+      "created_at": "2026-03-23T13:04:43Z",
+      "updated_at": "2026-03-23T13:04:44Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The QAT fake-quant path clamps to [-32, 31], while the rest of the int6 pipeline (e.g., `clip_range=31`) implies a symmetric [-31, 31] range. This mismatch changes the quantization behavior during QAT vs export and can hurt calibration/roundtrip fidelity. Align the clamp range with the export quantizer (or document why the asymmetric range is intentional).\n```suggestion\n                w_q = (torch.clamp(torch.round(w32 / scale[:, None]), -31, 31) * scale[:, None]).to(x.dtype)\n```",
+      "created_at": "2026-03-23T13:04:43Z",
+      "updated_at": "2026-03-23T13:04:45Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "In `mixed_quantize_int6_gptq`, the early `t.numel() <= 65536` passthrough runs before the control-tensor check. This means small control/scaling tensors matching `CONTROL_TENSOR_NAME_PATTERNS` will be downcast to fp16, losing precision, despite the later intent to keep them fp32. Reorder the checks so control tensors are handled before the size-based passthrough (or explicitly exempt them from downcasting).\n```suggestion\n        # Non-floating tensors are passed through unchanged.\n        if not t.is_floating_point():\n            result[name] = t\n            meta[name] = \"passthrough\"\n            continue\n        # Control/scaling tensors are kept in float32, regardless of size.\n        if any(p in name for p in CONTROL_TENSOR_NAME_PATTERNS):\n            result[name] = t.float()\n            meta[name] = \"passthrough_ctrl\"\n            continue\n        # Small floating-point tensors are downcast to float16 and passed through.\n        if t.numel() <= 65536:\n            result[name] = t.to(torch.float16)\n            meta[name] = \"passthrough\"\n            continue\n```",
+      "created_at": "2026-03-23T13:04:43Z",
+      "updated_at": "2026-03-23T13:04:45Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Same issue as above in `mixed_quantize_int6`: the size-based passthrough happens before the control-tensor check, so small control/scaling tensors will be downcast to fp16. Reorder/exempt control tensors to preserve fp32 precision for these parameters.\n```suggestion\n        # Always preserve floating-point control/scaling tensors in FP32,\n        # regardless of their size, to avoid precision loss.\n        if t.is_floating_point() and any(p in name for p in CONTROL_TENSOR_NAME_PATTERNS):\n            result[name] = t.float()\n            meta[name] = \"passthrough_ctrl\"\n            continue\n        if not t.is_floating_point() or t.numel() <= 65536:\n            result[name] = t.to(torch.float16) if t.is_floating_point() else t\n            meta[name] = \"passthrough\"\n            continue\n```",
+      "created_at": "2026-03-23T13:04:44Z",
+      "updated_at": "2026-03-23T13:04:45Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`Rotary.forward` computes `rd / (rd - 2)` when `seq_len > train_seq_len`. If `rope_dims` is set to 2 via env/config, this will divide by zero and crash on longer sequences. Add a guard/validation (e.g., require `rope_dims > 2` when using the NTK-style base rescaling) or handle the `rd==2` case explicitly.\n```suggestion\n            if seq_len > self.train_seq_len:\n                if rd <= 2:\n                    raise ValueError(\n                        f\"rope_dims must be greater than 2 when using NTK-style RoPE rescaling \"\n                        f\"for seq_len ({seq_len}) > train_seq_len ({self.train_seq_len}); got rope_dims={rd}\"\n                    )\n```",
+      "created_at": "2026-03-23T13:04:44Z",
+      "updated_at": "2026-03-23T13:04:45Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`Hyperparameters.muon_beta2` is defined but never used anywhere in the script (no references beyond the env read). If Muon is meant to support a beta2 term, wire it through; otherwise consider removing this hyperparameter to avoid confusion/misconfiguration.\n```suggestion\n\n```",
+      "created_at": "2026-03-23T13:04:44Z",
+      "updated_at": "2026-03-23T13:04:45Z"
+    }
+  ]
+}

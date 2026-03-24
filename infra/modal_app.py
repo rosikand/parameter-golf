@@ -15,38 +15,26 @@ from config import (
     WANDB_PROJECT,
 )
 
-app = modal.App(MODAL_APP_NAME)
-
 volume = modal.Volume.from_name(MODAL_VOLUME_NAME, create_if_missing=True)
 
-# Mount log_parser.py into the container at /root/log_parser.py
 _infra_dir = os.path.dirname(os.path.abspath(__file__))
-log_parser_mount = modal.Mount.from_local_file(
-    os.path.join(_infra_dir, "log_parser.py"),
-    remote_path="/root/log_parser.py",
-)
 
-image = (
-    modal.Image.from_registry(
-        "nvcr.io/nvidia/pytorch:24.04-py3",
-        add_python="3.11",
-    )
-    .pip_install(
-        "wandb",
-        "sentencepiece",
-        "huggingface-hub",
-        "datasets",
-        "kernels",
-        "tiktoken",
-    )
+# --------------------------------------------------------------------------- #
+# Data download app (lightweight, no GPU, separate from training)
+# --------------------------------------------------------------------------- #
+
+data_app = modal.App(f"{MODAL_APP_NAME}-data")
+
+data_image = (
+    modal.Image.debian_slim(python_version="3.12")
+    .pip_install("huggingface-hub")
 )
 
 
-@app.function(
-    image=image,
+@data_app.function(
+    image=data_image,
     volumes={MODAL_VOLUME_MOUNT: volume},
     timeout=600,
-    mounts=[log_parser_mount],
 )
 def ensure_data(
     data_download_script: str,
@@ -91,8 +79,31 @@ dl.main()
     print("Data download complete and committed to volume.")
 
 
-# We define separate functions for each GPU count since Modal requires
-# GPU spec at decoration time.
+# --------------------------------------------------------------------------- #
+# Training app (heavy NGC image, GPU)
+# --------------------------------------------------------------------------- #
+
+train_app = modal.App(MODAL_APP_NAME)
+
+train_image = (
+    modal.Image.from_registry(
+        "nvcr.io/nvidia/pytorch:24.04-py3",
+        add_python="3.12",
+    )
+    .pip_install(
+        "wandb",
+        "sentencepiece",
+        "huggingface-hub",
+        "datasets",
+        "kernels",
+        "tiktoken",
+    )
+    .add_local_file(
+        os.path.join(_infra_dir, "log_parser.py"),
+        remote_path="/root/log_parser.py",
+    )
+)
+
 
 def _train_run_impl(
     script_content: str,
@@ -144,7 +155,7 @@ def _train_run_impl(
         except Exception as e:
             print(f"WARNING: W&B init failed: {e}. Continuing without W&B.")
 
-    # Import log parser (mounted at /root/)
+    # Import log parser (baked into image at /root/)
     from log_parser import parse_line, extract_final_metrics
 
     # Launch training
@@ -216,13 +227,12 @@ def _train_run_impl(
     return result
 
 
-@app.function(
-    image=image,
+@train_app.function(
+    image=train_image,
     gpu="H100",
     volumes={MODAL_VOLUME_MOUNT: volume},
     timeout=1200,
-    secrets=[modal.Secret.from_name("wandb-secret", required=False)],
-    mounts=[log_parser_mount],
+    secrets=[modal.Secret.from_name("wandb-secret")],
 )
 def train_run_1gpu(
     script_content: str,
@@ -233,13 +243,12 @@ def train_run_1gpu(
     return _train_run_impl(script_content, env_vars, run_name, gpus=1, wandb_enabled=wandb_enabled)
 
 
-@app.function(
-    image=image,
-    gpu=modal.gpu.H100(count=2),
+@train_app.function(
+    image=train_image,
+    gpu="H100:2",
     volumes={MODAL_VOLUME_MOUNT: volume},
     timeout=1200,
-    secrets=[modal.Secret.from_name("wandb-secret", required=False)],
-    mounts=[log_parser_mount],
+    secrets=[modal.Secret.from_name("wandb-secret")],
 )
 def train_run_2gpu(
     script_content: str,
@@ -250,13 +259,12 @@ def train_run_2gpu(
     return _train_run_impl(script_content, env_vars, run_name, gpus=2, wandb_enabled=wandb_enabled)
 
 
-@app.function(
-    image=image,
-    gpu=modal.gpu.H100(count=4),
+@train_app.function(
+    image=train_image,
+    gpu="H100:4",
     volumes={MODAL_VOLUME_MOUNT: volume},
     timeout=1200,
-    secrets=[modal.Secret.from_name("wandb-secret", required=False)],
-    mounts=[log_parser_mount],
+    secrets=[modal.Secret.from_name("wandb-secret")],
 )
 def train_run_4gpu(
     script_content: str,
@@ -267,13 +275,12 @@ def train_run_4gpu(
     return _train_run_impl(script_content, env_vars, run_name, gpus=4, wandb_enabled=wandb_enabled)
 
 
-@app.function(
-    image=image,
-    gpu=modal.gpu.H100(count=8),
+@train_app.function(
+    image=train_image,
+    gpu="H100:8",
     volumes={MODAL_VOLUME_MOUNT: volume},
     timeout=1200,
-    secrets=[modal.Secret.from_name("wandb-secret", required=False)],
-    mounts=[log_parser_mount],
+    secrets=[modal.Secret.from_name("wandb-secret")],
 )
 def train_run_8gpu(
     script_content: str,

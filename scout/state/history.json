@@ -109,5 +109,111 @@
         ]
       }
     ]
+  },
+  {
+    "date": "2026-03-24",
+    "total_submissions": 571,
+    "submissions_with_score": 416,
+    "best_bpb": 0.5,
+    "top10": [
+      {
+        "number": 475,
+        "user": "abrahaw123-cell",
+        "bpb": 0.5,
+        "techniques": []
+      },
+      {
+        "number": 596,
+        "user": "AriaAnima",
+        "bpb": 0.643,
+        "techniques": [
+          "Int6",
+          "QAT",
+          "LoRA TTT",
+          "cosine scheduling",
+          "warmdown"
+        ]
+      },
+      {
+        "number": 568,
+        "user": "MatoTeziTanka",
+        "bpb": 0.7853,
+        "techniques": [
+          "Int6",
+          "TTT",
+          "LoRA",
+          "cosine scheduling",
+          "depth-scaled residual"
+        ]
+      },
+      {
+        "number": 216,
+        "user": "alons23",
+        "bpb": 0.81,
+        "techniques": [
+          "Muon optimizer",
+          "RoPE",
+          "QK-Norm"
+        ]
+      },
+      {
+        "number": 512,
+        "user": "MatoTeziTanka",
+        "bpb": 0.9512,
+        "techniques": [
+          "Int6",
+          "TTT",
+          "LoRA",
+          "depth-scaled residual"
+        ]
+      },
+      {
+        "number": 120,
+        "user": "andrewgcodes",
+        "bpb": 0.9588,
+        "techniques": [
+          "MLP expansion",
+          "Int6 quantization",
+          "QAT",
+          "sliding window eval"
+        ]
+      },
+      {
+        "number": 517,
+        "user": "lukacf",
+        "bpb": 0.9789,
+        "techniques": [
+          "TTT",
+          "cosine scheduling",
+          "AdamW TTT"
+        ]
+      },
+      {
+        "number": 168,
+        "user": "spokane-way",
+        "bpb": 1.02384,
+        "techniques": []
+      },
+      {
+        "number": 144,
+        "user": "DJLougen",
+        "bpb": 1.03056634,
+        "techniques": [
+          "Int8",
+          "Zstd",
+          "GQA",
+          "MPK strides"
+        ]
+      },
+      {
+        "number": 278,
+        "user": "nicolasdickenmann",
+        "bpb": 1.03647005,
+        "techniques": [
+          "sliding window eval",
+          "sparse prefix cache"
+        ]
+      }
+    ]
   }
 ]

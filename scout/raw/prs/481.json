@@ -1,10 +1,10 @@
 {
   "number": 481,
   "title": "Record: Cosine TTT scheduling with per-layer lr \u2014 mean val_bpb=1.0970 (3 seeds)",
-  "state": "open",
+  "state": "closed",
   "user": "mrdavtan",
   "created_at": "2026-03-23T00:28:26Z",
-  "updated_at": "2026-03-23T05:29:02Z",
+  "updated_at": "2026-03-23T17:33:06Z",
   "merged_at": null,
   "body": "## Summary\n\nval_bpb=1.0970 (3-seed mean, std=0.0010). 15.4-15.8 MB artifact. 8xH100 SXM, FA2.\n\n| Seed | Steps | Pre-TTT | Post-TTT | Artifact |\n|------|-------|---------|----------|----------|\n| 1337 | 7,101 | 1.1577 | 1.0959 | 15.4 MB |\n| 42 | 6,700 | 1.1588 | 1.0971 | 15.5 MB |\n| 7 | 6,987 | 1.1580 | 1.0979 | 15.8 MB |\n\nTraining architecture follows the community stack. The main change from prior work is in the TTT schedule. All runs used FA2; FA3 Hopper would improve pre-TTT quality through faster training steps. The schedule is independent of the attention kernel and should apply to any architecture.\n\n## TTT scheduling\n\nTwo modifications to AdamW TTT (PR #442):\n\n**Cosine lr decay** over 30 epochs. Starts at full lr to address large-scale quantization damage, progressively reduces to refine without overshooting. Flat lr must compromise between these two regimes.\n\n**Per-layer lr groups** based on quantization damage. MLP output projections showed 3.4\u00d7 higher relative quantization error than input projections on our trained checkpoint. TTT receives: 3\u00d7 base lr for output projections, 0.5\u00d7 for input projections, 1\u00d7 for the rest. Ratios are model-specific.\n\n```\nTTT_OPTIMIZER=adamw  TTT_LR=0.0005  TTT_EPOCHS=30\nTTT_COSINE=1  TTT_PERLAYER=1  TTT_FREEZE_BLOCKS=0\nTTT_BATCH_SEQS=64 (per GPU, 512 total with DDP sharding)\n```\n\n30 epochs at ~15.5s/epoch = ~465s total. We also tested flat lr, SGD, focal loss, and KL divergence from pre-quant model. Focal loss and KL divergence did not improve over cross-entropy. Full comparison in the README.\n\n## Other findings\n\nSee PR #212 for a non-record submission documenting 25+ experiments with negative results on codebook quantization, magnitude pruning, multi-token prediction, embedding factorization, and depth recurrence.\n\n## Acknowledgments\n\n- **Training architecture**: PRs #162 (raahilshah), #180 (thwu1)\n- **TTT as eval-time technique**: PR #77 (samacqua)\n- **Aggressive TTT**: PR #398 (felipe-parodi)\n- **AdamW for TTT**: PR #442 (sjp611)\n- **DDP TTT sharding**: PRs #398, #417 (EthanYangTW)\n- **Partial RoPE, LN Scale**: PR #315 (jfprincz)\n- **XSA**: arXiv:2603.09078\n- **Muon, modded-nanogpt**: foundation codebase\n\n## Reproduction\n\n```bash\ngit clone https://github.com/mrdavtan/parameter-golf.git\ncd parameter-golf && git checkout next-gen\npip install flash-attn --no-cache-dir --no-build-isolation\npip install zstandard sentencepiece huggingface_hub\npython3 data/cached_challenge_fineweb.py --variant sp1024\nbash run_competition.sh 1337\n```\n\nHardware: 8xH100 SXM (RunPod), PyTorch 2.9.1+cu128, Flash Attention 2\n",
   "labels": [],
@@ -16,6 +16,12 @@
       "body": "Updating to sliding window eval. New scores in progress. The per-layer lr groups, cosine scheduling, and ablation findings are independent of the evaluation method.",
       "created_at": "2026-03-23T05:29:02Z",
       "updated_at": "2026-03-23T05:29:02Z"
+    },
+    {
+      "user": "mrdavtan",
+      "body": "Closing: multi-epoch TTT is invalid per the clarified rules in #402. The per-layer LR and cosine scheduling contributions remain available for legal single-pass (Case 2) TTT implementations.",
+      "created_at": "2026-03-23T17:33:04Z",
+      "updated_at": "2026-03-23T17:33:04Z"
     }
   ]
 }

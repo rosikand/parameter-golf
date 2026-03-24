@@ -162,7 +162,7 @@ def main():
             return
 
     # Launch all runs in parallel via Modal starmap
-    from modal_app import app, get_train_fn
+    from modal_app import train_app, get_train_fn
     from leaderboard import add_result, print_summary
 
     train_fn = get_train_fn(args.gpus)
@@ -179,7 +179,7 @@ def main():
 
     print(f"\nLaunching {total_runs} runs on Modal...")
     results = []
-    with app.run():
+    with train_app.run():
         for result in train_fn.starmap(starmap_args):
             results.append(result)
 

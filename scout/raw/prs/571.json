@@ -1,0 +1,14 @@
+{
+  "number": 571,
+  "title": "Non-record: trigram phrase-memory ablation on 1\u00d7H100: negative result (1.2791 BPB best)",
+  "state": "open",
+  "user": "maxwellcipher",
+  "created_at": "2026-03-23T20:07:34Z",
+  "updated_at": "2026-03-23T20:07:34Z",
+  "merged_at": null,
+  "body": "## What this is\r\n\r\nA controlled ablation testing whether TrigramHash lookup tables improve a tuned 1\u00d7H100 backbone at the 16MB parameter-golf scale.\r\n\r\n## Results\r\n\r\n| Run | Params | Trigrams | val_bpb | Size |\r\n|-----|--------|----------|---------|------|\r\n| Full backbone control | 25.3M | None | **1.2791** | 21.6MB |\r\n| Slim control | 20.6M | None | **1.3007** | 17.4MB |\r\n| Slim + 2048\u00d764 | ~19M | 2048\u00d764 | **1.3029** | 17.3MB |\r\n| Slim + 4096\u00d796 | ~21M | 4096\u00d796 | **1.3040** | 17.9MB |\r\n\r\nFair comparison (same slim backbone): no-trigram beats both trigram variants. This is consistent with PR #486's note that \"trigram ablation confirmed negative at small scale\" but provides a published controlled comparison with actual numbers.\r\n\r\n## Why this might be useful\r\n\r\n- Saves others from spending compute testing trigrams in isolation at this configuration\r\n- Suggests the byte budget might be better spent on backbone capacity than static lookup tables\r\n- Open question: does this reverse on 8\u00d7H100 with 13K+ training steps?\r\n\r\n## Hardware\r\n\r\n1\u00d7H100 SXM, full FineWeb SP1024 dataset, 600s wallclock. No artifact fit under 16MB unfortunately and I ran out of credits to try a few smaller runs.  This is an exploratory non-record submission.\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/571",
+  "draft": false,
+  "comments": []
+}

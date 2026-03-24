@@ -1,0 +1,14 @@
+{
+  "number": 515,
+  "title": "Record: Atris Labs \u2014 val_bpb=1.2015, 10L MLP3x Int5/Int6 BigramHash SmearGate SWA",
+  "state": "open",
+  "user": "keshav55",
+  "created_at": "2026-03-23T08:48:13Z",
+  "updated_at": "2026-03-23T10:07:30Z",
+  "merged_at": null,
+  "body": "## Atris Labs \u2014 Parameter Golf Submission\n\n**val_bpb: 1.2015** (int8+zlib roundtrip, standard eval)\n\n### Architecture (25.5M params)\n- 10 transformer layers, MLP 3x (1536 hidden), 512 dim, GQA (8/4 heads)\n- BigramHash(10240): XOR hash of token pairs \u2192 128-dim embedding \u2192 projection\n- SmearGate: per-dim learned gate blending current + previous token\n\n### Training (8xH100, 600s)\n- Muon optimizer: lr=0.02, momentum=0.99, WD=0.04\n- AdamW: tied_embed_lr=0.03, WD=0.01\n- seq_len=2048, batch=786K, grad_clip=0.3\n- SWA: 24 checkpoint average during warmdown\n- 6486 steps, 92.5ms/step\n\n### Quantization\n- Int5 MLP weights + Int6 attention weights (per-row scale)\n- FP16 tied embeddings passthrough\n- 3% magnitude pruning\n- zlib compression (zstd fallback)\n- Artifact: 14.4MB\n\n### Included Files\n- README.md\n- submission.json\n- train_gpt.py (complete training script)\n\nBuilt with [Atris](https://atrislabs.com) \u2014 AI workspace operating system.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/515",
+  "draft": false,
+  "comments": []
+}

@@ -1,0 +1,14 @@
+{
+  "number": 583,
+  "title": "Record: 10L Int5-MLP3x BigramHash4096 SlidingEval \u2014 mean val_bpb 1.1489",
+  "state": "open",
+  "user": "suchihype",
+  "created_at": "2026-03-23T22:39:29Z",
+  "updated_at": "2026-03-23T22:39:29Z",
+  "merged_at": null,
+  "body": "## Record Submission\r\n\r\n**Mean val_bpb: 1.1489 \u00b1 0.0003 (3 seeds)**\r\n\r\n10-layer transformer, MLP 3\u00d7 with Int5 quantization, BigramHash(4096/128), full-run Int6 QAT, sliding window eval (stride 64). Schedule optimized via Optuna TPE sweep.\r\n\r\n| Seed | Roundtrip BPB | Steps |\r\n|------|--------------|-------|\r\n| 1337 | 1.1486 | 5,596 |\r\n| 42 | 1.1492 | 5,567 |\r\n| 7 | 1.1488 | 5,593 |\r\n\r\nAll under 16MB cap. 8\u00d7H100 SXM, 600s training. See README.md for full details.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/583",
+  "draft": false,
+  "comments": []
+}

@@ -1,0 +1,14 @@
+{
+  "number": 561,
+  "title": "Update README leaderboard with merged record submissions",
+  "state": "closed",
+  "user": "cocohearts",
+  "created_at": "2026-03-23T17:37:04Z",
+  "updated_at": "2026-03-23T17:42:37Z",
+  "merged_at": "2026-03-23T17:42:37Z",
+  "body": "## Summary\n\nUpdate the README leaderboard with the recently merged record submissions:\n- PR #265: 1.1307\n- PR #287: 1.1271\n- PR #315: 1.1248\n- PR #414: 1.1228\n\nEach new leaderboard row now states the base run and the architecture/config diff from that base, rather than a score delta.\n\n## Intentionally not included\n\n- PR #505 is not leaderboard-ready yet: it does not include a `submission.json`, and it does not include the train logs needed to back the claimed 3-seed result.\n- PR #545 is not leaderboard-ready yet: it is not packaged as a self-contained `/records` submission and is missing the expected submission metadata/files.\n\n## Scope\n\nREADME-only update.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/561",
+  "draft": false,
+  "comments": []
+}

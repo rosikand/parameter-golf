@@ -80,7 +80,7 @@ def expand_scripts(patterns: list[str]) -> list[str]:
 
 def run_ensure_data(train_shards: int):
     """Download dataset to Modal volume."""
-    from modal_app import app, ensure_data
+    from modal_app import data_app, ensure_data
 
     data_script_path = os.path.join(PROJECT_ROOT, "data", "cached_challenge_fineweb.py")
     with open(data_script_path) as f:
@@ -89,7 +89,7 @@ def run_ensure_data(train_shards: int):
     print(f"Downloading dataset to Modal volume (train_shards={train_shards})...")
     print("This may take several minutes on first run.")
 
-    with app.run():
+    with data_app.run():
         ensure_data.remote(data_download_script=data_script, train_shards=train_shards)
 
     print("Done.")
@@ -117,10 +117,10 @@ def run_single(script_path: str, run_name: str, gpus: int, env_vars: dict, wandb
     est_cost = gpus * (600 / 3600) * H100_COST_PER_HOUR
     print(f"Estimated cost (10min): ${est_cost:.2f}")
 
-    from modal_app import app, get_train_fn
+    from modal_app import train_app, get_train_fn
     train_fn = get_train_fn(gpus)
 
-    with app.run():
+    with train_app.run():
         result = train_fn.remote(
             script_content=script_content,
             env_vars=env_vars,

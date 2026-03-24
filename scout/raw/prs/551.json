@@ -1,0 +1,14 @@
+{
+  "number": 551,
+  "title": "Parameter Golf Submission - Efficient 21K Parameter Language Model",
+  "state": "open",
+  "user": "Vinaya-ai",
+  "created_at": "2026-03-23T16:25:30Z",
+  "updated_at": "2026-03-23T16:25:30Z",
+  "merged_at": null,
+  "body": "This submission presents a highly parameter-efficient language model designed under strict constraints.\r\n\r\nKey highlights:\r\n- Reduced vocabulary size to 200 for dense learning signal\r\n- Compact architecture (Embedding=16, Hidden=64)\r\n- ~21K parameters total\r\n- Optimized training strategy (lr=0.005, 30 epochs)\r\n\r\nApproach focused on maximizing performance per parameter rather than absolute model size.\r\n\r\nAll components included:\r\n- Model weights\r\n- Config\r\n- Training log\r\n- Execution script\r\n- Tokenizer files\r\n\r\nThe model is fully reproducible by running:\r\npython final_model.py",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/551",
+  "draft": false,
+  "comments": []
+}

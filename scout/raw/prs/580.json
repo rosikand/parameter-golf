@@ -1,0 +1,14 @@
+{
+  "number": 580,
+  "title": "[Non-record] Azure 1xH100 frontier-family engineering run (val_bpb=1.2623)",
+  "state": "open",
+  "user": "micoverde",
+  "created_at": "2026-03-23T22:28:35Z",
+  "updated_at": "2026-03-23T22:28:35Z",
+  "merged_at": null,
+  "body": "## Summary\n- add a non-record records-folder submission for our strongest verified Azure `1x H100` frontier-family engineering run\n- include the exact `train_gpt.py`, exact `train.log`, and `submission.json`\n- document the caveats clearly so this is not read as a leaderboard claim\n\n## Why\nThis is a real H100-side engineering artifact that bridges our earlier proxy-only work and future `8xH100` submission-grade runs. We are submitting it as a non-record public reference because the repo explicitly encourages interesting in-progress or non-record submissions under the `16MB` artifact cap.\n\n## Metrics\n- pre-quant `val_bpb`: `1.2591`\n- exact post-quant roundtrip `val_bpb`: `1.26233375`\n- total bytes: `12,727,250`\n- hardware: `1x NVIDIA H100 NVL 94GB`\n- exact source commit: `8e8c6d7a23f1bdf26905c0d93e43b5233a45a8ac`\n\n## Important caveats\n- this is a `non-record` submission, not a leaderboard claim\n- hardware is `1xH100`, not `8xH100 SXM`\n- training used a longer engineering wallclock cap (`1800s`)\n- the exact post-quant roundtrip metric completed successfully, but the trailing eval tail was interrupted by `SIGTERM` after that metric printed",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/580",
+  "draft": false,
+  "comments": []
+}

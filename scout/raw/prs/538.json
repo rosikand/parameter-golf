@@ -1,0 +1,14 @@
+{
+  "number": 538,
+  "title": "FP8 + Arithmetic Coding + SWA (1.1511 BPB)",
+  "state": "open",
+  "user": "cruz-andr",
+  "created_at": "2026-03-23T15:05:19Z",
+  "updated_at": "2026-03-23T17:06:36Z",
+  "merged_at": null,
+  "body": "## Summary\n- **val_bpb: 1.1511** on 8xH100, 10-minute wallclock\n- FP8 training via TransformerEngine (E4M3 fwd / E5M2 bwd) for ~1.3-1.5x throughput\n- Custom arithmetic coder replacing zstd-22, using per-tensor empirical histograms approaching Shannon entropy\n- Early SWA start (step 4500) for more weight averaging during warmdown\n- TF32 matmul precision for remaining non-FP8 ops\n- Architecture: 10L, 512dim, MLP 3x, SmearGate + BigramHash(10240)\n\n## Run Command\n```bash\nNUM_LAYERS=10 MODEL_DIM=512 MLP_MULT=3 VAL_LOSS_EVERY=0 MAX_WALLCLOCK_SECONDS=600 \\\nTTT_ENABLED=0 BIGRAM_VOCAB_SIZE=10240 WEIGHT_DECAY=0.04 \\\nDATA_PATH=/dev/shm/fineweb10B_sp1024/ \\\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\n## Built On\n- SOTA submission by thwu1 (1.1428 BPB): Int5-MLP + BigramHash(10240) + SWA\n- LoRA TTT submission by samacqua (1.1928 BPB)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/538",
+  "draft": false,
+  "comments": []
+}

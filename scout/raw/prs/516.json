@@ -1,0 +1,14 @@
+{
+  "number": 516,
+  "title": "Record: 11L NonTTT VR+GA MixedInt5/6: val_bpb=1.1428 (3-seed, 8xH100)",
+  "state": "closed",
+  "user": "Asukabot0",
+  "created_at": "2026-03-23T08:53:25Z",
+  "updated_at": "2026-03-23T12:05:28Z",
+  "merged_at": null,
+  "body": "## Summary\n\nNon-TTT submission with Value Residual (ResFormer) + Gated Attention + Mixed Int5/Int6 quantization.\n\n**3-seed mean val_bpb: 1.1428** (sliding window, stride=64, int6 roundtrip)\n\n## Approach\n\nBuilt on PR #315 base (EMA + Partial RoPE + LN Scale) with two architectural additions:\n\n- **Value Residual (ResFormer)**: Cache layer-0 V vectors and mix into subsequent layers via learnable \u03bb. 22 params per block, zero compute overhead. (arXiv:2410.17897, PR #413)\n- **Gated Attention**: Per-head sigmoid gate on attention output, suppresses attention sinks. ~37K params total. (arXiv:2505.06708, PR #413)\n- **Mixed Int5/Int6 quantization**: MLP middle layers use int5 [-16,15] for better zstd compression, edge layers + attention keep int6 [-32,31]\n\n### Key config\n```\n11L \u00d7 512 \u00d7 3xMLP, XSA4, EMA(0.997), Partial RoPE(16/64), LN Scale\nMuon(momentum=0.99, lr=0.025, wd=0.04), warmdown=3000\nTTT=OFF, Late QAT=OFF\nMixed int5/int6 + zstd-22\n```\n\n## Results\n\n| Seed | Steps | ms/step | val_bpb | Artifact Bytes | <16MB? |\n|------|-------|---------|---------|----------------|--------|\n| 1337 | 4622 | 129.82 | 1.14280 | 16,026,184 | NO |\n| 42 | 4623 | 129.79 | 1.14281 | 16,339,774 | NO |\n| 2025 | 4632 | 129.55 | 1.14287 | 16,244,044 | NO |\n| **Mean** | **4626** | **129.72** | **1.14283** | **16,203,334** | **NO** |\n\n## Known Issues & Next Steps\n\nThis submission has a **DDP performance regression** we've identified and are fixing:\n\n1. **`find_unused_parameters=True` in DDP** causes +53% step time (130ms vs expected ~85ms), reducing steps from ~7000 to ~4600. VR and GA params all receive gradients \u2014 this flag is unnecessary. Fix: set `find_unused_parameters=False`.\n2. **Artifact slightly exceeds 16MB** (by 26\u2013340KB). Fix: more aggressive int5 layer selection or magnitude pruning.\n\nWith these fixes we expect:\n- Step speed: ~85ms \u2192 ~7000 steps in 600s\n- val_bpb: ~1.12 range (matching single-GPU extrapolation)\n- Artifact: <16MB\n\nWill submit an updated run after fixes.\n\n## Hardware\n- 8\u00d7 H100 SXM 80GB\n- 600s wallclock (all seeds completed within budget)\n- Peak memory: ~27 GiB per GPU",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/516",
+  "draft": false,
+  "comments": []
+}

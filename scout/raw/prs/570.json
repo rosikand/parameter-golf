@@ -1,0 +1,14 @@
+{
+  "number": 570,
+  "title": "(Non record) 11L Frontier MixedQuant Trigram",
+  "state": "open",
+  "user": "armmer016",
+  "created_at": "2026-03-23T20:02:50Z",
+  "updated_at": "2026-03-23T20:02:50Z",
+  "merged_at": null,
+  "body": "Draft for future submission.\r\n\r\nThis is a non-record submission documenting a newbie experiment on an **8\u00d7H100** cluster to test the scaling of 11 layers with TrigramHash and BigramHash embeddings entirely without magnitude pruning.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/570",
+  "draft": true,
+  "comments": []
+}

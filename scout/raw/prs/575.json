@@ -1,0 +1,14 @@
+{
+  "number": 575,
+  "title": "Add 10min/16MB record: skinny RLM seq2048 (int8+zlib val_bpb 1.1750)",
+  "state": "open",
+  "user": "k-oconnor",
+  "created_at": "2026-03-23T21:34:56Z",
+  "updated_at": "2026-03-23T21:34:56Z",
+  "merged_at": null,
+  "body": "Small recursive language model.\r\n\r\nlooped RLM (skinny width, prefix + 2\u00d7 weight-tied blocks \u00d7 3 iterations + suffix), seq 2048, Muon with MATRIX_LR=0.02 / SCALAR_LR=0.02, MUON_WD=0.04, EMBED_BITS=8 (STE), LOSS_POS_WARMUP=256, ReLU\u00b2 MLP 3\u00d7, GQA, tied embeddings.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/575",
+  "draft": false,
+  "comments": []
+}

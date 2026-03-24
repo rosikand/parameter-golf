@@ -1,0 +1,14 @@
+{
+  "number": 595,
+  "title": "Record: Loqui Auris \u2014 10L + SWA + Standard TTT (val_bpb=1.1100)",
+  "state": "open",
+  "user": "LoquiAuris",
+  "created_at": "2026-03-24T02:56:33Z",
+  "updated_at": "2026-03-24T03:02:11Z",
+  "merged_at": null,
+  "body": "## Summary\n* val_bpb: 1.1100 (seed 1337)\n* 10L d=512, 8 heads, 4 KV heads (GQA), MLP 3x, ReLU\u00b2\n* SWA (29 checkpoints), SmearGate, BigramHash(4096), U-Net skips\n* Standard AdamW TTT: 10 epochs, lr=0.0005\n* Artifact: 15.69 MB (250KB headroom)\n* Platform: 8xH100 SXM, ~5992 steps in 600s\n\n## Acknowledgments\n* Training stack: PR #162 (raahilshah), PR #180 (thwu1)\n* TTT approach: PR #77 (samacqua), PR #442 (sjp611)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/595",
+  "draft": false,
+  "comments": []
+}

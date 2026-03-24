@@ -4,11 +4,18 @@
   "state": "open",
   "user": "unnir",
   "created_at": "2026-03-21T22:00:01Z",
-  "updated_at": "2026-03-21T22:00:01Z",
+  "updated_at": "2026-03-23T17:25:28Z",
   "merged_at": null,
   "body": "# Record: 11L + Tight SWA + Shared VE128 + Partial RoPE + LN Scale + XSA4 (val_bpb: 1.1246)\r\n\r\n## Key Innovation: Tight SWA\r\nSWA checkpoint collection restricted to scale<0.2 (last ~600 steps), every 50 steps. This eliminates the SWA quality penalty (post-SWA BPB = pre-SWA BPB) while maintaining quantization-friendly weight averaging. Standard SWA (scale<0.5) averages stale checkpoints that hurt final quality.\r\n\r\n## Architecture\r\n- 11 transformer layers, 512-dim, 8 heads (4 KV heads, GQA)\r\n- 3x MLP expansion with relu-squared activation\r\n- Efficient Partial XSA on last 4 layers (GQA-aware, zero-alloc)\r\n- Partial RoPE (16/64 dims) + NTK-aware scaling\r\n- LN Scale Factor 1/sqrt(layer_idx+1)\r\n- U-Net skip connections (5 encoder, 6 decoder)\r\n- SmearGate + BigramHash (2048 buckets, dim=128)\r\n- Shared Value Embedding (dim=128, layers 9,10) \u2014 1 table, per-layer learned scales\r\n- FlashAttention 3 (Hopper)\r\n- Orthogonal init with proj scaling by 1/sqrt(2*num_layers)\r\n- Logit softcap 30.0, tied embeddings\r\n\r\n## Training\r\n- Muon optimizer (matrices): lr=0.025, momentum=0.99 (warmup 0.92\u21920.99 over 1500 steps), WD=0.04\r\n- AdamW (embeddings): lr=0.035, (scalars): lr=0.025, WD=0.04\r\n- Gradient clip: 0.3\r\n- Batch: 786,432 tokens/step, seq_len=2048\r\n- Warmdown: 3000 iters (wallclock-based)\r\n- **Tight SWA**: every 50 steps when scale<0.2 (12 checkpoints from last 600 steps)\r\n- Late QAT: STE int6 fake-quantization when LR scale<0.1\r\n\r\n## Quantization\r\n- Int6 per-row for MLP + attention weights\r\n- Int8 per-row for embeddings\r\n- Control tensors in fp32\r\n- zstd level 22 compression\r\n\r\n## Results\r\n- 6942 steps in 600s at 86.4ms/step\r\n- Pre-quant val_bpb: 1.1407\r\n- Post-SWA val_bpb: 1.1407 (zero SWA penalty!)\r\n- Quant gap: 0.008\r\n- **Sliding window val_bpb: 1.1246**\r\n- Artifact size: 15,706,024 bytes (15.71 MB)\r\n\r\n## Run\r\n```bash\r\nNUM_LAYERS=11 MLP_MULT=3.0 XSA_LAST_N=4 ROPE_DIMS=16 LN_SCALE=1 \\\r\nSWA_ENABLED=1 SWA_EVERY=50 LATE_QAT_THRESHOLD=0.1 \\\r\nVE_ENABLED=1 VE_DIM=128 VE_LAYERS=9,10 \\\r\nBIGRAM_VOCAB_SIZE=2048 BIGRAM_DIM=128 ADAM_WD=0.04 MUON_WD=0.04 \\\r\nMATRIX_LR=0.025 SCALAR_LR=0.025 TIED_EMBED_LR=0.035 \\\r\ntorchrun --nproc_per_node=8 train_gpt.py\r\n```",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/374",
   "draft": false,
-  "comments": []
+  "comments": [
+    {
+      "user": "cocohearts",
+      "body": "unfortunately not statistically significant win over previous, sorry",
+      "created_at": "2026-03-23T17:25:28Z",
+      "updated_at": "2026-03-23T17:25:28Z"
+    }
+  ]
 }

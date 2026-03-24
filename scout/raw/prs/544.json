@@ -1,0 +1,69 @@
+{
+  "number": 544,
+  "title": "int5 GPTQ + 33.6M model: 1.1179 BPB (3-seed mean)",
+  "state": "closed",
+  "user": "EthanYangTW",
+  "created_at": "2026-03-23T15:51:19Z",
+  "updated_at": "2026-03-23T15:58:42Z",
+  "merged_at": null,
+  "body": "## Summary\n\n33.6M parameter model quantized to **int5 with GPTQ error compensation**, fitting under 16MB. First submission to achieve int5 quantization on a 33.6M model within the artifact size limit.\n\n**Architecture:** 11L, 512d, MHA 8/8, MLP 3.5x (1792), BigramHash 8192, XSA all layers\n**Quantization:** int5 per-row GPTQ (clip_range=15) + Early QAT (threshold 0.5) + EMA 0.997\n**TTT:** Legal score-first AdamW, chunk=131072, last 2 blocks unfrozen\n\n## Results\n\n| Seed | Sliding BPB | TTT BPB | Artifact |\n|------|-------------|---------|----------|\n| 1337 | 1.1244 | **1.1170** | 15.53 MB |\n| 42 | 1.1249 | **1.1182** | 15.36 MB |\n| 7 | 1.1250 | **1.1184** | 15.28 MB |\n| **Mean** | **1.1248** | **1.1179** | |\n\n## Logs\n\n### Seed 1337\n```\nmodel_params:33580124\nXSA:[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] ws:8 gqa:8/8\nlr:embed=0.035 matrix=0.025 scalar=0.025 batch:786432 wall:600s seed:1337\nstep:0/20000 val_loss:6.9304 val_bpb:4.1046 train_time:0ms step_avg:0.01ms\nstep:500/20000 train_loss:2.3701 train_time:48612ms step_avg:97.22ms\nstep:1000/20000 train_loss:2.2455 train_time:97399ms step_avg:97.40ms\nstep:1500/20000 train_loss:2.1909 train_time:146193ms step_avg:97.46ms\nstep:2000/20000 train_loss:2.0314 train_time:195030ms step_avg:97.52ms\nstep:2500/20000 train_loss:2.1357 train_time:243879ms step_avg:97.55ms\nstep:3000/20000 train_loss:2.1196 train_time:292698ms step_avg:97.57ms\nstep:3500/20000 train_loss:2.1280 train_time:341516ms step_avg:97.58ms\nstep:4000/20000 val_loss:2.0061 val_bpb:1.1881 train_time:390334ms step_avg:97.58ms\nlate_qat:enabled step:4399 scale:0.4999\nswa:start step:5450\nstep:6142/20000 val_loss:1.9016 val_bpb:1.1262 train_time:600020ms step_avg:97.69ms\nbest_averaging:ema val_bpb:1.1253\npruning:2.0% magnitude pruning applied\ngptq:calibrated 68 layers in 2.6s\nSerialized model int6+zstd: 15450968 bytes\nTotal submission size int6+zstd: 15526951 bytes\nfinal_int6_sliding_window val_loss:1.8985 val_bpb:1.1244 stride:32 eval_time:164429ms\nfinal_int6_sliding_window_exact val_loss:1.89850579 val_bpb:1.12440579\nttt:start chunks=474 chunk_tokens=131072 stride=32 lr=0.0001 epochs=3 opt=adamw freeze_first=2\n  ttt_chunk [1/474] bpb=1.205191 time=1.2s\n  ttt_chunk [101/474] bpb=1.125280 time=112.0s\n  ttt_chunk [201/474] bpb=1.125951 time=222.8s\n  ttt_chunk [301/474] bpb=1.121763 time=333.6s\n  ttt_chunk [401/474] bpb=1.118378 time=444.4s\n  ttt_chunk [474/474] bpb=1.117889 time=524.3s\nfinal_int6_ttt val_loss:1.8860 val_bpb:1.1170 stride:32 eval_time:525132ms\nfinal_int6_ttt_exact val_loss:1.88598432 val_bpb:1.11698985\n```\n\n### Seed 42\n```\nmodel_params:33580124\nseed:42\nstep:4000/20000 val_loss:2.0087 val_bpb:1.1897\nlate_qat:enabled step:4393 scale:0.4999\nswa:start step:5450\nstep:6138/20000 val_loss:1.9040 val_bpb:1.1276 train_time:600007ms step_avg:97.75ms\nbest_averaging:ema val_bpb:1.1267\npruning:2.0% magnitude pruning applied\ngptq:calibrated 68 layers in 2.5s\nSerialized model int6+zstd: 15284494 bytes\nTotal submission size int6+zstd: 15360477 bytes\nfinal_int6_sliding_window_exact val_loss:1.89928270 val_bpb:1.12486593\nttt:start chunks=474 chunk_tokens=131072 stride=32 lr=0.0001 epochs=3 opt=adamw freeze_first=2\n  ttt_chunk [1/474] bpb=1.199439 time=1.2s\n  ttt_chunk [101/474] bpb=1.125688 time=112.3s\n  ttt_chunk [474/474] bpb=1.119019 time=525.9s\nttt:done val_loss=1.888037 val_bpb=1.118206 elapsed=525.9s\nfinal_int6_ttt_exact val_loss:1.88803710 val_bpb:1.11820563\n```\n\n### Seed 7\n```\nmodel_params:33580124\nseed:7\nbest_averaging:ema val_bpb:1.1264\nSerialized model int6+zstd: 15206146 bytes\nTotal submission size int6+zstd: 15282129 bytes\nfinal_int6_sliding_window_exact val_loss:1.89958170 val_bpb:1.12504301\nttt:start chunks=474 chunk_tokens=131072 stride=32 lr=0.0001 epochs=2 opt=adamw freeze_first=2\nttt:done val_loss=1.888400 val_bpb=1.118421 elapsed=503.5s\nfinal_int6_ttt_exact val_loss:1.88840031 val_bpb:1.11842074\n```\n\n## Reproduction\n\n```bash\npip install --break-system-packages zstandard\npip install --break-system-packages flash-attn --no-build-isolation\npython3 data/cached_challenge_fineweb.py --variant sp1024 --train-shards 80\n\nSEED=1337 PRUNE_PCT=0.02 TTT_EPOCHS=3 TTT_LR=0.0001 \\\nTTT_OPTIMIZER=adamw TTT_FREEZE_BLOCKS=2 TTT_CHUNK_TOKENS=131072 \\\nEVAL_STRIDE=32 \\\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/544",
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "`train_gpt_mlx.py`\u2019s module docstring states a hard stop that both `train_gpt.py` and `train_gpt_mlx.py` should not exceed 1500 lines for newcomer readability, but `train_gpt.py` is now 1580 lines. Please move record-specific / experimental code (e.g., GPTQ/TTT helpers) into `/records` or otherwise reduce the core script length to stay within that stated limit.",
+      "created_at": "2026-03-23T15:58:39Z",
+      "updated_at": "2026-03-23T15:58:42Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`Rotary.forward()` computes `new_base = self.base * (scale ** (rd / (rd - 2)))`, which will divide by zero when `rope_dims` is 2 (and behaves poorly when `rope_dims <= 2`). Add validation that `rope_dims` is either 0 (meaning full head_dim) or an even value >= 4 to avoid runtime errors.",
+      "created_at": "2026-03-23T15:58:39Z",
+      "updated_at": "2026-03-23T15:58:42Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "When `rope_dims > 0`, it\u2019s applied without checking it\u2019s even and <= `head_dim`. If `rope_dims` is odd or larger than `head_dim`, `Rotary` will build cos/sin tables with incompatible last-dimension sizes and `apply_rotary_emb()` can error at runtime. Consider validating `0 < rope_dims <= head_dim` and `rope_dims % 2 == 0` up front (e.g., in `GPT.__init__`).",
+      "created_at": "2026-03-23T15:58:40Z",
+      "updated_at": "2026-03-23T15:58:42Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`CausalSelfAttention` hard-codes `train_seq_len=1024` when constructing `Rotary`, but the default `Hyperparameters.train_seq_len` is now 2048. This means RoPE will always take the \u201cseq_len > train_seq_len\u201d scaling branch during training/eval at 2048, which is easy to do unintentionally. If the scaling should be tied to the actual training context length, thread `args.train_seq_len` (or a dedicated hyperparameter) into `Rotary` construction.",
+      "created_at": "2026-03-23T15:58:40Z",
+      "updated_at": "2026-03-23T15:58:42Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`BigramHashEmbedding.bigram_hash()` sets `mod = bigram_vocab_size - 1` and then does `% mod`, which will raise a division-by-zero error if `BIGRAM_VOCAB_SIZE` is 1 (and produces negative indices if it\u2019s 0 but still instantiated). Add input validation in `BigramHashEmbedding.__init__` (or where it\u2019s constructed) to require `bigram_vocab_size >= 2` when enabled.",
+      "created_at": "2026-03-23T15:58:40Z",
+      "updated_at": "2026-03-23T15:58:42Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The QAT path in `CastedLinear.forward()` computes `torch.quantile(..., dim=1)` for every 2D weight on every forward pass when enabled. This is extremely expensive (quantile involves sorting / heavy reductions) and is likely to blow the 10-minute training budget once late-QAT turns on. Consider precomputing per-row clip values periodically, using a cheaper statistic (e.g., amax / EMA), or restricting QAT to a small subset of layers.\n```suggestion\n                # Use a cheaper per-row amax-based EMA for clipping instead of per-forward quantile.\n                if not hasattr(self, \"_qat_row_clip_ema\"):\n                    # Initialize EMA with current per-row maximum absolute values.\n                    self._qat_row_clip_ema = w32.abs().amax(dim=1)\n                else:\n                    current = w32.abs().amax(dim=1)\n                    ema_decay = 0.9\n                    self._qat_row_clip_ema.mul_(ema_decay).add_(current, alpha=1.0 - ema_decay)\n                row_clip = self._qat_row_clip_ema\n```",
+      "created_at": "2026-03-23T15:58:40Z",
+      "updated_at": "2026-03-23T15:58:42Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`ema_state` is initialized and updated as GPU float32 copies of the full `state_dict()` each step. This can significantly increase GPU memory usage (potentially causing OOM) and adds per-step overhead. Consider keeping EMA on CPU (and updating from `.detach().cpu()`), or limiting EMA to a subset of parameters.\n```suggestion\n                # Keep EMA state on CPU to avoid maintaining a full float32 copy on GPU.\n                ema_t = ema_state[name]\n                if ema_t.device != torch.device(\"cpu\"):\n                    ema_t = ema_t.detach().cpu()\n                    ema_state[name] = ema_t\n                t_cpu = t.detach().float().cpu()\n                ema_t.mul_(ema_decay).add_(t_cpu, alpha=1.0 - ema_decay)\n```",
+      "created_at": "2026-03-23T15:58:41Z",
+      "updated_at": "2026-03-23T15:58:42Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "In `mixed_quantize_int6_gptq`, the early branch `if not t.is_floating_point() or t.numel() <= 65536` runs before the control-tensor check, so small control tensors (matching `CONTROL_TENSOR_NAME_PATTERNS`) will be downcast to fp16 and never get the intended `passthrough_ctrl` handling. If control tensors are meant to stay fp32 for stability/accuracy, check `CONTROL_TENSOR_NAME_PATTERNS` before the `numel() <= 65536` passthrough/downcast logic.\n```suggestion\n        # Non-floating tensors are always passed through as-is.\n        if not t.is_floating_point():\n            result[name] = t\n            meta[name] = \"passthrough\"\n            continue\n        # Control tensors are kept in float32 for stability/accuracy, regardless of size.\n        if any(p in name for p in CONTROL_TENSOR_NAME_PATTERNS):\n            result[name] = t.float()\n            meta[name] = \"passthrough_ctrl\"\n            continue\n        # Small floating-point tensors are passed through in float16.\n        if t.numel() <= 65536:\n            result[name] = t.to(torch.float16)\n            meta[name] = \"passthrough\"\n            continue\n```",
+      "created_at": "2026-03-23T15:58:41Z",
+      "updated_at": "2026-03-23T15:58:42Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Several helpers and artifacts are named `int6` (e.g., `quantize_int6_per_row`, `final_model.int6.ptz`), but the PR description/docstring calls this \u201cint5 GPTQ\u201d. Since `clip_range=15` yields 31 signed levels (an int5-like scheme), please rename the functions/files/metadata to match the actual quantization format to avoid confusion for readers and future tooling.",
+      "created_at": "2026-03-23T15:58:41Z",
+      "updated_at": "2026-03-23T15:58:42Z"
+    }
+  ]
+}

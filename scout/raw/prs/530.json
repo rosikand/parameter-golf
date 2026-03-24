@@ -1,0 +1,14 @@
+{
+  "number": 530,
+  "title": "Non-record: Basis Block Interpolation (novel negative result) + Hyperparameter Sweep (MATRIX_LR=0.03 improves SOTA by 0.059 bpb)",
+  "state": "open",
+  "user": "j420",
+  "created_at": "2026-03-23T13:11:31Z",
+  "updated_at": "2026-03-23T13:11:31Z",
+  "merged_at": null,
+  "body": "Novel architecture exploration + systematic hyperparameter optimization.\r\n\r\nKey contributions:\r\n- Basis Block Interpolation: 5 basis blocks \u00d7 3 unrolls = 15 effective layers \r\n  at dim=576. Documented as informative negative result \u2014 block reuse is \r\n  bottlenecked by torch.compile(fullgraph=False) speed penalty.\r\n- Hyperparameter sweep: 15+ controlled experiments on 1xH100 SXM identifying \r\n  MATRIX_LR=0.03 as 0.059 bpb improvement over default 0.02.\r\n\r\nBest val_bpb: 1.4963 (1xH100, standard eval)\r\nTrack: non-record",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/530",
+  "draft": false,
+  "comments": []
+}

@@ -4,7 +4,7 @@
   "state": "open",
   "user": "mihaibujanca",
   "created_at": "2026-03-20T10:53:45Z",
-  "updated_at": "2026-03-21T06:14:41Z",
+  "updated_at": "2026-03-23T17:24:44Z",
   "body": "**Problem**\nSubmissions share code but not trained weights. Anyone who wants to evaluate, compare, or build on a submission must re-run the full 10-minute 8xH100 training from scratch. This is expensive, wasteful in training credits / favorizes contributorcontributors without H100 access, and blocks a whole category of downstream work.\n\n  **Why this matters**\n\n1. **Compute**\nEvery time someone wants to compare against a prior submission, they re-train it. Multiply that across contributors and seeds and we're burning significant H100-hours reproducing identical runs. Even with the compute grant, credits are finite. The current setup favors contributors who can afford to re-run freely over those who need to be deliberate with their budget\n\n  2. **Reusing the research benchmark**\nThis repo is accumulating dozens of small LMs trained on the same data with diverse architectures. With published weights this becomes a standardized collection of tiny LMs useful for interpretability research, architecture comparison, and compression studies. Without weights \n\n  3. **Downstream tooling**\n  Post-training quantization experiments, interpretability tools, distillation, and model merging are all bottlenecked by \"step 0: re-train the model.\" Shipping weights makes these lines of work trivially accessible.\n\n  **Implementation**\n\n  - A shared HuggingFace repo (e.g. openai/parameter-golf-weights) where each record submission uploads its final_model.pt and/or the compressed artifact\n  - The eval harness could upload automatically after a successful run, or submitters could upload manually as part of the PR checklist\n  - Reasonable overhead: the compressed artifacts are already under 20 MB. Full-precision checkpoints are ~50-100 MB\n\n  **Open questions**\n  - Required or opt-in?\n  - Where should it be hosted?\n  - Compressed artifact or full-precision final_model.pt, or both?\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/issues/202",
@@ -26,6 +26,12 @@
       "body": "Strongly second the motion.\n\nHuggingFace seems like the natural home for this \u2014 the BabyLM challenge did exactly this, and the Open LLM Leaderboard hosts hundreds of models in this size range.\n\nI've burned through a lot of compute credits just retraining other submissions to compare against. \n\nFor the moderators: published weights would let you verify scores via eval-only runs almost instantly, which would speed up the leaderboard backlog. Still need to retrain so not a huge help but there's something! ",
       "created_at": "2026-03-21T06:14:41Z",
       "updated_at": "2026-03-21T06:14:41Z"
+    },
+    {
+      "user": "0hq",
+      "body": "Ah that's a good point! I agree actually, we can just use Github since the files are so small anyways. I'll look into this.",
+      "created_at": "2026-03-23T17:24:44Z",
+      "updated_at": "2026-03-23T17:24:44Z"
     }
   ]
 }

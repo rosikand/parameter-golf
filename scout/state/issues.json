@@ -5,26 +5,31 @@
     "user": "notapplica",
     "category": "analysis",
     "techniques_mentioned": [
-      "Int5/Int6 quantization-aware training (QAT)",
-      "BigramHash",
-      "sliding window attention/evaluation",
-      "SWA (Stochastic Weight Averaging)",
-      "weight decay (MuonWD)",
-      "OrthoInit",
-      "SmearGate",
-      "MLP 3x expansion",
-      "test-time training (TTT)",
-      "backward-looking TTT",
-      "FlashAttention 3 (FA3)",
-      "sequence length curriculum",
       "EMA",
+      "GPTQ-lite",
+      "QAT",
       "Partial RoPE",
-      "LayerNorm scale",
-      "late QAT",
-      "AdamW TTT",
-      "GEPA"
+      "LN Scale",
+      "XSA4",
+      "TTT",
+      "Int6 MLP3x",
+      "SmearGate",
+      "BigramHash",
+      "OrthoInit",
+      "Muon WD",
+      "SWA",
+      "FA3",
+      "sliding window eval",
+      "MLP 3x expansion",
+      "int6 per-row quantization",
+      "fp16 tied embedding",
+      "long-context training",
+      "LoRA TTT",
+      "mixed precision",
+      "warmdown",
+      "multi-pass TTT"
     ],
-    "key_insights": "This auto-updated commentary issue tracks competition progress, documenting BPB improvements from 1.2244 baseline to ~1.0672 (pending) over ~5 days via techniques like Int6 QAT, BigramHash, SmearGate, SWA, and TTT. Key findings reported by participants include: seq curriculum breaks SWA, EMA causes a 0.14 BPB quantization gap on SWA stacks, and MLP 2.75x expansion is the sweet spot at 11L+SmearGate. Backward-looking TTT (adapting on already-evaluated tokens) is explicitly permitted under competition rules, while pre-eval adaptation on val data is not.",
+    "key_insights": "Auto-updated leaderboard commentary tracking competition progress, showing BPB dropped ~0.17 in ~5 days to 1.0523 (pending legality). Top techniques include sliding window eval (~-0.034 BPB), MLP 3x expansion (~-0.019 BPB), int6 per-row quantization, and TTT. Multiple pending submissions may be invalid due to improper TTT implementation (pre-scoring adaptation on eval tokens).",
     "relevance": "high"
   },
   {
@@ -33,12 +38,12 @@
     "user": "leloykun",
     "category": "bug_report",
     "techniques_mentioned": [
-      "test-time training",
       "TTT",
-      "backward-looking TTT",
-      "DDP parallel TTT"
+      "test-time training",
+      "DDP",
+      "sliding window"
     ],
-    "key_insights": "Many submissions implement TTT incorrectly by training on all eval tokens before scoring, which is equivalent to appending eval tokens to training data and constitutes information leakage. Proper TTT must score token t before adapting on tokens up to t. At least 9 PRs are potentially invalid due to this issue.",
+    "key_insights": "Many high-scoring TTT submissions are invalid because they adapt on all eval tokens before scoring, which is equivalent to training on eval data. Correct TTT must score token t before adapting on tokens up to t. At least 9 PRs are flagged as potentially invalid, explaining many sub-1.1 BPB scores.",
     "relevance": "high"
   },
   {
@@ -53,13 +58,14 @@
       "fp16 tied embedding",
       "long-context training seq4096",
       "Muon momentum",
-      "NorMuon",
       "LoRA TTT",
       "mixed precision",
       "val-only training",
+      "NorMuon",
+      "SentencePiece tokenizer",
       "zstd-22"
     ],
-    "key_insights": "Early leaderboard snapshot quantifying technique impacts: sliding window eval (~-0.034 BPB), MLP 3x expansion (~-0.019 BPB), int6 quantization (saves ~4MB enabling larger models), fp16 tied embedding (~-0.007 BPB), and seq4096 training (~-0.01 BPB). LoRA TTT with rank-8 adapters per document provides ~-0.004 BPB using only ~1/10 of eval budget.",
+    "key_insights": "Early unofficial leaderboard snapshot documenting key winning techniques with quantified BPB impacts: sliding window eval (-0.034), MLP 3x (-0.019), 10-layer mixed precision (-0.01), long-context training (-0.01), fp16 tied embedding (-0.007), Muon tuning (-0.005), LoRA TTT (-0.004). Val-only training (memorization) achieves 1.0149 BPB but is flagged separately.",
     "relevance": "high"
   },
   {
@@ -110,7 +116,7 @@
       "distillation",
       "model merging"
     ],
-    "key_insights": "Proposal to publish trained weights to a shared HuggingFace repo alongside code submissions, reducing redundant H100 compute for reproduction and enabling downstream research like interpretability and distillation. Compressed artifacts are already under 20MB, making hosting trivial.",
+    "key_insights": "Proposal to publish trained model weights (e.g., on HuggingFace) to avoid redundant retraining, enable reproducibility verification, and support downstream research like interpretability and distillation. Maintainer expressed interest; files are small enough to host on GitHub directly.",
     "relevance": "low"
   },
   {
@@ -128,7 +134,7 @@
   },
   {
     "number": 270,
-    "title": "Record submission: FarnsworthEngine v1 \u2014 val_bpb=1.1303 (mean 1.1313, 3 seeds)",
+    "title": "Title: Record submission: FarnsworthEngine v1 \u2014 val_bpb=1.1303 (mean 1.1313, 3 seeds)",
     "user": "timowhite88",
     "category": "competition_meta",
     "techniques_mentioned": [
@@ -142,7 +148,7 @@
       "FA3",
       "sliding window"
     ],
-    "key_insights": "Leaderboard addition request for PR #254 combining TTT with a full stack of techniques achieving mean 1.1313 BPB across 3 seeds. Notably this submission was later flagged in issue #402 as potentially invalid due to improper TTT implementation (training on eval tokens before scoring).",
+    "key_insights": "Record submission request for PR #254 achieving mean 1.1313 BPB across 3 seeds using TTT + 11-layer Int6 MLP3x + SmearGate + BigramHash + OrthoInit + SWA + FA3 + sliding window stride=64. However, this submission was later flagged in issue #402 as potentially invalid due to improper TTT implementation (multi-epoch TTT before evaluation).",
     "relevance": "medium"
   },
   {
@@ -151,7 +157,7 @@
     "user": "Hanosuko",
     "category": "other",
     "techniques_mentioned": [],
-    "key_insights": "Empty issue with no content.",
+    "key_insights": "Empty/test issue with no content.",
     "relevance": "low"
   },
   {
@@ -228,10 +234,9 @@
     "user": "leloykun",
     "category": "competition_meta",
     "techniques_mentioned": [
-      "autoresearch",
-      "automated submission tooling"
+      "autoresearch"
     ],
-    "key_insights": "Proposes limiting each participant to one open record attempt at a time, merging sufficiently similar concurrent submissions with shared credit, and enforcing stricter code quality to combat LLM-generated reward hacking. Motivated by the rapid flood of submissions and risk of cherry-picked or low-quality entries degrading scientific rigor.",
+    "key_insights": "Proposes rules to handle submission flood from AI-assisted tools: limit one open record attempt per participant, merge similar concurrent submissions, and enforce stricter code quality. A commenter prototyped a structured evidence artifact system with a verifier to make the evidentiary surface explicit without changing submission rules.",
     "relevance": "medium"
   },
   {
@@ -305,6 +310,30 @@
     "category": "other",
     "techniques_mentioned": [],
     "key_insights": "Enthusiasm post with no technical content or competition insights.",
+    "relevance": "low"
+  },
+  {
+    "number": 520,
+    "title": "Run & track experiments on Hugging Face infra",
+    "user": "lewtun",
+    "category": "other",
+    "techniques_mentioned": [
+      "autoresearch"
+    ],
+    "key_insights": "Provides an end-to-end example for launching and tracking parameter-golf experiments on Hugging Face infrastructure using HF Jobs, Buckets, and Trackio for live metrics. Includes agent skills integration for autoresearch-style automated experiment launching.",
+    "relevance": "low"
+  },
+  {
+    "number": 519,
+    "title": "Add fixed-step and fixed-compute evaluation benchmarks for hardware accessibility",
+    "user": "yhy19",
+    "category": "competition_meta",
+    "techniques_mentioned": [
+      "FLOPs counting",
+      "fixed-step training",
+      "fixed-compute training"
+    ],
+    "key_insights": "Proposes adding fixed-step (N gradient steps) and fixed-compute (X FLOPs) evaluation modes alongside the existing H100 wall-clock benchmark to lower barriers for participants without H100 access and improve reproducibility. Suggests tiered leaderboard system (Bronze/Silver/Gold) or separate leaderboards for each mode.",
     "relevance": "low"
   }
 ]

@@ -1,0 +1,14 @@
+{
+  "number": 540,
+  "title": "[DRAFT] BitNet b1.58 ternary QAT + depth recurrence submission",
+  "state": "open",
+  "user": "devferrazZz",
+  "created_at": "2026-03-23T15:08:17Z",
+  "updated_at": "2026-03-23T15:08:17Z",
+  "merged_at": null,
+  "body": "Results TBD pending H100 grant run. Approach validated on M1 Max 64GB: compression confirmed at ~14.2MB for 61.9M unique ternary params. Fill val_bpb, val_loss, artifact_mb, date from actual run logs before final PR.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/540",
+  "draft": true,
+  "comments": []
+}

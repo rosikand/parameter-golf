@@ -1,0 +1,14 @@
+{
+  "number": 587,
+  "title": "XSA-11 + GPTQ b64/pd002 \u2014 3-seed mean val_bpb 1.1208",
+  "state": "open",
+  "user": "newjordan",
+  "created_at": "2026-03-23T23:20:11Z",
+  "updated_at": "2026-03-23T23:20:11Z",
+  "merged_at": null,
+  "body": "## Results\n\n| Seed | Pre-TTT BPB | TTT BPB | Artifact |\n|------|-------------|---------|----------|\n| 1337 | 1.1203 | 1.1204 | 15.56 MB |\n| 42 | 1.1211 | 1.1213 | 15.56 MB |\n| 7 | 1.1205 | 1.1206 | 15.64 MB |\n| **Mean** | **1.1206** | **1.1208** | \u2014 |\n\n## Architecture\n\n11L/512d/8H/4KV, relu\u00b2, XSA on all 11 layers, BigramHash 2048, VE128, EMA 0.997, tied embeddings.\n\n## Key changes vs prior submissions\n\n- **XSA on all 11 layers** (was 4): -0.0006 BPB from expanded cross-self attention\n- **GPTQ block_size=64, percdamp=0.002**: better compression from smaller quantization blocks and less Hessian damping, freeing space for XSA-11\n\n## Quantization\n\nInt6 GPTQ with block_size=64, percdamp=0.002, 256-sample Hessian calibration, zstd-22 compression.\n\n## Reproduction\n\n```bash\npip install sentencepiece numpy zstandard\nSEED=1337 torchrun --standalone --nproc_per_node=8 train_gpt.py\n```",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/587",
+  "draft": false,
+  "comments": []
+}

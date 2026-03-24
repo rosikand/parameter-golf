@@ -1,0 +1,21 @@
+{
+  "number": 577,
+  "title": "GPTQ + Short TTT \u2014 val_bpb 1.1207 (seed 1337)",
+  "state": "open",
+  "user": "newjordan",
+  "created_at": "2026-03-23T22:12:42Z",
+  "updated_at": "2026-03-23T22:19:01Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **val_bpb: 1.1207** (single seed 1337)\n- **Artifact: 15.60 MB** (int6+zstd-22)\n- **Training: 600s** on 8xH100 SXM | **Eval: 268s** (75s sliding + 192s TTT)\n\nIterating on our previous submission (#508, 1.1215 three-seed mean). Same base architecture and GPTQ pipeline, with one change to the TTT strategy. Marginal improvement \u2014 sharing findings for the community.\n\n## What Changed from #508\n\n### Short TTT (no EMA, 50 chunks)\n\nOur #508 used EMA-smoothed TTT over 200 chunks (decay=0.995). We observed that TTT contributed +0.0000 to the final score \u2014 EMA was smoothing away all adaptation gains.\n\nWe tried a more aggressive approach: SGD TTT with no EMA, stopping training after 50 chunks. The running average peaks at chunk 51 (bpb=1.1104) but degrades through chunks 100\u2013400 before recovering. Final TTT score: 1.12075 \u2014 essentially matching the pre-TTT sliding window of 1.12070.\n\n**Conclusion**: short TTT avoids the late-chunk degradation of full TTT, but the adapted weights don't generalize well to the middle portion of the validation set. TTT is net neutral on this architecture.\n\n### Other Fixes\n\n- Proper zstd-22 compression (shaved ~2MB vs zlib fallback in an earlier broken run)\n- Disabled int8_sensitive to stay within 16MB\n\n## Results\n\n| Metric | #508 (seed 1337) | This run |\n|--------|------------------|----------|\n| Pre-quant (post-EMA) | 1.1386 | 1.1387 |\n| Post-quant roundtrip | 1.1444 | 1.1445 |\n| Sliding window (s64) | 1.1206 | **1.1207** |\n| Legal TTT | 1.1206 | **1.1208** |\n| Artifact | 15.56 MB | 15.60 MB |\n\nEffectively the same base model \u2014 variance is within seed noise.\n\n## TTT Chunk Trajectory\n\nThe short TTT (50 chunks, no EMA) shows clear adaptation then distribution shift:\n\n| Chunk range | Running BPB | Interpretation |\n|-------------|------------|----------------|\n| 1\u201350 | 1.158\u21921.110 | Adapting (training active) |\n| 51 (peak) | **1.1104** | Training stops, weights frozen |\n| 100\u2013200 | 1.119\u21921.137 | Distribution shift \u2014 adapted weights hurt |\n| 400\u2013900 | 1.138\u21921.127 | Gradual recovery |\n| 1300\u20131893 | 1.125\u21921.123 | Convergence to final |\n\nThe chunk-51 peak (1.1104) demonstrates the model has capacity for much lower BPB. The challenge is making that adaptation generalize across the full validation set.\n\n## Architecture\n\nUnchanged from #508: 11L/512d/8H/4KV/3xMLP (relu\u00b2), U-Net skip, Partial RoPE (16/64), XSA last 4, BigramHash(2048), VE128 on layers 9-10, SmearGate. 26.99M params.\n\n## Credits\n\n- Base architecture: @signalrush (PR #414)\n- Legal TTT recipe: @anantdgoel (PR #461)\n- GPTQ: Frantar et al. (2022)\n\n## Run\n\n```bash\nTTT_OPTIMIZER=sgd TTT_LR=0.002 TTT_EPOCHS=3 TTT_FREEZE_BLOCKS=2 \\\nTTT_EMA_DECAY=0 TTT_MAX_TRAIN_CHUNKS=50 INT8_SENSITIVE=\"\" \\\nSEED=1337 torchrun --standalone --nproc_per_node=8 train_gpt_v7.py\n```\n\nRequires Flash Attention 3 (Hopper selective build).\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/577",
+  "draft": false,
+  "comments": [
+    {
+      "user": "newjordan",
+      "body": "**Note:** This is a resubmission of PR #533 (originally submitted 2026-03-23T14:42:23Z). The original PR was closed when the source repository's visibility was accidentally changed. The code, results, and artifact are identical to the original submission.",
+      "created_at": "2026-03-23T22:19:01Z",
+      "updated_at": "2026-03-23T22:19:01Z"
+    }
+  ]
+}

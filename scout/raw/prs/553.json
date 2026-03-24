@@ -1,0 +1,14 @@
+{
+  "number": 553,
+  "title": "10L + GatedXSA + EMA + TrigramHash + QuadgramHash + SwiGLU (val_bpb=TBD)",
+  "state": "open",
+  "user": "Vighaneshs",
+  "created_at": "2026-03-23T17:01:09Z",
+  "updated_at": "2026-03-23T17:01:09Z",
+  "merged_at": null,
+  "body": "PS: I don't have funds for training on 8xh100.\r\n\r\nBuilding on the 10L SOTA (2026-03-20_10L_Int5MLP_MuonWD04_SWA50, 1.14276 BPB). Four additions:\r\n\r\n1. Gated XSA \u2014 XSA (arXiv:2603.09078) with a learned per-layer sigmoid gate instead of hard projection removal. Starts near full XSA (sigmoid(4.0) \u2248 0.98) and adapts during training. The intuition is that early and late layers may want different amounts of self-value suppression, so letting it learn seems better than fixing it at 1.0.\r\n\r\n2. EMA \u2014 Exponential moving average (decay=0.997) replacing SWA. Shadow copy on GPU, updated every step. Feels cleaner than SWA since you don't have to pick a start fraction \u2014 it naturally tracks the model through the whole warmdown.\r\n\r\n3. TrigramHash + QuadgramHash \u2014 Hash (t-2, t-1, t) and (t-3, t-2, t-1, t) into learned embedding tables (1024 buckets each, dim=64/32), added at the input. Cheap in terms of compressed bytes (~55KB and ~25KB respectively after int8+zstd) but gives the model explicit n-gram context at zero attention overhead. Uses int32 arithmetic for the hash to avoid overflow.\r\n\r\n4. SwiGLU \u2014 Swapped relu\u00b2 for SwiGLU with mlp_mult=2.0 (gate+up+down vs the old fc+proj). Param count stays the same as relu\u00b2 at mlp_mult=3.0.\r\n\r\nBigramHash is back to 10240 buckets (had to shrink it to 2048 in a previous 11L attempt to fit the budget \u2014 staying at 10L means we don't have to make that tradeoff).\r\n\r\nAll weights quantized int5 (MLP) / int6 (attn, bigram, trigram, quadgram proj) / int8 (embedding tables) + zstd-22. Fits within 16MB.\r\n\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/553",
+  "draft": false,
+  "comments": []
+}

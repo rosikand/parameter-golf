@@ -1,0 +1,14 @@
+{
+  "number": 554,
+  "title": "Non-record: 11L + XSA4 H100 frontier (1.4612 BPB legal)",
+  "state": "open",
+  "user": "chrisnkuno",
+  "created_at": "2026-03-23T17:06:29Z",
+  "updated_at": "2026-03-23T17:06:29Z",
+  "merged_at": null,
+  "body": "## Summary\nAdds a non-record 16MB submission for an `11L` decoder-only model with `XSA` in the final `4` layers.\n\n## Result\nOfficial legal checkpoint:\n- `val_bpb: 1.46120374`\n- total bytes: `15,983,603`\n- selection: `step650 + --no-default-large-keeps`\n\nStronger full-data development frontier:\n- `val_bpb: 1.41212874`\n- total bytes: `17,636,401`\n- over cap, included as supporting evidence only\n\n## Recipe\n- `TRAIN_SEQ_LEN=256`\n- `TRAIN_BATCH_TOKENS=524288`\n- `WARMDOWN_ITERS=200`\n- checkpoint frontier every `25` steps\n- `packed_zstd` artifact path\n\n## Notes\nThis is a single-H100 non-record result, not an `8xH100` record-track claim. The main remaining bottleneck is artifact size, not raw BPB.\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/554",
+  "draft": false,
+  "comments": []
+}

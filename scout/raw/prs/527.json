@@ -1,0 +1,63 @@
+{
+  "number": 527,
+  "title": "Submit 1x A100 QAT Fix - 1.4078 BPB (Non-Record)",
+  "state": "open",
+  "user": "Shuvam-Banerji-Seal",
+  "created_at": "2026-03-23T12:44:11Z",
+  "updated_at": "2026-03-23T15:57:15Z",
+  "merged_at": null,
+  "body": "Single-device (A100) run tuning hyperparams down from multi-device scales to ensure proper LR scheduling. Also swaps torch.quantile for w.amax().clamp_min to evade a 30x compiler performance penalty in Triton.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/527",
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "`numba` is imported unconditionally, but this script doesn\u2019t appear to rely on it for any executed code path. Since other record scripts don\u2019t require numba, this adds a new hard dependency that can break runs in environments without it; please remove `numba`/`njit` usage or make it optional (with a fallback path).",
+      "created_at": "2026-03-23T12:48:39Z",
+      "updated_at": "2026-03-23T12:48:41Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`fast_byte_parse` is defined as a `@njit` function but is unused and contains only `pass`. If it\u2019s not part of the submission, it should be removed (and the `numba` dependency dropped); if it is intended, it needs a real implementation and call site.\n```suggestion\n\n```",
+      "created_at": "2026-03-23T12:48:39Z",
+      "updated_at": "2026-03-23T12:48:41Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`_COMPRESSOR` can be overridden via the `COMPRESSOR` env var, but if it\u2019s set to `zstd` or `lz4` in an environment without those optional deps, the later `zstandard.*` / `lz4.frame.*` calls will crash. Consider validating availability right after parsing `COMPRESSOR` (or falling back to `zlib` with a clear warning/error).",
+      "created_at": "2026-03-23T12:48:39Z",
+      "updated_at": "2026-03-23T12:48:41Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`USE_FP8` is exposed as a flag, but the FP8 branch is currently a no-op (`pass`). This can lead to confusing behavior where FP8 is \u201cenabled\u201d but silently ignored; either implement the FP8 path, remove the flag, or raise a clear error when `USE_FP8=1`.\n```suggestion\n            # FP8 path is not implemented in this training script.\n            # Fail fast instead of silently ignoring USE_FP8 to avoid confusing behavior.\n            raise RuntimeError(\n                \"USE_FP8=1 was set, but the FP8 path in CastedLinear is not implemented \"\n                \"in this script. Please unset USE_FP8 or implement FP8 handling.\"\n            )\n```",
+      "created_at": "2026-03-23T12:48:40Z",
+      "updated_at": "2026-03-23T12:48:41Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The blurb states the run \u201cfits perfectly \u2026 for 10 minutes runtime\u201d, but the included `train.log` shows training stops at ~600s and then the final sliding-window eval takes ~1,357s (total wall time ~32 min). Please clarify that the 10-minute cap refers to training only, or adjust the default final evaluation mode/stride to stay within the stated runtime.",
+      "created_at": "2026-03-23T12:48:40Z",
+      "updated_at": "2026-03-23T12:48:41Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`README.md` claims a 10-minute wallclock cap, but the included `train.log` shows the final sliding-window evaluation alone takes ~22.6 minutes. Please either qualify that the cap is for training-only or document the end-to-end runtime and/or provide a faster final-eval configuration.\n```suggestion\n* **Training Loop Length:** 10 Minutes (Wallclock Cap - 2600 iterations; excludes final sliding-window evaluation)\n* **End-to-End Runtime (Training + Final Sliding-Window Eval):** ~23 Minutes (per `train.log`)\n```",
+      "created_at": "2026-03-23T12:48:40Z",
+      "updated_at": "2026-03-23T12:48:41Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The author line is duplicated; please keep it only once to avoid confusion.\n```suggestion\n\n```",
+      "created_at": "2026-03-23T12:48:40Z",
+      "updated_at": "2026-03-23T12:48:41Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The import/setup block has duplicated imports and duplicated `_COMPRESSOR` initialization (multiple `import os`, repeated `try: import lz4.frame`, repeated `import numba`). This is easy to desync and makes the script harder to audit; please consolidate to a single import block and set `_COMPRESSOR` exactly once.\n```suggestion\n\n_COMPRESSOR = os.environ.get(\"COMPRESSOR\", _COMPRESSOR)\n\nimport numba\n```",
+      "created_at": "2026-03-23T12:48:41Z",
+      "updated_at": "2026-03-23T12:48:41Z"
+    }
+  ]
+}

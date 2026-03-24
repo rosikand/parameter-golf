@@ -1,0 +1,14 @@
+{
+  "number": 572,
+  "title": "SOTA + LoRA TTT: 10L Int5/Int6 + test-time training",
+  "state": "open",
+  "user": "ritikmahy5",
+  "created_at": "2026-03-23T20:13:48Z",
+  "updated_at": "2026-03-23T20:13:48Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- Combines current SOTA training (10L mixed int5/int6 quantization, BigramHash(10240), SmearGate, Muon+SWA) with per-document LoRA test-time training at evaluation\n- LoRA rank-8 adapters on Q/V projections and LM head, reset between documents\n- Exploits unused eval budget (~445s of 600s) for per-document adaptation\n\n## Preliminary Results (1xH200, no wallclock cap)\n\n- Quantized SWA model sliding window eval: **~1.130 BPB** (running average at 24% eval)\n- Current SOTA: 1.1428 BPB\n\n## Status\n\n- [x] Training script complete\n- [x] Full training run on 1xH200\n- [ ] 8xH100 validation (10-min constraint)\n- [ ] 3-seed statistical significance\n- [ ] Final submission.json with verified results\n\n## Key Techniques\n\n1. **Mixed Int5/Int6 Quantization** \u2014 Int5 for MLP, Int6 for attention, FP16 for embeddings\n2. **BigramHash(10240)** \u2014 10240-bucket bigram embedding table\n3. **SmearGate + OrthoInit + U-Net skips**\n4. **Muon optimizer** WD=0.04, SWA start_frac=0.4\n5. **LoRA TTT at eval** \u2014 per-document adaptation with rank-8 LoRA on Q, V, LM head\n\n## Test Plan\n\n- [ ] Validate training completes in <10min on 8xH100 SXM\n- [ ] Validate eval completes in <10min on 8xH100 SXM\n- [ ] Verify artifact size <16,000,000 bytes\n- [ ] Run 3+ seeds, report mean/std, demonstrate p<0.01 vs SOTA",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/572",
+  "draft": true,
+  "comments": []
+}

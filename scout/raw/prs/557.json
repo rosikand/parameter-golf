@@ -1,0 +1,14 @@
+{
+  "number": 557,
+  "title": "Non-record: 10L + Batched LoRA TTT (val_bpb=1.1160)",
+  "state": "open",
+  "user": "hypery11",
+  "created_at": "2026-03-23T17:18:36Z",
+  "updated_at": "2026-03-23T17:18:36Z",
+  "merged_at": null,
+  "body": "## Summary\n\n10-layer transformer with batched per-document LoRA test-time training.\n\n- **Base val_bpb: 1.1476** (10 min train)\n- **TTT val_bpb: 1.1160** (8.3 min eval)\n- **Artifact: 15.75 MB**\n\n### Base Model\n- 10L, 512 dim, 8/4 GQA, 3x MLP with LeakyReLU(0.5)^2\n- BigramHash 10240, SmearGate, value residual, gated attention\n- Mixed int5/int6 quantization + zstd-22, 5% pruning\n\n### LoRA TTT\n- Rank-8 on Q/V/LM-head across all layers\n- 64 documents batched in parallel\n- Per-doc reset, Adam lr=0.01, 256-token chunks, 3 epochs\n- Score on final epoch, documents split by BOS boundaries\n\nSingle seed. 3-seed validation coming.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/557",
+  "draft": false,
+  "comments": []
+}

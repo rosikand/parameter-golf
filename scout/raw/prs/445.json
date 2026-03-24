@@ -1,10 +1,10 @@
 {
   "number": 445,
   "title": "Late Training Replay + EMA + GPTQ-lite (val_bpb=1.1236, 2-seed, no TTT on eval)",
-  "state": "open",
+  "state": "closed",
   "user": "newjordan",
   "created_at": "2026-03-22T17:36:07Z",
-  "updated_at": "2026-03-23T00:58:59Z",
+  "updated_at": "2026-03-23T18:40:47Z",
   "merged_at": null,
   "body": "## Summary\n\n- **val_bpb: 1.1236** (sliding window stride=64, 2-seed mean) | **15.59 MB** (mean) | 8xH100 SXM\n- Builds on PR #414 baseline (1.1233) with one addition:\n  - **Late Training Replay**: 2-epoch replay of last 100 training batches at 10% LR before EMA finalization\n\n### Important: No TTT on validation data\nThis submission does NOT perform test-time training on evaluation/validation tokens. The \"late replay\" step replays **training data only** (buffered from the training loop) as a late-stage fine-tuning step before weight averaging. No eval tokens are seen before scoring. Fully compliant with issue #402.\n\n### Results (3 seeds, 8xH100 SXM)\n\n| Seed | Steps | Sliding BPB (s64) | Artifact |\n|------|-------|-------------------|----------|\n| **1337** | 6991 | **1.1232** | 15.68 MB |\n| 42 | 6994 | 1.1240 | 16.37 MB* |\n| **2024** | 6987 | **1.1239** | 15.50 MB |\n\n**Mean (1337+2024): 1.1236 | Std: 0.0004**\n\n*Seed 42 artifact over size limit due to compression variance; BPB validates the approach.\n\n### How Late Training Replay Works\nDuring the warmdown phase (last ~15% of training), the 100 most recent training batches are buffered. After training ends but before EMA weight averaging, these buffered training batches are replayed for 2 epochs at 10% of the base learning rate. This is strictly a training-data-only operation \u2014 equivalent to extending training by ~200 steps with a tiny learning rate. The model never sees validation tokens before scoring.\n\n## Test plan\n\n- [x] 3 seeds run on 8xH100 SXM, 600s each\n- [x] Seeds 1337, 2024 under 16MB (15.68 MB, 15.50 MB)\n- [x] Post-quant int6 roundtrip verified\n- [x] Sliding window eval (stride=64) consistent across seeds (std=0.0004)\n- [x] train_gpt.py under 1500 lines (1443)\n- [x] **No TTT on validation data** \u2014 late replay uses training data only (per issue #402)\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
   "labels": [],

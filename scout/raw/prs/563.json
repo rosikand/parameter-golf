@@ -1,0 +1,14 @@
+{
+  "number": 563,
+  "title": "Add submission: 10L Enhanced with BigramHash(12240) + SOTA techniques",
+  "state": "open",
+  "user": "instax-dutta",
+  "created_at": "2026-03-23T18:23:57Z",
+  "updated_at": "2026-03-23T18:23:57Z",
+  "merged_at": null,
+  "body": "## Summary\r\nNew competitive submission for parameter-golf challenge combining all SOTA techniques.\r\n### Architecture\r\n- 10 layers, 512 model dim, 8 attention heads, 4 KV heads (GQA)\r\n- MLP 3\u00d7 expansion (hidden=1536), ReLU\u00b2 activation\r\n- U-Net skip connections, tied embeddings\r\n### Key Techniques\r\n1. **Mixed int5/int6 quantization** - int5 for MLP (1.86MB savings), int6 for attention\r\n2. **BigramHash(12240)** - larger vocabulary than SOTA's 10240 to reduce hash collisions\r\n3. **SmearGate** - token-level recurrence for lightweight bigram signal\r\n4. **Orthogonal init** - with muP-scaled output projections\r\n5. **Muon optimizer** - with weight decay=0.04\r\n6. **SWA** - from last 40% of training, every 50 steps\r\n7. **Sliding window eval** - stride=64 for better context\r\n8. **zstd-22 compression** + 3% magnitude pruning\r\n### Expected Performance\r\n- Target: ~1.1428 val_bpb (competitive with current SOTA 1.14276)\r\n- Artifact size: within 16MB limit\r\n### Files\r\n- `train_gpt.py` - Full training script\r\n- `README.md` - Detailed documentation\r\n- `submission.json` - Submission metadata\r\n- `requirements.txt` - Additional dependencies (zstandard)\r\n---\r\nThis submission is ready for Tier 2/3 validation runs on 1\u00d7H100 or 8\u00d7H100.\r\n---",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/563",
+  "draft": false,
+  "comments": []
+}

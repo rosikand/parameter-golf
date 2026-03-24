@@ -1,0 +1,14 @@
+{
+  "number": 586,
+  "title": "Record: 11L + Hadamard Rotation + VE128 + cuDNN SDPA (val_bpb: 1.1365)",
+  "state": "open",
+  "user": "EaCognitive",
+  "created_at": "2026-03-23T23:18:22Z",
+  "updated_at": "2026-03-23T23:18:22Z",
+  "merged_at": null,
+  "body": "## Summary\n- First application of Walsh-Hadamard rotation for int6 quantization in this competition\n- Improves zstd compression from 1.70x to 1.76x, recovering 530KB of artifact headroom\n- Headroom directly enables Shared Value Embeddings (VE128) which previously overflowed\n- CPU parameter probe guided hyperparameter selection, reducing GPU compute by ~84%\n- 3-seed mean: 1.1365 +/- 0.0005 BPB. All artifacts under 16MB.\n\n## Key Findings\n- Hadamard rotation and GPTQ are substitutes, not complements, at int6 precision\n- Late QAT (STE fake-quantization) was dead code in all prior work due to instance vs class attribute shadowing\n- FlashAttention 3 compresses 1.8% worse than cuDNN SDPA with zstd-22\n- Removing dead QAT guard from CastedLinear.forward() yields 7% throughput gain via torch.compile guard elimination\n\n## Test plan\n- [x] 3-seed validation (1337, 42, 2024) with mean 1.1365, std 0.0005\n- [x] All artifacts under 16,000,000 bytes\n- [x] All training runs under 600s wallclock on 8xH100\n- [x] No network calls during evaluation\n- [x] Artifact is self-contained\n\nErick Aleman | EA Cognitive | www.eacognitive.com | github.com/eacognitive",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/586",
+  "draft": false,
+  "comments": []
+}

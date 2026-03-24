@@ -4,7 +4,7 @@
   "state": "open",
   "user": "yesbhautik",
   "created_at": "2026-03-19T07:32:20Z",
-  "updated_at": "2026-03-23T02:55:53Z",
+  "updated_at": "2026-03-23T22:16:34Z",
   "merged_at": null,
   "body": "## Summary\n\n- Standard-track submission: `records/track_10min_16mb/2026-03-21_DominationV3/`\n- GPTQ-lite optimal clip percentile search during int6 quantization\n- 25-epoch aggressive SGD TTT (lr=0.012, all blocks unfrozen) on already-graded tokens\n- Partial RoPE (16/64 dims) + LN Scale + XSA removed for more training steps\n- 3-seed verified, all under 600s training, eval under 600s, and under 16MB\n\n## Results (8xH100 SXM)\n\n| Seed | val_bpb | train_time_ms | TTT_time_ms | total_artifact_bytes |\n|------|---------|---------------|-------------|----------------------|\n| 1337 | 1.12513674 | 599779 | 389133 | 15965664 |\n| 7    | 1.12540132 | 599841 | ~389000 | 15829190 |\n| 42   | **1.12431423** | 599822 | ~389000 | 15806256 |\n| **Mean** | **1.12495076** |  |  |  |\n\n## Technique Stack\n\n- **11 layers**, 512 dim, 8 heads, 4 KV heads (GQA), MLP 3x (1536 hidden)\n- **Partial RoPE** (16/64 dims), **LN Scale** (1/sqrt(layer+1))\n- **EMA** (decay=0.997)\n- **GPTQ-lite**: Per-row optimal clip percentile (5 candidates) minimizing reconstruction MSE\n- **25-epoch SGD TTT** (lr=0.012, momentum=0.9, all blocks unfrozen)\n- **Per-dim SmearGate** + **BigramHash(4096x128)**\n- **Int6 per-row quantization** (mlp+attn+tok_emb) + zstd-22\n- **Muon optimizer** WD=0.04, momentum 0.99, **OrthoInit**, U-Net skip connections\n- **Sliding window eval** stride=64\n\n## Rule Compliance\n\n- Trains only on FineWeb train shards (80 shards, no validation data during training)\n- TTT runs at eval time on already-graded validation tokens (per FAQ rules)\n- Training capped to 599.8s (all seeds stop under 600s)\n- TTT (~389s) + sliding eval (~197s) = ~586s total eval (under 10-minute eval limit)\n- Artifact = compressed_model_bytes + code_bytes, all under 16,000,000",
   "labels": [
@@ -49,6 +49,12 @@
       "body": "@cocohearts Thanks for the review \u2014 both issues are now fixed:\n\n1. **Moved `run_modal.py`** inside the submission folder at `records/track_10min_16mb/2026-03-20_DominationV1/run_modal.py`. No root-level file changes remain.\n\n2. **Removed the val-only (CombinedOptimal) submission** entirely. You're right \u2014 it trained on the validation set, which violates the rules. That folder is deleted.\n\n3. **Also removed the old StandardOptimal** folder (superseded by DominationV1).\n\nThe PR now only adds a single new folder: `records/track_10min_16mb/2026-03-20_DominationV1/` containing `train_gpt.py`, `submission.json`, `README.md`, `train.log`, and `run_modal.py`. The DominationV1 submission trains exclusively on the full FineWeb training set (80 shards) \u2014 no validation data access during training.\n\n**Score:** mean val_bpb = 1.1391 (3-seed verified: 1.1378 / 1.1391 / 1.1404), all artifacts under 16MB.\n\nAlso merged latest upstream/main to stay in sync with the reset leaderboard.",
       "created_at": "2026-03-21T00:20:58Z",
       "updated_at": "2026-03-21T00:20:58Z"
+    },
+    {
+      "user": "yesbhautik",
+      "body": "Hey @cocohearts @0hq @longouyang @welinder \r\nCan you guys please take a look at my new commits, and update the things accordingly.",
+      "created_at": "2026-03-23T22:00:15Z",
+      "updated_at": "2026-03-23T22:00:15Z"
     }
   ]
 }

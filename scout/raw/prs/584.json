@@ -1,0 +1,14 @@
+{
+  "number": 584,
+  "title": "5 novel architecture ablations on SOTA baseline",
+  "state": "closed",
+  "user": "ssatia",
+  "created_at": "2026-03-23T22:50:39Z",
+  "updated_at": "2026-03-23T22:51:21Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **5 self-contained ablation scripts** built on top of the current SOTA record (11L EMA + GPTQ-lite, val_bpb=1.1233)\n- Each file is a complete training script with a single targeted modification, ready to run with `torchrun --nproc_per_node=8`\n- Includes `baseline.py` as the unmodified control\n\n## Ablations\n\n| # | File | Technique | Param Cost | Env Vars |\n|---|------|-----------|------------|----------|\n| 1 | `ablation1_swiglu.py` | SwiGLU MLP (replace relu\u00b2) | ~neutral | none |\n| 2 | `ablation2_sliding_window.py` | Window attention on early layers | zero | `SW_WINDOW_SIZE=256`, `SW_NUM_LAYERS=5` |\n| 3 | `ablation3_register_tokens.py` | Learnable register/sink tokens | ~8KB | `NUM_REGISTERS=4` |\n| 4 | `ablation4_head_temperature.py` | Gated V-norm (learned RMS norm on values) | 4 scalars | none |\n| 5 | `ablation5_mixture_of_softmax.py` | Mixture of Softmax (breaks rank bottleneck) | ~384KB at K=2 | `MOS_NUM_EXPERTS=2` |\n\n## Rationale\n\nThese target techniques **not yet explored** in the competition:\n- **SwiGLU**: Standard in LLaMA/Gemma, never compared against relu\u00b2 in this codebase\n- **Sliding Window**: FlashAttn 3 supports it natively, saves FLOPs on early layers\n- **Register Tokens**: From \"ViTs Need Registers\" (ICLR 2024), absorbs attention sinks\n- **Gated V-Norm**: Q and K are normalized but V isn't \u2014 this should help quantization\n- **MoS**: Yang et al. 2018 \"Breaking the Softmax Bottleneck\" \u2014 directly targets BPB metric\n\n## Test plan\n\n- [ ] Run `baseline.py` with SEED=1337 as control\n- [ ] Run each ablation with SEED=1337\n- [ ] Compare `final_int6_sliding_window_exact val_bpb` across all runs\n- [ ] Verify all artifacts fit within 16MB budget\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/584",
+  "draft": true,
+  "comments": []
+}

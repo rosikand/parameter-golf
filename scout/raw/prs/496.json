@@ -4,11 +4,24 @@
   "state": "open",
   "user": "galaxy4552",
   "created_at": "2026-03-23T02:52:55Z",
-  "updated_at": "2026-03-23T02:52:55Z",
+  "updated_at": "2026-03-24T04:07:13Z",
   "merged_at": null,
   "body": "Non-record submission of PipeOwl-1.8-jp-parameter-golf.\r\n\r\nrepo:[PipeOwl-1.8-jp-parameter-golf](https://huggingface.co/WangKaiLin/PipeOwl-1.8-jp-parameter-golf)\r\n\r\nThis work explores a field-based language model with linear-time scoring, without attention or transformer weights.\r\n\r\nFocus is on alternative structure rather than benchmark performance.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/496",
   "draft": false,
-  "comments": []
+  "comments": [
+    {
+      "user": "0hq",
+      "body": "You need a val_bpb to submit a non record submission!",
+      "created_at": "2026-03-23T23:23:36Z",
+      "updated_at": "2026-03-23T23:23:36Z"
+    },
+    {
+      "user": "galaxy4552",
+      "body": "Thanks! I've added a preliminary val_bpb evaluation to the README.\r\n\r\nCurrent result:\r\nval_bpb \u2248 21.42\r\n\r\nAlso included a simple evaluation script:\r\nhttps://huggingface.co/WangKaiLin/PipeOwl-1.8.1-jp-evalbpb",
+      "created_at": "2026-03-24T04:07:13Z",
+      "updated_at": "2026-03-24T04:07:13Z"
+    }
+  ]
 }

@@ -1,0 +1,39 @@
+{
+  "number": 560,
+  "title": "Non-record: 1x RTX PRO 6000 Blackwell 10L Int5-MLP (1.1935 BPB)",
+  "state": "open",
+  "user": "Rohan5commit",
+  "created_at": "2026-03-23T17:26:47Z",
+  "updated_at": "2026-03-23T17:32:56Z",
+  "merged_at": null,
+  "body": "## Summary\n\nAdds a non-record unlimited-compute submission that ports the merged `2026-03-20_10L_Int5MLP_MuonWD04_SWA50` recipe to a single `RTX PRO 6000 Blackwell Server Edition`.\n\nBest completed run:\n\n- exact post-quant `val_bpb`: `1.19349046`\n- exact post-quant `val_loss`: `2.01515331`\n- pre-quant `val_bpb`: `1.2082`\n- steps: `14085`\n- wallclock: `2700s`\n- artifact bytes: `15691796`\n\n## Included\n\n- portable single-GPU `train_gpt.py` snapshot\n- `results.tsv` with the completed submission run and one incomplete follow-up run\n- preserved tail excerpts from both Lightning-generated logs\n- `submission.json`\n\n## Notes\n\n- This is a non-record submission in the unlimited-compute track, not a 10-minute record claim.\n- The longer follow-up run is included for context only and is not used as the submission score.\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/560",
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "The log label \"Total submission size int8+zlib\" is misleading here because the artifact produced above is logged as int6+{_COMPRESSOR} (and _COMPRESSOR may be \"zstd\"). Consider updating the message to reflect the actual quantization/compressor so log tails and later metadata don\u2019t imply zlib/int8 when zstd/int6 is used.",
+      "created_at": "2026-03-23T17:32:55Z",
+      "updated_at": "2026-03-23T17:32:56Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "These final evaluation log keys are named \"final_int8_zlib_roundtrip\" even though the roundtripped weights were loaded from the mixed int5/int6 artifact and the compressor may be zstd. Renaming the log keys (or making them depend on _COMPRESSOR / quant scheme) would avoid confusion when comparing runs.\n```suggestion\n    # Log final evaluation for mixed-int6 roundtripped weights, with compressor in the tag\n    quant_scheme = \"mixed_int6\"\n    compressor = _COMPRESSOR if \"_COMPRESSOR\" in globals() else \"zlib\"\n    roundtrip_tag = f\"final_{quant_scheme}_{compressor}_roundtrip\"\n    log0(\n        f\"{roundtrip_tag} val_loss:{q_val_loss:.4f} val_bpb:{q_val_bpb:.4f} \"\n        f\"eval_time:{1000.0 * (time.perf_counter() - t_qeval):.0f}ms\"\n    )\n    log0(f\"{roundtrip_tag}_exact val_loss:{q_val_loss:.8f} val_bpb:{q_val_bpb:.8f}\")\n```",
+      "created_at": "2026-03-23T17:32:55Z",
+      "updated_at": "2026-03-23T17:32:56Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "In this submission metadata, \"bytes_model_int8_zlib\" appears to be recording the compressed artifact size even though the included log tail reports \"Serialized model int6+zstd\" for the same byte count. To keep metadata unambiguous (and consistent with other submissions that use bytes_model_int6_zstd), consider renaming this field (or adding the correct one) and also populating bytes_code instead of null (it can be derived from bytes_total - bytes_model).\n```suggestion\n  \"bytes_model_int6_zstd\": 15636771,\n  \"bytes_code\": 55025,\n```",
+      "created_at": "2026-03-23T17:32:56Z",
+      "updated_at": "2026-03-23T17:32:56Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The follow-up run row shows artifact_bytes=16180242, which exceeds the repo\u2019s stated decimal 16MB cap (16,000,000 bytes). Since this directory is under track_non_record_16mb, it would help to call this out explicitly in the row\u2019s notes/status (or README) so readers don\u2019t assume it was a valid under-cap artifact.\n```suggestion\nrtx6000_65m_b131k_s32_eb512\t2.0281\t1.2011\t\t\t16180242\t20330\t3900\t32\t512\tincomplete_eval\ttraining finished; sliding eval was interrupted after 11.9% with running_bpb about 1.195432; artifact_bytes=16180242 exceeds 16MB cap (non-record over-cap run)\n```",
+      "created_at": "2026-03-23T17:32:56Z",
+      "updated_at": "2026-03-23T17:32:56Z"
+    }
+  ]
+}

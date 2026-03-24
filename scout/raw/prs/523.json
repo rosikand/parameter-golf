@@ -1,0 +1,14 @@
+{
+  "number": 523,
+  "title": "Add RIOM v1 shared-depth recurrence non-record submission",
+  "state": "open",
+  "user": "hesong0222-dev",
+  "created_at": "2026-03-23T11:29:49Z",
+  "updated_at": "2026-03-23T11:29:49Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\nThis draft PR adds a non-record RIOM-style submission under `records/track_non_record_16mb/2026-03-23_RIOM_v1_recur`.\r\n\r\nThe core idea is shared-depth recurrence: replace 9 distinct transformer blocks with 3 shared blocks repeated 3 times, with lightweight learned recurrence gates. The tokenizer and dataset remain unchanged from the official SP1024 FineWeb setup, and the change is isolated to the record-local `train_gpt.py`.\r\n\r\n## What actually ran\r\n\r\nThis package is based on a real Apple Silicon MLX development run.\r\n\r\n- training steps: `50`\r\n- validation prefix: `1,048,576` official validation tokens\r\n- pre-quant: `val_loss=5.4143`, `val_bpb=3.2439`\r\n- post-quant: `val_loss=5.42207763`, `val_bpb=3.24862008`\r\n- code bytes: `51,404`\r\n- compressed model bytes: `2,273,437`\r\n- total counted bytes: `2,324,841`\r\n\r\n## Why this is interesting even if non-record\r\n\r\nOn the same local development prefix, this recurrent package improved `val_bpb` over the local baseline package while sharply reducing counted artifact size. That is the main RIOM hypothesis in compact form: more effective depth per byte through parameter sharing.\r\n\r\n## Limitations\r\n\r\n- This is not a record claim.\r\n- This is a local MLX development run, not an 8xH100 submission.\r\n- Validation was capped with `VAL_MAX_TOKENS`; it should be rerun with `VAL_MAX_TOKENS=0` before any serious upstream submission.\r\n- The next concrete step is a CUDA/PyTorch port into the official `train_gpt.py` path.\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/523",
+  "draft": true,
+  "comments": []
+}

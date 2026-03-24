@@ -1,0 +1,14 @@
+{
+  "number": 596,
+  "title": "Record: DeepQuant V10b \u2014 11L INT6 + 8ep LoRA TTT (val_bpb=0.6430)",
+  "state": "open",
+  "user": "AriaAnima",
+  "created_at": "2026-03-24T03:09:15Z",
+  "updated_at": "2026-03-24T04:31:00Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **Mean val_bpb: 0.6430** (3 seeds, std=0.0017), beating PROTEUS v8 (0.7853) by **18.1%**\n- All runs fit in 16MB and complete eval within 600s\n\n| Seed | val_bpb | Eval time | Size |\n|------|---------|-----------|------|\n| 42   | 0.6407  | 443s      | 15.73 MB |\n| 1337 | 0.6437  | 433s      | 15.50 MB |\n| 2024 | 0.6447  | 443s      | 15.40 MB |\n\n### Key innovations over PROTEUS v8:\n- 8 TTT epochs (vs 5) with per-step cosine LR decay\n- LM-head LoRA rank-16 (vs 8) \u2014 doubled output adaptation capacity\n- Per-block bias tuning during TTT\n- Post-TTT temperature rescaling (T=0.98)\n- Wall-clock TTT time limit (350s) with base-model fallback\n\n### Unrealized potential\nWithout eval time limit: **val_bpb = 0.5684** (seed=42, all 61 batches, eval=752s, avg_loss at batch 60/61 = 0.9499). The gap between 0.64 and 0.57 is entirely from ~2% longest documents falling back to base model. Future TTT overhead optimization would close this gap.\n\nRan out of compute budget for further optimization runs \u2014 will improve and resubmit!\n\n## Test plan\n- [x] 3 seeds with consistent results (std=0.0017)\n- [x] All artifacts under 16MB\n- [x] All eval times under 600s\n- [x] TTT compliance: score-every-epoch, per-document, backward-looking (Issue #402)\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/596",
+  "draft": false,
+  "comments": []
+}

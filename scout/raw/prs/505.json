@@ -4,11 +4,24 @@
   "state": "open",
   "user": "JoeProAI",
   "created_at": "2026-03-23T05:10:22Z",
-  "updated_at": "2026-03-23T05:10:22Z",
+  "updated_at": "2026-03-23T17:33:43Z",
   "merged_at": null,
-  "body": "# SwiGLU + VE128 + U-Net Skip Gates (No TTT)\n\n**val_bpb (3-seed mean): 1.11807945** (std: 0.000836, best: 1.11691774)\n\n| Seed | val_bpb |\n|------|---------|\n| 42   | 1.11885136 |\n| 123  | 1.11691774 |\n| 7    | 1.11846924 |\n\n## Architecture\n\n11-layer transformer:\n\n- **SwiGLU FFN** with Star-ReLU activation (hidden=1792)\n- **U-Net Skip Gates**: 5 encoder, 6 decoder with learned gating\n- **XSA4**: Extended Self-Attention in last 4 layers\n- **Value Embeddings (VE128)**: 128-dim shared embedding, per-layer scales (layers 9-10)\n- **BigramHash**: 8192 buckets, 128-dim\n- **EMA** (decay=0.997)\n- **Partial RoPE** (16 dims)\n- **LN Scale**, **Late QAT@0.15**\n- **Int6 + GPTQ-lite + zstd-22**\n\n## Training Configuration\n\n- Sequence length: **2048** (key finding: +0.008 bpb over seq_len=1024)\n- Batch tokens: **786,432**\n- Warmdown: **3,500 steps**\n- 8xH100 SXM (Modal), ~18 min/seed\n\n## Key Ablation: Sequence Length\n\n| Config | val_bpb |\n|--------|---------|\n| Full arch, seq_len=1024 | 1.12670 |\n| Full arch, seq_len=2048 | **1.11808** |\n| Improvement | **-0.00862** |\n\n## Provenance\n\nAll architectural components discovered through systematic ablation search and Codex-guided exploration. Value Embeddings adapted from community. **No test-time training.**\n\n## Compute\n\n~18 min/seed on 8xH100 SXM (Modal). Three seeds for verification.",
+  "body": "# SwiGLU + VE128 + U-Net Skip Gates (No TTT)\n\n**val_bpb (3-seed mean): 1.11807945** (std: 0.000836, best: 1.11691774)\n\n| Seed | val_bpb |\n|------|---------|\n| 42   | 1.11885136 |\n| 123  | 1.11691774 |\n| 7    | 1.11846924 |\n\n## Architecture\n\n11-layer transformer:\n\n- **SwiGLU FFN** with Star-ReLU activation (hidden=1792)\n- **U-Net Skip Gates**: 5 encoder, 6 decoder with learned gating\n- **XSA4**: Extended Self-Attention in last 4 layers\n- **Value Embeddings (VE128)**: 128-dim shared embedding, per-layer scales (layers 9-10)\n- **BigramHash**: 8192 buckets, 128-dim\n- **EMA** (decay=0.997)\n- **Partial RoPE** (16 dims)\n- **LN Scale**, **Late QAT@0.15**\n- **Int6 + GPTQ-lite + zstd-22**\n\n## Training Configuration\n\n- Sequence length: **2048** (key finding: +0.008 bpb over seq_len=1024)\n- Batch tokens: **786,432**\n- Warmdown: **3,500 steps**\n- 8xH100 SXM (Modal), ~18 min/seed\n\n## Key Ablation: Sequence Length\n\n| Config | val_bpb |\n|--------|---------|\n| Full arch, seq_len=1024 | 1.12670 |\n| Full arch, seq_len=2048 | **1.11808** |\n| Improvement | **-0.00862** |\n\n## Provenance\n\nAll architectural components discovered through systematic ablation search and Codex-guided exploration. Value Embeddings adapted from community. **No test-time training.**\n\n## Disclosure\n\nThis work is **independently funded** with no sponsorship, grants, or funding from OpenAI or any other organization. All compute was self-funded on Modal (personal account).\n\n## Compute\n\n~18 min/seed on 8xH100 SXM (Modal). Three seeds for verification.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/505",
   "draft": false,
-  "comments": []
+  "comments": [
+    {
+      "user": "himanalot",
+      "body": "uh i ran this and got like 20 mb artifact but idk bro maybe smths diff on my machine?",
+      "created_at": "2026-03-23T15:26:32Z",
+      "updated_at": "2026-03-23T15:26:38Z"
+    },
+    {
+      "user": "cocohearts",
+      "body": "pls add more comments / stuff on ur pr, train logs, submission.json",
+      "created_at": "2026-03-23T17:33:43Z",
+      "updated_at": "2026-03-23T17:33:43Z"
+    }
+  ]
 }

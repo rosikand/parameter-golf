@@ -1,0 +1,14 @@
+{
+  "number": 541,
+  "title": "Hybrid Hypergraph + Transformer approach",
+  "state": "closed",
+  "user": "immartian",
+  "created_at": "2026-03-23T15:21:42Z",
+  "updated_at": "2026-03-23T23:24:07Z",
+  "merged_at": null,
+  "body": "## Summary\n\nA novel two-phase training approach that combines a **binding-energy-weighted pattern store** (epistemic hypergraph) with a **residual transformer**, generalizing BigramHash to a principled multi-resolution hierarchy.\n\n### Architecture (16MB budget)\n- **~5MB**: Hypergraph pattern store \u2014 3 Cantor levels (bigrams, trigrams, 5-grams), patterns selected by binding energy B(C), noise automatically dropped\n- **~9MB**: Residual transformer (9L, 512d, int8+zlib) trained with Muon+Adam\n- **~2MB**: Code + overhead\n\n### How it works\n- **Phase 1 (~90s)**: Scan FineWeb shards to build multi-level pattern tables. Each pattern's binding energy \u2014 computed from token specificity \u00d7 prediction certainty \u00d7 evidence mass \u2014 determines inclusion. Zero-binding patterns are filtered.\n- **Phase 2 (~8 min)**: Train standard transformer as residual predictor\n- **Eval**: `P(next) = \u03bb\u00b7P_hyper + (1-\u03bb)\u00b7P_neural`, where \u03bb scales with binding confidence\n\n### Key insight\nAt 16MB, neural nets approximate everything through weights. BigramHash already proved that exact pattern storage beats approximation for bigrams. We generalize this: store multi-resolution patterns exactly where binding energy is high, let the transformer handle the rest.\n\n### Test results\n- **30/30** theory tests (Cantor enrichment, binding energy, COMPRESS invariants)\n- **29/29** hybrid system tests (pattern store, prediction, serialization, budget)\n- Proof-of-concept on synthetic data: hybrid beats pure neural on structured patterns\n- Awaiting GPU time to validate on real FineWeb\n\n## Files\n| File | Description |\n|------|-------------|\n| `hypergraph_lm.py` | Standalone pattern store module (pure Python + numpy) |\n| `train_hybrid.py` | Full training script: Phase 1 scan + Phase 2 train + hybrid eval |\n| `test/test_hybrid_system.py` | 37 tests for the hybrid system |\n| `test/test_cantor_emergence.py` | 30 tests for the underlying theory |\n| `test/cantor_emergence_proof.py` | Mini-dataset proof of concept |\n\n## Test plan\n- [ ] Run on 8xH100 with real FineWeb data\n- [ ] Measure BPB improvement from hybrid interpolation vs pure neural\n- [ ] Tune budget split (store vs transformer) and \u03bb threshold\n- [ ] Compare with baseline BigramHash approach\n- [ ] Optimize Phase 1 scan time (<90s target)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/541",
+  "draft": false,
+  "comments": []
+}

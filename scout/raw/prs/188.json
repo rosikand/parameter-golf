@@ -1,10 +1,10 @@
 {
   "number": 188,
-  "title": "ROCm Support",
+  "title": "Included AMDGPU ROCm Support",
   "state": "open",
   "user": "reimorster",
   "created_at": "2026-03-20T07:28:43Z",
-  "updated_at": "2026-03-22T21:55:24Z",
+  "updated_at": "2026-03-23T15:23:33Z",
   "merged_at": null,
   "body": "Changed baseline script for ROCm support on my local environment, hope it helps people who doesn`t have a CUDA system",
   "labels": [],

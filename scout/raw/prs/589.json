@@ -1,0 +1,14 @@
+{
+  "number": 589,
+  "title": "Record: Late Soft-Round QAT + Score-First Backward-Looking TTT \u2014 val_bpb 1.1178",
+  "state": "open",
+  "user": "RoyiRa",
+  "created_at": "2026-03-23T23:44:39Z",
+  "updated_at": "2026-03-23T23:44:39Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **val_bpb: 1.1178** (3-seed mean, std 0.0005)\n- **Artifact: ~15.75 MB** (under 16 MB limit)\n- **8\u00d7H100 SXM**, train \u2264 10 min, eval \u2264 10 min\n\n## Novel Contribution: Late Soft-Round QAT\n\nStandard STE quantization-aware training uses hard rounding in the forward pass and an identity-style surrogate in the backward pass, which provides no bin-aware gradient signal near quantization boundaries. We replace that late in training with a temperature-controlled soft-round surrogate, giving the optimizer a non-zero, bin-aware gradient signal that encourages weights to settle onto nearby int6 grid points just before EMA/SWA finalization.\n\n## Score-First Backward-Looking TTT\n\nBackward-looking adaptation following PR #461: validation tokens split into ~1,893 non-overlapping 32K-token chunks. Each chunk is scored under `torch.inference_mode()`, then trained with SGD (cosine-decayed lr=0.002, momentum=0.9, 3 epochs). Chunk N is scored by a model adapted only on chunks 0..N-1.\n\n## Results\n\n| Seed | Pre-TTT bpb | **Post-TTT bpb** | TTT gain | Artifact |\n|------|-------------|-----------------|----------|----------|\n| 1337 | 1.1201 | **1.1176** | -0.0025 | 15,700,318 |\n| 42 | 1.1209 | **1.1183** | -0.0026 | 15,850,153 |\n| 7 | 1.1200 | **1.1174** | -0.0026 | 15,706,617 |\n| **Mean** | **1.1203** | **1.1178** | **-0.0026** | |\n\n## Credits\n\n- **Base model**: PR #414 by @signalrush\n- **TTT recipe**: PR #461 by @Christopher-Lee-McClendon\n- **LeakyReLU\u00b2 activation**: PR #493 by @parinzee\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/589",
+  "draft": false,
+  "comments": []
+}

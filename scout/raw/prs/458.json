@@ -4,7 +4,7 @@
   "state": "open",
   "user": "ofirkris",
   "created_at": "2026-03-22T20:32:55Z",
-  "updated_at": "2026-03-23T00:14:06Z",
+  "updated_at": "2026-03-23T10:35:15Z",
   "merged_at": null,
   "body": "## Results\n| Seed | val_bpb | Artifact | Steps |\n|------|---------|----------|-------|\n| 42 | 1.1365 | 15,759,319 | 6491 |\n| 1337 | 1.1366 | 15,820,386 | 6520 |\n\n- 8xH100 SXM, 600s, 92ms/step\n- PyTorch 2.7.0 + FlashAttention 2.8.3\n- No TTT, no test-time adaptation\n\n## Techniques\n10L 512d, 3x MLP, XSA last 4 layers, EMA 0.997, Partial RoPE 16/64, LN Scale,\nSmearGate, BigramHash(10240), Int5 MLP / Int6 attn, FP16 embeds, 3.2% pruning, zstd-22,\nsliding window eval stride=64",
   "labels": [],
@@ -16,6 +16,12 @@
       "body": "partial rope is interesting havent seen that in many submissions yet. how many dims did you find works best? 16 seems low but if it works it works",
       "created_at": "2026-03-23T00:14:06Z",
       "updated_at": "2026-03-23T00:14:06Z"
+    },
+    {
+      "user": "ofirkris",
+      "body": "> partial rope is interesting havent seen that in many submissions yet. how many dims did you find works best? 16 seems low but if it works it works\r\n\r\nI tested 16 out of 64 dims (25%) based on ablations from other competitive runs on this challenge. \r\n\r\nThe intuition is that most heads don't need full positional information - leaving 48 dims position-free lets them learn content-based attention patterns. \r\nI didn't sweep extensively (tried 0, 16, 32, 64) and 16 gave the best result on my setup. Would be interesting to see if anyone finds a different sweet spot at larger layer counts.",
+      "created_at": "2026-03-23T10:35:15Z",
+      "updated_at": "2026-03-23T10:35:15Z"
     }
   ]
 }

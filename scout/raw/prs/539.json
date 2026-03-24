@@ -1,0 +1,14 @@
+{
+  "number": 539,
+  "title": "Add test submission: 2026-03-23_naive_solution",
+  "state": "open",
+  "user": "PavelPaha",
+  "created_at": "2026-03-23T15:07:59Z",
+  "updated_at": "2026-03-23T15:23:30Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- Test submission to verify the format and submission process\n- Unmodified `train_gpt.py` baseline run for 100 steps on a single GPU\n- **Not** a competitive entry \u2014 just checking that the submission structure is correct\n\n## Metrics\n\n| Metric | Value |\n|--------|-------|\n| val_loss (post-quant) | 3.3216 |\n| val_bpb (post-quant) | 1.9672 |\n| Total size int8+zlib | 10,481,651 bytes |\n| Train time | 33s (100 steps) |\n\n## Included files\n\n- `README.md` \u2014 submission description\n- `submission.json` \u2014 leaderboard metadata\n- `train.log` \u2014 full training log\n- `train_gpt.py` \u2014 unmodified baseline snapshot",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/539",
+  "draft": false,
+  "comments": []
+}

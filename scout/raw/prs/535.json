@@ -1,0 +1,14 @@
+{
+  "number": 535,
+  "title": "Record: 11L LeakyReLU\u00b2 + Full GPTQ + QAT Alignment (val_bpb: 1.1204)",
+  "state": "open",
+  "user": "raahilshah",
+  "created_at": "2026-03-23T14:53:58Z",
+  "updated_at": "2026-03-23T14:53:58Z",
+  "merged_at": null,
+  "body": "# Record: 11L LeakyReLU\u00b2 + Full GPTQ + QAT Alignment\n\n**val_bpb: 1.1204** (3-seed mean, std 0.0001) | **15.85 MB** max artifact | 8xH100 SXM, 600s\n\n## Key Innovations\n\n1. **LeakyReLU(0.5)\u00b2** replacing relu\u00b2 \u2014 prevents dead neurons, doubles effective MLP capacity (-0.0015 BPB)\n2. **Full GPTQ** with Hessian calibration \u2014 31% quant gap reduction vs percentile search (-0.0026 BPB)\n3. **QAT-export alignment** \u2014 quantile(0.9995) clipping matches STE to export quantizer (-0.0005 BPB)\n\n## Results (3 seeds, 8xH100 SXM)\n\n| Seed | val_loss | Sliding BPB (s64) | Artifact |\n|------|----------|-------------------|----------|\n| 7    | 1.8915 | **1.1203** | 15,762,694 bytes |\n| 314  | 1.8919 | 1.1205 | 15,732,473 bytes |\n| 2024 | 1.8917 | 1.1204 | 15,851,228 bytes |\n\n**Mean: 1.1204 | Std: 0.0001**\n\n## Architecture\n\n11L, 512d, 8H/4KV (GQA), MLP 3x with **LeakyReLU(0.5)\u00b2**, XSA4, Partial RoPE 16/64, LN Scale, VE128, SmearGate, BigramHash(2048), U-Net skips, EMA(0.997), Tight SWA, Late QAT@0.15, **Full GPTQ** (Hessian-aware int6), zstd-22, FA3 Hopper.\n\n## Verification\n\n- [x] 3 seeds, all train \u2264600s on 8xH100 SXM\n- [x] All artifacts \u226416,000,000 bytes (max: 15,851,228)\n- [x] No TTT on validation data\n- [x] No network calls during evaluation\n- [x] Sliding window eval stride=64, consistent across seeds (std=0.0001)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/535",
+  "draft": false,
+  "comments": []
+}
