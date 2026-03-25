@@ -1,0 +1,2 @@
+timestamp,run_name,script,gpus,val_bpb,final_int8_val_bpb,final_ttt_val_bpb,submission_bytes,wallclock_s,exit_code,notes
+2026-03-25 12:27:27,baseline_smoke,baseline.py,1,2.3594,2.35897656,2.3106,9769720,3.4,0,

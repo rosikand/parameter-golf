@@ -51,6 +51,7 @@ def make_train_app(gpus: int):
         volumes={MODAL_VOLUME_MOUNT: volume},
         timeout=1200,
         secrets=[modal.Secret.from_name("wandb-secret")],
+        serialized=True,
     )
     def train_run(
         script_content: str,
