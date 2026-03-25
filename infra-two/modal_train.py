@@ -252,6 +252,7 @@ def train(
 @app.function(volumes={DATA_MOUNT: data_volume})
 def sync_results() -> list[dict]:
     """Read all run results from the Volume."""
+    data_volume.reload()
     runs_path = Path(RUNS_DIR)
     if not runs_path.exists():
         return []
@@ -282,6 +283,7 @@ def sync_results() -> list[dict]:
 @app.function(volumes={DATA_MOUNT: data_volume})
 def get_run_log(run_id: str) -> str:
     """Fetch the full training log for a specific run."""
+    data_volume.reload()
     log_path = Path(RUNS_DIR) / run_id / "train.log"
     if log_path.exists():
         return log_path.read_text()

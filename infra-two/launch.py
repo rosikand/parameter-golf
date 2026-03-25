@@ -84,7 +84,10 @@ def main():
     print(f"  Wallclock: {args.max_wallclock}s")
     print()
 
-    subprocess.run(cmd, cwd=str(Path(__file__).parent))
+    result = subprocess.run(cmd, cwd=str(Path(__file__).parent))
+    if result.returncode != 0:
+        print(f"\n  Error: modal run failed (exit code {result.returncode})")
+        sys.exit(result.returncode)
 
 
 if __name__ == "__main__":

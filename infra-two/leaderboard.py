@@ -12,7 +12,6 @@ Local leaderboard for Parameter Golf experiments.
 
 import argparse
 import json
-import subprocess
 import sys
 from pathlib import Path
 
@@ -33,23 +32,10 @@ def sync():
     """Pull all results from Modal Volume into local leaderboard.json."""
     print("Syncing results from Modal Volume...")
 
-    # Import here to avoid requiring modal for non-sync commands
-    try:
-        from modal_train import sync_results
-    except ImportError:
-        # Fall back to subprocess if direct import doesn't work
-        print("Calling modal run to sync...")
-        result = subprocess.run(
-            ["modal", "run", "modal_train.py::sync_results"],
-            capture_output=True, text=True,
-            cwd=str(Path(__file__).parent),
-        )
-        print(result.stdout)
-        if result.returncode != 0:
-            print(f"Error: {result.stderr}")
-        return
+    from modal_train_frozen import app, sync_results
 
-    remote_results = sync_results.remote()
+    with app.run():
+        remote_results = sync_results.remote()
     local_entries = load()
 
     # Merge: update existing runs, add new ones
@@ -73,8 +59,9 @@ def sync():
 def fetch_log(run_id: str):
     """Fetch and print the full training log for a run."""
     try:
-        from modal_train import get_run_log
-        log = get_run_log.remote(run_id)
+        from modal_train_frozen import app, get_run_log
+        with app.run():
+            log = get_run_log.remote(run_id)
         print(log)
     except Exception as e:
         print(f"Error fetching log: {e}")
