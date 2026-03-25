@@ -1,0 +1,14 @@
+{
+  "number": 666,
+  "title": "Non-record: BitNet Ternary \u2014 65M params in 15.9MB (1.1932 BPB)",
+  "state": "open",
+  "user": "chrislovescoding",
+  "created_at": "2026-03-25T01:12:44Z",
+  "updated_at": "2026-03-25T01:12:44Z",
+  "merged_at": null,
+  "body": "## Summary\n\nTernary weight quantization ({-1, 0, +1} at ~1.58 bits/weight) enables fitting **65M parameters** in a 15.9MB artifact \u2014 **3x the parameter count** of standard int6 submissions (~22M params) at similar artifact size.\n\nThis explores a fundamentally different optimization axis: instead of aggressively quantizing a small model, we train a much larger model with extreme quantization from the start. **No other submission in this competition has attempted ternary/BitNet-style training.**\n\n## Key Results\n\n| Metric | Value |\n|--------|-------|\n| Model params | 64,529,040 |\n| Artifact size | 15,878,267 bytes |\n| Post-quant val_bpb | **1.2271** |\n| Sliding window val_bpb (stride=64) | **1.1932** |\n| Quantization gap | **0.0003 BPB** (near-zero) |\n| Steps | 5,026 in 600s on 8xH100 |\n\n## Approach\n\n- **Architecture:** 12 layers, 768 dim, 12/6 GQA heads, 3x MLP (hidden=2304), LeakyReLU(0.5)-squared, U-Net skip connections\n- **Ternary STE:** Full-precision weights maintained by Muon optimizer; forward pass quantizes to {-1, 0, +1} via Straight-Through Estimator with per-row mean-absolute scaling\n- **Activation schedule:** Full-precision for first 30% of wallclock, ternary STE for remaining 70%\n- **Compression:** Ternary int8 values + zlib-9 (zstd-22 would save ~1MB further)\n- **Eval:** Sliding window stride=64\n\n## Key Findings\n\n1. **Ternary training works at 65M scale** in 10 minutes \u2014 loss fully recovers after the ternary transition (spike from 1.30 to 1.36 BPB, then recovery to 1.23)\n2. **Near-zero quantization gap** (0.0003 BPB) because the model is trained with ternary STE\n3. **3x more parameters** fit in the same budget vs int6 \u2014 opens a new frontier for parameter-constrained LMs\n4. The ternary approach is **orthogonal to and composable with** other competition techniques (GPTQ, XSA, EMA, etc.)\n\n## Test Plan\n\n- [x] Runs in <10 minutes on 8xH100 SXM\n- [x] Artifact under 16MB (15.9MB)\n- [x] Reproducible (single seed, deterministic)\n- [x] Sliding window eval completes within eval budget",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/666",
+  "draft": false,
+  "comments": []
+}

@@ -1,0 +1,57 @@
+{
+  "number": 657,
+  "title": "Record: 11L LeakyReLU\u00b2 + VRL + lzma \u2014 val_bpb 1.1229 (3-seed mean)",
+  "state": "open",
+  "user": "anthony-maio",
+  "created_at": "2026-03-24T23:20:30Z",
+  "updated_at": "2026-03-25T00:52:52Z",
+  "merged_at": null,
+  "body": "## Summary\n\nval_bpb = 1.1229 (3-seed mean, std 0.0005) | ~15.89 MB | 8\u00d7H100 SXM\n\n### 3-Seed Results (8\u00d7H100 80GB SXM, PyTorch 2.9.1+cu128)\n\n| Seed | step_avg | steps | val_bpb | Artifact |\n|------|----------|-------|---------|----------|\n| 1337 | 87.1ms | 6,889 | 1.1234 | 15,887,926 |\n| 42 | 88.0ms | 6,818 | 1.1225 | 15,877,570 |\n| 2025 | 87.5ms | 6,857 | 1.1228 | 15,890,566 |\n| **Mean** | **87.5ms** | **6,855** | **1.1229 (std 0.0005)** | |\n\nAll 3 artifacts under 16,000,000 bytes. All 3 train logs attached.\n\n### Key Innovations\n\n**LeakyReLU(0.5)\u00b2**: One-line activation swap preserving negative gradient flow through MLP. ~-0.002 BPB vs standard relu\u00b2. Credit: PR #493 @parinzee, PR #518 @sofiabod.\n\n**Value Residual Learning (VRL)**: Layer 0's V output blended into all subsequent attention layers via learned sigmoid gates. Combats attention concentration (ResFormer, arXiv:2410.17897). +10 scalar params. Credit: PR #569 @gowtham0992.\n\n**lzma compression**: Stdlib replacement for zstd-22, compresses 2-5% tighter on quantized weights. Recovers ~300-500KB headroom, enabling full MLP 3\u00d7 + BigramHash 2048 under 16MB without capacity cuts. No external dependencies.\n\n### Architecture\n\nPR #414 base + LeakyReLU\u00b2 + VRL + lzma:\n\n| Component | Details |\n|-----------|---------|\n| Layers | 11L, 512d, 8H/4KV (GQA), U-Net skips (5 enc, 6 dec) |\n| MLP | 3\u00d7 expansion (1536), **LeakyReLU(0.5)\u00b2** activation |\n| Attention | XSA4, Partial RoPE 16/64, LN Scale 1/\u221a(i+1), **VRL** |\n| Embeddings | BigramHash(2048), VE128 (layers 9-10), SmearGate |\n| Training | EMA(0.997) + Tight SWA, Late QAT (STE@0.15), OrthoInit |\n| Optimizer | Muon WD=0.04, warmdown=3500, batch=786K tokens |\n| Quantization | GPTQ-lite int6 + **lzma** (preset=6) |\n| Attention kernel | FlashAttention 3 (Hopper native) |\n\n### Credits\n\n- Base model: PR #414 by @signalrush\n- LeakyReLU\u00b2: PR #493 by @parinzee, PR #518 by @sofiabod\n- VRL: ResFormer (arXiv:2410.17897), PR #569 by @gowtham0992\n- XSA: PR #287 by @jfprincz\n- Competition infrastructure: OpenAI, RunPod\n\n## Test plan\n- [x] Seed 1337: 1.1234 bpb, 15.89MB valid\n- [x] Seed 42: 1.1225 bpb, 15.88MB valid\n- [x] Seed 2025: 1.1228 bpb, 15.89MB valid\n- [x] 3-seed mean: 1.1229, std 0.0005\n- [x] All 3 train logs attached\n- [x] All artifacts under 16,000,000 bytes\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/657",
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "These log lines say \"int8+zlib\" but the artifact being written is int6 plus the configured compressor (currently lzma). This is misleading when inspecting logs and comparing submission sizes; update the message(s) to reflect the actual quantization/compressor being used.\n```suggestion\n\n```",
+      "created_at": "2026-03-24T23:24:00Z",
+      "updated_at": "2026-03-24T23:24:03Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This log label references an \"int8+zlib\" roundtrip, but this path is evaluating the int6+lzma artifact. Rename the log label so it matches what was actually loaded/decompressed to avoid confusion when tracking regressions.",
+      "created_at": "2026-03-24T23:24:00Z",
+      "updated_at": "2026-03-24T23:24:03Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This second occurrence also labels the result as an \"int8+zlib\" roundtrip even though it\u2019s still evaluating the int6+lzma artifact. Keeping these labels consistent with the actual codec will make log parsing and comparisons more reliable.",
+      "created_at": "2026-03-24T23:24:00Z",
+      "updated_at": "2026-03-24T23:24:03Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`late_k_layers` is computed but never used, which makes the quantization path harder to follow. Remove it or wire it into the intended late-layer quantization behavior.\n```suggestion\n\n```",
+      "created_at": "2026-03-24T23:24:01Z",
+      "updated_at": "2026-03-24T23:24:03Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The reproduction command points to the 2026-03-23_Reproduce414_LegalTTT script rather than this record\u2019s train_gpt.py, so following the README won\u2019t reproduce the stated result. Update the path to the correct 2026-03-24_LeakyReLU2_VRL_LZMA/train_gpt.py (or explain why the older script is intended).\n```suggestion\nrecords/track_10min_16mb/2026-03-24_LeakyReLU2_VRL_LZMA/train_gpt.py\n```",
+      "created_at": "2026-03-24T23:24:01Z",
+      "updated_at": "2026-03-24T23:24:03Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This submission metadata leaves val_bpb/bytes_total/bytes_code as null. If any tooling expects numeric values (as in other records), this will break parsing/aggregation. Consider either populating these fields with the actual numbers or omitting this folder/metadata until the run is complete.\n```suggestion\n    \"val_bpb\": 0.0,\n    \"bytes_total\": 0,\n    \"bytes_code\": 0,\n```",
+      "created_at": "2026-03-24T23:24:02Z",
+      "updated_at": "2026-03-24T23:24:03Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Populate numeric score fields in track submission metadata**\n\nThis `submission.json` is in the `track_10min_16mb` records tree but leaves `val_bpb`, `bytes_total`, and `bytes_code` as `null`; downstream tooling that ranks or validates submissions using numeric comparisons/arithmetic on these fields will either fail or skip this entry. Since the repo\u2019s submission contract requires `val_bpb` and related metadata for acceptance, these fields should be concrete numbers (or the folder should be moved out of record submissions).\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-24T23:26:34Z",
+      "updated_at": "2026-03-24T23:26:34Z"
+    }
+  ]
+}

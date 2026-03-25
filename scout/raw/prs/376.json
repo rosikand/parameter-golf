@@ -1,10 +1,10 @@
 {
   "number": 376,
   "title": "Record: 11L Next-Gen Stack + Custom Kernels, val_bpb=1.1399",
-  "state": "open",
+  "state": "closed",
   "user": "anthony-maio",
   "created_at": "2026-03-21T22:58:17Z",
-  "updated_at": "2026-03-23T19:37:16Z",
+  "updated_at": "2026-03-24T16:17:34Z",
   "merged_at": null,
   "body": "## Summary\n\n9-layer transformer with full competitive stack achieving **val_bpb = 1.1401** on sliding window evaluation (stride=64).\n\n- **9 layers**, 512 dim, 8 heads, 4 KV heads (GQA), MLP 3x (hidden=1536)\n- SmearGate + BigramHash (2048 buckets) + int6+zstd-22 compression\n- SWA (14-15 checkpoint average during warmdown)\n- Muon optimizer (WD=0.04, momentum=0.99, warmup 0.92\u21920.99 over 1500 steps)\n- Orthogonal init + muP scaling\n- NTK-RoPE (base=50000)\n- Sequence length 2048, batch 786K tokens\n\nTrained 4,782 steps at ~125ms/step on 8xH100 SXM in 600s. Artifact under 16MB.\n\nCustom Triton/CUDA kernel pipeline in active development (fused RMSNorm+QKV 1.47x, fused ReLU\u00b2 MLP 1.26x, fused softcap+CE 1.70x) for next submission targeting more training steps within the wallclock budget.\n\n## Test plan\n\n- [x] Full 10-minute training on 8xH100 SXM\n- [x] Sliding window evaluation (stride=64)\n- [x] Int6+zstd-22 compression under 16MB\n- [ ] 3-seed statistical significance run (pending compute)\n- [ ] Custom kernel integration run\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
   "labels": [],
@@ -40,6 +40,12 @@
       "body": "This artifact is written to `final_model.int8.ptz` and the logs mention `int8+zlib`, but the code is doing mixed int6 quantization and may use zstd depending on availability. Consider renaming the output filename/log strings to reflect the actual quantization/compressor to avoid confusion when comparing artifacts.\n```suggestion\n    quant_filename = f\"final_model.int6.{_COMPRESSOR}.ptz\"\n    if master_process:\n        with open(quant_filename, \"wb\") as f:\n            f.write(quant_blob)\n        quant_file_bytes = os.path.getsize(quant_filename)\n        code_bytes = len(code.encode(\"utf-8\"))\n        log0(f\"Serialized model int6+{_COMPRESSOR}: {quant_file_bytes} bytes\")\n        log0(f\"Total submission size int6+{_COMPRESSOR}: {quant_file_bytes + code_bytes} bytes\")\n\n    if distributed:\n        dist.barrier()\n    with open(quant_filename, \"rb\") as f:\n```",
       "created_at": "2026-03-21T23:01:49Z",
       "updated_at": "2026-03-21T23:01:49Z"
+    },
+    {
+      "user": "anthony-maio",
+      "body": "Closing this PR in favor of a new submission based on the PR #414 lineage.\n\nThis submission served as our initial exploration (custom kernels, depth recurrence, TTT debugging) but the scored config (1.1399 bpb) is no longer competitive with the current frontier (~1.12x). The techniques explored here (fused Triton kernels, autograd-compatible training kernels, systematic TTT debugging) are documented in the commit history for anyone interested.\n\nNew submission will reproduce #414's stack with additional improvements (LeakyReLU(0.5)\u00b2, VRL, FA3 Hopper) and include 3-seed significance testing as required.",
+      "created_at": "2026-03-24T16:17:33Z",
+      "updated_at": "2026-03-24T16:17:33Z"
     }
   ]
 }

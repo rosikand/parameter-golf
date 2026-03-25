@@ -1,0 +1,12 @@
+{
+  "number": 627,
+  "title": "ROCm Support PR Proposal",
+  "state": "open",
+  "user": "reimorster",
+  "created_at": "2026-03-24T15:38:42Z",
+  "updated_at": "2026-03-24T15:38:42Z",
+  "body": "I proposed small changes on main script to allow people with ROCm hardware to iterate locally even though the final result must run on H100 cluster. It would be nice if someone reviews it.\n\nThanks",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/issues/627",
+  "comments": []
+}

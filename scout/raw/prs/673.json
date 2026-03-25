@@ -1,0 +1,14 @@
+{
+  "number": 673,
+  "title": "Add submission snapshots for grant-backed runs",
+  "state": "open",
+  "user": "Aristide021",
+  "created_at": "2026-03-25T03:47:16Z",
+  "updated_at": "2026-03-25T03:47:16Z",
+  "merged_at": null,
+  "body": "This draft PR adds three submission-style record folders for current Parameter Golf work.\n\nIncluded:\n- `records/track_non_record_16mb/2026-03-19_ValOnly_SlidingWindow_mlx/`\n- `records/track_10min_16mb/2026-03-19_QAT_Int6_MLP3_SlidingWindow/`\n- `records/track_10min_16mb/2026-03-21_SWA_BigramHash_SmearGate_Int5MLP_MuonWD/`\n\nCurrent evidence:\n- The MLX non-record run includes a real `train.log`, artifact under 16MB, and end-to-end validation of training, quantization/export, and evaluation.\n- The two `track_10min_16mb` folders are code snapshots prepared in record format, but they do not yet include H100 `train.log` files or final metrics.\n\nWhy draft:\n- I am applying for challenge compute credits and need a reviewable PR link.\n- Final 10-minute-track metrics and logs will be added after funded H100 runs.\n\nIntent:\n- Use the MLX run as pipeline validation evidence.\n- Backfill the pending 10-minute submission folders with verified H100 logs and metrics once compute is available.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/673",
+  "draft": true,
+  "comments": []
+}

@@ -1,0 +1,14 @@
+{
+  "number": 687,
+  "title": "Record: 5-expert Hedge Mixer + TTT (3-seed mean val_bpb=1.0745)",
+  "state": "closed",
+  "user": "RoyiRa",
+  "created_at": "2026-03-25T06:26:03Z",
+  "updated_at": "2026-03-25T06:29:37Z",
+  "merged_at": null,
+  "body": "## Summary\n\n3-seed mean val_bpb: **1.0745** (std 0.021) | <15.5 MB | 8xH100 SXM, 600s\n\n## Results\n\n| Seed | Pre-TTT BPB | Post-TTT BPB | Artifact |\n|------|-------------|-------------|----------|\n| 1337 | 1.1248 | **1.0560** | 15.48 MB |\n| 42 | 1.1257 | **1.0970** | 15.41 MB |\n| 7 | 1.1251 | **1.0704** | 15.43 MB |\n| **Mean** | **1.1252** | **1.0745** | |\n\n## Key Technique: 5-expert Logistic Context Mixer\n\nGPU-vectorized online context mixing using the Hedge algorithm. Five experts blend predictions in log-probability space during TTT eval:\n\n| Expert | Source |\n|--------|--------|\n| Neural | Base model log-softmax |\n| Unigram | Token frequency from scored tokens |\n| Bigram | P(next \\| prev) from scored tokens |\n| Trigram | Hashed P(next \\| prev2, prev1) with 64K buckets |\n| Entropy | Neural model entropy as confidence regularizer |\n\nN-gram tables built incrementally from already-scored tokens only (legal). Expert weights updated online via Hedge: `log_w -= eta * loss`.\n\n## Training Budget\n\nGPTQ calibration runs within the 600s training budget (18s reserved).\n\n| Phase | Time |\n|-------|------|\n| Training loop | 582s |\n| EMA + GPTQ calibration + quantization | ~18s |\n| **Total training** | **~600s** |\n| TTT eval with mixer | ~562s |\n\n## Reproduction\n\n```bash\npip install -r requirements.txt\nDATA_PATH=./data/datasets/fineweb10B_sp1024 \\\nTOKENIZER_PATH=./data/tokenizers/fineweb_1024_bpe.model \\\nSEED=1337 MAX_WALLCLOCK_SECONDS=600 \\\nUSE_MIXER=1 TTT_LR=0.0001 TTT_CHUNK_TOKENS=131072 \\\n  torchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\n## Credits\n\n- Base model: PR #606 by @gowtham0992\n- TTT recipe: PR #461 by @Christopher-Lee-McClendon\n- Mixer inspiration: PAQ compression (context mixing) + Hedge algorithm",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/687",
+  "draft": false,
+  "comments": []
+}

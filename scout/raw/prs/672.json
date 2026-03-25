@@ -1,0 +1,14 @@
+{
+  "number": 672,
+  "title": "Record: 30ep Cosine TTT on LeakyReLU\u00b2 stack (3-seed mean val_bpb=1.0781)",
+  "state": "open",
+  "user": "andrewbaggio1",
+  "created_at": "2026-03-25T03:22:29Z",
+  "updated_at": "2026-03-25T03:22:29Z",
+  "merged_at": null,
+  "body": "## Summary\n\n**3-seed mean val_bpb: 1.0781** (std=0.0041) | 15.62 MB artifact | 8xH100 SXM\n\nSingle change from PR #518: TTT_EPOCHS=30. All architecture identical.\n\n## Results (8xH100 SXM)\n\n| Seed | Sliding BPB (s64) | Artifact |\n|------|-------------------|----------|\n| 1337 | 1.0743 | 15.62 MB |\n| 42 | 1.0774 | 15.62 MB |\n| 7 | 1.0825 | 15.62 MB |\n| **Mean \u00b1 Std** | **1.0781 \u00b1 0.0041** | |\n\n## vs. Verified SOTA\n\n| Submission | Mean BPB |\n|-----------|----------|\n| **Ours** | **1.0781** |\n| PR #549 (verified SOTA) | 1.1194 |\n| Improvement | **-0.041** |\n\n## Timing\n\n- Training: 600s (10 min cap)\n- TTT (30 epochs cosine): 494s\n- Sliding eval (stride=64): 96s\n- **Total eval: 590s (under 10 min)**\n\n## Architecture\n\nPR #518's full stack: 11L LeakyReLU(0.5)\u00b2, d=512, 4 KV GQA, MLP 3x, BigramHash(2048), SmearGate, XSA4, Partial RoPE, LN Scale, EMA, SWA, Late QAT, OrthoInit, VE128. Int6+zstd-22.\n\n## Run command\n\n```bash\nSEED=1337 torchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\n## Credits\n\nPR #518, PR #481 (mrdavtan), PR #442 (sjp611), PR #398 (felipe-parodi)\n\n## Test plan\n\n- [x] train_gpt.py compiles\n- [x] 3 seeds verified, all artifacts < 16 MB\n- [x] Mean beats verified SOTA by 0.041 BPB\n- [x] Training < 10 min, eval < 10 min on 8xH100\n- [x] PR only adds files to one new folder\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/672",
+  "draft": false,
+  "comments": []
+}

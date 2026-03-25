@@ -1,0 +1,14 @@
+{
+  "number": 636,
+  "title": "Add non-record 10min submission: 11L XSA4 + EMA + GPTQ + FA3 (1.12336724)",
+  "state": "open",
+  "user": "NewyorkDev",
+  "created_at": "2026-03-24T18:14:25Z",
+  "updated_at": "2026-03-24T18:20:23Z",
+  "merged_at": null,
+  "body": "## Summary\n\nThis PR adds a non-record 10-minute submission folder for our preserved March 24, 2026 `v6` run:\n\n- `final_int6_sliding_window_exact val_bpb: 1.12336724`\n- `Total submission size int6+zstd: 15853809 bytes`\n- hardware: `8xH100 SXM`\n- status: single preserved official run log, not a new-record claim\n\n## Included Files\n\n- `README.md` with results tables, architecture summary, exact run command, and credit/lineage\n- `submission.json`\n- `requirements.txt`\n- `train_gpt.py`\n- `train_seed1337.log`\n\n## Notes\n\nThis is intentionally submitted as a non-record entry. The folder contains one fully preserved official run log and does not claim the multi-seed statistical significance required for a new leaderboard record.\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/636",
+  "draft": false,
+  "comments": []
+}

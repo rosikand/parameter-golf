@@ -1,0 +1,14 @@
+{
+  "number": 661,
+  "title": "Non-record: 30ep Cosine TTT on SwiGLU + U-Net (1xH100, val_bpb=1.1175)",
+  "state": "open",
+  "user": "andrewbaggio1",
+  "created_at": "2026-03-25T00:08:43Z",
+  "updated_at": "2026-03-25T00:08:43Z",
+  "merged_at": null,
+  "body": "## Summary\n\nNon-record 1xH100 submission. Single change from PR #462: **TTT_EPOCHS=30** (default 10).\n\n**val_bpb = 1.1175** (sliding window stride=64, seed 1337) | **7.5 MB** artifact | 1xH100 SXM\n\n## Results (1xH100 SXM, seed 1337)\n\n| Metric | Value |\n|--------|-------|\n| Training steps | 936 (wallclock capped) |\n| Post-quant roundtrip val_bpb | 1.0684 |\n| **Sliding window val_bpb** | **1.1175** |\n| Artifact size | 7.5 MB |\n| TTT time | 3,376s (30 epochs cosine) |\n\n## Approach\n\nPR #462's full SwiGLU + U-Net architecture with 30-epoch cosine TTT (vs default 10). Consistent with PR #481's finding that more cosine TTT epochs improve results.\n\n## Architecture\n\nPR #462's stack unchanged: 11L SwiGLU (hidden=1792), U-Net gated skips, BigramHash (8192), SmearGate, EMA (0.9985), Late QAT, Partial RoPE, LN Scale, Int6+zstd.\n\n## Limitation\n\n1xH100 only \u2014 needs 8xH100 verification. 30 TTT epochs estimated ~7 min on 8xH100 (within eval budget).\n\n## Credits\n\nPR #462 (JoeProAI), PR #481 (mrdavtan), PR #442 (sjp611), PR #398 (felipe-parodi)\n\n## Test plan\n\n- [x] train_gpt.py compiles (`ast.parse` passes)\n- [x] Artifact under 16 MB (7.5 MB)\n- [x] PR only adds files to one new folder\n- [x] submission.json includes all required fields\n- [x] Train log included\n- [ ] Pending: 8xH100 verification + additional seeds\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/661",
+  "draft": false,
+  "comments": []
+}

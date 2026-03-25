@@ -1,0 +1,14 @@
+{
+  "number": 664,
+  "title": "Non-record: hybrid spiking Transformer (SNN)with a multi-step spiking MLP",
+  "state": "open",
+  "user": "tsbiosky",
+  "created_at": "2026-03-25T00:53:40Z",
+  "updated_at": "2026-03-25T00:55:24Z",
+  "merged_at": null,
+  "body": "# Hybrid Spiking Neural Networks (SNNs) MLP\r\n\r\n**val_bpb: 1.2982** | **15.78 MB** | 8\u00d7H100 SXM\r\n\r\nA contest-friendly hybrid SNN submission built from the `train_gpt.py` baseline: keep dense GQA attention and the original training/eval/compression pipeline, but replace the standard  feed-forward block with a small multi-step leaky integrate-and-fire (LIF-style) spiking MLP.\r\n\r\nReference :https://arxiv.org/pdf/2203.14679\r\n\r\n## Why this is interesting\r\n\r\nThis is **not** a fully spiking language model. It is a **hybrid Transformer + SNN-MLP** design:\r\n\r\n- embeddings, attention, residual path, and logits remain standard dense LM components\r\n- only the feed-forward block is replaced by a spiking mechanism\r\n- the original Parameter Golf training and export path stays intact\r\n\r\nThat makes the experiment meaningful for the contest setting because it isolates one question:\r\n\r\n> Can spike neural network achieves good performance in a tiny language model under a strict size budget?",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/664",
+  "draft": false,
+  "comments": []
+}

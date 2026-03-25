@@ -1,0 +1,14 @@
+{
+  "number": 602,
+  "title": "Add non-record 4xH100 10L Int5-MLP submission",
+  "state": "open",
+  "user": "ReNothingg",
+  "created_at": "2026-03-24T07:09:07Z",
+  "updated_at": "2026-03-24T07:09:07Z",
+  "merged_at": null,
+  "body": "# Non-record: 10L Int5-MLP on 4xH100 for 1200s\r\n\r\nThis is a non-record submission based on the 10L Int5-MLP recipe, rerun on 4xH100.\r\n\r\nIt is not intended for the main 10-minute 8xH100 leaderboard. This run uses 4 GPUs with the script's built-in gradient accumulation behavior and a 1200-second wallclock cap.\r\n\r\n## Result\r\n\r\n- val_loss: 1.92858953\r\n- val_bpb: 1.14222237\r\n- bytes_total: 15803072\r\n- stopping_early: train_time=1200141ms step=6847/20000\r\n- final_eval_mode: sliding_window stride=64\r\n\r\n## Command\r\n\r\n```bash\r\nSEED=1337 \\\r\nRUN_ID=int5_4gpu_seed1337_1200s_20260324_055951 \\\r\nDATA_PATH=/workspace/parameter-golf/data/datasets/fineweb10B_sp1024 \\\r\nTOKENIZER_PATH=/workspace/parameter-golf/data/tokenizers/fineweb_1024_bpe.model \\\r\nMAX_WALLCLOCK_SECONDS=1200 \\\r\ntorchrun --standalone --nproc_per_node=4 train_gpt.py\r\n```\r\n\r\n## Notes\r\n\r\n- Final artifact used zstd compression.\r\n- This submission is for the non-record track.\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/602",
+  "draft": false,
+  "comments": []
+}

@@ -1,14 +1,21 @@
 {
   "number": 555,
   "title": "Add 11L Shared Sparse Sidecar + EMA + AdamW TTT (1.0916 mean)",
-  "state": "open",
+  "state": "closed",
   "user": "ymrohit",
   "created_at": "2026-03-23T17:06:44Z",
-  "updated_at": "2026-03-23T17:29:37Z",
+  "updated_at": "2026-03-24T14:10:18Z",
   "merged_at": null,
   "body": "## Summary\n\nThis PR submits a derivative of `@sjp611`'s `1.1027` AdamW-TTT 11-layer stack with a new **shared sparse sidecar** added on top of the late layers.\n\nMain result:\n\n- **3-seed mean val_bpb: 1.09161722**\n- best seed: **1.09009466**\n- all three seeds are legal under the decimal `16,000,000`-byte cap\n\n## What Is New\n\nThe main contribution is a **late shared sparse sidecar**:\n\n- injected only in late layers\n- shared across multiple insertion sites\n- conditioned per site with learned site embeddings\n- modulated per site with learned residual scales\n- implemented as `gate -> value -> depthwise conv -> proj`\n\nThis adds a late local-refinement path without paying for another full transformer block at every site.\n\n## Evidence\n\n### Official cloud result\n\n| Seed | Steps | val_loss | val_bpb | Total bytes |\n|------|------:|---------:|--------:|------------:|\n| 13 | 5965 | 1.84057430 | 1.09009466 | 15,973,374 |\n| 1337 | 5966 | 1.84364647 | 1.09191418 | 15,986,252 |\n| 1111 | 5961 | 1.84521443 | 1.09284281 | 15,868,806 |\n| **Mean** | | **1.84314507** | **1.09161722** | |\n| **Std** | | **0.00236** | **0.00140** | |\n\n### Matched local sidecar ablation on donor family\n\nThis is not the official leaderboard metric, but it is the cleanest directional ablation for the sidecar idea itself:\n\n| Variant | final int6 roundtrip val_bpb |\n|--------|-------------------------------:|\n| Base donor | 1.09458804 |\n| Sidecar64 | 1.07249022 |\n\n## Legalization Work\n\nThe first sidecar-on-donor version was too close to the 16MB cap. The final legal version trimmed:\n\n- `SPARSE_HIDDEN_DIM: 64 -> 48`\n- `BIGRAM_DIM: 128 -> 96`\n- `MAX_WALLCLOCK_SECONDS: 600 -> 596`\n\nThis preserved the architecture while making all three cloud runs legal.\n\n## Attribution\n\nThis submission is a derivative work and should be credited that way:\n\n- direct donor: `@sjp611` AdamW-TTT 11-layer stack\n- donor lineage: `PR #398`\n- new contribution in this PR: shared sparse sidecar architecture, late-site conditioning, and cloud-legal deployment of that architecture\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/555",
   "draft": false,
-  "comments": []
+  "comments": [
+    {
+      "user": "valerio-oai",
+      "body": "As far as I can tell here, this proposed TTT scheme trains on the validation set by reporting the score on a doc after its weights have adapted to it, rendering this unsound for the purposes of this competition. ",
+      "created_at": "2026-03-24T14:10:17Z",
+      "updated_at": "2026-03-24T14:10:17Z"
+    }
+  ]
 }

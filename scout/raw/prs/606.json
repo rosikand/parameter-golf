@@ -1,0 +1,51 @@
+{
+  "number": 606,
+  "title": "Record: int5 GPTQ + Soft-Round QAT (3-seed mean 1.1162)",
+  "state": "closed",
+  "user": "EthanYangTW",
+  "created_at": "2026-03-24T07:49:41Z",
+  "updated_at": "2026-03-25T01:02:17Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **3-seed mean val_bpb = 1.1162 (std 0.0006)**\n- int5 GPTQ quantization ([-15,15], 31 levels) with Hessian-aware error compensation enables 33.6M params in 16MB\n- Soft-Round QAT: differentiable tanh-based rounding (alpha 1\u219216) replacing STE for better training quality at zero cost\n- Legal score-first AdamW TTT with cosine LR decay across chunks\n\n## Results\n\n| Seed | TTT BPB | Artifact |\n|------|---------|----------|\n| 1337 | **1.1155** | 15,822,078 bytes |\n| 42 | **1.1163** | 15,415,405 bytes |\n| 7 | **1.1167** | 15,368,627 bytes |\n| **Mean** | **1.1162** | |\n| **Std** | **0.0006** | |\n\n## Key Innovations\n\n1. **int5 quantization** \u2014 31 unique values stored as int8, ~0.46 bytes/param after zstd (vs int6's ~0.58). Enables 33.6M param model under 16MB.\n2. **GPTQ error compensation** \u2014 Hessian-aware column reordering + Cholesky error redistribution. 256-sample calibration.\n3. **Soft-Round QAT** \u2014 `s_\u03b1(y) = floor(y) + 0.5 * tanh(\u03b1\u00b7r) / tanh(\u03b1/2) + 0.5` with alpha annealing 1\u219216 during QAT steps.\n4. **33.6M param model** \u2014 MHA 8/8, BigramHash 8192, MLP 3.5x (1792), XSA all 11 layers.\n5. **Early QAT 0.5** + **EMA 0.997** + **FA3 Hopper**\n\n## Architecture\n\n- 11L, model_dim=512, 8H/8KV (MHA), MLP 3.5x relu\u00b2\n- XSA on all 11 layers, Partial RoPE 16/64, LN Scale\n- SmearGate + OrthoInit, BigramHash 8192, Shared VE128\n- Tight SWA (every 50), Muon lr=0.025, WD=0.04\n\n## TTT (Legal, Score-First)\n\n- 131072-token chunks, score first then adapt\n- AdamW (lr=0.0001, wd=0.0), 3 epochs/chunk, cosine LR\n- Last 2 blocks + norms + lm_head unfrozen (~5.8M / 33.6M)\n- Every token scored BEFORE any gradient update using it\n\n## Test plan\n\n- [x] 3-seed validation (seeds 1337, 42, 7)\n- [x] All artifacts under 16,000,000 bytes\n- [x] Training completes under 600s on 8xH100 SXM\n- [x] Evaluation completes under 600s\n- [x] Score-first TTT (legal per rulings #44, #152, #168)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/606",
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "In QAT paths you clamp weights with `torch.clamp(..., -(cr+1), cr)`, which makes the quantization range asymmetric and increases the number of representable integer levels (e.g., int5 becomes [-16, 15] = 32 values, int6 becomes [-32, 31] = 64 values). This does not match the stated int5/int6 ranges used elsewhere in this script (e.g., GPTQ quantization clamps to [-cr, cr]) and can cause a train/inference mismatch. Consider clamping to [-cr, cr] (or otherwise aligning QAT and post-training quantization ranges and updating the documentation accordingly).",
+      "created_at": "2026-03-24T07:55:24Z",
+      "updated_at": "2026-03-24T07:55:26Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`mixed_quantize_int6_gptq` uses plain `print(...)` for quantization stats. In distributed runs this will print from every rank, which matches the duplicated lines seen in the added logs and makes logs noisy/harder to parse. Prefer routing these messages through `log0` / gating them on `rank == 0` (or returning the stats to the caller and logging once).\n```suggestion\n    msg1 = f\"gptq_quantize: {gptq_count} GPTQ layers, {naive_count} naive layers\"\n    msg2 = f\"mixed_precision: {int5_params} int5 params, {int6_params} int6 params\"\n    if not dist.is_available() or not dist.is_initialized() or dist.get_rank() == 0:\n        print(msg1, flush=True)\n        print(msg2, flush=True)\n```",
+      "created_at": "2026-03-24T07:55:25Z",
+      "updated_at": "2026-03-24T07:55:26Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`LogisticContextMixer` vocab size is computed as `val_tokens.to(torch.int32).max().item() + 1`, which forces a full dtype conversion of the entire validation tensor (tens of millions of tokens) just to get the max. Since vocab size is already known (`args.vocab_size`, or `sp.vocab_size()`), prefer using that directly (or `int(val_tokens.max()) + 1` without casting) to avoid unnecessary CPU work and memory pressure during eval.\n```suggestion\n        vocab_size=args.vocab_size,\n```",
+      "created_at": "2026-03-24T07:55:25Z",
+      "updated_at": "2026-03-24T07:55:26Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This record script writes/reads `final_model.int6.ptz` and logs it as `int6+...`, but the submission/README describe int5 GPTQ (and most scripts in the repo use the `final_model.int8.ptz` artifact name). If there are any shared tooling expectations around artifact filenames or log labels, this inconsistency can break automation and is confusing for reproduction. Consider aligning the artifact filename/log labels with the actual format (e.g., `final_model.int5.ptz` or the repo-standard `final_model.int8.ptz` naming convention).\n```suggestion\n        with open(\"final_model.int5.ptz\", \"wb\") as f:\n            f.write(quant_blob)\n        quant_file_bytes = len(quant_blob)\n        code_bytes = len(code.encode(\"utf-8\"))\n        log0(f\"Serialized model int5+{_COMPRESSOR}: {quant_file_bytes} bytes\")\n        log0(f\"Total submission size int5+{_COMPRESSOR}: {quant_file_bytes + code_bytes} bytes\")\n    if distributed:\n        dist.barrier()\n    with open(\"final_model.int5.ptz\", \"rb\") as f:\n```",
+      "created_at": "2026-03-24T07:55:25Z",
+      "updated_at": "2026-03-24T07:55:26Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The README describes the MLP as \"relu\u00b2\", but the implementation in `train_gpt.py` uses `leaky_relu(..., negative_slope=0.5).square()`. Updating the README to match the actual activation used will make the architecture description accurate and easier to reproduce/compare against other runs.\n```suggestion\n- 11 layers, model_dim=512, 8 heads / 8 KV heads (MHA), MLP 3.5x leaky_relu\u00b2 (negative_slope=0.5)\n```",
+      "created_at": "2026-03-24T07:55:26Z",
+      "updated_at": "2026-03-24T07:55:26Z"
+    },
+    {
+      "user": "valerio-oai",
+      "body": "As per previous PRs, it's disallowed to use training data in any way during evaluation, which your GPTQ calibration is currently doing. This would be legal (or at least more likely to be legal) if you ended training early and calibrated as part of the training time. However, per the logs provided, it looks like you're training for the full 10 minutes, then doing 3.6s of calibration and then the rest of the eval, meaning this is included in the eval time and therefore currently illegal. ",
+      "created_at": "2026-03-25T01:02:17Z",
+      "updated_at": "2026-03-25T01:02:17Z"
+    }
+  ]
+}

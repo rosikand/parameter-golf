@@ -162,10 +162,10 @@ def main():
             return
 
     # Launch all runs in parallel via Modal starmap
-    from modal_app import train_app, get_train_fn
+    from modal_app import make_train_app
     from leaderboard import add_result, print_summary
 
-    train_fn = get_train_fn(args.gpus)
+    train_app, train_fn = make_train_app(args.gpus)
 
     starmap_args = [
         (

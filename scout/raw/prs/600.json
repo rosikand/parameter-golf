@@ -1,0 +1,14 @@
+{
+  "number": 600,
+  "title": "Non-record: TTT-LoRA Base \u2014 HumanAI Convention (val_bpb=1.2364)",
+  "state": "open",
+  "user": "humanaiconvention",
+  "created_at": "2026-03-24T06:01:43Z",
+  "updated_at": "2026-03-24T06:01:43Z",
+  "merged_at": null,
+  "body": "## Submission: TTT-LoRA Base\n\n**Track:** `track_non_record_16mb`  \n**Author:** HumanAI Convention (@humanaiconvention)  \n**val_bpb:** 1.23637747  \n**Submission size:** 15,669,326 bytes\n\n### Novel contribution\n\nThis submission introduces **per-document Test-Time Training via LoRA** as an evaluation-time technique. During the 10-minute evaluation budget, each validation document receives its own fresh rank-128 LoRA adapters trained with Adam on the preceding chunks before predicting the next chunk.\n\nThis approach is orthogonal to all current leaderboard entries and exploits the separate evaluation budget in a way no current submission does.\n\n### Base submission note\n\nTTT is disabled (`TTT_ENABLED=0`) in this submission. Local testing showed consistent improvement (\u22120.136 bpb on 50-doc smoke test), but the first production run revealed that the LR tuned on smoke models (0.001) is too high for a well-trained production model. LR calibration is in progress. A follow-up submission with working TTT targeting competitive val_bpb is planned pending compute credits.\n\n### Architecture changes vs baseline\n\n- SmearGate residual mixing gate\n- Orthogonal initialisation\n- Bigram hash embeddings (2048 buckets)\n- GQA (8q / 4kv heads)\n- SWA over final 5065 steps\n- int6 + zstd22 quantisation (5.14\u00d7 compression)\n\n### Compute credits request\n\nWe are applying for OpenAI compute credits via the grant form to complete TTT LR calibration.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/600",
+  "draft": false,
+  "comments": []
+}

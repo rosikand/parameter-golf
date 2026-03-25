@@ -1,0 +1,14 @@
+{
+  "number": 655,
+  "title": "Add attempts/ directory with experiment templates",
+  "state": "closed",
+  "user": "dhruvjatkar",
+  "created_at": "2026-03-24T23:05:43Z",
+  "updated_at": "2026-03-24T23:09:30Z",
+  "merged_at": null,
+  "body": "## Summary\n- Add `attempts/` directory structure for tracking in-progress experiments\n- Include `_template/` folder with `submission.json`, `README.md`, and `env.sh` templates\n- Add `results.tsv` with header row for cross-attempt comparison\n- Add `attempts/README.md` documenting folder structure, naming conventions, workflow, and status values\n\n## Test plan\n- [x] Verify directory structure with `ls -R attempts/`\n- [x] Confirm template files contain correct fields matching `records/` conventions\n- [x] No executable code; purely infrastructure/template files\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/655",
+  "draft": false,
+  "comments": []
+}

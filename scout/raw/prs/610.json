@@ -1,0 +1,14 @@
+{
+  "number": 610,
+  "title": "GPTQ Int6 + SGD Test-Time Training \u2014 A800 1.1190 bpb",
+  "state": "open",
+  "user": "ChaosCodes",
+  "created_at": "2026-03-24T10:59:42Z",
+  "updated_at": "2026-03-24T10:59:42Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **11-layer 512d GPT** with PR#414's 10-technique stack + LeakyReLU(0.5)\u00b2 activation\n- **GPTQ int6 quantization**: Hessian-guided column-wise quantization replacing naive per-row rounding, reducing quantization error by 33.6% (Hessian-weighted MSE)\n- **SGD test-time training (TTT)**: Continues training on validation data in a causal (score-first) manner with cosine LR decay, adapting last 9/11 layers\n\n## Key Results\n\n| Metric | Value |\n|--------|-------|\n| A800 bpb (GPTQ + TTT) | **1.1190** |\n| A800 bpb (GPTQ only) | 1.1214 |\n| A800 bpb (sliding window, no TTT) | 1.1243 |\n| Estimated H100 bpb | ~1.122 |\n| Artifact size | 15,750,888 bytes (98.4% of 16MB) |\n| Training time | 1200s on 8\u00d7A800-SXM4-80GB |\n\n## Techniques\n\n**Architecture (PR#414 stack):** XSA4, EMA, U-Net skip, SmearGate, BigramHash, PartialRoPE, LNScale, ValueEmbed, LateQAT, SWA\n\n**Novel contributions:**\n1. **LeakyReLU(0.5)\u00b2** replacing GELU\u00b2 \u2014 saves 0.0026 bpb by improving gradient flow\n2. **GPTQ int6** \u2014 data-dependent quantization using 256 calibration samples, block-128 updates\n3. **SGD TTT** \u2014 Simple SGD (lr=0.002, momentum=0.9) with cosine schedule over 900 chunks of 32K tokens, 3 epochs/chunk\n\n## Compression\n\nzstd level-21 with long-distance matching (LDM) for model artifact compression.\n\n## Files\n\n- `train_gpt.py` \u2014 Full training + GPTQ + TTT evaluation pipeline\n- `eval_gptq.py` \u2014 Standalone GPTQ evaluation script\n- `eval_ttt.py` \u2014 Standalone TTT evaluation script\n- `submission.json` \u2014 Structured results metadata\n- `train.log` \u2014 Complete training log\n- `README.md` \u2014 Detailed writeup with technique descriptions and ablations\n\nSee `records/track_10min_16mb/2026-03-24_GPTQ_TTT/README.md` for full details.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/610",
+  "draft": false,
+  "comments": []
+}

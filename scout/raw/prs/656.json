@@ -1,0 +1,21 @@
+{
+  "number": 656,
+  "title": "Three Breadsticks: 1.1190 BPB (3-seed mean 1.1195)",
+  "state": "closed",
+  "user": "newjordan",
+  "created_at": "2026-03-24T23:17:18Z",
+  "updated_at": "2026-03-25T06:20:18Z",
+  "merged_at": null,
+  "body": "## Results\n\n| Seed | Pre-TTT BPB | TTT BPB | Artifact |\n|------|-------------|---------|----------|\n| 1337 | 1.1196 | **1.1195** | 15.90 MB |\n| 42 | 1.1199 | **1.1200** | 15.61 MB |\n| 2045 | 1.1191 | **1.1190** | 15.81 MB |\n| **Mean** | **1.1195** | **1.1195** | \u2014 |\n\n## Progression\n\n| PR | Mean BPB | Notes |\n|----|----------|-------|\n| #577, #533 | 1.1207* | Initial GPTQ submission |\n| #578, #508 | 1.1215 | QAT + TTT refinement |\n| #587 | 1.1208 | XSA + quantization tuning |\n| **#656** | **1.1195** | **Activation + eval improvements** |\n\n*single seed\n\n## Architecture\n\n11L/512d U-Net, 26.93M params. GPTQ int6+zstd, legal score-first TTT.\n\n## Reproduce\n\n```bash\nSEED=2045 torchrun --nproc_per_node=8 train_gpt.py\n```\n\n8xH100 SXM, 600s wallclock, ~6,900 steps.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/656",
+  "draft": false,
+  "comments": [
+    {
+      "user": "valerio-oai",
+      "body": "This submission dos not include a submission.json or train logs, so I can't verify it enough to score it. Additionally, from the training code it looks like it applies GPTQ with training data calibration at eval time, which is disallowed. Closing for now.",
+      "created_at": "2026-03-25T06:20:17Z",
+      "updated_at": "2026-03-25T06:20:17Z"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "number": 612,
+  "title": "Non-record: 11L GEPA + 12k Steps + Pure Int6 + Legal TTT (val_bpb=1.1079)",
+  "state": "open",
+  "user": "Christopher-Lee-McClendon",
+  "created_at": "2026-03-24T12:10:03Z",
+  "updated_at": "2026-03-24T12:10:03Z",
+  "merged_at": null,
+  "body": "## Non-Record Submission: 11L GEPA + 12k Steps + Pure Int6 + Legal TTT\n\n**val_bpb = 1.1079** (1.10788263 exact) | Pre-TTT float: 1.1268 | Int6 quant: ~1.154 | TTT gain: \u22120.046 | Artifact: 14.79 MB\n\n### Summary\n\nGEPA architecture (11L, 27M params) trained for **12,000 steps** (7k peak-LR + 5k warmdown) on 4\u00d7A100-40GB. Pure int6 per-row quantization with 15-candidate GPTQ-lite clip search + zstd-22 compression. Legal score-first TTT (SGD, momentum 0.9, lr=0.002, 10 epochs, freeze first 2 blocks).\n\n### Key Results\n\n| Metric | Value |\n|---|---|\n| Final val_bpb | **1.10788263** |\n| Pre-TTT float (step 12000) | 1.1268 |\n| Post-quantization pre-TTT | ~1.154 |\n| TTT improvement | \u22120.046 |\n| Model bytes | 15,432,359 |\n| Code bytes | 78,281 |\n| Total artifact | 15,510,640 (< 16 MB \u2705) |\n| Training time | ~100 min (4\u00d7A100) |\n| Eval time | 2072s |\n\n### Novel Contributions\n\n1. **12k-step training** with 5k-step warmdown \u2014 exploits unlimited-compute track\n2. **Pure int6** per-row quantization (no mixed int6/int8) with 15-percentile GPTQ-lite\n3. **Legal score-first TTT** with LR warmup and SGD momentum\n\n### Track\n\n`track_non_record_16mb` \u2014 unlimited compute, 16 MB artifact limit.\n\n### Checklist\n\n- [x] README.md with approach description\n- [x] submission.json with correct metadata\n- [x] train.log demonstrating results\n- [x] train_gpt.py (self-contained, no network calls)\n- [x] Total submission \u2264 16 MB\n- [x] Legal TTT (score-first, no val data cheating)\n- [x] GPG-signed commit",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/612",
+  "draft": false,
+  "comments": []
+}

@@ -4,7 +4,7 @@
   "state": "open",
   "user": "leloykun",
   "created_at": "2026-03-22T05:21:50Z",
-  "updated_at": "2026-03-23T18:05:43Z",
+  "updated_at": "2026-03-24T15:43:05Z",
   "body": "Don't train on eval tokens your model hasn't scored yet!\n\n---\n\n\"Proper\" TTT goes like this:\n\n1. For each `1 <= t <= T`:\n    1.1. Score on eval token `t`\n    1.2. Adapt weights based on eval token `<= t`\n---\n\nWhat y'all are doing is something like this:\n1. For each `1 <= t <= T`:\n    1.1. Adapt weights based on eval token `<= t`\n2. For each `1 <= t <= T`:\n    2.1. Score on eval token `t`\n\nBut this is equivalent to appending the eval tokens to the training tokens and switching training strategies before eval! Also see: https://github.com/openai/parameter-golf/pull/152#issuecomment-4101741099\n\n---\n\nPotentially invalid submissions:\n| PR  | comment | status |\n| --- | --- | --- |\n| https://github.com/openai/parameter-golf/pull/136 | TTT on half of the batch; eval on full batch | [ ] open |\n| https://github.com/openai/parameter-golf/pull/152 | TTT on all eval tokens before evaluation | [x] closed |\n| https://github.com/openai/parameter-golf/pull/254 | TTT on multiple parts of eval sequence for multiple epochs | [ ] open |\n| https://github.com/openai/parameter-golf/pull/264 | TTT before eval | [ ] open |\n| https://github.com/openai/parameter-golf/pull/338 | TTT on multiple parts of eval sequence for multiple epochs | [ ] open |\n| https://github.com/openai/parameter-golf/pull/398 | TTT on all eval tokens before evaluation | [ ] Open |\n| https://github.com/openai/parameter-golf/pull/421 | TTT before evals | [ ] open |\n| https://github.com/openai/parameter-golf/pull/417 | TTT for multiple epochs before evals | [ ] open |\n| https://github.com/openai/parameter-golf/pull/442 | TTT before evals | [ ] open |\n\ncc @0hq \n\n---\n\nPlease feel free to correct me if I'm wrong.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/issues/402",
@@ -80,6 +80,36 @@
       "body": "@0hq thanks for looking at it. Why not have the default be case 3? This would be in line with all previous work and avoids the following issue (from above):\n\n> Imagine you were trying to measure your model's \"emergent capability\", so you make an eval set of 50k examples of something the model was not trained to do (let's say multiply numbers). Then, if you did token-stream TTT at inference time and your model got non-zero accuracy, you cannot say it is an \"emergent phenomenon\" but rather that your model can learn to multiply numbers when trained on thousands of examples. Token-stream TTT is identical to just continuing to train for 1-epoch on the eval set and reporting the mean loss (in the first epoch losses for each batch are losses before training on them).\n\n[Visualization for clarity](https://samacquaviva.com/projects/ttt-clarification/): <img width=\"857\" height=\"805\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/b8b558b6-744a-4b2b-9244-d0e9a36e68c5\" />",
       "created_at": "2026-03-23T18:05:42Z",
       "updated_at": "2026-03-23T18:05:42Z"
+    },
+    {
+      "user": "hegdeadithyak",
+      "body": "hey @samacqua , just for confirmation is this legal ?\n```\ndef eval_val_ttt(args, model, device, val_tokens,\n                 base_bytes_lut, has_leading_space_lut, is_boundary_token_lut):\n    chunk_size = args.ttt_chunk_size\n    rank       = args.ttt_lora_rank\n    lr         = args.ttt_lora_lr\n    adapt_steps = args.ttt_lora_steps\n\n    tokens = val_tokens.to(device, dtype=torch.int64)\n    N      = tokens.numel()\n\n    # Freeze base model weights; only LoRA adapters are trainable\n    for p in model.parameters():\n        p.requires_grad_(False)\n\n    adapters  = _attach_lora(model, rank)\n    optimizer = torch.optim.Adam([p for a in adapters for p in a.parameters()], lr=lr)\n\n    loss_sum    = 0.0\n    token_count = 0\n    byte_count  = 0.0\n\n    model.eval()   # keep BN/dropout in eval mode; LoRA grads still flow\n\n    pos = 0\n    while pos + chunk_size + 1 <= N:\n        x_chunk  = tokens[pos: pos + chunk_size].unsqueeze(0)\n        y_chunk  = tokens[pos + 1: pos + chunk_size + 1].unsqueeze(0)\n\n        #STEP 1: SCORE with current LoRA (NO GRAD for the score)\n        with torch.no_grad():\n            with torch.autocast(device_type=\"cuda\", dtype=torch.bfloat16):\n                logits = model.get_logits(x_chunk)\n            per_tok_loss = F.cross_entropy(\n                logits[0].float(), y_chunk[0], reduction=\"none\")\n            chunk_loss_val = float(per_tok_loss.mean())\n\n        loss_sum    += float(per_tok_loss.sum())\n        token_count += int(y_chunk.numel())\n        byte_count  += float(_count_bytes(y_chunk[0], x_chunk[0],\n                                          base_bytes_lut, has_leading_space_lut, is_boundary_token_lut))\n\n        #STEP 2: ADAPT LoRA on this chunk's loss\n        #(uses only tokens \u2264 pos+chunk_size, never future tokens)\n        for _ in range(adapt_steps):\n            optimizer.zero_grad()\n            with torch.autocast(device_type=\"cuda\", dtype=torch.bfloat16):\n                adapt_loss = _forward_with_lora(model, x_chunk, y_chunk)\n            adapt_loss.backward()\n            optimizer.step()\n\n        pos += chunk_size\n\n    _detach_lora(model)\n    for p in model.parameters():\n        p.requires_grad_(True)\n    model.train()\n\n    val_loss        = loss_sum / max(token_count, 1)\n    bits_per_token  = val_loss / math.log(2.0)\n    tokens_per_byte = token_count / max(byte_count, 1.0)\n    return val_loss, float(bits_per_token * tokens_per_byte)\n```",
+      "created_at": "2026-03-24T06:28:06Z",
+      "updated_at": "2026-03-24T06:28:06Z"
+    },
+    {
+      "user": "himanalot",
+      "body": "Are implementations like #611 legal? I'd have to imagine they're not\u2014they're getting dramatically lower scores through re-scoring tokens after the model already trained on them. There's a new host of these types of submissions flooding in.\n\nIt seems there's been a new scheme going on where people are using a score-every-epoch approach where they score all tokens in a document, train on them, and then rescore the same tokens and keep the minimum NLL across epochs. This doesn't seem to fit the goal of the challenge; it's really just exploiting eval and doesn't have any real innovation imo. \n\n\n- LoRA TTT with score-every-epoch (#596, #568, #620, #512, #548, etc.) \u2014 the questionable method",
+      "created_at": "2026-03-24T14:14:07Z",
+      "updated_at": "2026-03-24T14:38:39Z"
+    },
+    {
+      "user": "valerio-oai",
+      "body": "@himanalot Can't speak for every TTT scheme, but agreed that the score-every-epoch-and-keep-the-lowest-loss is equivalent to training on the val set, and is disallowed in my book.",
+      "created_at": "2026-03-24T14:39:28Z",
+      "updated_at": "2026-03-24T14:39:28Z"
+    },
+    {
+      "user": "robinojw",
+      "body": "@valerio-oai\n\nPersonally I would prefer that TTT was written into the rules as explicitly disallowed, it wastes $ outside of training on compute. I called out whether or not my approach would be 'legal' in my PR and seems like the consensus is _no_. \n\nI can try another seed run with `TTT_EPOCHS=1` to be fully compliant but I might need to apply for some more compute at this point. I'd expect to gain around ~0.04-0.06 BPB hopefully scoring around 1.10-1.12 but sounds like I should just scrap TTT all together? \n\nMy PR: https://github.com/openai/parameter-golf/pull/620",
+      "created_at": "2026-03-24T15:09:37Z",
+      "updated_at": "2026-03-24T15:09:37Z"
+    },
+    {
+      "user": "valerio-oai",
+      "body": "@robinojw I see your point, but the reason we give the 10-min eval time is so folks can have interesting test-time approaches, so TTT is a valid approach in theory, but very easy to unintentionally leak val data into. There's still a long time to go, and I'm sure approaches will start to crystallize eventually.",
+      "created_at": "2026-03-24T15:43:05Z",
+      "updated_at": "2026-03-24T15:43:05Z"
     }
   ]
 }

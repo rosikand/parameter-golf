@@ -1,0 +1,14 @@
+{
+  "number": 671,
+  "title": "Submission: Atris Labs v8 (audited seed42, clean branch)",
+  "state": "open",
+  "user": "keshav55",
+  "created_at": "2026-03-25T02:41:12Z",
+  "updated_at": "2026-03-25T02:41:12Z",
+  "merged_at": null,
+  "body": "This PR supersedes #515 with a clean submission-only branch.\n\nIncluded files:\n- `records/track_10min_16mb/2026-03-22_AtrisLabs_v8/README.md`\n- `records/track_10min_16mb/2026-03-22_AtrisLabs_v8/submission.json`\n- `records/track_10min_16mb/2026-03-22_AtrisLabs_v8/train.log`\n- `records/track_10min_16mb/2026-03-22_AtrisLabs_v8/train_gpt.py`\n\nAudited run included in this branch:\n- `seed=42`\n- `val_bpb=1.18069496`\n- `val_loss=1.99355398`\n- `bytes_total=14461499`\n- `steps=6428` in `600.039s`\n\nWhy this replacement:\n- keeps the diff to the submission folder only\n- includes a real train log\n- aligns README/JSON with the audited run in the branch\n- avoids the earlier commit-history/co-author concerns on the submission branch\n\nIf preferred, I can close #515 after this replacement is reviewed.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/671",
+  "draft": false,
+  "comments": []
+}

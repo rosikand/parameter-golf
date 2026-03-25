@@ -1,0 +1,14 @@
+{
+  "number": 668,
+  "title": "Non-record: 11L GEPA + 30k Steps + Pure Int6 + Legal TTT (val_bpb=1.0920)",
+  "state": "open",
+  "user": "Christopher-Lee-McClendon",
+  "created_at": "2026-03-25T01:25:36Z",
+  "updated_at": "2026-03-25T01:25:36Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **val_bpb = 1.0920** \u2014 new personal best with legal score-first TTT\n- 11L GEPA architecture (27M params) trained for **30000 steps** (12000 peak-LR + 18000 warmdown)\n- Pure int6 per-row quantization with 15-candidate GPTQ-lite + zstd-22 compression\n- Legal score-first TTT (SGD, momentum 0.9, 10 epochs): **\u22120.035 BPP** gain\n- Artifact: **13.40 MB** (14,136,140 bytes total) \u2014 smallest in our series\n- Includes model artifact (`final_model.int6.ptz`) for reproducibility\n\n## Key Result\n\n| Metric | Value |\n|---|---|\n| Float base (30k steps) | 1.1043 |\n| Int6 quantized | 1.1267 |\n| After legal TTT | **1.0920** |\n| Quant gap | 0.022 BPP |\n| TTT gain | \u22120.035 BPP |\n| Eval time | 2,064s on 4\u00d7A100-40GB |\n| Training wallclock | 14,998s (~4.2 hours) |\n\n## Scaling Law (6 data points)\n\n| Steps | Peak-LR | Warmdown | Float Base | TTT BPP | Artifact |\n|---|---|---|---|---|---|\n| 9,000 | 5,000 | 4,000 | 1.135 | 1.116 | 14.94 MB |\n| 12,000 | 7,000 | 5,000 | 1.127 | 1.108 | 14.79 MB |\n| 15,000 | 9,000 | 6,000 | 1.122 | 1.104 | 14.52 MB |\n| 20,000 | 12,000 | 8,000 | 1.115 | 1.098 | 14.22 MB |\n| 25,000 | 12,000 | 13,000 | 1.109 | 1.094 | 13.75 MB |\n| **30,000** | **12,000** | **18,000** | **1.104** | **1.092** | **13.40 MB** |\n\nAll three metrics improve monotonically across all 6 experiments.\n\n## Key Insights\n\n1. **60% warmdown ratio** (18k of 30k steps) reduces quantization gap from 0.027 \u2192 0.022\n2. **Warmdown acceleration**: Final 5000 steps produce \u22120.052 BPP decline (25k\u219230k)\n3. **Diminishing returns**: \u0394 from 25k\u219230k is only \u22120.002 BPP (vs \u22120.004 for 20k\u219225k)\n\n> Non-record unlimited-compute submission (4\u00d7A100-40GB, ~4.2 hours).\n\n## Prior Submissions in This Series\n\n- PR #644: 25k steps \u2192 1.0944 BPP\n- PR #628: 20k steps \u2192 1.0983 BPP\n- PR #612: 12k steps \u2192 1.1079 BPP\n- PR #598: 7k steps \u2192 1.1334 BPP\n\n## Acknowledgments\n\nBuilds on techniques from: @signalrush (PR #414, GPTQ-lite/EMA), @jfprincz (PRs #287/#315, XSA/Partial RoPE/LN Scale), @unnir (PR #265, Efficient XSA), raahilshah (PR #162, SmearGate/BigramHash), @aruniyer (PR #86, Int6 QAT), samacqua (LoRA TTT), @abaybektursun (PR #549, LeakyReLU\u00b2), and the OpenAI baseline.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/668",
+  "draft": false,
+  "comments": []
+}

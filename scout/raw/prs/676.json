@@ -1,0 +1,14 @@
+{
+  "number": 676,
+  "title": "SwiGLU MLP: parameter-neutral gated activation over LeakyReLU^2",
+  "state": "open",
+  "user": "they-call-me-god",
+  "created_at": "2026-03-25T04:12:57Z",
+  "updated_at": "2026-03-25T04:12:57Z",
+  "merged_at": null,
+  "body": "## Summary\n\nReplace `LeakyReLU(0.5)^2` with **SwiGLU** gating \u2014 the same multiplicative activation used in LLaMA, Mistral, Gemma, and PaLM.\n\nBuilt on the PR #549 SOTA stack (LeakyReLU\u00b2 + Legal TTT + Parallel Muon). Single change, zero parameter increase.\n\n## The Change\n\n```python\n# Before (SOTA)\nx = F.leaky_relu(F.linear(x, up_w), negative_slope=0.5).square()\nout = F.linear(x, down_w)\n\n# After (SwiGLU)\nhalf = up_w.shape[0] // 2\ngate = F.silu(F.linear(x, up_w[:half]))   # learned gating\nup   = F.linear(x, up_w[half:])\nout  = F.linear(gate * up, down_w)\n```\n\n## Parameter Neutrality\n\n| Bank | Old shape | New shape |\n|------|-----------|-----------|\n| mlp_up_bank[i] | (1536, 512) | (2048, 512) \u2014 gate\\|\\|up |\n| mlp_down_bank[i] | (512, 1536) | (512, 1024) |\n\nProof: `2 \u00d7 512 \u00d7 1536 = 3 \u00d7 512 \u00d7 1024 = 1,572,864` per layer.\n\n## Status\n\nTraining logs pending (RunPod 8\u00d7H100). Will update with 3-seed results and final val_bpb.\n\n## New env vars\n\n- `USE_SWIGLU=1` (default on)\n- `SWIGLU_HALF_DIM=1024`",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/676",
+  "draft": false,
+  "comments": []
+}

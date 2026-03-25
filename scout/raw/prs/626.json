@@ -1,0 +1,21 @@
+{
+  "number": 626,
+  "title": "Record: Full GPTQ + LeakyReLU\u00b2 + Parallel Muon (3-seed mean 1.1180)",
+  "state": "closed",
+  "user": "kshitizz36",
+  "created_at": "2026-03-24T15:36:34Z",
+  "updated_at": "2026-03-25T06:17:28Z",
+  "merged_at": null,
+  "body": "## Results\r\n\r\n- 3-seed mean val_bpb (sliding, stride=64): **1.11800697**\r\n- std (sample): **0.00102882**\r\n- mean size: **15,931,864 bytes**\r\n- hardware: **8xH100 SXM**, 600s train budget\r\n\r\n| Seed | step_avg | steps | Pre-quant bpb | Post-GPTQ sliding bpb | Total size (bytes) |\r\n|------|----------|-------|---------------|------------------------|--------------------|\r\n| 42   | 84.98ms  | 7062  | 1.1384        | **1.11752350**         | 15,890,732         |\r\n| 1337 | 86.65ms  | 6925  | 1.1402        | 1.11918848             | 15,891,780         |\r\n| 2024 | 85.20ms  | 7043  | 1.1383        | **1.11730894**         | 16,013,080         |\r\n| **Mean** | **85.61ms** | **7010** | **1.1390** | **1.11800697** | **15,931,864** |\r\n\r\n## Notes\r\n\r\n- No TTT used.\r\n- Full logs for all 3 seeds are included under this record folder.\r\n- Independent 3-seed run of the same Full GPTQ + LeakyReLU\u00b2 + Parallel Muon direction.\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/626",
+  "draft": false,
+  "comments": [
+    {
+      "user": "valerio-oai",
+      "body": "This submission uses GPTQ at test time, hence using training data at eval time, which is disallowed. Closing for now.",
+      "created_at": "2026-03-25T06:17:27Z",
+      "updated_at": "2026-03-25T06:17:27Z"
+    }
+  ]
+}

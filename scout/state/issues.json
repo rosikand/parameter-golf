@@ -5,31 +5,28 @@
     "user": "notapplica",
     "category": "analysis",
     "techniques_mentioned": [
+      "LeakyReLU squared",
+      "Test-Time Training (TTT)",
+      "backward-looking TTT",
+      "sliding window evaluation",
+      "GPTQ",
       "EMA",
-      "GPTQ-lite",
-      "QAT",
-      "Partial RoPE",
-      "LN Scale",
-      "XSA4",
-      "TTT",
-      "Int6 MLP3x",
+      "Int6 quantization",
+      "MLP 3x width",
       "SmearGate",
       "BigramHash",
       "OrthoInit",
-      "Muon WD",
-      "SWA",
-      "FA3",
-      "sliding window eval",
-      "MLP 3x expansion",
-      "int6 per-row quantization",
-      "fp16 tied embedding",
-      "long-context training",
-      "LoRA TTT",
-      "mixed precision",
-      "warmdown",
-      "multi-pass TTT"
+      "Muon optimizer",
+      "weight decay",
+      "SWA (Stochastic Weight Averaging)",
+      "FlashAttention 3",
+      "Parallel Muon",
+      "sequence curriculum",
+      "Partial RoPE",
+      "Late QAT",
+      "full-weight SGD TTT"
     ],
-    "key_insights": "Auto-updated leaderboard commentary tracking competition progress, showing BPB dropped ~0.17 in ~5 days to 1.0523 (pending legality). Top techniques include sliding window eval (~-0.034 BPB), MLP 3x expansion (~-0.019 BPB), int6 per-row quantization, and TTT. Multiple pending submissions may be invalid due to improper TTT implementation (pre-scoring adaptation on eval tokens).",
+    "key_insights": "Auto-updated leaderboard commentary tracking BPB progress from 1.2244 baseline down to ~1.1154 over ~6 days. A Mar 24 enforcement sweep closed 15+ PRs for illegal pre-eval TTT and GPTQ calibration at eval time; only backward-looking TTT (adapting on already-evaluated tokens) is permitted. Key technical findings include: seq curriculum breaks SWA, EMA causes 0.14 BPB quant gap on SWA stacks, and MLP 2.75x width is optimal at 11L+SmearGate.",
     "relevance": "high"
   },
   {
@@ -38,12 +35,12 @@
     "user": "leloykun",
     "category": "bug_report",
     "techniques_mentioned": [
-      "TTT",
-      "test-time training",
-      "DDP",
-      "sliding window"
+      "TTT (Test-Time Training)",
+      "backward-looking TTT",
+      "DDP parallel TTT",
+      "causal evaluation"
     ],
-    "key_insights": "Many high-scoring TTT submissions are invalid because they adapt on all eval tokens before scoring, which is equivalent to training on eval data. Correct TTT must score token t before adapting on tokens up to t. At least 9 PRs are flagged as potentially invalid, explaining many sub-1.1 BPB scores.",
+    "key_insights": "Many submissions implemented TTT incorrectly by adapting on all eval tokens before scoring, which is equivalent to training on the eval set and constitutes information leakage. Legal TTT must score each token t before adapting on tokens \u2264t. At least 9 PRs were flagged as potentially invalid, and this issue triggered the March 24 enforcement sweep that closed 15+ submissions.",
     "relevance": "high"
   },
   {
@@ -89,13 +86,13 @@
     "user": "ibarrajo",
     "category": "bug_report",
     "techniques_mentioned": [
-      "Flash Attention 3",
-      "FA3",
-      "SDPA",
-      "flash_attn"
+      "Flash Attention 3 (FA3)",
+      "Flash Attention 2 (FA2)",
+      "scaled_dot_product_attention (SDPA)",
+      "GQA (Grouped Query Attention)"
     ],
-    "key_insights": "The official RunPod template is missing flash_attn_interface (FA3) and flash_attn (FA2), yet multiple top submissions depend on FA3 without fallbacks. Submissions should include a try/except fallback to PyTorch SDPA, which is ~10% slower than FA3 on H100 but ensures compatibility with the evaluation environment.",
-    "relevance": "high"
+    "key_insights": "The official RunPod evaluation environment is missing both flash_attn_interface (FA3) and flash_attn (FA2), yet multiple top submissions depend on FA3 with no fallback, meaning they would crash on the official template. A workaround using PyTorch SDPA is ~10% slower than FA3 on H100s, and prebuilt FA3 wheels for the correct Torch version (2.9.1) are not readily available.",
+    "relevance": "medium"
   },
   {
     "number": 87,
@@ -335,5 +332,28 @@
     ],
     "key_insights": "Proposes adding fixed-step (N gradient steps) and fixed-compute (X FLOPs) evaluation modes alongside the existing H100 wall-clock benchmark to lower barriers for participants without H100 access and improve reproducibility. Suggests tiered leaderboard system (Bronze/Silver/Gold) or separate leaderboards for each mode.",
     "relevance": "low"
+  },
+  {
+    "number": 627,
+    "title": "ROCm Support PR Proposal",
+    "user": "reimorster",
+    "category": "other",
+    "techniques_mentioned": [
+      "ROCm"
+    ],
+    "key_insights": "Proposes minor changes to the main training script to allow local iteration on AMD ROCm hardware, while final submissions still run on the official H100 cluster. No novel modeling techniques discussed.",
+    "relevance": "low"
+  },
+  {
+    "number": 677,
+    "title": "Illegal submissions megathread",
+    "user": "0hq",
+    "category": "competition_meta",
+    "techniques_mentioned": [
+      "Test-Time Training (TTT)",
+      "GPTQ calibration at eval"
+    ],
+    "key_insights": "Official megathread clarifying rules around invalid submissions, prompted by a wave of illegal solutions from autoresearch tools and rules confusion. Pre-eval TTT and GPTQ calibration during evaluation are explicitly disallowed.",
+    "relevance": "high"
   }
 ]

@@ -1,0 +1,14 @@
+{
+  "number": 681,
+  "title": "Non-record: BigramHash(4096) + Cosine EMA + LZMA-9",
+  "state": "open",
+  "user": "Alfaxad",
+  "created_at": "2026-03-25T05:16:08Z",
+  "updated_at": "2026-03-25T05:16:08Z",
+  "merged_at": null,
+  "body": "## Summary\n- **Non-record submission** tested on 1xH100 (940 steps, 10 min wallclock)\n- Built on PR #549 stack with 4 targeted changes:\n  - BigramHash expanded 2048\u21924096 for richer local context\n  - Cosine EMA schedule (0.99\u21920.999) replacing fixed 0.997\n  - Earlier late QAT activation (threshold 0.15\u21920.10)\n  - LZMA preset 6\u21929 for maximum compression\n\n## Results (1xH100)\n| Metric | Value |\n|--------|-------|\n| Pre-quant val BPB | 1.3628 |\n| Legal TTT BPB | **1.4775** |\n| Artifact size | 7.9MB (49% of 16MB) |\n| Steps (1xH100, 10 min) | 940 |\n\n## Notes\n- 8xH100 evaluation pending (budget constraint) \u2014 on 8xH100 this runs ~7500 steps\n- Artifact is very compact (7.9MB), leaving room for model expansion\n- The cosine EMA creates a quantization gap (1.37\u21922.21 roundtrip) that TTT partially recovers \u2014 fixed EMA may be preferable\n- Developed using [ShinkaEvolve](https://github.com/SakanaAI/ShinkaEvolve) (Sakana AI) evolutionary code optimization with GPT-5.4 + Gemini 3 Pro as mutation operators\n\n## Test plan\n- [x] Verified script runs on 1xH100 with torchrun\n- [x] Training completes within 10 min wallclock\n- [x] Artifact under 16MB (7.9MB)\n- [x] Legal TTT produces valid BPB score\n- [ ] 8xH100 evaluation (pending compute budget)\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/681",
+  "draft": false,
+  "comments": []
+}

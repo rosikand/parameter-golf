@@ -1,0 +1,14 @@
+{
+  "number": 683,
+  "title": "Add submission validation script",
+  "state": "open",
+  "user": "mvanhorn",
+  "created_at": "2026-03-25T05:28:44Z",
+  "updated_at": "2026-03-25T05:28:44Z",
+  "merged_at": null,
+  "body": "Adds `validate_submission.py` - a standalone pre-submission checker that catches the most common issues from #677 before participants open a PR.\n\n**Usage:**\n```bash\npython3 validate_submission.py records/track_10min_16mb/2026-03-24_MySubmission/\n```\n\n**What it checks:**\n- Folder is under `records/track_10min_16mb/` or `records/track_non_record_16mb/`\n- Required files present: `README.md`, `submission.json`, `train_gpt*.py`, and at least one train log\n- `submission.json` has required fields (`val_bpb`/`mean_val_bpb`, `name`/`run_name`, `date`) with correct types\n- Training script has valid Python syntax\n- Total folder size reported (warns near 16 MB cap)\n\n**Example output (current SOTA):**\n```\nValidating: records/track_10min_16mb/2026-03-23_LeakyReLU_LegalTTT_ParallelMuon\n\n  [PASS] Folder location: Track: track_10min_16mb\n  [PASS] Required files: README.md, submission.json, train_gpt.py\n  [PASS] Train log: Found: train_seed1337.log, train_seed2025.log, train_seed42.log\n  [PASS] submission.json: OK\n  [PASS] Training script syntax: OK (train_gpt.py)\n  [PASS] Size check: Total size 0.14 MB\n\nResult: PASS (6 passed)\n```\n\nTested against all 25 existing records in the repo. 21 pass clean, 4 flag known issues (genuinely missing files or fields in those specific submissions).\n\nUses only Python stdlib - no extra dependencies. 263 lines.\n\nThis contribution was developed with AI assistance (Claude Code).",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/683",
+  "draft": false,
+  "comments": []
+}

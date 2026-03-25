@@ -1,10 +1,10 @@
 {
   "number": 146,
   "title": "Non-record: Warmdown-Tuned Training (val_bpb=1.2987) on 1xRTX 5090",
-  "state": "open",
+  "state": "closed",
   "user": "swapp1990",
   "created_at": "2026-03-20T01:11:44Z",
-  "updated_at": "2026-03-20T01:23:46Z",
+  "updated_at": "2026-03-24T21:50:25Z",
   "merged_at": null,
   "body": "## Summary\n- **val_bpb: 1.2987** (int8+zlib roundtrip) on 1xRTX 5090, 1200s wallclock\n- 9+ experiments testing batch size, sequence length, architecture, warmdown tuning, register tokens, and layer looping\n- Key discovery: warmdown_iters=3000 is optimal -- LR warmdown produces **2.6x per-step BPB improvement**\n- Register token tested (3 approaches) and ruled out\n- Layer looping + wider model (Exp 9) in progress\n- Total submission size: 15.8MB (under 16MB limit)\n\n## Experiment Results\n\n| Exp | Change | val_bpb | Key Finding |\n|-----|--------|---------|-------------|\n| 6 | 1200s, warmdown=600 | 1.312 | Warmdown 2.6x per-step efficiency |\n| 7 | warmdown=2000 | 1.306 | Layer 3 activated |\n| **8a** | **warmdown=3000** | **1.299** | **Best result** |\n| 8b | warmdown=3000 + register | 1.301 | Register token doesn't help |\n| 9 | Layer looping + wider | TBD | In progress |\n\n## Test plan\n- [x] Verify submission.json fields match train.log\n- [x] Verify total size under 16MB limit\n- [x] Verify int8+zlib roundtrip val_bpb matches\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
   "labels": [],

@@ -1,0 +1,14 @@
+{
+  "number": 698,
+  "title": "Add MergedTop3_v3 clean 8xH100 record-track submission",
+  "state": "open",
+  "user": "hesong0222-dev",
+  "created_at": "2026-03-25T08:56:32Z",
+  "updated_at": "2026-03-25T09:06:42Z",
+  "merged_at": null,
+  "body": "## Summary\n\nThis PR adds a clean `track_10min_16mb` submission folder:\n\n- `records/track_10min_16mb/2026-03-25_MergedTop3_v3_clean_h100`\n\nThe submission is a merged top-stack recipe built from the public leaderboard lineage:\n\n- 11 layers\n- XSA on the last 4 layers\n- EMA only\n- 3x MLP\n- SmearGate\n- BigramHash with 2048 buckets\n- mixed int6 quantization with zstd\n- sequence length 2048\n- Muon/AdamW weight decay 0.04\n- sliding-window eval with stride 64\n- Partial RoPE (`ROPE_DIMS=16`)\n- layerwise LN scaling\n- GPTQ-lite clip search\n- `WARMDOWN_ITERS=3500`\n\nThis folder is the clean rerun package after removing recovery-only framing and adding strict runtime gates for a fresh uninterrupted 8x H100 execution.\n\n## Clean run result\n\nMeasured on `8x H100` with a fresh uninterrupted single-seed run:\n\n- `step_stop=5347`\n- `train_time=580.213s`\n- `final_int6_roundtrip_exact val_loss=1.96565872`\n- `final_int6_roundtrip_exact val_bpb=1.16417381`\n- `eval_time=44.398s`\n- `bytes_model_int6_zstd=15,562,277`\n- `bytes_code=72,924`\n- `bytes_total=15,635,201`\n\nThis run stayed under both required caps:\n\n- training time `< 600s`\n- evaluation time `< 600s`\n- artifact size `< 16,000,000`\n\n## What is included\n\n- `train_gpt.py`\n- `README.md`\n- `submission.json`\n- `requirements.txt`\n- helper scripts for remote bootstrap, strict preflight, one-shot run, and artifact collection\n\n## Verification\n\n- local `python3 -m py_compile train_gpt.py` passed\n- strict single-process and 8-process remote preflight passed before training\n- clean 8x H100 one-shot run completed\n- final exact metric and final byte accounting were captured from the successful run output and later cross-checked against the recovered remote log/artifacts\n\n## Limitations\n\n- This is a clean single-seed result, not a new-SOTA statistical claim\n- no multi-seed significance test is included in this PR\n- this PR does not include multi-seed statistical evidence\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/698",
+  "draft": false,
+  "comments": []
+}

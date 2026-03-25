@@ -215,5 +215,140 @@
         ]
       }
     ]
+  },
+  {
+    "date": "2026-03-25",
+    "total_submissions": 671,
+    "submissions_with_score": 492,
+    "best_bpb": 0.434,
+    "top10": [
+      {
+        "number": 663,
+        "user": "raahilg",
+        "bpb": 0.434,
+        "techniques": []
+      },
+      {
+        "number": 475,
+        "user": "abrahaw123-cell",
+        "bpb": 0.5,
+        "techniques": []
+      },
+      {
+        "number": 611,
+        "user": "teddyoweh",
+        "bpb": 0.5601,
+        "techniques": [
+          "LoRA TTT",
+          "K-Projection LoRA",
+          "Min-NLL epoch selection",
+          "Cosine scheduling"
+        ]
+      },
+      {
+        "number": 596,
+        "user": "AriaAnima",
+        "bpb": 0.643,
+        "techniques": [
+          "Int6",
+          "TTT",
+          "LoRA"
+        ]
+      },
+      {
+        "number": 614,
+        "user": "bigbag",
+        "bpb": 0.6864,
+        "techniques": [
+          "LoRA TTT",
+          "FlashAttention-3",
+          "GQA",
+          "MLP expansion",
+          "ReLU\u00b2",
+          "Int6",
+          "Zstd",
+          "Muon",
+          "Cosine scheduling"
+        ]
+      },
+      {
+        "number": 605,
+        "user": "bigbag",
+        "bpb": 0.7227,
+        "techniques": [
+          "LoRA TTT",
+          "FlashAttention-3",
+          "EMA",
+          "SWA",
+          "SmearGate",
+          "BigramHash",
+          "QAT",
+          "Int6",
+          "Zstd",
+          "GQA",
+          "MLP expansion",
+          "ReLU\u00b2",
+          "Muon",
+          "Cosine scheduling"
+        ]
+      },
+      {
+        "number": 568,
+        "user": "MatoTeziTanka",
+        "bpb": 0.7853,
+        "techniques": [
+          "TTT",
+          "Int6",
+          "LoRA",
+          "cosine scheduling",
+          "magnitude pruning"
+        ]
+      },
+      {
+        "number": 216,
+        "user": "alons23",
+        "bpb": 0.81,
+        "techniques": [
+          "Muon optimizer",
+          "RoPE",
+          "QK-Norm"
+        ]
+      },
+      {
+        "number": 642,
+        "user": "minh-stakc",
+        "bpb": 0.8173,
+        "techniques": [
+          "TTT",
+          "LoRA",
+          "cosine scheduling",
+          "XSA",
+          "Partial RoPE",
+          "EMA",
+          "Int6",
+          "Zstd",
+          "SmearGate",
+          "BigramHash",
+          "GQA",
+          "MLP expansion"
+        ]
+      },
+      {
+        "number": 620,
+        "user": "robinojw",
+        "bpb": 0.9443,
+        "techniques": [
+          "LeakyReLU\u00b2",
+          "LoRA TTT",
+          "SmearGate",
+          "BigramHash",
+          "Depth-scaled residuals",
+          "SWA",
+          "Muon",
+          "Int8",
+          "Zstd"
+        ]
+      }
+    ]
   }
 ]

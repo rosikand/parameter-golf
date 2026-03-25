@@ -1,10 +1,10 @@
 {
   "number": 188,
   "title": "Included AMDGPU ROCm Support",
-  "state": "open",
+  "state": "closed",
   "user": "reimorster",
   "created_at": "2026-03-20T07:28:43Z",
-  "updated_at": "2026-03-23T15:23:33Z",
+  "updated_at": "2026-03-24T22:27:47Z",
   "merged_at": null,
   "body": "Changed baseline script for ROCm support on my local environment, hope it helps people who doesn`t have a CUDA system",
   "labels": [],
@@ -61,9 +61,15 @@
     },
     {
       "user": "reimorster",
-      "body": "@codex, please review it.",
-      "created_at": "2026-03-22T21:55:24Z",
-      "updated_at": "2026-03-22T21:55:24Z"
+      "body": "@codex review",
+      "created_at": "2026-03-24T19:31:12Z",
+      "updated_at": "2026-03-24T19:31:12Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "Codex Review: Didn't find any major issues. Keep it up!\n\n<details> <summary>\u2139\ufe0f About Codex in GitHub</summary>\n<br/>\n\n[Your team has set up Codex to review pull requests in this repo](http://chatgpt.com/codex/settings/general). Reviews are triggered when you\n- Open a pull request for review\n- Mark a draft as ready\n- Comment \"@codex review\".\n\nIf Codex has suggestions, it will comment; otherwise it will react with \ud83d\udc4d.\n\n\n\n\nCodex can also answer questions or update the PR. Try commenting \"@codex address that feedback\".\n            \n</details>",
+      "created_at": "2026-03-24T19:34:55Z",
+      "updated_at": "2026-03-24T19:34:55Z"
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "number": 604,
+  "title": "GolfStudent v2 14L: d=352, Value Residuals, GPTQ-lite, Schedule-Free, Muon+EMA",
+  "state": "open",
+  "user": "whitestone1121-web",
+  "created_at": "2026-03-24T07:42:35Z",
+  "updated_at": "2026-03-25T05:27:18Z",
+  "merged_at": null,
+  "body": "## GolfStudent v2 \u2014 16MB Hybrid LM\r\n\r\n**Architecture:** d=352, L=14 (10x GatedMLP + 4x Attention every 3rd layer), vocab=1024, weight-tied embedding/lm_head, SwiGLU FFN (3x expansion), RoPE on attention layers, orthogonal weight init\r\n\r\n**v2 improvements over v1:**\r\n- **d=352** (from 288) \u2014 +65% model capacity, ~15MB INT8+zlib (94% of 16MB budget)\r\n- **Value Residuals** \u2014 learned scalar skip gates (init=0, tanh-gated) every 3 blocks\r\n- **GPTQ-lite** \u2014 5 clip percentile candidates per row, min reconstruction MSE INT8\r\n- **Schedule-Free final 120s** \u2014 constant LR floor (10%) + faster EMA (decay=0.97) instead of LR\u21920 warmdown\r\n\r\n**Training:**\r\n- Muon optimizer (momentum 0.85\u21920.99 warmup over 1500 steps, WD=0.04) for matrix params\r\n- Adam (fused) for embeddings/scalars\r\n- EMA decay=0.997, updated every step\r\n- Wallclock-aware schedule: cosine + schedule-free final 120s\r\n- Grad clip=0.3\r\n\r\n**Quantization:** Per-row INT8 GPTQ-lite (5 clip percentiles, min MSE) + zlib level=9\r\n**Size:** ~15.06MB / 16MB (94.1% budget)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/604",
+  "draft": false,
+  "comments": [
+    {
+      "user": "whitestone1121-web",
+      "body": "Updated for v2: Architecture is now d=352 (from 288), adding Value Residuals (learned tanh-gated skip connections every 3 blocks, init=0) and GPTQ-lite INT8 (5 clip percentile candidates per row, min reconstruction MSE). No distillation - pure CE on FineWeb binary shards. Quantization + zlib happens after the wallclock timer exits, matching standard contest format. Dry-run confirms ~15.06MB (94.1% of 16MB budget).",
+      "created_at": "2026-03-25T01:07:16Z",
+      "updated_at": "2026-03-25T01:07:16Z"
+    }
+  ]
+}

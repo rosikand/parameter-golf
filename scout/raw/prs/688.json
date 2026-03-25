@@ -1,0 +1,14 @@
+{
+  "number": 688,
+  "title": "Record: 5-expert Hedge Mixer + TTT (3-seed mean val_bpb=1.0745)",
+  "state": "open",
+  "user": "RoyiRa",
+  "created_at": "2026-03-25T06:32:22Z",
+  "updated_at": "2026-03-25T10:41:37Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\n3-seed mean val_bpb: **1.0745** (std 0.021) | <15.5 MB | 8xH100 SXM, 600s\r\n\r\n## Results\r\n\r\n| Seed | Pre-TTT BPB | Post-TTT BPB | Artifact |\r\n|------|-------------|-------------|----------|\r\n| 1337 | 1.1248 | **1.0560** | 15.48 MB |\r\n| 42 | 1.1257 | **1.0970** | 15.41 MB |\r\n| 7 | 1.1251 | **1.0704** | 15.43 MB |\r\n| **Mean** | **1.1252** | **1.0745** | |\r\n\r\n## Key Technique: 5-expert Logistic Context Mixer\r\n\r\nGPU-vectorized online context mixing using the Hedge algorithm. Five experts blend predictions in log-probability space during TTT eval:\r\n\r\n| Expert | Source |\r\n|--------|--------|\r\n| Neural | Base model log-softmax |\r\n| Unigram | Token frequency from scored tokens |\r\n| Bigram | P(next \\| prev) from scored tokens |\r\n| Trigram | Hashed P(next \\| prev2, prev1) with 64K buckets |\r\n| Entropy | Neural model entropy as confidence regularizer |\r\n\r\nN-gram tables built incrementally from already-scored tokens only (legal). Expert weights updated online via Hedge: `log_w -= eta * loss`.\r\n\r\nEach expert produces an NLL for every token. The mixer maintains learned weights (one per expert) updated via the Hedge algorithm. At each position, the mixed prediction is:\r\n  `mixed_NLL = -log(sum_k w_k * exp(-NLL_k))`\r\n\r\n## Training Budget\r\n\r\nGPTQ calibration runs within the 600s training budget (18s reserved).\r\n\r\n| Phase | Time |\r\n|-------|------|\r\n| Training loop | 582s |\r\n| EMA + GPTQ calibration + quantization | ~18s |\r\n| **Total training** | **~600s** |\r\n| TTT eval with mixer | ~562s |\r\n\r\n## Reproduction\r\n\r\n```bash\r\npip install -r requirements.txt\r\nSEED=1337 MAX_WALLCLOCK_SECONDS=600 USE_MIXER=1 TTT_LR=0.0001 TTT_CHUNK_TOKENS=131072 \\\r\n  torchrun --standalone --nproc_per_node=8 train_gpt.py\r\n```\r\n\r\n## Credits\r\n\r\n- Base model: PR #606 by @gowtham0992\r\n- TTT recipe: PR #461 by @Christopher-Lee-McClendon",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/688",
+  "draft": false,
+  "comments": []
+}

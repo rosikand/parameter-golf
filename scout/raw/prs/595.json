@@ -1,14 +1,39 @@
 {
   "number": 595,
   "title": "Record: Loqui Auris \u2014 10L + SWA + Standard TTT (val_bpb=1.1100)",
-  "state": "open",
+  "state": "closed",
   "user": "LoquiAuris",
   "created_at": "2026-03-24T02:56:33Z",
-  "updated_at": "2026-03-24T03:02:11Z",
+  "updated_at": "2026-03-24T15:55:46Z",
   "merged_at": null,
   "body": "## Summary\n* val_bpb: 1.1100 (seed 1337)\n* 10L d=512, 8 heads, 4 KV heads (GQA), MLP 3x, ReLU\u00b2\n* SWA (29 checkpoints), SmearGate, BigramHash(4096), U-Net skips\n* Standard AdamW TTT: 10 epochs, lr=0.0005\n* Artifact: 15.69 MB (250KB headroom)\n* Platform: 8xH100 SXM, ~5992 steps in 600s\n\n## Acknowledgments\n* Training stack: PR #162 (raahilshah), PR #180 (thwu1)\n* TTT approach: PR #77 (samacqua), PR #442 (sjp611)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/595",
   "draft": false,
-  "comments": []
+  "comments": [
+    {
+      "user": "valerio-oai",
+      "body": "As far as I can tell here, this proposed TTT scheme trains on the validation set by reporting the score on a doc after its weights have adapted to it, rendering this unsound for the purposes of this competition. Specifically, you use #442's TTT scheme, which was ruled out.",
+      "created_at": "2026-03-24T14:12:37Z",
+      "updated_at": "2026-03-24T14:12:37Z"
+    },
+    {
+      "user": "LoquiAuris",
+      "body": "Hi Valerio,\r\n\r\nThank you for the clarification. Understood, I'll focus on architectural\r\nimprovements going forward.\r\n\r\nSeparate question: are compute grants still available? I submitted a\r\nrequest through the form and wanted to confirm it's still being processed.\r\nMy current work is focused on non-TTT architecture optimizations (11L,\r\nimproved quantization, activation functions) and additional compute would\r\nhelp with validation runs.\r\n\r\nBest regards,\r\nEli Pancamo\r\n\r\nOn Tue, Mar 24, 2026 at 10:13\u202fAM valerio-oai ***@***.***>\r\nwrote:\r\n\r\n> *valerio-oai* left a comment (openai/parameter-golf#595)\r\n> <https://github.com/openai/parameter-golf/pull/595#issuecomment-4118637760>\r\n>\r\n> As far as I can tell here, this proposed TTT scheme trains on the\r\n> validation set by reporting the score on a doc after its weights have\r\n> adapted to it, rendering this unsound for the purposes of this competition.\r\n> Specifically, you use #442\r\n> <https://github.com/openai/parameter-golf/pull/442>'s TTT scheme, which\r\n> was ruled out.\r\n>\r\n> \u2014\r\n> Reply to this email directly, view it on GitHub\r\n> <https://github.com/openai/parameter-golf/pull/595?email_source=notifications&email_token=A6XCGYPLIQJJ6MBKYEUJKVL4SKJWZA5CNFSNUABFM5UWIORPF5TWS5BNNB2WEL2JONZXKZKDN5WW2ZLOOQXTIMJRHA3DGNZXGYYKM4TFMFZW63VGMF2XI2DPOKSWK5TFNZ2KYZTPN52GK4S7MNWGSY3L#issuecomment-4118637760>,\r\n> or unsubscribe\r\n> <https://github.com/notifications/unsubscribe-auth/A6XCGYLEXX247QG5EWL62OD4SKJWZAVCNFSM6AAAAACW44FUROVHI2DSMVQWIX3LMV43OSLTON2WKQ3PNVWWK3TUHM2DCMJYGYZTONZWGA>\r\n> .\r\n> You are receiving this because you authored the thread.Message ID:\r\n> ***@***.***>\r\n>\r\n",
+      "created_at": "2026-03-24T14:50:13Z",
+      "updated_at": "2026-03-24T14:50:13Z"
+    },
+    {
+      "user": "valerio-oai",
+      "body": "Hi Eli, thanks for understanding, and don't take the closing of this PR as me trying to clip your wings! Compute grants are still available, they just take some time to come through :)",
+      "created_at": "2026-03-24T15:46:23Z",
+      "updated_at": "2026-03-24T15:46:23Z"
+    },
+    {
+      "user": "LoquiAuris",
+      "body": "Valerio, Thanks for the info on the grants... And no worries, wings not\r\nclipped, wings are stronger..\r\n\r\nI'm glad the challenge is back to being based on the core architecture\r\nwhere it really matters..\r\n\r\nKindest regards\r\n\r\nEli\r\n\r\nOn Tue, Mar 24, 2026 at 11:46\u202fAM valerio-oai ***@***.***>\r\nwrote:\r\n\r\n> *valerio-oai* left a comment (openai/parameter-golf#595)\r\n> <https://github.com/openai/parameter-golf/pull/595#issuecomment-4119342231>\r\n>\r\n> Hi Eli, thanks for understanding, and don't take the closing of this PR as\r\n> me trying to clip your wings! Compute grants are still available, they just\r\n> take some time to come through :)\r\n>\r\n> \u2014\r\n> Reply to this email directly, view it on GitHub\r\n> <https://github.com/openai/parameter-golf/pull/595?email_source=notifications&email_token=A6XCGYOGR3BQ5ZVEP6MNWU34SKUWNA5CNFSNUABFM5UWIORPF5TWS5BNNB2WEL2JONZXKZKDN5WW2ZLOOQXTIMJRHEZTIMRSGMY2M4TFMFZW63VGMF2XI2DPOKSWK5TFNZ2KYZTPN52GK4S7MNWGSY3L#issuecomment-4119342231>,\r\n> or unsubscribe\r\n> <https://github.com/notifications/unsubscribe-auth/A6XCGYKB46U6Q4BSPAYMYF34SKUWNAVCNFSM6AAAAACW44FUROVHI2DSMVQWIX3LMV43OSLTON2WKQ3PNVWWK3TUHM2DCMJZGM2DEMRTGE>\r\n> .\r\n> You are receiving this because you authored the thread.Message ID:\r\n> ***@***.***>\r\n>\r\n",
+      "created_at": "2026-03-24T15:55:46Z",
+      "updated_at": "2026-03-24T15:55:46Z"
+    }
+  ]
 }

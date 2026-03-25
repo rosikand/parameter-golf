@@ -1,0 +1,14 @@
+{
+  "number": 638,
+  "title": "Record: 11L XSA-all + LeakyReLU(0.5)\u00b2 + VR + GA (val_bpb=1.1164, pending 3-seed)",
+  "state": "open",
+  "user": "Asukabot0",
+  "created_at": "2026-03-24T18:36:15Z",
+  "updated_at": "2026-03-25T10:53:17Z",
+  "merged_at": null,
+  "body": "## Summary\n\n**val_bpb = 1.1164** (single seed 1337, pending 3-seed validation) | **15.94 MB** | 8xH100 SXM | **No TTT**\n\nNon-TTT submission within 0.001 BPB of current non-TTT SOTA (1.1154, PR #609). **Requesting compute grant for 8xH100 3-seed validation.**\n\n## Architecture\n\n- 11L, 512d, 8H/4KV (GQA), MLP 3x, **LeakyReLU(0.5)\u00b2**\n- **XSA on all 11 layers** (-0.006 BPB vs XSA-last-4)\n- Value Residual + Gated Attention (-0.002 BPB combined)\n- SmearGate, BigramHash(4096), Partial RoPE 16/64, LN Scale\n- EMA(0.997), int6 per-row + zstd-21, U-Net skip connections\n\n## Single-GPU Results (1xH100 NVL, 7500 steps, seed=1337)\n\n| Metric | Value |\n|--------|-------|\n| Raw val_bpb | 1.1338 |\n| Int6 roundtrip | 1.1401 |\n| **Int6 sliding (s=64)** | **1.1164** |\n| Artifact | 15,941,860 bytes |\n| Step avg | 1064 ms/step |\n\n## Reproduction\n\n```bash\npython3 data/cached_challenge_fineweb.py --variant sp1024 --train-shards 80\nSEED=1337 XSA_LAST_N=11 LEAKY_RELU=1 WARMDOWN_ITERS=3500 \\\n  MATRIX_LR=0.025 SCALAR_LR=0.025 TIED_EMBED_LR=0.035 \\\n  MUON_MOMENTUM=0.99 MUON_MOMENTUM_WARMUP_START=0.92 MUON_MOMENTUM_WARMUP_STEPS=1500 \\\n  TTT_ENABLED=0 CANON_LAST_N=0 SWA_ENABLED=0 \\\n  torchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\n## Negative Results\n\n| Technique | Impact | Notes |\n|-----------|--------|-------|\n| Full GPTQ (Hessian) | +0.029 worse | Requires Parameter Banking |\n| Tight SWA | +0.005 worse | Doubles quantization gap |\n| Canon AC (last5) | +0.017 worse | Conflicts with VR+GA |\n\n## Credits\n\n- Base: modded-nanogpt, PR #315 (jfprincz)\n- XSA-all: PR #609\n- LeakyReLU\u00b2: PR #493/#518\n- Value Residual: PR #413\n- Gated Attention: arXiv:2505.06708\n\n## Test plan\n\n- [x] Single-seed validation (seed 1337)\n- [x] Artifact under 16,000,000 bytes\n- [ ] 3-seed validation on 8xH100 SXM (pending compute grant)\n- [ ] Training completes under 600s on 8xH100\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/638",
+  "draft": false,
+  "comments": []
+}

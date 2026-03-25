@@ -1,0 +1,14 @@
+{
+  "number": 599,
+  "title": "[Non-Record] Hymba: Hybrid Attention + Mamba SSM (val_bpb 1.1828)",
+  "state": "open",
+  "user": "mkenney2",
+  "created_at": "2026-03-24T05:31:33Z",
+  "updated_at": "2026-03-24T05:35:02Z",
+  "merged_at": null,
+  "body": "# Hymba: Hybrid Attention + Mamba SSM \r\n\r\n**First competitive non-transformer architecture in the competition.**\r\n\r\nA 7-layer hybrid model that runs attention and Mamba SSM in parallel within each block, achieving **val_bpb ~1.18** (3 seeds) on 8\u00d7H100 in 10 minutes, beating the naive transformer baseline (1.2244).\r\n\r\n## Architecture\r\n\r\nEach block runs two branches in parallel on the same input:\r\n\r\n1. **Attention branch**: Standard GQA (8 heads, 4 KV heads) with RoPE + SDPA\r\n2. **Mamba branch**: Selective scan SSM (`mamba-ssm`) with causal conv1d, gated projection\r\n\r\nOutputs are merged with a learned weighted average: `sigmoid(\u03b1) \u00b7 attn + (1 - sigmoid(\u03b1)) \u00b7 mamba`, then projected through a shared output layer.\r\n\r\nKey design: the input projection for K, V, and Mamba (x, gate) is fused into a single matmul for GPU efficiency. Q is projected separately to allow for future factorization.\r\n\r\n## Key Findings\r\n\r\n**Shallow models win at this compute budget.** The SSM branch makes each layer more powerful (attention for local precision, Mamba for long-range state), reducing the need for depth. Fewer layers = faster steps = more training in 10 minutes. The optimal depth (7L) is significantly shallower than the transformer baseline (9-11L).\r\n\r\n**Training stability determines quantization quality.** With standard LR (0.04), the int6 quantization gap was 0.02-0.06 BPB. Reducing to LR=0.02 with aggressive cosine warmdown (3000 steps) produced smoother, more quantization-friendly weights \u2014 shrinking the gap to 0.02 without QAT. The warmdown phase alone accounts for ~0.06 BPB improvement as EMA weights converge.\r\n\r\n**The Mamba branch adds minimal overhead on multi-GPU.** At 7 layers with MLP 4\u00d7, Hymba runs at ~85ms/step on 8\u00d7H100 (~7,000 steps in 10 min). The selective scan is O(T) and the per-layer Mamba params are small, so gradient sync overhead is negligible.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/599",
+  "draft": false,
+  "comments": []
+}

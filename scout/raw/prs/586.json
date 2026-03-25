@@ -1,14 +1,21 @@
 {
   "number": 586,
-  "title": "Record: 11L + Hadamard Rotation + VE128 + cuDNN SDPA (val_bpb: 1.1365)",
+  "title": "11L + Hadamard Rotation + VE128 + cuDNN SDPA (val_bpb: 1.1365, 3-seed mean)",
   "state": "open",
   "user": "EaCognitive",
   "created_at": "2026-03-23T23:18:22Z",
-  "updated_at": "2026-03-23T23:18:22Z",
+  "updated_at": "2026-03-24T20:24:44Z",
   "merged_at": null,
-  "body": "## Summary\n- First application of Walsh-Hadamard rotation for int6 quantization in this competition\n- Improves zstd compression from 1.70x to 1.76x, recovering 530KB of artifact headroom\n- Headroom directly enables Shared Value Embeddings (VE128) which previously overflowed\n- CPU parameter probe guided hyperparameter selection, reducing GPU compute by ~84%\n- 3-seed mean: 1.1365 +/- 0.0005 BPB. All artifacts under 16MB.\n\n## Key Findings\n- Hadamard rotation and GPTQ are substitutes, not complements, at int6 precision\n- Late QAT (STE fake-quantization) was dead code in all prior work due to instance vs class attribute shadowing\n- FlashAttention 3 compresses 1.8% worse than cuDNN SDPA with zstd-22\n- Removing dead QAT guard from CastedLinear.forward() yields 7% throughput gain via torch.compile guard elimination\n\n## Test plan\n- [x] 3-seed validation (1337, 42, 2024) with mean 1.1365, std 0.0005\n- [x] All artifacts under 16,000,000 bytes\n- [x] All training runs under 600s wallclock on 8xH100\n- [x] No network calls during evaluation\n- [x] Artifact is self-contained\n\nErick Aleman | EA Cognitive | www.eacognitive.com | github.com/eacognitive",
+  "body": "## 11L + Hadamard Rotation + VE128 + cuDNN SDPA\n\n**val_bpb: 1.1365** (sliding window stride=64, 3-seed mean, std 0.0005) | **~15.6 MB** | 8xH100 SXM, 600s\n\n### 3-Seed Results\n\n| Seed | Steps | Pre-quant | Sliding BPB | Artifact | Compression |\n|------|-------|-----------|-------------|----------|-------------|\n| 1337 | 8098 | 1.1512 | 1.1364 | 15,618,718 | 1.75x |\n| 42 | 8102 | 1.1513 | 1.1361 | 15,629,540 | 1.75x |\n| 2024 | 7960 | 1.1521 | 1.1370 | 15,600,361 | 1.76x |\n\n### Technique: Data-Free Hadamard Rotation for Int6 Quantization\n\nWalsh-Hadamard rotation applied to weight matrices before int6 per-row quantization. The orthogonal rotation spreads outlier values uniformly, improving zstd compression from 1.70x to 1.76x and reducing quantization gap from 0.0093 to 0.0084 BPB.\n\nThis technique is data-free: no calibration samples, no training data access at eval time. The rotation matrix is deterministic from the weight dimension.\n\nNo other open or merged PR uses rotation-based quantization.\n\n### Compression Enables Architecture\n\nThe 0.06x compression improvement recovers 530KB of artifact headroom within the 16MB budget, directly enabling Shared Value Embeddings (VE128 on layers 9-10) which previously overflowed at 44KB headroom.\n\n### Ablation\n\n| Config | Sliding BPB | Compression | Headroom | Quant Gap |\n|--------|-------------|-------------|----------|-----------|\n| Baseline (no Hadamard, no VE) | 1.1372 | 1.70x | 44KB | 0.0093 |\n| + Hadamard rotation | 1.1377 | 1.78x | 712KB | 0.0091 |\n| + VE128 (enabled by headroom) | **1.1365** | 1.76x | 400KB | 0.0084 |\n\n### Findings\n\n- **Hadamard rotation and GPTQ are substitutes at int6 precision.** Full GPTQ (actorder + Cholesky) provides zero additional improvement when Hadamard rotation is present. Tested 3 times with identical result.\n- **CPU parameter probe** guided hyperparameter selection across 9.5M configurations, reducing GPU compute by ~84%.\n- No TTT. No training data access at eval time.\n\n### Architecture\n\n11 layers, 512-dim, 8 heads (4 KV heads, GQA), MLP 3x relu-squared, XSA on last 4 layers, Partial RoPE (16/64), LN Scale, U-Net skip connections, SmearGate, BigramHash(2048), EMA 0.997, cuDNN SDPA. Muon lr=0.025 + AdamW lr=0.035. Warmdown 3500 steps (cosine).\n\nErick Aleman | EA Cognitive | www.eacognitive.com | github.com/eacognitive",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/586",
   "draft": false,
-  "comments": []
+  "comments": [
+    {
+      "user": "EaCognitive",
+      "body": "This submission validates our current approach. Ongoing research has identified several highly promising extensions from recent literature that we're ready to test. GPU grant has been submitted. We welcome any feedback. Thank you.",
+      "created_at": "2026-03-24T20:16:26Z",
+      "updated_at": "2026-03-24T20:16:26Z"
+    }
+  ]
 }

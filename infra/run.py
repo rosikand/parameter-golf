@@ -80,17 +80,52 @@ def expand_scripts(patterns: list[str]) -> list[str]:
 
 def run_ensure_data(train_shards: int):
     """Download dataset to Modal volume."""
-    from modal_app import data_app, ensure_data
+    import modal
+    from config import MODAL_VOLUME_MOUNT, MODAL_VOLUME_NAME
+
+    # Build a standalone app — avoids importing the heavy train_image
+    app = modal.App("parameter-golf-data")
+    vol = modal.Volume.from_name(MODAL_VOLUME_NAME, create_if_missing=True)
+    img = modal.Image.debian_slim(python_version="3.12").pip_install("huggingface-hub")
 
     data_script_path = os.path.join(PROJECT_ROOT, "data", "cached_challenge_fineweb.py")
     with open(data_script_path) as f:
         data_script = f.read()
 
+    @app.function(image=img, volumes={MODAL_VOLUME_MOUNT: vol}, timeout=1800, serialized=True)
+    def _ensure_data():
+        import importlib.util
+        import sys as _sys
+        from pathlib import Path
+
+        with open("/tmp/cached_challenge_fineweb.py", "w") as f:
+            f.write(data_script)
+        _sys.path.insert(0, "/tmp")
+
+        spec = importlib.util.spec_from_file_location("cached_challenge_fineweb", "/tmp/cached_challenge_fineweb.py")
+        dl = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(dl)
+
+        dl.ROOT = Path(MODAL_VOLUME_MOUNT)
+        dl.DATASETS_DIR = dl.ROOT / "datasets"
+        dl.TOKENIZERS_DIR = dl.ROOT / "tokenizers"
+        dl.DATASETS_DIR.mkdir(parents=True, exist_ok=True)
+        dl.TOKENIZERS_DIR.mkdir(parents=True, exist_ok=True)
+
+        _sys.argv = ["dl", "--variant", "sp1024", "--train-shards", str(train_shards)]
+        print(f"Downloading dataset train_shards={train_shards}...", flush=True)
+        dl.main()
+
+        vol.commit()
+        print("Data download complete and committed to volume.", flush=True)
+        return "ok"
+
     print(f"Downloading dataset to Modal volume (train_shards={train_shards})...")
     print("This may take several minutes on first run.")
 
-    with data_app.run():
-        ensure_data.remote(data_download_script=data_script, train_shards=train_shards)
+    with app.run():
+        result = _ensure_data.remote()
+        print(f"Result: {result}")
 
     print("Done.")
 
@@ -117,8 +152,8 @@ def run_single(script_path: str, run_name: str, gpus: int, env_vars: dict, wandb
     est_cost = gpus * (600 / 3600) * H100_COST_PER_HOUR
     print(f"Estimated cost (10min): ${est_cost:.2f}")
 
-    from modal_app import train_app, get_train_fn
-    train_fn = get_train_fn(gpus)
+    from modal_app import make_train_app
+    train_app, train_fn = make_train_app(gpus)
 
     with train_app.run():
         result = train_fn.remote(

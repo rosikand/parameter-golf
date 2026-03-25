@@ -1,14 +1,21 @@
 {
   "number": 548,
   "title": "Record: Loqui Auris \u2014 10L + LoRA TTT (mean val_bpb=1.0865, 2 seeds)",
-  "state": "open",
+  "state": "closed",
   "user": "LoquiAuris",
   "created_at": "2026-03-23T16:08:09Z",
-  "updated_at": "2026-03-24T03:01:02Z",
+  "updated_at": "2026-03-24T14:37:30Z",
   "merged_at": null,
   "body": "## Summary\n* Mean val_bpb: 1.0865 (2 seeds: 1.0856, 1.0874)\n* 10L d=512, 8 heads, 4 KV heads (GQA), MLP 3x, ReLU\u00b2\n* EMA(0.997), SmearGate, BigramHash(4096), U-Net skips\n* Per-document LoRA TTT: rank=8 on Q+V+LM head, AdamW lr=0.01, 2 epochs\n* Batched TTT: 64 docs/GPU across 8 GPUs, ~225s total\n* Artifact: ~15.7 MB (fits 16MB with ~294KB headroom)\n* Platform: 8xH100 SXM, ~6000 steps in 600s\n\n## Results\n| Seed | val_bpb | Artifact | Fits? |\n|------|---------|----------|-------|\n| 42   | 1.0856  | 15.73 MB | YES   |\n| 1337 | 1.0874  | 15.63 MB | YES   |\n| Mean | 1.0865  |          |       |\n\nThird seed pending (compute grant).\n\n## Acknowledgments\n* Training stack: PR #162 (raahilshah), PR #180 (thwu1)\n* LoRA TTT approach: PR #512 (MatoTeziTanka), PR #77 (samacqua)\n* EMA + TTT: PR #442 (sjp611)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/548",
   "draft": false,
-  "comments": []
+  "comments": [
+    {
+      "user": "valerio-oai",
+      "body": "I believe this TTT scheme trains on the eval tokens, given it is based on a PR that we judged to do this. Closing for now so that people running AI agents scraping previous SOTAs know that the current state of this submission is invalid, but obviously submit a new run when you have it :)",
+      "created_at": "2026-03-24T14:37:30Z",
+      "updated_at": "2026-03-24T14:37:30Z"
+    }
+  ]
 }

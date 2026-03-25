@@ -1,0 +1,21 @@
+{
+  "number": 648,
+  "title": "Depth Recurrence (3+3 x 2 loops) + HW Optimizations",
+  "state": "closed",
+  "user": "maorinka",
+  "created_at": "2026-03-24T21:47:52Z",
+  "updated_at": "2026-03-24T22:36:40Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **Depth recurrence**: 6 unique layers (3 encoder + 3 decoder) looped 2x = 12 effective layers, freeing ~7.5MB of the 16MB budget for wider MLPs or more BigramHash buckets\n- **Per-loop conditioning**: Learned scale + bias per (loop, block) so tied layers differentiate passes\n- **U-Net preserved**: Skip connections work across effective layers (LIFO), looping within encoder/decoder halves separately\n- **LR scaling**: `1/sqrt(num_loops)` for matrix and scalar optimizers\n\n### Training HW optimizations\n- Async data prefetch (background thread + separate CUDA stream)\n- Pinned memory for H2D transfers\n- NCCL tuning for H100 NVLink (`NCCL_NVLS_ENABLE=1`, `NCCL_NET_GDR_LEVEL=5`)\n- GPU-resident SWA accumulation (avoids D2H sync per checkpoint)\n- `torch.cuda.empty_cache()` after warmup\n\nBuilt on top of the current #1 submission (10L Int5-MLP, 1.1428 bpb).\n\n## Test plan\n\n- [ ] Run on 1xH100 to verify training completes without errors\n- [ ] Verify artifact size < 16MB\n- [ ] Run 3 seeds on 8xH100 for statistical significance\n- [ ] Compare quantization roundtrip gap (recurrence vs baseline)\n- [ ] Confirm backward compat: `NUM_LAYERS=10` produces identical behavior to #1\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/648",
+  "draft": false,
+  "comments": [
+    {
+      "user": "maorinka",
+      "body": "Closing \u2014 no H100 validation results yet. Will reopen once we have 3-seed runs with val_bpb scores.",
+      "created_at": "2026-03-24T22:36:39Z",
+      "updated_at": "2026-03-24T22:36:39Z"
+    }
+  ]
+}

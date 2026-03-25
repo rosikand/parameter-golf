@@ -1,14 +1,21 @@
 {
   "number": 442,
   "title": "Record: 11L EMA + AdamW TTT 10ep (mean val_bpb=1.1027)",
-  "state": "open",
+  "state": "closed",
   "user": "sjp611",
   "created_at": "2026-03-22T17:07:13Z",
-  "updated_at": "2026-03-22T17:23:00Z",
+  "updated_at": "2026-03-24T14:02:36Z",
   "merged_at": null,
   "body": "## Summary\n\n- Replace SGD with AdamW for test-time training (3-line diff from PR #398)\n- Mean val_bpb **1.1027** (3-seed), best **1.0992** \u2014 beats prior SOTA 1.1213 by **-0.019**\n- TTT time reduced from ~260s to ~157s (10 epochs vs 20)\n\n## Approach\n\nBuilt on PR #398 (11L EMA + SGD TTT 20ep). Single change: **SGD \u2192 AdamW for TTT**.\n\n```diff\n-    ttt_lr = float(os.environ.get(\"TTT_LR\", 0.008))\n-    ttt_epochs = int(os.environ.get(\"TTT_EPOCHS\", 20))\n+    ttt_lr = float(os.environ.get(\"TTT_LR\", 0.0005))\n+    ttt_epochs = int(os.environ.get(\"TTT_EPOCHS\", 10))\n\n-    optimizer = torch.optim.SGD(ttt_params, lr=args.ttt_lr, momentum=args.ttt_momentum)\n+    optimizer = torch.optim.AdamW(ttt_params, lr=args.ttt_lr, weight_decay=0.0)\n```\n\nAll other settings identical to PR #398 (11L, EMA 0.997, SmearGate, BigramHash 2048, int6+zstd).\n\n## Results (3-seed, sliding window stride=64)\n\n| Seed | Steps | val_bpb |\n|------|-------|---------|\n| 1337 | 4372 | 1.1060 |\n| 42   | 4578 | 1.0992 |\n| 7    | 4612 | 1.1030 |\n| **Mean\u00b1Std** | | **1.1027 \u00b1 0.0034** |\n\n## Comparison to prior SOTA (PR #398)\n\n| Metric | PR #398 | Ours |\n|--------|---------|------|\n| Mean BPB | 1.1221 | 1.1027 |\n| Best BPB | 1.1213 | 0.0992 |\n| TTT optimizer | SGD(lr=0.008, mom=0.9) | AdamW(lr=0.0005, wd=0.0) |\n| TTT epochs | 20 | 10 |\n| TTT time | ~260s | ~157s |\n\n## Run command\n\n```bash\nSEED=1337 torchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\n(all hyperparameters are set as defaults in train_gpt.py)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/442",
   "draft": false,
-  "comments": []
+  "comments": [
+    {
+      "user": "valerio-oai",
+      "body": "As far as I can tell here, this proposed TTT scheme trains on the validation set by reporting the score on a doc after its weights have adapted to it, rendering this unsound for the purposes of this competition.",
+      "created_at": "2026-03-24T14:02:36Z",
+      "updated_at": "2026-03-24T14:02:36Z"
+    }
+  ]
 }

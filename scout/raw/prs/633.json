@@ -1,0 +1,21 @@
+{
+  "number": 633,
+  "title": "PROTEUS v9 \u2014 11L INT6 + single-epoch LoRA TTT (mean val_bpb=1.1526, 3 seeds)",
+  "state": "open",
+  "user": "MatoTeziTanka",
+  "created_at": "2026-03-24T17:12:33Z",
+  "updated_at": "2026-03-24T22:56:52Z",
+  "merged_at": null,
+  "body": "## Result\n\n**Mean val_bpb: 1.1526** (3 seeds, std: 0.0004)\n\n| Seed | Post-Quant BPB | TTT BPB (1 epoch) |\n|------|---------------|-------------------|\n| 42   | 1.1804        | 1.1527            |\n| 1337 | 1.1749        | 1.1529            |\n| 2024 | 1.1771        | 1.1522            |\n\n## TTT Legality \u2014 Single Epoch, Score-Then-Train\n\nThis submission addresses the ruling on PR #568 ([comment](https://github.com/openai/parameter-golf/pull/568#issuecomment-4119903415)) where @valerio-oai correctly identified multi-epoch TTT as training on eval data.\n\n**This submission uses `TTT_EPOCHS=1`.** Each token is scored **exactly once**, **before** being trained on:\n\n1. Forward pass on chunk \u2192 **score** (accumulate loss for BPB)\n2. **Train** LoRA on that chunk (backward-looking \u2014 tokens already scored)\n3. Advance to next chunk\n\nNo token is ever scored after being trained on. This is the same score-then-train pattern as PR #77 (merged), applied once per document.\n\n**What changed from v7/v8:** `TTT_EPOCHS` reduced from 2-5 to 1. `TTT_MIN_DOC_LEN` set to 512. No other code changes.\n\n## Architecture\n\n11 transformer layers, 512d, 8/4 heads (GQA), 26.8M params. INT6 GPTQ-lite quantization, zstd-22 compression. Artifact ~15.4 MB (96.3% of 16MB budget).\n\nFull details in [README.md](records/track_10min_16mb/2026-03-24_PROTEUS_v9/README.md).\n\n## Platform\n\nRunPod 8\u00d7H100 SXM, PyTorch 2.8.0+cu128.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/633",
+  "draft": false,
+  "comments": [
+    {
+      "user": "MatoTeziTanka",
+      "body": "**Adding nats (val_loss) for clarity:**\n\n| Seed | val_loss (nats) | val_bpb |\n|------|----------------|---------|\n| 42   | 1.9463         | 1.1527  |\n| 1337 | 1.9466         | 1.1529  |\n| 2024 | 1.9454         | 1.1522  |\n| **Mean** | **1.9461** | **1.1526** |\n\nPlatform: RunPod 8\u00d7H100 SXM, PyTorch 2.8.0+cu128. Docker: `matotezitanka/proteus-pytorch:2.11.0-cuda12.8`.",
+      "created_at": "2026-03-24T22:56:52Z",
+      "updated_at": "2026-03-24T22:56:52Z"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "number": 647,
+  "title": "[non-record] AutoEvolve: competition-faithful autonomous search loop for Parameter Golf",
+  "state": "open",
+  "user": "zanwenfu",
+  "created_at": "2026-03-24T21:12:06Z",
+  "updated_at": "2026-03-24T21:16:51Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\nThis PR adds AutoEvolve, a competition-faithful autonomous research loop for Parameter Golf.\r\n\r\nAutoEvolve starts from the current local/public SOTA baseline, benchmarks a local incumbent, searches on long-horizon 1xH100 proxy runs, and promotes only validated improvements toward final 8xH100 / 600s evaluation. The goal is not generic hyperparameter sweeping, but a stateful autonomous research process that learns from both wins and failures.\r\n\r\n## What is included\r\n\r\n- refreshed AutoEvolve baseline to the current top local record (`1.1194`)\r\n- long-horizon `1xH100` proxy mode and competition-fidelity `8xH100` final mode\r\n- incumbent + bounded frontier search instead of naive greedy-only continuation\r\n- structured memory dossier derived from committed experiment state\r\n- repeat-family guard to prevent wasting runs on the same failed proposal family\r\n- rollback and active-base recovery after failed or non-improving runs\r\n- timeout-stage parsing and partial telemetry preservation\r\n- durable logging / result persistence and RunPod monitoring utilities\r\n- dedicated AutoEvolve README and root README pointer\r\n\r\n## Validation\r\n\r\n- `python3 -m py_compile autoevolve/evolve.py autoevolve/monitor.py`\r\n- `bash -n autoevolve/runpod_launch.sh`\r\n- `python3 autoevolve/monitor.py --summary`\r\n- live dry-run through `gpt-5.4` succeeded; proposal applied cleanly and dry-run left no persistent experiment residue\r\n\r\n## Scope\r\n\r\nThis is a non-record infrastructure/research submission. It does not claim a new leaderboard score yet; it contributes a reproducible autonomous experimentation system intended to generate and validate future non-record and record-quality submissions more efficiently.\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/647",
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "This shard-count check can fail under `set -euo pipefail`: `ls \"$DATA_DIR\"/fineweb_train_*.bin` exits non-zero when no files match, which can abort the script before it reaches the download path. Consider using a nullglob-based count, `compgen -G`, `find`, or `ls ... 2>/dev/null || true` so missing shards is handled as an expected state.\n```suggestion\nSHARD_COUNT=$(compgen -G \"$DATA_DIR\"/fineweb_train_*.bin | wc -l)\n\nif [ ! -f \"$TOKENIZER\" ] || [ \"$SHARD_COUNT\" -lt 2 ]; then\n  echo \"  Downloading FineWeb data (this takes ~5-10 minutes)...\"\n  $PYTHON_RUN data/cached_challenge_fineweb.py --variant sp1024 --train-shards 10\n  echo \"  Data downloaded.\"\nelse\n  echo \"  Data already present ($SHARD_COUNT shards)\"\n```",
+      "created_at": "2026-03-24T21:16:50Z",
+      "updated_at": "2026-03-24T21:16:51Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`setup_git()` rewrites the `origin` remote URL to embed `GITHUB_TOKEN` directly (e.g. `https://<token>@github.com/...`). This can leak the token via incidental logging (e.g. `git remote -v`, error messages) and persists it in `.git/config` on the machine. Prefer using a credential helper / `GIT_ASKPASS`, or setting an auth header for just the push invocation, so the token isn\u2019t stored in the remote URL.",
+      "created_at": "2026-03-24T21:16:50Z",
+      "updated_at": "2026-03-24T21:16:51Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`zstandard`/`zlib` import and the `_COMPRESSOR` flag are currently unused. Given the strict 16,000,000-byte artifact budget (code size counts), consider removing unused imports/variables (or wiring `_COMPRESSOR` into the actual compression path) to avoid paying code-size overhead and reduce confusion about which compressor is in use.\n```suggestion\nfrom pathlib import Path\n```",
+      "created_at": "2026-03-24T21:16:51Z",
+      "updated_at": "2026-03-24T21:16:51Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The challenge overview says the artifact is \"code + zlib/zstd-compressed model\", but the current baseline in `autoevolve/train_gpt.py` writes an `int6` artifact using `lzma` compression (and logs `Total submission size int6+lzma`). Consider updating this line to include `lzma` (or aligning the implementation to the documented compressors) so the agent instructions match the actual pipeline.\n```suggestion\n- Fits in a **16,000,000 byte** artifact (code + zlib/zstd/lzma-compressed model)\n```",
+      "created_at": "2026-03-24T21:16:51Z",
+      "updated_at": "2026-03-24T21:16:51Z"
+    }
+  ]
+}

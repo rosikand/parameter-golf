@@ -1,0 +1,21 @@
+{
+  "number": 674,
+  "title": "Podracing: 1.0461 BPB (3-seed mean)",
+  "state": "closed",
+  "user": "newjordan",
+  "created_at": "2026-03-25T03:50:12Z",
+  "updated_at": "2026-03-25T06:30:47Z",
+  "merged_at": null,
+  "body": "![podracing](https://github.com/user-attachments/assets/7b582344-456a-4d94-90a3-11303b7566f5)\r\n\r\n## Results\r\n\r\n| Seed | Sliding BPB | 5-gram BPB | Artifact |\r\n|------|-------------|-----------|----------|\r\n| 1337 | 1.1190 | **1.0451** | 15.63 MB |\r\n| 42 | 1.1217 | **1.0471** | 15.59 MB |\r\n| 2045 | 1.1200 | **1.0460** | 15.64 MB |\r\n| **Mean** | **1.1202** | **1.0461** | \u2014 |\r\n\r\n## Progression\r\n\r\n| PR | Mean BPB | Notes |\r\n|----|----------|-------|\r\n| #190 | \u2014 | The Stinky Frost Recipe |\r\n| #390, #401 | 1.1295, 1.1243 | Sponge Bath TTT + EMA/SWA/QAT |\r\n| #445 | 1.1236 | Late Training Replay + EMA + GPTQ-lite |\r\n| #498, #499 | 1.1478 | The Frugendorff (recursive weight sharing) |\r\n| #508, #578 | 1.1215 | GPTQ + Early QAT + Legal TTT |\r\n| #533, #577 | 1.1207 | GPTQ + Short TTT |\r\n| #587 | 1.1208 | XSA + quantization tuning |\r\n| #656 | 1.1195 | Three Breadsticks (activation + eval) |\r\n| **This PR** | **1.0461** | **Podracing (5-gram eval interpolation)** |\r\n\r\n## Key Addition\r\n\r\nLegal score-first hashed 5-gram interpolation during sliding window eval. Fixed-weight linear mixing (alpha=0.20), no target-aware gating. Cache built from already-scored tokens only. Strictly backward-looking.\r\n\r\nInspired by and credited to @deanbrr (PR #659) for the n-gram eval cache concept.\r\n\r\n## Architecture\r\n\r\n11L/512d U-Net, 26.93M params. LeakyReLU\u00b2 (slope 0.5), XSA last 4, BigramHash 1536. GPTQ int6+zstd, late QAT.\r\n\r\n## Reproduce\r\n\r\n```bash\r\nSEED=2045 MLP_ACT=leaky_relu_sq MLP_LEAKY_SLOPE=0.5 XSA_LAST_N=4 BIGRAM_VOCAB_SIZE=1536 ROPE_DIMS=24 NGRAM_EVAL_ORDER=5 NGRAM_EVAL_ALPHA=0.20 NGRAM_EVAL_MIN_COUNT=2 NGRAM_EVAL_BUCKETS=4194304 torchrun --nproc_per_node=8 train_gpt.py\r\n```\r\n\r\n8xH100 SXM, 600s training + ~190s eval.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/674",
+  "draft": false,
+  "comments": [
+    {
+      "user": "valerio-oai",
+      "body": "I quite like the 5-gram EvalCache idea and encourage you to resubmit a valid run with it, but this submission has no submission.json or train logs, so I can't validate it, and it looks like it does GPTQ at eval time with training data, which is disallowed. \r\n\r\nHowever, if you removed the GPTQ and submitted a proper .json and training logs, I think the 5-gram EvalCache idea is at least directionally legal, would have to see the final code on a valid submission to make sure, though. Closing for now but please do resubmit! A concern I have with the current caching setup is that it sort of assumes we know what the next token is and only calculates the p_blended for that token -- in a real generation setting, we don't know what the correct token should be, so this wouldn't hold -- that being said, afaict this would only give an efficiency improvement (I think it spares you from having to calculate it over the whole vocab?) so as long as an updated version still fits within the eval time, I think the score should be quite similar. Will think about this more if you resubmit a similar run.",
+      "created_at": "2026-03-25T06:23:09Z",
+      "updated_at": "2026-03-25T06:30:47Z"
+    }
+  ]
+}

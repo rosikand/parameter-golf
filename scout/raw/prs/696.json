@@ -1,0 +1,14 @@
+{
+  "number": 696,
+  "title": "Add non-record JEPA byte-level encoder-decoder submission",
+  "state": "open",
+  "user": "gravelBridge",
+  "created_at": "2026-03-25T08:25:12Z",
+  "updated_at": "2026-03-25T08:25:12Z",
+  "merged_at": null,
+  "body": "Non-record submission for the 16MB track using a JEPA (Joint Embedding Predictive Architecture) encoder-decoder as an alternative to the standard causal GPT used by all current leaderboard entries.\r\n- Architecture: Byte-level tokenizer (vocab 260, no BPE), 5-layer depth-recurrent encoder (2 repeats) with patched latent projection, 7-layer causal decoder conditioned on encoder latents. 24.6M parameters.\r\n- Quantization & Compression: INT6 optimal-clip quantization with STE QAT during warmdown, LZMA preset 9 compression. - Total submission: 15.7MB.\r\n- Test-Time Training: Sliding window TTT with SGD (lr=0.002), 2 epochs per chunk, stride 256.\r\n- Result: Final TTT val_bpb 1.2622 (pre-quantization 1.2957), trained for 10,635 / 20,000 steps.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/696",
+  "draft": false,
+  "comments": []
+}

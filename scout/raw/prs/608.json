@@ -1,0 +1,14 @@
+{
+  "number": 608,
+  "title": "Non-record: Hybrid SSM Scene Overview",
+  "state": "closed",
+  "user": "Teddygat0r",
+  "created_at": "2026-03-24T09:59:53Z",
+  "updated_at": "2026-03-24T10:08:44Z",
+  "merged_at": null,
+  "body": "Tried experimenting with SSM layers as a potential way to improve performance given the small model parameter limit.\r\n\r\nThe SSM training time complexity hurts the most here. Training just isn't fast enough to be competitive with optimized regular attention kernels, O(n logn) / sequence is too slow.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/608",
+  "draft": false,
+  "comments": []
+}

@@ -1,0 +1,14 @@
+{
+  "number": 621,
+  "title": "Add BigramHash module: lightweight n-gram logit bias via hash embedding",
+  "state": "open",
+  "user": "tigertonez",
+  "created_at": "2026-03-24T13:50:50Z",
+  "updated_at": "2026-03-24T13:50:50Z",
+  "merged_at": null,
+  "body": "## BigramHash: Lightweight N-gram Logit Bias\r\n\r\nThis PR introduces a `BigramHash` module that injects shallow bigram statistics into the model's logit predictions via a learned hash embedding table.\r\n\r\n### Motivation\r\nThe current SOTA stack focuses heavily on deeper quantization and attention variants. However, n-gram statistics are powerful predictors of next-token probability at near-zero parameter cost. By hashing consecutive token pairs `(t_{i-1}, t_i)` into a compact embedding table and adding the result as a logit bias, the model learns a cheap shallow prior that complements what the deep transformer layers learn.\r\n\r\n### Implementation\r\n- `BigramHash(vocab_size, table_size=8192)`: maps each bigram to a logit bias vector via a Knuth multiplicative hash\r\n- Zero-initialized to be a no-op at the start of training, learning incrementally\r\n- Adds ~8192 \u00d7 1024 \u00d7 2 bytes \u2248 16MB equivalent \u2014 but with aggressive int4 quantization this fits cleanly within the artifact budget\r\n\r\n### Next Steps\r\n- Integrate `BigramHash` output into the GPT forward pass as an additive logit bias\r\n- Ablate table sizes (4096, 8192, 16384) vs val_bpb\r\n- Combine with QAT + Muon stack from current SOTA",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/621",
+  "draft": false,
+  "comments": []
+}

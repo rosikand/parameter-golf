@@ -1,0 +1,14 @@
+{
+  "number": 623,
+  "title": "[10min/16MB]  AWQ + Cyclic Momentum + ReLU\u00b2 + 11L Shared \u2014 1.1507 bpb",
+  "state": "open",
+  "user": "SPThole",
+  "created_at": "2026-03-24T14:22:27Z",
+  "updated_at": "2026-03-25T04:29:45Z",
+  "merged_at": null,
+  "body": "**val_bpb: 1.1507 \u00b1 0.0016** (3-seed mean) | **~15.4 MB** | 8\u00d7H100 SXM, 600s\r\n\r\n| Seed | val_bpb | Size |\r\n|------|---------|------|\r\n| 42 | 1.1502 | 15.45 MB |\r\n| 43 | 1.1494 | 15.52 MB |\r\n| 44 | 1.1526 | 15.43 MB |\r\n\r\n### Techniques\r\n\r\n| Technique | Description |\r\n|-----------|-------------|\r\n| **AWQ** | Activation-aware weight scaling (\u03b1=0.5) before int5/int6 quantization. Closed 63% of the quant gap (0.027 \u2192 0.010 bpb). |\r\n| **Cyclic Muon Momentum** | Triangle wave 0.85\u20130.95 (period=50) after warmup. Escapes sharp minima. |\r\n| **ReLU\u00b2** | Sparser MLP activations, better for small models. |\r\n| **11L Shared** | 10 unique weight sets, last block reused. Free depth. |\r\n\r\n### Development\r\n\r\nExperimented on 1\u00d7H100 (21+ experiments) to iterate fast, promoted the winner to 8\u00d7H100. Tested MTP, curriculum learning, TTT, GPTQ-lite, layer-aware quant, EMA, QAT, AdaptiveRMSNorm, partial RoPE, and value embeddings \u2014 most were neutral or negative in isolation. AWQ and cyclic momentum were the clear winners beyond the base architecture.\r\n\r\nFull ablation table and experiment logs in the README.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/623",
+  "draft": false,
+  "comments": []
+}

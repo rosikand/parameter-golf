@@ -1,0 +1,14 @@
+{
+  "number": 697,
+  "title": "feat: depth recurrence + cosine recovery TTT",
+  "state": "open",
+  "user": "Danishlynx",
+  "created_at": "2026-03-25T08:56:15Z",
+  "updated_at": "2026-03-25T08:56:15Z",
+  "merged_at": null,
+  "body": "Based on merged SOTA (PR #549 stack + LeakyReLU\u00b2 + Legal TTT, 1.1194 bpb):\r\n\r\n1. Depth recurrence: repeat layers 4-5 \u2192 13 virtual layers from 11 physical\r\n   - Per-repetition learnable scale parameters\r\n   - U-Net skip connections adapted for virtual layer count\r\n   - DEPTH_RECURRENCE=4,5 env var\r\n\r\n2. Enhanced TTT with cosine recovery phase:\r\n   - After standard score-first TTT, runs N additional cosine-LR epochs on all scored data to repair int6 quantization damage\r\n   - Re-scores with standard sliding window eval\r\n   - TTT_RECOVERY_EPOCHS=20, TTT_RECOVERY_LR=0.001 env vars\r\n\r\n3. FlashAttention 3 fallback to SDPA for non-Hopper GPUs\r\n   - Manual GQA head repeat for PyTorch <2.5 compatibility\r\n\r\nSmoke-tested on 1xH100 SXM 80GB. Both features validated.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/697",
+  "draft": false,
+  "comments": []
+}

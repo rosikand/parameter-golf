@@ -1,14 +1,21 @@
 {
   "number": 581,
   "title": "Record: 11L Sidecar48 + Enhanced TTT (cosine LR, 20 epochs) \u2014 1.0698 BPB (3-seed mean)",
-  "state": "open",
+  "state": "closed",
   "user": "teddyoweh",
   "created_at": "2026-03-23T22:38:22Z",
-  "updated_at": "2026-03-24T02:06:03Z",
+  "updated_at": "2026-03-24T14:11:54Z",
   "merged_at": null,
   "body": "## \ud83c\udfc6 Result: 1.0698 BPB (3-seed mean, sliding window s=64)\n\nEnhanced test-time training built on [@ymrohit's shared sparse sidecar architecture](https://github.com/openai/parameter-golf/pull/555). The base model and training loop are identical to PR #555; the only change is the TTT phase.\n\n### What's New\n\n| Enhancement | PR #555 (baseline) | This submission |\n|---|---|---|\n| TTT epochs | 10 | **20** |\n| LR schedule | Flat 0.0005 | **Cosine 0.0005\u21920.00002** |\n| LR warmup | None | **1-epoch linear warmup** |\n| Weight decay | 0.0 | **0.01** |\n\n### 3-Seed Results (8\u00d7H100 80GB SXM, USE_COMPILE=1)\n\n| Seed | Steps | Pre-TTT BPB | Post-TTT (standard) | Post-TTT (sliding s=64) | Size |\n|---|---|---|---|---|---|\n| 13 | 5627 | 1.1522 | 1.0847 | **1.0703** | 15.94 MB |\n| 1111 | 5613 | 1.1508 | 1.0837 | **1.0687** | 16.14 MB |\n| 1337 | 5609 | 1.1518 | 1.0851 | **1.0704** | 16.12 MB |\n| **Mean** | **5616** | **1.1516** | **1.0845** | **1.0698** | \u2014 |\n\n- Std dev (sliding BPB): 0.00093 \u2014 extremely tight across seeds\n- All runs under 16 MB submission limit \u2705\n- All runs complete in ~596s wallclock \u2705\n- Step time: ~106ms (torch.compile enabled)\n\n### Leaderboard Comparison\n\n| Submission | BPB | \u0394 vs ours |\n|---|---|---|\n| **This submission** | **1.0698** | \u2014 |\n| PR #555 (ymrohit, pending) | 1.0916 | +0.0218 |\n| PR #414 (signalrush, merged #1) | 1.1233 | +0.0535 |\n| PR #315 (jfprincz, merged #2) | 1.1248 | +0.0550 |\n\n### TTT Loss Curve (seed 1337)\n\n```\nEpoch  1/20: loss=1.9527  lr=0.000500\nEpoch  5/20: loss=1.9096  lr=0.000449\nEpoch 10/20: loss=1.8712  lr=0.000280\nEpoch 15/20: loss=1.8453  lr=0.000097\nEpoch 20/20: loss=1.8345  lr=0.000020\n```\n\n### Key Insight\n\nFlat-LR TTT either stops too early or overshoots if trained longer. Cosine annealing with warmup allows 20 productive epochs \u2014 the LR ramps up gently (1-epoch warmup), explores at high LR in the middle, then precisely converges with LR decaying to 0.00002. Weight decay (0.01) prevents overfitting to the validation data.\n\n### Architecture (unchanged from PR #555)\n\n11-layer transformer with SharedSparseSidecar (48 hidden), BigramHash embeddings, SmearGate, U-Net skip connections, EMA, relu\u00b2 MLP, int6 mixed quantization + zstd-22.\n\n### Reproducibility\n\n```bash\nDATA_PATH=data/datasets/fineweb10B_sp1024 \\\nTOKENIZER_PATH=data/tokenizers/fineweb_1024_bpe.model \\\nMAX_WALLCLOCK_SECONDS=596 USE_COMPILE=1 \\\nTTT_EPOCHS=20 TTT_COSINE=1 TTT_LR=0.0005 TTT_LR_MIN=0.00002 \\\nTTT_WARMUP_EPOCHS=1 TTT_WD=0.01 EVAL_STRIDE=64 \\\nFINAL_SLIDING_EVAL_ENABLE=1 SEED=1337 \\\ntorchrun --nproc_per_node=8 train_gpt.py\n```",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/581",
   "draft": false,
-  "comments": []
+  "comments": [
+    {
+      "user": "valerio-oai",
+      "body": "As far as I can tell here, this proposed TTT scheme trains on the validation set by reporting the score on a doc after its weights have adapted to it, rendering this unsound for the purposes of this competition.  Even though you specifically change #555's TTT scheme, this code still first adapts to all the docs and then validates on them, meaning you leak validation tokens, which is disallowed.",
+      "created_at": "2026-03-24T14:11:54Z",
+      "updated_at": "2026-03-24T14:11:54Z"
+    }
+  ]
 }

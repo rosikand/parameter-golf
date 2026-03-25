@@ -1,0 +1,27 @@
+{
+  "number": 616,
+  "title": "Update README.md",
+  "state": "closed",
+  "user": "valerio-oai",
+  "created_at": "2026-03-24T13:25:20Z",
+  "updated_at": "2026-03-24T17:17:18Z",
+  "merged_at": "2026-03-24T13:25:37Z",
+  "body": "",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/616",
+  "draft": false,
+  "comments": [
+    {
+      "user": "abaybektursun",
+      "body": "@valerio-oai @cocohearts @0hq \r\nFYI author is wrong for \r\n```\r\nLeakyReLU\u00b2 + Legal Score-First TTT + Parallel Muon\t1.1194\tsanjeevmadhav\tOn PR #549: LeakyReLU(0.5)^2 + TTT + Parallel Muon on the PR #414 stack\t2026-03-23\t[info](https://github.com/openai/parameter-golf/blob/main/records/track_10min_16mb/2026-03-23_LeakyReLU_LegalTTT_ParallelMuon/README.md)\r\n```\r\n Should be @abaybektursun",
+      "created_at": "2026-03-24T13:57:01Z",
+      "updated_at": "2026-03-24T14:07:48Z"
+    },
+    {
+      "user": "valerio-oai",
+      "body": "sorry about that, fixed!",
+      "created_at": "2026-03-24T17:17:18Z",
+      "updated_at": "2026-03-24T17:17:18Z"
+    }
+  ]
+}

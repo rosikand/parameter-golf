@@ -1,0 +1,14 @@
+{
+  "number": 662,
+  "title": "Add non-record streaming legal TTT late-block submission",
+  "state": "open",
+  "user": "simon-marcus",
+  "created_at": "2026-03-25T00:23:33Z",
+  "updated_at": "2026-03-25T00:23:33Z",
+  "merged_at": null,
+  "body": "## Summary\nThis adds a non-record `track_10min_16mb` submission documenting a full 8xH100 run built from the March 23 leader with a different legal TTT protocol.\n\n## Why submit this\nThis is intentionally framed as a non-record submission. The main value is to provide the community with a clean comparison between:\n- the March 23 leader's chunked score-first legal TTT over all blocks\n- a streaming legal TTT variant that adapts online and only updates the last 4 blocks\n\n## What changed relative to the March 23 leader\n- kept the same base model stack and `LeakyReLU(0.5)^2` activation\n- switched eval-time adaptation to `TTT_MODE=stream`\n- used `TTT_PARAM_MODE=late_blocks` with `TTT_LAST_N_BLOCKS=4`\n- included explicit preflight and run logs for reproducibility\n\n## Result\nFinal `legal_ttt_exact` on the included run:\n- `1.12082320`\n\nThis slightly trails the March 23 leader's seed-1337 `1.11922988`, but the intermediate pre-TTT and sliding-window metrics are very close, which makes this a useful data point on the TTT protocol itself.\n\n## Included artifacts\n- `train_gpt.py`\n- `train_seed1337.log`\n- `runpod_launch.log`\n- `preflight.log`\n- `submission.json`\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/662",
+  "draft": false,
+  "comments": []
+}

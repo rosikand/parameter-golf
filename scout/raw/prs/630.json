@@ -1,0 +1,14 @@
+{
+  "number": 630,
+  "title": "Non-record: LapushBaby stock baseline 1xGPU RunPod",
+  "state": "open",
+  "user": "LapushBaby",
+  "created_at": "2026-03-24T16:04:03Z",
+  "updated_at": "2026-03-24T16:04:03Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\nThis is a non-record submission documenting a reproducible single-GPU RunPod run using the stock root `train_gpt.py` copied into the submission folder.\r\n\r\nKey result:\r\n- `final_int8_zlib_roundtrip_exact val_bpb: 1.36294332`\r\n- `val_loss: 2.30127271`\r\n- total submission size: `12,264,252` bytes\r\n\r\n## Setup\r\n\r\n- Dataset: FineWeb `sp1024`\r\n- Train shards: 10\r\n- Hardware: 1x GPU on RunPod\r\n- Wallclock cap: 600 seconds\r\n\r\n## Repro command\r\n\r\n```bash\r\nRUN_ID=real_10min \\\r\nDATA_PATH=./data/datasets/fineweb10B_sp1024/ \\\r\nTOKENIZER_PATH=./data/tokenizers/fineweb_1024_bpe.model \\\r\nVOCAB_SIZE=1024 \\\r\nMAX_WALLCLOCK_SECONDS=600 \\\r\nVAL_LOSS_EVERY=0 \\\r\ntorchrun --standalone --nproc_per_node=1 train_gpt.py",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/630",
+  "draft": false,
+  "comments": []
+}

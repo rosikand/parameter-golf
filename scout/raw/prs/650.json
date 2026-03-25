@@ -1,0 +1,14 @@
+{
+  "number": 650,
+  "title": "draft",
+  "state": "closed",
+  "user": "abaybektursun",
+  "created_at": "2026-03-24T21:59:38Z",
+  "updated_at": "2026-03-24T23:28:56Z",
+  "merged_at": null,
+  "body": "",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/650",
+  "draft": false,
+  "comments": []
+}

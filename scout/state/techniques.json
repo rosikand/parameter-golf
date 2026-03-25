@@ -61,12 +61,42 @@
         "pr": 553,
         "bpb": null,
         "user": "Vighaneshs"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 700,
+        "bpb": 1.0541,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 688,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 674,
+        "bpb": 1.0461,
+        "user": "newjordan"
+      },
+      {
+        "pr": 687,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
       }
     ],
-    "best_bpb": 1.1132,
+    "best_bpb": 1.0461,
     "worst_bpb": 1.5275,
-    "avg_bpb": 1.2277,
-    "count": 12
+    "avg_bpb": 1.1622,
+    "count": 18
   },
   "Value Residual": {
     "name": "Value Residual",
@@ -138,7 +168,7 @@
       },
       {
         "pr": 505,
-        "bpb": 1.11807945,
+        "bpb": 1.14802544,
         "user": "JoeProAI"
       },
       {
@@ -270,12 +300,117 @@
         "pr": 518,
         "bpb": 1.0622,
         "user": "sofiabod"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 593,
+        "bpb": 1.1163,
+        "user": "abaybektursun"
+      },
+      {
+        "pr": 576,
+        "bpb": 1.1164,
+        "user": "cmcdnd"
+      },
+      {
+        "pr": 598,
+        "bpb": 1.1334,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 615,
+        "bpb": 1.1169,
+        "user": "danialht"
+      },
+      {
+        "pr": 610,
+        "bpb": 1.119,
+        "user": "ChaosCodes"
+      },
+      {
+        "pr": 484,
+        "bpb": 1.1185,
+        "user": "Robby955"
+      },
+      {
+        "pr": 601,
+        "bpb": 1.1418,
+        "user": "anantdgoel"
+      },
+      {
+        "pr": 693,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 692,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 690,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 684,
+        "bpb": 1.0574,
+        "user": "DeepReinforce"
+      },
+      {
+        "pr": 686,
+        "bpb": 1.11819,
+        "user": "msisovic"
+      },
+      {
+        "pr": 604,
+        "bpb": null,
+        "user": "whitestone1121-web"
+      },
+      {
+        "pr": 623,
+        "bpb": 1.1507,
+        "user": "SPThole"
+      },
+      {
+        "pr": 675,
+        "bpb": 1.2302,
+        "user": "ChideraIbe123"
+      },
+      {
+        "pr": 670,
+        "bpb": null,
+        "user": "abaybektursun"
       }
     ],
     "best_bpb": 1.0487,
     "worst_bpb": 1.4525,
-    "avg_bpb": 1.137,
-    "count": 40
+    "avg_bpb": 1.1336,
+    "count": 61
   },
   "GradQuant": {
     "name": "GradQuant",
@@ -294,12 +429,17 @@
         "pr": 332,
         "bpb": 1.132,
         "user": "saml212"
+      },
+      {
+        "pr": 670,
+        "bpb": null,
+        "user": "abaybektursun"
       }
     ],
     "best_bpb": 1.1132,
     "worst_bpb": 1.1396,
     "avg_bpb": 1.1283,
-    "count": 3
+    "count": 4
   },
   "AdamW TTT": {
     "name": "AdamW TTT",
@@ -331,7 +471,7 @@
       },
       {
         "pr": 462,
-        "bpb": 1.0672,
+        "bpb": 1.06715285,
         "user": "JoeProAI"
       },
       {
@@ -383,12 +523,72 @@
         "pr": 518,
         "bpb": 1.0622,
         "user": "sofiabod"
+      },
+      {
+        "pr": 631,
+        "bpb": null,
+        "user": "senstar-hsoleimani"
+      },
+      {
+        "pr": 595,
+        "bpb": 1.11,
+        "user": "LoquiAuris"
+      },
+      {
+        "pr": 615,
+        "bpb": 1.1169,
+        "user": "danialht"
+      },
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 684,
+        "bpb": 1.0574,
+        "user": "DeepReinforce"
+      },
+      {
+        "pr": 685,
+        "bpb": 1.0366,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 687,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 639,
+        "bpb": 1.1175,
+        "user": "Robby955"
+      },
+      {
+        "pr": 686,
+        "bpb": 1.11819,
+        "user": "msisovic"
+      },
+      {
+        "pr": 646,
+        "bpb": 1.1349,
+        "user": "Upsalla"
+      },
+      {
+        "pr": 668,
+        "bpb": 1.092,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 667,
+        "bpb": 1.1352,
+        "user": "suchitj2702"
       }
     ],
     "best_bpb": 0.9789,
     "worst_bpb": 1.15321496,
-    "avg_bpb": 1.0958,
-    "count": 16
+    "avg_bpb": 1.098,
+    "count": 28
   },
   "EMA": {
     "name": "EMA",
@@ -685,12 +885,12 @@
       },
       {
         "pr": 505,
-        "bpb": 1.11807945,
+        "bpb": 1.14802544,
         "user": "JoeProAI"
       },
       {
         "pr": 484,
-        "bpb": 1.1679,
+        "bpb": 1.1185,
         "user": "Robby955"
       },
       {
@@ -720,7 +920,7 @@
       },
       {
         "pr": 462,
-        "bpb": 1.0672,
+        "bpb": 1.06715285,
         "user": "JoeProAI"
       },
       {
@@ -740,7 +940,7 @@
       },
       {
         "pr": 550,
-        "bpb": null,
+        "bpb": 1.63,
         "user": "haimianbaobao007"
       },
       {
@@ -755,7 +955,7 @@
       },
       {
         "pr": 593,
-        "bpb": 1.1171,
+        "bpb": 1.1163,
         "user": "abaybektursun"
       },
       {
@@ -785,7 +985,7 @@
       },
       {
         "pr": 579,
-        "bpb": 1.1478,
+        "bpb": 1.1325,
         "user": "newjordan"
       },
       {
@@ -862,12 +1062,232 @@
         "pr": 518,
         "bpb": 1.0622,
         "user": "sofiabod"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 619,
+        "bpb": null,
+        "user": "zeal175"
+      },
+      {
+        "pr": 642,
+        "bpb": 0.8173,
+        "user": "minh-stakc"
+      },
+      {
+        "pr": 639,
+        "bpb": 1.1175,
+        "user": "Robby955"
+      },
+      {
+        "pr": 649,
+        "bpb": 1.2073,
+        "user": "pall23-mech"
+      },
+      {
+        "pr": 644,
+        "bpb": 1.0944,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 645,
+        "bpb": 1.899,
+        "user": "FlynnCruse"
+      },
+      {
+        "pr": 643,
+        "bpb": 1.5672,
+        "user": "frido22"
+      },
+      {
+        "pr": 586,
+        "bpb": 1.1365,
+        "user": "EaCognitive"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 636,
+        "bpb": 1.12336724,
+        "user": "NewyorkDev"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 628,
+        "bpb": 1.0983,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 605,
+        "bpb": 0.7227,
+        "user": "bigbag"
+      },
+      {
+        "pr": 598,
+        "bpb": 1.1334,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 615,
+        "bpb": 1.1169,
+        "user": "danialht"
+      },
+      {
+        "pr": 607,
+        "bpb": 1.475,
+        "user": "Neopolita"
+      },
+      {
+        "pr": 610,
+        "bpb": 1.119,
+        "user": "ChaosCodes"
+      },
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 604,
+        "bpb": null,
+        "user": "whitestone1121-web"
+      },
+      {
+        "pr": 599,
+        "bpb": 1.1828,
+        "user": "mkenney2"
+      },
+      {
+        "pr": 347,
+        "bpb": null,
+        "user": "FlashyFlash3011"
+      },
+      {
+        "pr": 688,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 699,
+        "bpb": null,
+        "user": "RohanMulay1"
+      },
+      {
+        "pr": 698,
+        "bpb": 1.16417381,
+        "user": "hesong0222-dev"
+      },
+      {
+        "pr": 691,
+        "bpb": 1.0988,
+        "user": "xexyz"
+      },
+      {
+        "pr": 695,
+        "bpb": 1.136,
+        "user": "0xNoramiya"
+      },
+      {
+        "pr": 693,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 692,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 690,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 684,
+        "bpb": 1.0574,
+        "user": "DeepReinforce"
+      },
+      {
+        "pr": 687,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 686,
+        "bpb": 1.11819,
+        "user": "msisovic"
+      },
+      {
+        "pr": 682,
+        "bpb": null,
+        "user": "gthgomez"
+      },
+      {
+        "pr": 681,
+        "bpb": 1.4775,
+        "user": "Alfaxad"
+      },
+      {
+        "pr": 680,
+        "bpb": 1.1482555,
+        "user": "bro4all"
+      },
+      {
+        "pr": 623,
+        "bpb": 1.1507,
+        "user": "SPThole"
+      },
+      {
+        "pr": 672,
+        "bpb": 1.0781,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 668,
+        "bpb": 1.092,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 661,
+        "bpb": 1.1175,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 363,
+        "bpb": 1.1648,
+        "user": "evangelinehelsinki"
       }
     ],
-    "best_bpb": 1.0487,
-    "worst_bpb": 1.8338,
-    "avg_bpb": 1.1471,
-    "count": 94
+    "best_bpb": 0.7227,
+    "worst_bpb": 1.899,
+    "avg_bpb": 1.1525,
+    "count": 138
   },
   "sliding window eval": {
     "name": "sliding window eval",
@@ -909,7 +1329,7 @@
       },
       {
         "pr": 473,
-        "bpb": 1.122,
+        "bpb": 1.1214,
         "user": "abaybektursun"
       },
       {
@@ -1784,7 +2204,7 @@
       },
       {
         "pr": 593,
-        "bpb": 1.1171,
+        "bpb": 1.1163,
         "user": "abaybektursun"
       },
       {
@@ -1931,12 +2351,167 @@
         "pr": 518,
         "bpb": 1.0622,
         "user": "sofiabod"
+      },
+      {
+        "pr": 639,
+        "bpb": 1.1175,
+        "user": "Robby955"
+      },
+      {
+        "pr": 586,
+        "bpb": 1.1365,
+        "user": "EaCognitive"
+      },
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 399,
+        "bpb": 1.1247,
+        "user": "abaybektursun"
+      },
+      {
+        "pr": 376,
+        "bpb": 1.1401,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 573,
+        "bpb": 1.0523,
+        "user": "Sarimsaljook"
+      },
+      {
+        "pr": 598,
+        "bpb": 1.1334,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 555,
+        "bpb": 1.09161722,
+        "user": "ymrohit"
+      },
+      {
+        "pr": 583,
+        "bpb": 1.1489,
+        "user": "suchihype"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 700,
+        "bpb": 1.0541,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 698,
+        "bpb": 1.16417381,
+        "user": "hesong0222-dev"
+      },
+      {
+        "pr": 691,
+        "bpb": 1.0988,
+        "user": "xexyz"
+      },
+      {
+        "pr": 696,
+        "bpb": 1.2622,
+        "user": "gravelBridge"
+      },
+      {
+        "pr": 695,
+        "bpb": 1.136,
+        "user": "0xNoramiya"
+      },
+      {
+        "pr": 694,
+        "bpb": 1.1507,
+        "user": "Bortlesboat"
+      },
+      {
+        "pr": 693,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 692,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 690,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 484,
+        "bpb": 1.1185,
+        "user": "Robby955"
+      },
+      {
+        "pr": 684,
+        "bpb": 1.0574,
+        "user": "DeepReinforce"
+      },
+      {
+        "pr": 674,
+        "bpb": 1.0461,
+        "user": "newjordan"
+      },
+      {
+        "pr": 656,
+        "bpb": 1.1195,
+        "user": "newjordan"
+      },
+      {
+        "pr": 673,
+        "bpb": null,
+        "user": "Aristide021"
+      },
+      {
+        "pr": 659,
+        "bpb": 1.092,
+        "user": "deanbrr"
+      },
+      {
+        "pr": 666,
+        "bpb": 1.1932,
+        "user": "chrislovescoding"
+      },
+      {
+        "pr": 662,
+        "bpb": 1.1208232,
+        "user": "simon-marcus"
+      },
+      {
+        "pr": 661,
+        "bpb": 1.1175,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 363,
+        "bpb": 1.1648,
+        "user": "evangelinehelsinki"
       }
     ],
     "best_bpb": 0.9588,
     "worst_bpb": 2.40284524,
-    "avg_bpb": 1.1863,
-    "count": 212
+    "avg_bpb": 1.1775,
+    "count": 243
   },
   "Int6 quantization": {
     "name": "Int6 quantization",
@@ -2188,7 +2763,7 @@
       },
       {
         "pr": 484,
-        "bpb": 1.1746,
+        "bpb": 1.1185,
         "user": "Robby955"
       },
       {
@@ -2250,12 +2825,107 @@
         "pr": 462,
         "bpb": 1.0672,
         "user": "JoeProAI"
+      },
+      {
+        "pr": 695,
+        "bpb": 1.136,
+        "user": "0xNoramiya"
+      },
+      {
+        "pr": 694,
+        "bpb": 1.1507,
+        "user": "Bortlesboat"
+      },
+      {
+        "pr": 693,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 692,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 690,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 433,
+        "bpb": 1.3441,
+        "user": "Robby955"
+      },
+      {
+        "pr": 685,
+        "bpb": 1.0366,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 674,
+        "bpb": 1.0461,
+        "user": "newjordan"
+      },
+      {
+        "pr": 687,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 656,
+        "bpb": 1.1195,
+        "user": "newjordan"
+      },
+      {
+        "pr": 639,
+        "bpb": 1.1175,
+        "user": "Robby955"
+      },
+      {
+        "pr": 626,
+        "bpb": 1.118007,
+        "user": "kshitizz36"
+      },
+      {
+        "pr": 686,
+        "bpb": 1.11819,
+        "user": "msisovic"
+      },
+      {
+        "pr": 682,
+        "bpb": null,
+        "user": "gthgomez"
+      },
+      {
+        "pr": 646,
+        "bpb": 1.1349,
+        "user": "Upsalla"
+      },
+      {
+        "pr": 615,
+        "bpb": 1.1169,
+        "user": "danialht"
+      },
+      {
+        "pr": 668,
+        "bpb": 1.092,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 665,
+        "bpb": 1.14638,
+        "user": "harborglowvintage-oss"
+      },
+      {
+        "pr": 369,
+        "bpb": 1.1328,
+        "user": "signalrush"
       }
     ],
     "best_bpb": 0.9588,
     "worst_bpb": 1.8338,
-    "avg_bpb": 1.1655,
-    "count": 62
+    "avg_bpb": 1.1553,
+    "count": 81
   },
   "cosine scheduling": {
     "name": "cosine scheduling",
@@ -2404,12 +3074,87 @@
         "pr": 462,
         "bpb": 1.0672,
         "user": "JoeProAI"
+      },
+      {
+        "pr": 642,
+        "bpb": 0.8173,
+        "user": "minh-stakc"
+      },
+      {
+        "pr": 644,
+        "bpb": 1.0944,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 598,
+        "bpb": 1.1334,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 607,
+        "bpb": 1.475,
+        "user": "Neopolita"
+      },
+      {
+        "pr": 599,
+        "bpb": 1.1828,
+        "user": "mkenney2"
+      },
+      {
+        "pr": 697,
+        "bpb": null,
+        "user": "Danishlynx"
+      },
+      {
+        "pr": 691,
+        "bpb": 1.0988,
+        "user": "xexyz"
+      },
+      {
+        "pr": 684,
+        "bpb": 1.0574,
+        "user": "DeepReinforce"
+      },
+      {
+        "pr": 685,
+        "bpb": 1.0366,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 604,
+        "bpb": null,
+        "user": "whitestone1121-web"
+      },
+      {
+        "pr": 672,
+        "bpb": 1.0781,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 550,
+        "bpb": 1.63,
+        "user": "haimianbaobao007"
+      },
+      {
+        "pr": 661,
+        "bpb": 1.1175,
+        "user": "andrewbaggio1"
       }
     ],
     "best_bpb": 0.643,
-    "worst_bpb": 1.4784,
-    "avg_bpb": 1.1272,
-    "count": 29
+    "worst_bpb": 1.63,
+    "avg_bpb": 1.1372,
+    "count": 44
   },
   "XSA": {
     "name": "XSA",
@@ -2641,7 +3386,7 @@
       },
       {
         "pr": 363,
-        "bpb": 2.4402,
+        "bpb": 1.1648,
         "user": "evangelinehelsinki"
       },
       {
@@ -2726,7 +3471,7 @@
       },
       {
         "pr": 505,
-        "bpb": 1.11807945,
+        "bpb": 1.14802544,
         "user": "JoeProAI"
       },
       {
@@ -2751,7 +3496,7 @@
       },
       {
         "pr": 462,
-        "bpb": 1.0672,
+        "bpb": 1.06715285,
         "user": "JoeProAI"
       },
       {
@@ -2776,7 +3521,7 @@
       },
       {
         "pr": 593,
-        "bpb": 1.1171,
+        "bpb": 1.1163,
         "user": "abaybektursun"
       },
       {
@@ -2801,7 +3546,7 @@
       },
       {
         "pr": 579,
-        "bpb": 1.1478,
+        "bpb": 1.1325,
         "user": "newjordan"
       },
       {
@@ -2923,12 +3668,202 @@
         "pr": 518,
         "bpb": 1.0622,
         "user": "sofiabod"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 656,
+        "bpb": 1.1195,
+        "user": "newjordan"
+      },
+      {
+        "pr": 642,
+        "bpb": 0.8173,
+        "user": "minh-stakc"
+      },
+      {
+        "pr": 639,
+        "bpb": 1.1175,
+        "user": "Robby955"
+      },
+      {
+        "pr": 644,
+        "bpb": 1.0944,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 645,
+        "bpb": 1.899,
+        "user": "FlynnCruse"
+      },
+      {
+        "pr": 586,
+        "bpb": 1.1365,
+        "user": "EaCognitive"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 636,
+        "bpb": 1.12336724,
+        "user": "NewyorkDev"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 628,
+        "bpb": 1.0983,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 631,
+        "bpb": null,
+        "user": "senstar-hsoleimani"
+      },
+      {
+        "pr": 598,
+        "bpb": 1.1334,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 581,
+        "bpb": 1.0698,
+        "user": "teddyoweh"
+      },
+      {
+        "pr": 615,
+        "bpb": 1.1169,
+        "user": "danialht"
+      },
+      {
+        "pr": 610,
+        "bpb": 1.119,
+        "user": "ChaosCodes"
+      },
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 484,
+        "bpb": 1.1185,
+        "user": "Robby955"
+      },
+      {
+        "pr": 601,
+        "bpb": 1.1418,
+        "user": "anantdgoel"
+      },
+      {
+        "pr": 700,
+        "bpb": 1.0541,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 347,
+        "bpb": null,
+        "user": "FlashyFlash3011"
+      },
+      {
+        "pr": 688,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 699,
+        "bpb": null,
+        "user": "RohanMulay1"
+      },
+      {
+        "pr": 698,
+        "bpb": 1.16417381,
+        "user": "hesong0222-dev"
+      },
+      {
+        "pr": 691,
+        "bpb": 1.0988,
+        "user": "xexyz"
+      },
+      {
+        "pr": 695,
+        "bpb": 1.136,
+        "user": "0xNoramiya"
+      },
+      {
+        "pr": 693,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 692,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 690,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 674,
+        "bpb": 1.0461,
+        "user": "newjordan"
+      },
+      {
+        "pr": 672,
+        "bpb": 1.0781,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 670,
+        "bpb": null,
+        "user": "abaybektursun"
+      },
+      {
+        "pr": 659,
+        "bpb": 1.092,
+        "user": "deanbrr"
+      },
+      {
+        "pr": 668,
+        "bpb": 1.092,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 667,
+        "bpb": 1.1352,
+        "user": "suchitj2702"
       }
     ],
-    "best_bpb": 1.0487,
-    "worst_bpb": 2.4402,
-    "avg_bpb": 1.1606,
-    "count": 102
+    "best_bpb": 0.8173,
+    "worst_bpb": 1.899,
+    "avg_bpb": 1.1416,
+    "count": 140
   },
   "Partial RoPE": {
     "name": "Partial RoPE",
@@ -3210,7 +4145,7 @@
       },
       {
         "pr": 505,
-        "bpb": 1.11807945,
+        "bpb": 1.14802544,
         "user": "JoeProAI"
       },
       {
@@ -3245,7 +4180,7 @@
       },
       {
         "pr": 462,
-        "bpb": 1.0672,
+        "bpb": 1.06715285,
         "user": "JoeProAI"
       },
       {
@@ -3265,7 +4200,7 @@
       },
       {
         "pr": 593,
-        "bpb": 1.1171,
+        "bpb": 1.1163,
         "user": "abaybektursun"
       },
       {
@@ -3362,12 +4297,137 @@
         "pr": 518,
         "bpb": 1.0622,
         "user": "sofiabod"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 653,
+        "bpb": 1.1552,
+        "user": "demirelo"
+      },
+      {
+        "pr": 642,
+        "bpb": 0.8173,
+        "user": "minh-stakc"
+      },
+      {
+        "pr": 644,
+        "bpb": 1.0944,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 586,
+        "bpb": 1.1365,
+        "user": "EaCognitive"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 628,
+        "bpb": 1.0983,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 598,
+        "bpb": 1.1334,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 610,
+        "bpb": 1.119,
+        "user": "ChaosCodes"
+      },
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 699,
+        "bpb": null,
+        "user": "RohanMulay1"
+      },
+      {
+        "pr": 698,
+        "bpb": 1.16417381,
+        "user": "hesong0222-dev"
+      },
+      {
+        "pr": 693,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 684,
+        "bpb": 1.0574,
+        "user": "DeepReinforce"
+      },
+      {
+        "pr": 682,
+        "bpb": null,
+        "user": "gthgomez"
+      },
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 623,
+        "bpb": 1.1507,
+        "user": "SPThole"
+      },
+      {
+        "pr": 672,
+        "bpb": 1.0781,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 668,
+        "bpb": 1.092,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 661,
+        "bpb": 1.1175,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 363,
+        "bpb": 1.1648,
+        "user": "evangelinehelsinki"
       }
     ],
-    "best_bpb": 1.0487,
+    "best_bpb": 0.8173,
     "worst_bpb": 2.962,
-    "avg_bpb": 1.1789,
-    "count": 86
+    "avg_bpb": 1.1634,
+    "count": 111
   },
   "SmearGate": {
     "name": "SmearGate",
@@ -3514,7 +4574,7 @@
       },
       {
         "pr": 433,
-        "bpb": 1.2105,
+        "bpb": 1.3441,
         "user": "Robby955"
       },
       {
@@ -3724,7 +4784,7 @@
       },
       {
         "pr": 344,
-        "bpb": 1.2756,
+        "bpb": 1.133,
         "user": "aryanbhosale"
       },
       {
@@ -3999,7 +5059,7 @@
       },
       {
         "pr": 462,
-        "bpb": 1.0672,
+        "bpb": 1.06715285,
         "user": "JoeProAI"
       },
       {
@@ -4014,7 +5074,7 @@
       },
       {
         "pr": 550,
-        "bpb": null,
+        "bpb": 1.189,
         "user": "haimianbaobao007"
       },
       {
@@ -4059,7 +5119,7 @@
       },
       {
         "pr": 484,
-        "bpb": 1.1679,
+        "bpb": 1.1185,
         "user": "Robby955"
       },
       {
@@ -4149,7 +5209,7 @@
       },
       {
         "pr": 515,
-        "bpb": 1.2015,
+        "bpb": 1.1807,
         "user": "keshav55"
       },
       {
@@ -4161,12 +5221,172 @@
         "pr": 518,
         "bpb": 1.0622,
         "user": "sofiabod"
+      },
+      {
+        "pr": 658,
+        "bpb": 1.3117,
+        "user": "hmlizama"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 642,
+        "bpb": 0.8173,
+        "user": "minh-stakc"
+      },
+      {
+        "pr": 644,
+        "bpb": 1.0944,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 586,
+        "bpb": 1.1365,
+        "user": "EaCognitive"
+      },
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 637,
+        "bpb": 1.14767,
+        "user": "bryjudy"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 628,
+        "bpb": 1.0983,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      },
+      {
+        "pr": 620,
+        "bpb": 0.9443,
+        "user": "robinojw"
+      },
+      {
+        "pr": 605,
+        "bpb": 0.7227,
+        "user": "bigbag"
+      },
+      {
+        "pr": 555,
+        "bpb": 1.09161722,
+        "user": "ymrohit"
+      },
+      {
+        "pr": 486,
+        "bpb": 1.1132,
+        "user": "ndokutovich"
+      },
+      {
+        "pr": 589,
+        "bpb": 1.1178,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 610,
+        "bpb": 1.119,
+        "user": "ChaosCodes"
+      },
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 601,
+        "bpb": 1.1418,
+        "user": "anantdgoel"
+      },
+      {
+        "pr": 600,
+        "bpb": 1.23637747,
+        "user": "humanaiconvention"
+      },
+      {
+        "pr": 347,
+        "bpb": null,
+        "user": "FlashyFlash3011"
+      },
+      {
+        "pr": 698,
+        "bpb": 1.16417381,
+        "user": "hesong0222-dev"
+      },
+      {
+        "pr": 691,
+        "bpb": 1.0988,
+        "user": "xexyz"
+      },
+      {
+        "pr": 694,
+        "bpb": 1.1507,
+        "user": "Bortlesboat"
+      },
+      {
+        "pr": 673,
+        "bpb": null,
+        "user": "Aristide021"
+      },
+      {
+        "pr": 672,
+        "bpb": 1.0781,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 671,
+        "bpb": 1.18069496,
+        "user": "keshav55"
+      },
+      {
+        "pr": 668,
+        "bpb": 1.092,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 665,
+        "bpb": 1.14638,
+        "user": "harborglowvintage-oss"
+      },
+      {
+        "pr": 661,
+        "bpb": 1.1175,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 363,
+        "bpb": 1.1648,
+        "user": "evangelinehelsinki"
       }
     ],
-    "best_bpb": 1.05,
+    "best_bpb": 0.7227,
     "worst_bpb": 1.9011,
-    "avg_bpb": 1.1577,
-    "count": 158
+    "avg_bpb": 1.148,
+    "count": 190
   },
   "BigramHash": {
     "name": "BigramHash",
@@ -4328,7 +5548,7 @@
       },
       {
         "pr": 433,
-        "bpb": 1.2105,
+        "bpb": 1.3441,
         "user": "Robby955"
       },
       {
@@ -4523,7 +5743,7 @@
       },
       {
         "pr": 363,
-        "bpb": 2.4402,
+        "bpb": 1.1648,
         "user": "evangelinehelsinki"
       },
       {
@@ -4593,7 +5813,7 @@
       },
       {
         "pr": 344,
-        "bpb": 1.2756,
+        "bpb": 1.133,
         "user": "aryanbhosale"
       },
       {
@@ -4853,7 +6073,7 @@
       },
       {
         "pr": 505,
-        "bpb": 1.11807945,
+        "bpb": 1.14802544,
         "user": "JoeProAI"
       },
       {
@@ -4903,7 +6123,7 @@
       },
       {
         "pr": 462,
-        "bpb": 1.0672,
+        "bpb": 1.06715285,
         "user": "JoeProAI"
       },
       {
@@ -4928,7 +6148,7 @@
       },
       {
         "pr": 550,
-        "bpb": null,
+        "bpb": 1.63,
         "user": "haimianbaobao007"
       },
       {
@@ -4948,7 +6168,7 @@
       },
       {
         "pr": 593,
-        "bpb": 1.1171,
+        "bpb": 1.1163,
         "user": "abaybektursun"
       },
       {
@@ -5013,7 +6233,7 @@
       },
       {
         "pr": 484,
-        "bpb": 1.1679,
+        "bpb": 1.1185,
         "user": "Robby955"
       },
       {
@@ -5118,19 +6338,264 @@
       },
       {
         "pr": 515,
-        "bpb": 1.2015,
+        "bpb": 1.1807,
         "user": "keshav55"
       },
       {
         "pr": 518,
         "bpb": 1.0622,
         "user": "sofiabod"
+      },
+      {
+        "pr": 658,
+        "bpb": 1.3117,
+        "user": "hmlizama"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 653,
+        "bpb": 1.1552,
+        "user": "demirelo"
+      },
+      {
+        "pr": 435,
+        "bpb": 1.613,
+        "user": "rthgit"
+      },
+      {
+        "pr": 648,
+        "bpb": null,
+        "user": "maorinka"
+      },
+      {
+        "pr": 642,
+        "bpb": 0.8173,
+        "user": "minh-stakc"
+      },
+      {
+        "pr": 649,
+        "bpb": 1.2073,
+        "user": "pall23-mech"
+      },
+      {
+        "pr": 644,
+        "bpb": 1.0944,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 586,
+        "bpb": 1.1365,
+        "user": "EaCognitive"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 637,
+        "bpb": 1.14767,
+        "user": "bryjudy"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 628,
+        "bpb": 1.0983,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      },
+      {
+        "pr": 632,
+        "bpb": 1.2767,
+        "user": "AtomChen0425"
+      },
+      {
+        "pr": 631,
+        "bpb": null,
+        "user": "senstar-hsoleimani"
+      },
+      {
+        "pr": 620,
+        "bpb": 0.9443,
+        "user": "robinojw"
+      },
+      {
+        "pr": 605,
+        "bpb": 0.7227,
+        "user": "bigbag"
+      },
+      {
+        "pr": 598,
+        "bpb": 1.1334,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 486,
+        "bpb": 1.1132,
+        "user": "ndokutovich"
+      },
+      {
+        "pr": 589,
+        "bpb": 1.1178,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 621,
+        "bpb": null,
+        "user": "tigertonez"
+      },
+      {
+        "pr": 615,
+        "bpb": 1.1169,
+        "user": "danialht"
+      },
+      {
+        "pr": 610,
+        "bpb": 1.119,
+        "user": "ChaosCodes"
+      },
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 601,
+        "bpb": 1.1418,
+        "user": "anantdgoel"
+      },
+      {
+        "pr": 600,
+        "bpb": 1.23637747,
+        "user": "humanaiconvention"
+      },
+      {
+        "pr": 700,
+        "bpb": 1.0541,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 347,
+        "bpb": null,
+        "user": "FlashyFlash3011"
+      },
+      {
+        "pr": 688,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 698,
+        "bpb": 1.16417381,
+        "user": "hesong0222-dev"
+      },
+      {
+        "pr": 691,
+        "bpb": 1.0988,
+        "user": "xexyz"
+      },
+      {
+        "pr": 695,
+        "bpb": 1.136,
+        "user": "0xNoramiya"
+      },
+      {
+        "pr": 694,
+        "bpb": 1.1507,
+        "user": "Bortlesboat"
+      },
+      {
+        "pr": 693,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 692,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 690,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 674,
+        "bpb": 1.0461,
+        "user": "newjordan"
+      },
+      {
+        "pr": 687,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 686,
+        "bpb": 1.11819,
+        "user": "msisovic"
+      },
+      {
+        "pr": 681,
+        "bpb": 1.4775,
+        "user": "Alfaxad"
+      },
+      {
+        "pr": 680,
+        "bpb": 1.1482555,
+        "user": "bro4all"
+      },
+      {
+        "pr": 673,
+        "bpb": null,
+        "user": "Aristide021"
+      },
+      {
+        "pr": 672,
+        "bpb": 1.0781,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 671,
+        "bpb": 1.18069496,
+        "user": "keshav55"
+      },
+      {
+        "pr": 668,
+        "bpb": 1.092,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 665,
+        "bpb": 1.14638,
+        "user": "harborglowvintage-oss"
+      },
+      {
+        "pr": 661,
+        "bpb": 1.1175,
+        "user": "andrewbaggio1"
       }
     ],
-    "best_bpb": 1.05,
-    "worst_bpb": 2.4402,
-    "avg_bpb": 1.1723,
-    "count": 191
+    "best_bpb": 0.7227,
+    "worst_bpb": 1.9011,
+    "avg_bpb": 1.1594,
+    "count": 240
   },
   "SWA": {
     "name": "SWA",
@@ -5277,7 +6742,7 @@
       },
       {
         "pr": 433,
-        "bpb": 1.2105,
+        "bpb": 1.3441,
         "user": "Robby955"
       },
       {
@@ -5792,7 +7257,7 @@
       },
       {
         "pr": 593,
-        "bpb": 1.1171,
+        "bpb": 1.1163,
         "user": "abaybektursun"
       },
       {
@@ -5917,19 +7382,169 @@
       },
       {
         "pr": 515,
-        "bpb": 1.2015,
+        "bpb": 1.1807,
         "user": "keshav55"
       },
       {
         "pr": 518,
         "bpb": 1.0622,
         "user": "sofiabod"
+      },
+      {
+        "pr": 658,
+        "bpb": 1.3117,
+        "user": "hmlizama"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 648,
+        "bpb": null,
+        "user": "maorinka"
+      },
+      {
+        "pr": 642,
+        "bpb": 0.8186,
+        "user": "minh-stakc"
+      },
+      {
+        "pr": 639,
+        "bpb": 1.1175,
+        "user": "Robby955"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 637,
+        "bpb": 1.14767,
+        "user": "bryjudy"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      },
+      {
+        "pr": 632,
+        "bpb": 1.2767,
+        "user": "AtomChen0425"
+      },
+      {
+        "pr": 620,
+        "bpb": 0.9443,
+        "user": "robinojw"
+      },
+      {
+        "pr": 605,
+        "bpb": 0.7227,
+        "user": "bigbag"
+      },
+      {
+        "pr": 581,
+        "bpb": 1.0698,
+        "user": "teddyoweh"
+      },
+      {
+        "pr": 610,
+        "bpb": 1.119,
+        "user": "ChaosCodes"
+      },
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 484,
+        "bpb": 1.1185,
+        "user": "Robby955"
+      },
+      {
+        "pr": 600,
+        "bpb": 1.23637747,
+        "user": "humanaiconvention"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 691,
+        "bpb": 1.0988,
+        "user": "xexyz"
+      },
+      {
+        "pr": 694,
+        "bpb": 1.1507,
+        "user": "Bortlesboat"
+      },
+      {
+        "pr": 693,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 692,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 690,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 686,
+        "bpb": 1.11819,
+        "user": "msisovic"
+      },
+      {
+        "pr": 673,
+        "bpb": null,
+        "user": "Aristide021"
+      },
+      {
+        "pr": 672,
+        "bpb": 1.0781,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 671,
+        "bpb": 1.18069496,
+        "user": "keshav55"
+      },
+      {
+        "pr": 670,
+        "bpb": null,
+        "user": "abaybektursun"
+      },
+      {
+        "pr": 665,
+        "bpb": 1.14638,
+        "user": "harborglowvintage-oss"
+      },
+      {
+        "pr": 369,
+        "bpb": 1.1328,
+        "user": "signalrush"
       }
     ],
-    "best_bpb": 1.0487,
+    "best_bpb": 0.7227,
     "worst_bpb": 3.08435975,
-    "avg_bpb": 1.1774,
-    "count": 158
+    "avg_bpb": 1.1661,
+    "count": 188
   },
   "Muon optimizer": {
     "name": "Muon optimizer",
@@ -5956,7 +7571,7 @@
       },
       {
         "pr": 473,
-        "bpb": 1.122,
+        "bpb": 1.1214,
         "user": "abaybektursun"
       },
       {
@@ -6341,14 +7956,54 @@
       },
       {
         "pr": 462,
-        "bpb": 1.0672,
+        "bpb": 1.06715285,
         "user": "JoeProAI"
+      },
+      {
+        "pr": 586,
+        "bpb": 1.1365,
+        "user": "EaCognitive"
+      },
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 518,
+        "bpb": 1.0622,
+        "user": "sofiabod"
+      },
+      {
+        "pr": 639,
+        "bpb": 1.1175,
+        "user": "Robby955"
+      },
+      {
+        "pr": 626,
+        "bpb": 1.118007,
+        "user": "kshitizz36"
+      },
+      {
+        "pr": 686,
+        "bpb": 1.11819,
+        "user": "msisovic"
+      },
+      {
+        "pr": 682,
+        "bpb": null,
+        "user": "gthgomez"
       }
     ],
     "best_bpb": 0.81,
     "worst_bpb": 1.9588,
-    "avg_bpb": 1.1897,
-    "count": 82
+    "avg_bpb": 1.1837,
+    "count": 90
   },
   "Zstd compression": {
     "name": "Zstd compression",
@@ -6832,12 +8487,52 @@
         "pr": 462,
         "bpb": 1.0672,
         "user": "JoeProAI"
+      },
+      {
+        "pr": 598,
+        "bpb": 1.1334,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 695,
+        "bpb": 1.136,
+        "user": "0xNoramiya"
+      },
+      {
+        "pr": 694,
+        "bpb": 1.1507,
+        "user": "Bortlesboat"
+      },
+      {
+        "pr": 484,
+        "bpb": 1.1185,
+        "user": "Robby955"
+      },
+      {
+        "pr": 433,
+        "bpb": 1.3441,
+        "user": "Robby955"
+      },
+      {
+        "pr": 685,
+        "bpb": 1.0366,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 674,
+        "bpb": 1.0461,
+        "user": "newjordan"
+      },
+      {
+        "pr": 656,
+        "bpb": 1.1195,
+        "user": "newjordan"
       }
     ],
-    "best_bpb": 1.05,
+    "best_bpb": 1.0366,
     "worst_bpb": 3.31983927,
-    "avg_bpb": 1.3191,
-    "count": 96
+    "avg_bpb": 1.3036,
+    "count": 104
   },
   "GQA": {
     "name": "GQA",
@@ -6924,7 +8619,7 @@
       },
       {
         "pr": 433,
-        "bpb": 1.2105,
+        "bpb": 1.3441,
         "user": "Robby955"
       },
       {
@@ -7274,7 +8969,7 @@
       },
       {
         "pr": 550,
-        "bpb": null,
+        "bpb": 1.63,
         "user": "haimianbaobao007"
       },
       {
@@ -7289,7 +8984,7 @@
       },
       {
         "pr": 579,
-        "bpb": 1.1478,
+        "bpb": 1.1325,
         "user": "newjordan"
       },
       {
@@ -7304,7 +8999,7 @@
       },
       {
         "pr": 484,
-        "bpb": 1.1679,
+        "bpb": 1.1185,
         "user": "Robby955"
       },
       {
@@ -7381,12 +9076,182 @@
         "pr": 518,
         "bpb": 1.0622,
         "user": "sofiabod"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 653,
+        "bpb": 1.1552,
+        "user": "demirelo"
+      },
+      {
+        "pr": 633,
+        "bpb": 1.1526,
+        "user": "MatoTeziTanka"
+      },
+      {
+        "pr": 642,
+        "bpb": 0.8173,
+        "user": "minh-stakc"
+      },
+      {
+        "pr": 639,
+        "bpb": 1.1158,
+        "user": "Robby955"
+      },
+      {
+        "pr": 649,
+        "bpb": 1.2073,
+        "user": "pall23-mech"
+      },
+      {
+        "pr": 586,
+        "bpb": 1.1365,
+        "user": "EaCognitive"
+      },
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 637,
+        "bpb": 1.14767,
+        "user": "bryjudy"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 549,
+        "bpb": 1.1194,
+        "user": "abaybektursun"
+      },
+      {
+        "pr": 605,
+        "bpb": 0.7227,
+        "user": "bigbag"
+      },
+      {
+        "pr": 614,
+        "bpb": 0.6864,
+        "user": "bigbag"
+      },
+      {
+        "pr": 600,
+        "bpb": 1.23637747,
+        "user": "humanaiconvention"
+      },
+      {
+        "pr": 599,
+        "bpb": 1.1828,
+        "user": "mkenney2"
+      },
+      {
+        "pr": 700,
+        "bpb": 1.0541,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 688,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 697,
+        "bpb": null,
+        "user": "Danishlynx"
+      },
+      {
+        "pr": 691,
+        "bpb": 1.0988,
+        "user": "xexyz"
+      },
+      {
+        "pr": 694,
+        "bpb": 1.1507,
+        "user": "Bortlesboat"
+      },
+      {
+        "pr": 693,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 692,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 690,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 685,
+        "bpb": 1.0366,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 672,
+        "bpb": 1.0781,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 515,
+        "bpb": 1.1807,
+        "user": "keshav55"
+      },
+      {
+        "pr": 671,
+        "bpb": 1.18069496,
+        "user": "keshav55"
+      },
+      {
+        "pr": 666,
+        "bpb": 1.1932,
+        "user": "chrislovescoding"
+      },
+      {
+        "pr": 363,
+        "bpb": 1.1648,
+        "user": "evangelinehelsinki"
       }
     ],
-    "best_bpb": 1.03056634,
+    "best_bpb": 0.6864,
     "worst_bpb": 3.31983927,
-    "avg_bpb": 1.2383,
-    "count": 108
+    "avg_bpb": 1.2064,
+    "count": 142
   },
   "OrthoInit": {
     "name": "OrthoInit",
@@ -7635,12 +9500,57 @@
         "pr": 430,
         "bpb": null,
         "user": "sahiee-dev"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 637,
+        "bpb": 1.14767,
+        "user": "bryjudy"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 469,
+        "bpb": 1.1418,
+        "user": "cmcdnd"
+      },
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 604,
+        "bpb": 136.56,
+        "user": "whitestone1121-web"
+      },
+      {
+        "pr": 297,
+        "bpb": 1.16292025,
+        "user": "davidpuertolas"
+      },
+      {
+        "pr": 672,
+        "bpb": 1.0781,
+        "user": "andrewbaggio1"
       }
     ],
     "best_bpb": 1.0539,
-    "worst_bpb": 1.4536,
-    "avg_bpb": 1.155,
-    "count": 49
+    "worst_bpb": 136.56,
+    "avg_bpb": 3.755,
+    "count": 58
   },
   "Recursive Weight Sharing": {
     "name": "Recursive Weight Sharing",
@@ -8138,12 +10048,147 @@
         "pr": 518,
         "bpb": 1.0622,
         "user": "sofiabod"
+      },
+      {
+        "pr": 645,
+        "bpb": 1.899,
+        "user": "FlynnCruse"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 595,
+        "bpb": 1.11,
+        "user": "LoquiAuris"
+      },
+      {
+        "pr": 605,
+        "bpb": 0.7227,
+        "user": "bigbag"
+      },
+      {
+        "pr": 614,
+        "bpb": 0.6864,
+        "user": "bigbag"
+      },
+      {
+        "pr": 618,
+        "bpb": 1.4702,
+        "user": "0xtigerclaw"
+      },
+      {
+        "pr": 615,
+        "bpb": 1.1169,
+        "user": "danialht"
+      },
+      {
+        "pr": 607,
+        "bpb": 1.475,
+        "user": "Neopolita"
+      },
+      {
+        "pr": 583,
+        "bpb": 1.1489,
+        "user": "suchihype"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 700,
+        "bpb": 1.0541,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 347,
+        "bpb": null,
+        "user": "FlashyFlash3011"
+      },
+      {
+        "pr": 688,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 698,
+        "bpb": 1.16417381,
+        "user": "hesong0222-dev"
+      },
+      {
+        "pr": 691,
+        "bpb": 1.0988,
+        "user": "xexyz"
+      },
+      {
+        "pr": 685,
+        "bpb": 1.0366,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 673,
+        "bpb": null,
+        "user": "Aristide021"
+      },
+      {
+        "pr": 672,
+        "bpb": 1.0781,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 515,
+        "bpb": 1.1807,
+        "user": "keshav55"
+      },
+      {
+        "pr": 671,
+        "bpb": 1.18069496,
+        "user": "keshav55"
+      },
+      {
+        "pr": 642,
+        "bpb": 0.8173,
+        "user": "minh-stakc"
+      },
+      {
+        "pr": 666,
+        "bpb": 1.1932,
+        "user": "chrislovescoding"
+      },
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 550,
+        "bpb": 1.63,
+        "user": "haimianbaobao007"
+      },
+      {
+        "pr": 363,
+        "bpb": 1.1648,
+        "user": "evangelinehelsinki"
       }
     ],
-    "best_bpb": 0.9588,
+    "best_bpb": 0.6864,
     "worst_bpb": 2.3517,
-    "avg_bpb": 1.2017,
-    "count": 94
+    "avg_bpb": 1.1919,
+    "count": 121
   },
   "QAT": {
     "name": "QAT",
@@ -8235,7 +10280,7 @@
       },
       {
         "pr": 433,
-        "bpb": 1.2105,
+        "bpb": 1.3441,
         "user": "Robby955"
       },
       {
@@ -8660,7 +10705,7 @@
       },
       {
         "pr": 505,
-        "bpb": 1.11807945,
+        "bpb": 1.14802544,
         "user": "JoeProAI"
       },
       {
@@ -8705,7 +10750,7 @@
       },
       {
         "pr": 550,
-        "bpb": null,
+        "bpb": 1.63,
         "user": "haimianbaobao007"
       },
       {
@@ -8865,14 +10910,209 @@
       },
       {
         "pr": 462,
-        "bpb": 1.0672,
+        "bpb": 1.06715285,
         "user": "JoeProAI"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 656,
+        "bpb": 1.1195,
+        "user": "newjordan"
+      },
+      {
+        "pr": 619,
+        "bpb": null,
+        "user": "zeal175"
+      },
+      {
+        "pr": 642,
+        "bpb": 0.8186,
+        "user": "minh-stakc"
+      },
+      {
+        "pr": 639,
+        "bpb": 1.1175,
+        "user": "Robby955"
+      },
+      {
+        "pr": 644,
+        "bpb": 1.0944,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 645,
+        "bpb": 1.899,
+        "user": "FlynnCruse"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 631,
+        "bpb": null,
+        "user": "senstar-hsoleimani"
+      },
+      {
+        "pr": 605,
+        "bpb": 0.7227,
+        "user": "bigbag"
+      },
+      {
+        "pr": 593,
+        "bpb": 1.1163,
+        "user": "abaybektursun"
+      },
+      {
+        "pr": 598,
+        "bpb": 1.1334,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 581,
+        "bpb": 1.0698,
+        "user": "teddyoweh"
+      },
+      {
+        "pr": 473,
+        "bpb": 1.1214,
+        "user": "abaybektursun"
+      },
+      {
+        "pr": 615,
+        "bpb": 1.1169,
+        "user": "danialht"
+      },
+      {
+        "pr": 607,
+        "bpb": 1.475,
+        "user": "Neopolita"
+      },
+      {
+        "pr": 610,
+        "bpb": 1.119,
+        "user": "ChaosCodes"
+      },
+      {
+        "pr": 599,
+        "bpb": 1.1828,
+        "user": "mkenney2"
+      },
+      {
+        "pr": 696,
+        "bpb": 1.2622,
+        "user": "gravelBridge"
+      },
+      {
+        "pr": 695,
+        "bpb": 1.136,
+        "user": "0xNoramiya"
+      },
+      {
+        "pr": 693,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 692,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 690,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 484,
+        "bpb": 1.1185,
+        "user": "Robby955"
+      },
+      {
+        "pr": 674,
+        "bpb": 1.0461,
+        "user": "newjordan"
+      },
+      {
+        "pr": 604,
+        "bpb": null,
+        "user": "whitestone1121-web"
+      },
+      {
+        "pr": 681,
+        "bpb": 1.4775,
+        "user": "Alfaxad"
+      },
+      {
+        "pr": 623,
+        "bpb": 1.1507,
+        "user": "SPThole"
+      },
+      {
+        "pr": 675,
+        "bpb": 1.2302,
+        "user": "ChideraIbe123"
+      },
+      {
+        "pr": 673,
+        "bpb": null,
+        "user": "Aristide021"
+      },
+      {
+        "pr": 672,
+        "bpb": 1.0781,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 670,
+        "bpb": null,
+        "user": "abaybektursun"
+      },
+      {
+        "pr": 669,
+        "bpb": 1.4942,
+        "user": "amabito"
+      },
+      {
+        "pr": 667,
+        "bpb": 1.1352,
+        "user": "suchitj2702"
+      },
+      {
+        "pr": 661,
+        "bpb": 1.1175,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 363,
+        "bpb": 1.1648,
+        "user": "evangelinehelsinki"
       }
     ],
     "best_bpb": 0.643,
     "worst_bpb": 2.962,
-    "avg_bpb": 1.2074,
-    "count": 144
+    "avg_bpb": 1.2012,
+    "count": 183
   },
   "warmdown": {
     "name": "warmdown",
@@ -9209,14 +11449,94 @@
       },
       {
         "pr": 462,
-        "bpb": 1.0672,
+        "bpb": 1.06715285,
         "user": "JoeProAI"
+      },
+      {
+        "pr": 644,
+        "bpb": 1.0944,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 586,
+        "bpb": 1.1365,
+        "user": "EaCognitive"
+      },
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 628,
+        "bpb": 1.0983,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 598,
+        "bpb": 1.1334,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 618,
+        "bpb": 1.4702,
+        "user": "0xtigerclaw"
+      },
+      {
+        "pr": 604,
+        "bpb": 136.56,
+        "user": "whitestone1121-web"
+      },
+      {
+        "pr": 599,
+        "bpb": 1.1828,
+        "user": "mkenney2"
+      },
+      {
+        "pr": 695,
+        "bpb": 1.136,
+        "user": "0xNoramiya"
+      },
+      {
+        "pr": 668,
+        "bpb": 1.092,
+        "user": "Christopher-Lee-McClendon"
       }
     ],
     "best_bpb": 0.643,
-    "worst_bpb": 1.9263,
-    "avg_bpb": 1.1903,
-    "count": 67
+    "worst_bpb": 136.56,
+    "avg_bpb": 2.9634,
+    "count": 83
   },
   "TTT": {
     "name": "TTT",
@@ -9598,7 +11918,7 @@
       },
       {
         "pr": 484,
-        "bpb": 1.1746,
+        "bpb": 1.1185,
         "user": "Robby955"
       },
       {
@@ -9775,12 +12095,177 @@
         "pr": 518,
         "bpb": 1.0622,
         "user": "sofiabod"
+      },
+      {
+        "pr": 658,
+        "bpb": 1.3117,
+        "user": "hmlizama"
+      },
+      {
+        "pr": 550,
+        "bpb": 1.189,
+        "user": "haimianbaobao007"
+      },
+      {
+        "pr": 656,
+        "bpb": 1.1195,
+        "user": "newjordan"
+      },
+      {
+        "pr": 653,
+        "bpb": 1.1552,
+        "user": "demirelo"
+      },
+      {
+        "pr": 633,
+        "bpb": 1.1526,
+        "user": "MatoTeziTanka"
+      },
+      {
+        "pr": 651,
+        "bpb": 1.2093,
+        "user": "phulin"
+      },
+      {
+        "pr": 642,
+        "bpb": 0.8173,
+        "user": "minh-stakc"
+      },
+      {
+        "pr": 644,
+        "bpb": 1.0944,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 646,
+        "bpb": 1.1349,
+        "user": "Upsalla"
+      },
+      {
+        "pr": 596,
+        "bpb": 0.643,
+        "user": "AriaAnima"
+      },
+      {
+        "pr": 628,
+        "bpb": 1.0983,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 631,
+        "bpb": null,
+        "user": "senstar-hsoleimani"
+      },
+      {
+        "pr": 548,
+        "bpb": 1.0865,
+        "user": "LoquiAuris"
+      },
+      {
+        "pr": 622,
+        "bpb": 1.0941,
+        "user": "Upsalla"
+      },
+      {
+        "pr": 598,
+        "bpb": 1.1334,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 486,
+        "bpb": 1.1132,
+        "user": "ndokutovich"
+      },
+      {
+        "pr": 462,
+        "bpb": 1.06715285,
+        "user": "JoeProAI"
+      },
+      {
+        "pr": 442,
+        "bpb": 1.1027,
+        "user": "sjp611"
+      },
+      {
+        "pr": 617,
+        "bpb": null,
+        "user": "ryanadamsai"
+      },
+      {
+        "pr": 615,
+        "bpb": 1.1169,
+        "user": "danialht"
+      },
+      {
+        "pr": 612,
+        "bpb": 1.10788263,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 610,
+        "bpb": 1.119,
+        "user": "ChaosCodes"
+      },
+      {
+        "pr": 600,
+        "bpb": 1.23637747,
+        "user": "humanaiconvention"
+      },
+      {
+        "pr": 700,
+        "bpb": 1.0541,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 347,
+        "bpb": null,
+        "user": "FlashyFlash3011"
+      },
+      {
+        "pr": 688,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 697,
+        "bpb": null,
+        "user": "Danishlynx"
+      },
+      {
+        "pr": 691,
+        "bpb": 1.0988,
+        "user": "xexyz"
+      },
+      {
+        "pr": 696,
+        "bpb": 1.2622,
+        "user": "gravelBridge"
+      },
+      {
+        "pr": 676,
+        "bpb": null,
+        "user": "they-call-me-god"
+      },
+      {
+        "pr": 672,
+        "bpb": 1.0781,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 662,
+        "bpb": 1.1208232,
+        "user": "simon-marcus"
+      },
+      {
+        "pr": 661,
+        "bpb": 1.1175,
+        "user": "andrewbaggio1"
       }
     ],
-    "best_bpb": 0.7853,
+    "best_bpb": 0.643,
     "worst_bpb": 1.5382,
-    "avg_bpb": 1.1541,
-    "count": 111
+    "avg_bpb": 1.1418,
+    "count": 144
   },
   "LoRA": {
     "name": "LoRA",
@@ -9817,7 +12302,7 @@
       },
       {
         "pr": 363,
-        "bpb": 2.4402,
+        "bpb": 1.1648,
         "user": "evangelinehelsinki"
       },
       {
@@ -9929,12 +12414,57 @@
         "pr": 522,
         "bpb": null,
         "user": "Himanshukkk"
+      },
+      {
+        "pr": 658,
+        "bpb": 1.3117,
+        "user": "hmlizama"
+      },
+      {
+        "pr": 550,
+        "bpb": 1.189,
+        "user": "haimianbaobao007"
+      },
+      {
+        "pr": 633,
+        "bpb": 1.1526,
+        "user": "MatoTeziTanka"
+      },
+      {
+        "pr": 642,
+        "bpb": 0.8173,
+        "user": "minh-stakc"
+      },
+      {
+        "pr": 596,
+        "bpb": 0.643,
+        "user": "AriaAnima"
+      },
+      {
+        "pr": 548,
+        "bpb": 1.0865,
+        "user": "LoquiAuris"
+      },
+      {
+        "pr": 622,
+        "bpb": 1.0941,
+        "user": "Upsalla"
+      },
+      {
+        "pr": 617,
+        "bpb": null,
+        "user": "ryanadamsai"
+      },
+      {
+        "pr": 600,
+        "bpb": 1.23637747,
+        "user": "humanaiconvention"
       }
     ],
-    "best_bpb": 0.7853,
+    "best_bpb": 0.643,
     "worst_bpb": 2.962,
-    "avg_bpb": 1.3781,
-    "count": 29
+    "avg_bpb": 1.2435,
+    "count": 38
   },
   "FP16 tied embeddings": {
     "name": "FP16 tied embeddings",
@@ -10371,14 +12901,44 @@
       },
       {
         "pr": 515,
-        "bpb": 1.2015,
+        "bpb": 1.1807,
         "user": "keshav55"
+      },
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 671,
+        "bpb": 1.18069496,
+        "user": "keshav55"
+      },
+      {
+        "pr": 665,
+        "bpb": 1.14638,
+        "user": "harborglowvintage-oss"
       }
     ],
     "best_bpb": 1.0487,
     "worst_bpb": 3.2306,
-    "avg_bpb": 1.255,
-    "count": 87
+    "avg_bpb": 1.2467,
+    "count": 93
   },
   "Int5 quantization": {
     "name": "Int5 quantization",
@@ -10427,12 +12987,37 @@
         "pr": 511,
         "bpb": 1.1417373,
         "user": "AnirudhRahul"
+      },
+      {
+        "pr": 694,
+        "bpb": 1.1507,
+        "user": "Bortlesboat"
+      },
+      {
+        "pr": 531,
+        "bpb": 1.13243,
+        "user": "pragnyanramtha"
+      },
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 665,
+        "bpb": 1.14638,
+        "user": "harborglowvintage-oss"
+      },
+      {
+        "pr": 369,
+        "bpb": 1.1328,
+        "user": "signalrush"
       }
     ],
-    "best_bpb": 1.1417373,
+    "best_bpb": 1.1162,
     "worst_bpb": 1.2334,
-    "avg_bpb": 1.1668,
-    "count": 9
+    "avg_bpb": 1.1557,
+    "count": 14
   },
   "GPTQ": {
     "name": "GPTQ",
@@ -10464,7 +13049,7 @@
       },
       {
         "pr": 593,
-        "bpb": 1.1171,
+        "bpb": 1.1163,
         "user": "abaybektursun"
       },
       {
@@ -10499,7 +13084,7 @@
       },
       {
         "pr": 579,
-        "bpb": 1.1478,
+        "bpb": 1.1325,
         "user": "newjordan"
       },
       {
@@ -10556,12 +13141,152 @@
         "pr": 503,
         "bpb": 1.1195,
         "user": "EthanYangTW"
+      },
+      {
+        "pr": 656,
+        "bpb": 1.1195,
+        "user": "newjordan"
+      },
+      {
+        "pr": 633,
+        "bpb": 1.1526,
+        "user": "MatoTeziTanka"
+      },
+      {
+        "pr": 639,
+        "bpb": 1.1158,
+        "user": "Robby955"
+      },
+      {
+        "pr": 636,
+        "bpb": 1.12336724,
+        "user": "NewyorkDev"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 628,
+        "bpb": 1.0983,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 631,
+        "bpb": null,
+        "user": "senstar-hsoleimani"
+      },
+      {
+        "pr": 626,
+        "bpb": 1.11800697,
+        "user": "kshitizz36"
+      },
+      {
+        "pr": 598,
+        "bpb": 1.1334,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 615,
+        "bpb": 1.1169,
+        "user": "danialht"
+      },
+      {
+        "pr": 612,
+        "bpb": 1.10788263,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 610,
+        "bpb": 1.119,
+        "user": "ChaosCodes"
+      },
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 603,
+        "bpb": null,
+        "user": "AnirudhRahul"
+      },
+      {
+        "pr": 601,
+        "bpb": 1.1418,
+        "user": "anantdgoel"
+      },
+      {
+        "pr": 700,
+        "bpb": 1.0541,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 347,
+        "bpb": null,
+        "user": "FlashyFlash3011"
+      },
+      {
+        "pr": 688,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 698,
+        "bpb": 1.16417381,
+        "user": "hesong0222-dev"
+      },
+      {
+        "pr": 691,
+        "bpb": 1.0988,
+        "user": "xexyz"
+      },
+      {
+        "pr": 693,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 692,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 690,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 668,
+        "bpb": 1.092,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
       }
     ],
-    "best_bpb": 1.1164,
-    "worst_bpb": 1.1478,
-    "avg_bpb": 1.1235,
-    "count": 24
+    "best_bpb": 1.0541,
+    "worst_bpb": 1.16417381,
+    "avg_bpb": 1.1198,
+    "count": 52
   },
   "FP16": {
     "name": "FP16",
@@ -10709,12 +13434,27 @@
         "pr": 540,
         "bpb": null,
         "user": "devferrazZz"
+      },
+      {
+        "pr": 648,
+        "bpb": null,
+        "user": "maorinka"
+      },
+      {
+        "pr": 697,
+        "bpb": null,
+        "user": "Danishlynx"
+      },
+      {
+        "pr": 696,
+        "bpb": 1.2622,
+        "user": "gravelBridge"
       }
     ],
     "best_bpb": 1.2092,
     "worst_bpb": 3.2306,
-    "avg_bpb": 1.8508,
-    "count": 25
+    "avg_bpb": 1.8087,
+    "count": 28
   },
   "tied embeddings": {
     "name": "tied embeddings",
@@ -10748,12 +13488,22 @@
         "pr": 462,
         "bpb": 1.0672,
         "user": "JoeProAI"
+      },
+      {
+        "pr": 649,
+        "bpb": 1.2073,
+        "user": "pall23-mech"
+      },
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
       }
     ],
     "best_bpb": 1.0622,
     "worst_bpb": 1.35091763,
-    "avg_bpb": 1.1965,
-    "count": 6
+    "avg_bpb": 1.1876,
+    "count": 8
   },
   "Int6": {
     "name": "Int6",
@@ -11065,7 +13815,7 @@
       },
       {
         "pr": 344,
-        "bpb": 1.2756,
+        "bpb": 1.133,
         "user": "aryanbhosale"
       },
       {
@@ -11465,12 +14215,12 @@
       },
       {
         "pr": 550,
-        "bpb": null,
+        "bpb": 1.63,
         "user": "haimianbaobao007"
       },
       {
         "pr": 435,
-        "bpb": 1.8716,
+        "bpb": 1.613,
         "user": "rthgit"
       },
       {
@@ -11580,7 +14330,7 @@
       },
       {
         "pr": 505,
-        "bpb": 1.11807945,
+        "bpb": 1.14802544,
         "user": "JoeProAI"
       },
       {
@@ -11635,14 +14385,229 @@
       },
       {
         "pr": 515,
-        "bpb": 1.2015,
+        "bpb": 1.1807,
         "user": "keshav55"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 656,
+        "bpb": 1.1195,
+        "user": "newjordan"
+      },
+      {
+        "pr": 633,
+        "bpb": 1.1526,
+        "user": "MatoTeziTanka"
+      },
+      {
+        "pr": 619,
+        "bpb": null,
+        "user": "zeal175"
+      },
+      {
+        "pr": 642,
+        "bpb": 0.8173,
+        "user": "minh-stakc"
+      },
+      {
+        "pr": 649,
+        "bpb": 1.2073,
+        "user": "pall23-mech"
+      },
+      {
+        "pr": 644,
+        "bpb": 1.0944,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 646,
+        "bpb": 1.1349,
+        "user": "Upsalla"
+      },
+      {
+        "pr": 645,
+        "bpb": 1.899,
+        "user": "FlynnCruse"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 637,
+        "bpb": 1.14767,
+        "user": "bryjudy"
+      },
+      {
+        "pr": 636,
+        "bpb": 1.12336724,
+        "user": "NewyorkDev"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 628,
+        "bpb": 1.0983,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 632,
+        "bpb": 1.2767,
+        "user": "AtomChen0425"
+      },
+      {
+        "pr": 631,
+        "bpb": null,
+        "user": "senstar-hsoleimani"
+      },
+      {
+        "pr": 605,
+        "bpb": 0.7227,
+        "user": "bigbag"
+      },
+      {
+        "pr": 614,
+        "bpb": 0.6864,
+        "user": "bigbag"
+      },
+      {
+        "pr": 623,
+        "bpb": 1.1507,
+        "user": "SPThole"
+      },
+      {
+        "pr": 518,
+        "bpb": 1.0622,
+        "user": "sofiabod"
+      },
+      {
+        "pr": 486,
+        "bpb": 1.1132,
+        "user": "ndokutovich"
+      },
+      {
+        "pr": 442,
+        "bpb": 1.1027,
+        "user": "sjp611"
+      },
+      {
+        "pr": 417,
+        "bpb": 1.1227,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 615,
+        "bpb": 1.1169,
+        "user": "danialht"
+      },
+      {
+        "pr": 612,
+        "bpb": 1.10788263,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 610,
+        "bpb": 1.119,
+        "user": "ChaosCodes"
+      },
+      {
+        "pr": 484,
+        "bpb": 1.1185,
+        "user": "loveless2001"
+      },
+      {
+        "pr": 601,
+        "bpb": 1.1418,
+        "user": "anantdgoel"
+      },
+      {
+        "pr": 600,
+        "bpb": 1.23637747,
+        "user": "humanaiconvention"
+      },
+      {
+        "pr": 599,
+        "bpb": 1.1828,
+        "user": "mkenney2"
+      },
+      {
+        "pr": 347,
+        "bpb": null,
+        "user": "FlashyFlash3011"
+      },
+      {
+        "pr": 688,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 699,
+        "bpb": null,
+        "user": "RohanMulay1"
+      },
+      {
+        "pr": 698,
+        "bpb": 1.16417381,
+        "user": "hesong0222-dev"
+      },
+      {
+        "pr": 697,
+        "bpb": null,
+        "user": "Danishlynx"
+      },
+      {
+        "pr": 691,
+        "bpb": 1.0988,
+        "user": "xexyz"
+      },
+      {
+        "pr": 696,
+        "bpb": 1.2622,
+        "user": "gravelBridge"
+      },
+      {
+        "pr": 678,
+        "bpb": 1.3525,
+        "user": "SPThole"
+      },
+      {
+        "pr": 673,
+        "bpb": null,
+        "user": "Aristide021"
+      },
+      {
+        "pr": 672,
+        "bpb": 1.0781,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 671,
+        "bpb": 1.18069496,
+        "user": "keshav55"
+      },
+      {
+        "pr": 661,
+        "bpb": 1.1175,
+        "user": "andrewbaggio1"
       }
     ],
     "best_bpb": 0.643,
     "worst_bpb": 2.3517,
-    "avg_bpb": 1.1694,
-    "count": 176
+    "avg_bpb": 1.1624,
+    "count": 219
   },
   "Zstd": {
     "name": "Zstd",
@@ -12279,7 +15244,7 @@
       },
       {
         "pr": 505,
-        "bpb": 1.11807945,
+        "bpb": 1.14802544,
         "user": "JoeProAI"
       },
       {
@@ -12404,8 +15369,8 @@
       },
       {
         "pr": 484,
-        "bpb": 1.1679,
-        "user": "Robby955"
+        "bpb": 1.1185,
+        "user": "loveless2001"
       },
       {
         "pr": 567,
@@ -12506,12 +15471,182 @@
         "pr": 516,
         "bpb": 1.14283,
         "user": "Asukabot0"
+      },
+      {
+        "pr": 656,
+        "bpb": 1.1195,
+        "user": "newjordan"
+      },
+      {
+        "pr": 633,
+        "bpb": 1.1526,
+        "user": "MatoTeziTanka"
+      },
+      {
+        "pr": 642,
+        "bpb": 0.8173,
+        "user": "minh-stakc"
+      },
+      {
+        "pr": 649,
+        "bpb": 1.2073,
+        "user": "pall23-mech"
+      },
+      {
+        "pr": 644,
+        "bpb": 1.0944,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 637,
+        "bpb": 1.14767,
+        "user": "bryjudy"
+      },
+      {
+        "pr": 636,
+        "bpb": 1.12336724,
+        "user": "NewyorkDev"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 630,
+        "bpb": 1.36294332,
+        "user": "LapushBaby"
+      },
+      {
+        "pr": 620,
+        "bpb": 0.9443,
+        "user": "robinojw"
+      },
+      {
+        "pr": 605,
+        "bpb": 0.7227,
+        "user": "bigbag"
+      },
+      {
+        "pr": 614,
+        "bpb": 0.6864,
+        "user": "bigbag"
+      },
+      {
+        "pr": 555,
+        "bpb": 1.09161722,
+        "user": "ymrohit"
+      },
+      {
+        "pr": 518,
+        "bpb": 1.0622,
+        "user": "sofiabod"
+      },
+      {
+        "pr": 486,
+        "bpb": 1.1132,
+        "user": "ndokutovich"
+      },
+      {
+        "pr": 442,
+        "bpb": 1.1027,
+        "user": "sjp611"
+      },
+      {
+        "pr": 417,
+        "bpb": 1.1227,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 612,
+        "bpb": 1.10788263,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 610,
+        "bpb": 1.119,
+        "user": "ChaosCodes"
+      },
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 602,
+        "bpb": 1.14222237,
+        "user": "ReNothingg"
+      },
+      {
+        "pr": 601,
+        "bpb": 1.1418,
+        "user": "anantdgoel"
+      },
+      {
+        "pr": 600,
+        "bpb": 1.23637747,
+        "user": "humanaiconvention"
+      },
+      {
+        "pr": 700,
+        "bpb": 1.0541,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 347,
+        "bpb": null,
+        "user": "FlashyFlash3011"
+      },
+      {
+        "pr": 688,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 698,
+        "bpb": 1.16417381,
+        "user": "hesong0222-dev"
+      },
+      {
+        "pr": 691,
+        "bpb": 1.0988,
+        "user": "xexyz"
+      },
+      {
+        "pr": 678,
+        "bpb": 1.3525,
+        "user": "SPThole"
+      },
+      {
+        "pr": 672,
+        "bpb": 1.0781,
+        "user": "andrewbaggio1"
+      },
+      {
+        "pr": 669,
+        "bpb": 1.4942,
+        "user": "amabito"
+      },
+      {
+        "pr": 661,
+        "bpb": 1.1175,
+        "user": "andrewbaggio1"
       }
     ],
-    "best_bpb": 1.03056634,
+    "best_bpb": 0.6864,
     "worst_bpb": 3.08435975,
-    "avg_bpb": 1.2173,
-    "count": 172
+    "avg_bpb": 1.1975,
+    "count": 206
   },
   "Meta-TTT": {
     "name": "Meta-TTT",
@@ -12847,7 +15982,7 @@
       },
       {
         "pr": 435,
-        "bpb": 1.8716,
+        "bpb": 1.613,
         "user": "rthgit"
       },
       {
@@ -12864,12 +15999,47 @@
         "pr": 199,
         "bpb": 1.1929,
         "user": "mrdavtan"
+      },
+      {
+        "pr": 142,
+        "bpb": 1.1925,
+        "user": "ankitmaloo"
+      },
+      {
+        "pr": 643,
+        "bpb": 1.5672,
+        "user": "frido22"
+      },
+      {
+        "pr": 630,
+        "bpb": 1.36294332,
+        "user": "LapushBaby"
+      },
+      {
+        "pr": 620,
+        "bpb": 0.9443,
+        "user": "robinojw"
+      },
+      {
+        "pr": 604,
+        "bpb": null,
+        "user": "whitestone1121-web"
+      },
+      {
+        "pr": 675,
+        "bpb": 1.2302,
+        "user": "ChideraIbe123"
+      },
+      {
+        "pr": 670,
+        "bpb": null,
+        "user": "abaybektursun"
       }
     ],
-    "best_bpb": 1.03056634,
+    "best_bpb": 0.9443,
     "worst_bpb": 2.4402,
-    "avg_bpb": 1.3507,
-    "count": 67
+    "avg_bpb": 1.3397,
+    "count": 74
   },
   "DenseFormer": {
     "name": "DenseFormer",
@@ -12883,12 +16053,22 @@
         "pr": 328,
         "bpb": 1.9588,
         "user": "kingjulio8238"
+      },
+      {
+        "pr": 615,
+        "bpb": 1.1169,
+        "user": "danialht"
+      },
+      {
+        "pr": 363,
+        "bpb": 1.1648,
+        "user": "evangelinehelsinki"
       }
     ],
-    "best_bpb": 1.9588,
+    "best_bpb": 1.1169,
     "worst_bpb": 1.9588,
-    "avg_bpb": 1.9588,
-    "count": 2
+    "avg_bpb": 1.4135,
+    "count": 4
   },
   "Gated Attention": {
     "name": "Gated Attention",
@@ -12967,12 +16147,42 @@
         "pr": 516,
         "bpb": 1.14283,
         "user": "Asukabot0"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 607,
+        "bpb": 1.475,
+        "user": "Neopolita"
+      },
+      {
+        "pr": 601,
+        "bpb": 1.1418,
+        "user": "anantdgoel"
+      },
+      {
+        "pr": 670,
+        "bpb": null,
+        "user": "abaybektursun"
       }
     ],
     "best_bpb": 1.0487,
     "worst_bpb": 3.2306,
-    "avg_bpb": 1.4025,
-    "count": 15
+    "avg_bpb": 1.3301,
+    "count": 21
   },
   "GPTQ-lite": {
     "name": "GPTQ-lite",
@@ -13011,12 +16221,32 @@
         "pr": 534,
         "bpb": 1.1804,
         "user": "rarce"
+      },
+      {
+        "pr": 644,
+        "bpb": 1.0944,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 645,
+        "bpb": 1.899,
+        "user": "FlynnCruse"
+      },
+      {
+        "pr": 604,
+        "bpb": null,
+        "user": "whitestone1121-web"
+      },
+      {
+        "pr": 505,
+        "bpb": 1.14802544,
+        "user": "JoeProAI"
       }
     ],
-    "best_bpb": 1.1194,
-    "worst_bpb": 1.1804,
-    "avg_bpb": 1.1472,
-    "count": 7
+    "best_bpb": 1.0944,
+    "worst_bpb": 1.899,
+    "avg_bpb": 1.225,
+    "count": 11
   },
   "Int5": {
     "name": "Int5",
@@ -13268,14 +16498,64 @@
       },
       {
         "pr": 515,
-        "bpb": 1.2015,
+        "bpb": 1.1807,
         "user": "keshav55"
+      },
+      {
+        "pr": 619,
+        "bpb": null,
+        "user": "zeal175"
+      },
+      {
+        "pr": 632,
+        "bpb": 1.2767,
+        "user": "AtomChen0425"
+      },
+      {
+        "pr": 623,
+        "bpb": 1.1507,
+        "user": "SPThole"
+      },
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 602,
+        "bpb": 1.14222237,
+        "user": "ReNothingg"
+      },
+      {
+        "pr": 601,
+        "bpb": 1.1418,
+        "user": "anantdgoel"
+      },
+      {
+        "pr": 700,
+        "bpb": 1.0541,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 671,
+        "bpb": 1.18069496,
+        "user": "keshav55"
+      },
+      {
+        "pr": 670,
+        "bpb": null,
+        "user": "abaybektursun"
+      },
+      {
+        "pr": 669,
+        "bpb": 1.4942,
+        "user": "amabito"
       }
     ],
-    "best_bpb": 1.116,
+    "best_bpb": 1.0541,
     "worst_bpb": 3.08435975,
-    "avg_bpb": 1.2081,
-    "count": 50
+    "avg_bpb": 1.2055,
+    "count": 60
   },
   "SwiGLU": {
     "name": "SwiGLU",
@@ -13407,7 +16687,7 @@
       },
       {
         "pr": 505,
-        "bpb": 1.11807945,
+        "bpb": 1.14802544,
         "user": "JoeProAI"
       },
       {
@@ -13422,7 +16702,7 @@
       },
       {
         "pr": 462,
-        "bpb": 1.0672,
+        "bpb": 1.06715285,
         "user": "JoeProAI"
       },
       {
@@ -13454,12 +16734,42 @@
         "pr": 553,
         "bpb": null,
         "user": "Vighaneshs"
+      },
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 549,
+        "bpb": 1.1194,
+        "user": "abaybektursun"
+      },
+      {
+        "pr": 604,
+        "bpb": null,
+        "user": "whitestone1121-web"
+      },
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 676,
+        "bpb": null,
+        "user": "they-call-me-god"
+      },
+      {
+        "pr": 661,
+        "bpb": 1.1175,
+        "user": "andrewbaggio1"
       }
     ],
-    "best_bpb": 1.0672,
+    "best_bpb": 1.06715285,
     "worst_bpb": 1.9263,
-    "avg_bpb": 1.2106,
-    "count": 35
+    "avg_bpb": 1.1972,
+    "count": 41
   },
   "U-Net": {
     "name": "U-Net",
@@ -13491,14 +16801,59 @@
       },
       {
         "pr": 505,
-        "bpb": 1.11807945,
+        "bpb": 1.14802544,
         "user": "JoeProAI"
+      },
+      {
+        "pr": 550,
+        "bpb": 1.189,
+        "user": "haimianbaobao007"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 656,
+        "bpb": 1.1195,
+        "user": "newjordan"
+      },
+      {
+        "pr": 579,
+        "bpb": 1.1325,
+        "user": "newjordan"
+      },
+      {
+        "pr": 648,
+        "bpb": null,
+        "user": "maorinka"
+      },
+      {
+        "pr": 586,
+        "bpb": 1.1365,
+        "user": "EaCognitive"
+      },
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 661,
+        "bpb": 1.1175,
+        "user": "andrewbaggio1"
       }
     ],
     "best_bpb": 1.06715285,
-    "worst_bpb": 1.1558,
-    "avg_bpb": 1.1219,
-    "count": 6
+    "worst_bpb": 1.189,
+    "avg_bpb": 1.1337,
+    "count": 15
   },
   "Muon": {
     "name": "Muon",
@@ -13575,7 +16930,7 @@
       },
       {
         "pr": 433,
-        "bpb": 1.2105,
+        "bpb": 1.3441,
         "user": "Robby955"
       },
       {
@@ -14000,12 +17355,12 @@
       },
       {
         "pr": 550,
-        "bpb": null,
+        "bpb": 1.189,
         "user": "haimianbaobao007"
       },
       {
         "pr": 593,
-        "bpb": 1.1171,
+        "bpb": 1.1163,
         "user": "abaybektursun"
       },
       {
@@ -14160,14 +17515,174 @@
       },
       {
         "pr": 515,
-        "bpb": 1.2015,
+        "bpb": 1.1807,
         "user": "keshav55"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 653,
+        "bpb": 1.1552,
+        "user": "demirelo"
+      },
+      {
+        "pr": 642,
+        "bpb": 0.8186,
+        "user": "minh-stakc"
+      },
+      {
+        "pr": 649,
+        "bpb": 1.2073,
+        "user": "pall23-mech"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 620,
+        "bpb": 0.9443,
+        "user": "robinojw"
+      },
+      {
+        "pr": 626,
+        "bpb": 1.11800697,
+        "user": "kshitizz36"
+      },
+      {
+        "pr": 605,
+        "bpb": 0.7227,
+        "user": "bigbag"
+      },
+      {
+        "pr": 614,
+        "bpb": 0.6864,
+        "user": "bigbag"
+      },
+      {
+        "pr": 623,
+        "bpb": 1.1507,
+        "user": "SPThole"
+      },
+      {
+        "pr": 340,
+        "bpb": null,
+        "user": "starfly-web"
+      },
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 604,
+        "bpb": null,
+        "user": "whitestone1121-web"
+      },
+      {
+        "pr": 698,
+        "bpb": 1.16417381,
+        "user": "hesong0222-dev"
+      },
+      {
+        "pr": 695,
+        "bpb": 1.136,
+        "user": "0xNoramiya"
+      },
+      {
+        "pr": 694,
+        "bpb": 1.1507,
+        "user": "Bortlesboat"
+      },
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 693,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 692,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 690,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 531,
+        "bpb": 1.13243,
+        "user": "pragnyanramtha"
+      },
+      {
+        "pr": 484,
+        "bpb": 1.1185,
+        "user": "Robby955"
+      },
+      {
+        "pr": 680,
+        "bpb": 1.1482555,
+        "user": "bro4all"
+      },
+      {
+        "pr": 676,
+        "bpb": null,
+        "user": "they-call-me-god"
+      },
+      {
+        "pr": 671,
+        "bpb": 1.18069496,
+        "user": "keshav55"
+      },
+      {
+        "pr": 670,
+        "bpb": null,
+        "user": "abaybektursun"
+      },
+      {
+        "pr": 659,
+        "bpb": 1.092,
+        "user": "deanbrr"
+      },
+      {
+        "pr": 667,
+        "bpb": 1.1352,
+        "user": "suchitj2702"
+      },
+      {
+        "pr": 666,
+        "bpb": 1.1932,
+        "user": "chrislovescoding"
+      },
+      {
+        "pr": 369,
+        "bpb": 1.1328,
+        "user": "signalrush"
       }
     ],
-    "best_bpb": 1.06715285,
+    "best_bpb": 0.6864,
     "worst_bpb": 1.9263,
-    "avg_bpb": 1.1885,
-    "count": 132
+    "avg_bpb": 1.1693,
+    "count": 164
   },
   "pruning": {
     "name": "pruning",
@@ -14194,14 +17709,24 @@
       },
       {
         "pr": 515,
-        "bpb": 1.2015,
+        "bpb": 1.1807,
         "user": "keshav55"
+      },
+      {
+        "pr": 671,
+        "bpb": 1.18069496,
+        "user": "keshav55"
+      },
+      {
+        "pr": 670,
+        "bpb": null,
+        "user": "abaybektursun"
       }
     ],
     "best_bpb": 1.1164,
-    "worst_bpb": 1.2015,
-    "avg_bpb": 1.1543,
-    "count": 5
+    "worst_bpb": 1.1807,
+    "avg_bpb": 1.1552,
+    "count": 7
   },
   "weight sharing": {
     "name": "weight sharing",
@@ -14447,14 +17972,44 @@
       },
       {
         "pr": 462,
-        "bpb": 1.0672,
+        "bpb": 1.06715285,
         "user": "JoeProAI"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 697,
+        "bpb": null,
+        "user": "Danishlynx"
       }
     ],
     "best_bpb": 1.0539,
     "worst_bpb": 1.9011,
-    "avg_bpb": 1.2115,
-    "count": 32
+    "avg_bpb": 1.1984,
+    "count": 38
   },
   "per-layer scaling": {
     "name": "per-layer scaling",
@@ -14480,7 +18035,7 @@
       },
       {
         "pr": 593,
-        "bpb": 1.1171,
+        "bpb": 1.1163,
         "user": "abaybektursun"
       },
       {
@@ -14497,12 +18052,62 @@
         "pr": 535,
         "bpb": 1.1204,
         "user": "raahilshah"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 549,
+        "bpb": 1.1194,
+        "user": "abaybektursun"
+      },
+      {
+        "pr": 631,
+        "bpb": null,
+        "user": "senstar-hsoleimani"
+      },
+      {
+        "pr": 620,
+        "bpb": 0.9443,
+        "user": "robinojw"
+      },
+      {
+        "pr": 626,
+        "bpb": 1.11800697,
+        "user": "kshitizz36"
+      },
+      {
+        "pr": 576,
+        "bpb": 1.1164,
+        "user": "cmcdnd"
+      },
+      {
+        "pr": 518,
+        "bpb": 1.0622,
+        "user": "sofiabod"
+      },
+      {
+        "pr": 659,
+        "bpb": 1.092,
+        "user": "deanbrr"
+      },
+      {
+        "pr": 667,
+        "bpb": 1.1352,
+        "user": "suchitj2702"
+      },
+      {
+        "pr": 666,
+        "bpb": 1.1932,
+        "user": "chrislovescoding"
       }
     ],
-    "best_bpb": 1.1171,
-    "worst_bpb": 1.13704,
-    "avg_bpb": 1.122,
-    "count": 5
+    "best_bpb": 0.9443,
+    "worst_bpb": 1.1932,
+    "avg_bpb": 1.108,
+    "count": 15
   },
   "U-Net skips": {
     "name": "U-Net skips",
@@ -14576,12 +18181,32 @@
         "pr": 535,
         "bpb": 1.1204,
         "user": "raahilshah"
+      },
+      {
+        "pr": 694,
+        "bpb": 1.1507,
+        "user": "Bortlesboat"
+      },
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 531,
+        "bpb": 1.13243,
+        "user": "pragnyanramtha"
+      },
+      {
+        "pr": 433,
+        "bpb": 1.3441,
+        "user": "Robby955"
       }
     ],
     "best_bpb": 1.0865,
     "worst_bpb": 2.3517,
-    "avg_bpb": 1.2281,
-    "count": 14
+    "avg_bpb": 1.218,
+    "count": 18
   },
   "MoE": {
     "name": "MoE",
@@ -14610,12 +18235,22 @@
         "pr": 480,
         "bpb": 1.1456,
         "user": "imyesung"
+      },
+      {
+        "pr": 679,
+        "bpb": 1.2164,
+        "user": "andrewmouldon"
+      },
+      {
+        "pr": 660,
+        "bpb": 1.1826,
+        "user": "HugoOchoaLP"
       }
     ],
     "best_bpb": 1.1456,
     "worst_bpb": 1.4072,
-    "avg_bpb": 1.2764,
-    "count": 5
+    "avg_bpb": 1.238,
+    "count": 7
   },
   "NTK RoPE": {
     "name": "NTK RoPE",
@@ -14936,12 +18571,27 @@
         "pr": 536,
         "bpb": 1.51402594,
         "user": "Jaksenc"
+      },
+      {
+        "pr": 622,
+        "bpb": 1.0941,
+        "user": "Upsalla"
+      },
+      {
+        "pr": 340,
+        "bpb": null,
+        "user": "starfly-web"
+      },
+      {
+        "pr": 531,
+        "bpb": 1.13243,
+        "user": "pragnyanramtha"
       }
     ],
-    "best_bpb": 1.132,
+    "best_bpb": 1.0941,
     "worst_bpb": 3.38410431,
-    "avg_bpb": 1.5517,
-    "count": 50
+    "avg_bpb": 1.5313,
+    "count": 53
   },
   "Int4 quantization": {
     "name": "Int4 quantization",
@@ -14969,12 +18619,22 @@
         "pr": 540,
         "bpb": null,
         "user": "devferrazZz"
+      },
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 666,
+        "bpb": 1.1932,
+        "user": "chrislovescoding"
       }
     ],
-    "best_bpb": 2.6034,
+    "best_bpb": 1.157,
     "worst_bpb": 2.6034,
-    "avg_bpb": 2.6034,
-    "count": 2
+    "avg_bpb": 1.6512,
+    "count": 4
   },
   "RoPE": {
     "name": "RoPE",
@@ -15053,12 +18713,22 @@
         "pr": 29,
         "bpb": null,
         "user": "nidhilak-Aquarius"
+      },
+      {
+        "pr": 604,
+        "bpb": null,
+        "user": "whitestone1121-web"
+      },
+      {
+        "pr": 599,
+        "bpb": 1.1828,
+        "user": "mkenney2"
       }
     ],
     "best_bpb": 0.81,
     "worst_bpb": 1.4784,
-    "avg_bpb": 1.1798,
-    "count": 15
+    "avg_bpb": 1.1801,
+    "count": 17
   },
   "FlashAttention": {
     "name": "FlashAttention",
@@ -15107,12 +18777,27 @@
         "pr": 564,
         "bpb": 1.127,
         "user": "sadeghja1070"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
       }
     ],
-    "best_bpb": 1.1246,
+    "best_bpb": 1.1229,
     "worst_bpb": 1.4072,
-    "avg_bpb": 1.1625,
-    "count": 9
+    "avg_bpb": 1.1555,
+    "count": 12
   },
   "ALiBi": {
     "name": "ALiBi",
@@ -15247,12 +18932,22 @@
         "pr": 503,
         "bpb": 1.1195,
         "user": "EthanYangTW"
+      },
+      {
+        "pr": 568,
+        "bpb": 0.7853,
+        "user": "MatoTeziTanka"
+      },
+      {
+        "pr": 569,
+        "bpb": 1.1175,
+        "user": "gowtham0992"
       }
     ],
-    "best_bpb": 1.1195,
+    "best_bpb": 0.7853,
     "worst_bpb": 1.1792,
-    "avg_bpb": 1.1386,
-    "count": 11
+    "avg_bpb": 1.1011,
+    "count": 13
   },
   "AdamW": {
     "name": "AdamW",
@@ -15296,12 +18991,17 @@
         "pr": 562,
         "bpb": 1.1354,
         "user": "bigbag"
+      },
+      {
+        "pr": 691,
+        "bpb": 1.0988,
+        "user": "xexyz"
       }
     ],
-    "best_bpb": 1.1215,
+    "best_bpb": 1.0988,
     "worst_bpb": 1.1478,
-    "avg_bpb": 1.131,
-    "count": 8
+    "avg_bpb": 1.1264,
+    "count": 9
   },
   "Int5 QAT": {
     "name": "Int5 QAT",
@@ -15523,12 +19223,17 @@
         "pr": 190,
         "bpb": 1.1725,
         "user": "newjordan"
+      },
+      {
+        "pr": 626,
+        "bpb": 1.11800697,
+        "user": "kshitizz36"
       }
     ],
-    "best_bpb": 1.1248,
+    "best_bpb": 1.11800697,
     "worst_bpb": 1.2037,
-    "avg_bpb": 1.1613,
-    "count": 14
+    "avg_bpb": 1.1582,
+    "count": 15
   },
   "Magnitude pruning": {
     "name": "Magnitude pruning",
@@ -15820,12 +19525,17 @@
         "pr": 532,
         "bpb": 1.0487,
         "user": "NotADevIAmaMeatPopsicle"
+      },
+      {
+        "pr": 603,
+        "bpb": null,
+        "user": "AnirudhRahul"
       }
     ],
     "best_bpb": 1.0487,
     "worst_bpb": 1.2012,
     "avg_bpb": 1.1612,
-    "count": 9
+    "count": 10
   },
   "MLA": {
     "name": "MLA",
@@ -15971,12 +19681,17 @@
         "pr": 187,
         "bpb": 1.1629,
         "user": "Idan3011"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
       }
     ],
-    "best_bpb": 1.1629,
+    "best_bpb": 1.1229,
     "worst_bpb": 1.1629,
-    "avg_bpb": 1.1629,
-    "count": 2
+    "avg_bpb": 1.1429,
+    "count": 3
   },
   "looped transformer": {
     "name": "looped transformer",
@@ -16220,12 +19935,17 @@
         "pr": 307,
         "bpb": 1.1357,
         "user": "dennisimoo"
+      },
+      {
+        "pr": 579,
+        "bpb": 1.1325,
+        "user": "newjordan"
       }
     ],
     "best_bpb": 1.1236,
     "worst_bpb": 1.2089,
-    "avg_bpb": 1.1599,
-    "count": 17
+    "avg_bpb": 1.1578,
+    "count": 18
   },
   "KV Cache": {
     "name": "KV Cache",
@@ -16540,19 +20260,44 @@
       },
       {
         "pr": 550,
-        "bpb": null,
+        "bpb": 1.63,
         "user": "haimianbaobao007"
       },
       {
         "pr": 548,
         "bpb": 1.0865,
         "user": "LoquiAuris"
+      },
+      {
+        "pr": 512,
+        "bpb": 0.9512,
+        "user": "MatoTeziTanka"
+      },
+      {
+        "pr": 620,
+        "bpb": 0.9443,
+        "user": "robinojw"
+      },
+      {
+        "pr": 605,
+        "bpb": 0.7227,
+        "user": "bigbag"
+      },
+      {
+        "pr": 614,
+        "bpb": 0.6864,
+        "user": "bigbag"
+      },
+      {
+        "pr": 611,
+        "bpb": 0.5601,
+        "user": "teddyoweh"
       }
     ],
-    "best_bpb": 0.643,
-    "worst_bpb": 1.1844,
-    "avg_bpb": 1.0688,
-    "count": 7
+    "best_bpb": 0.5601,
+    "worst_bpb": 1.63,
+    "avg_bpb": 0.9923,
+    "count": 12
   },
   "cross-layer parameter sharing": {
     "name": "cross-layer parameter sharing",
@@ -16627,12 +20372,42 @@
         "pr": 160,
         "bpb": 1.16230441,
         "user": "ChaseWNorton"
+      },
+      {
+        "pr": 639,
+        "bpb": 1.1158,
+        "user": "Robby955"
+      },
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      },
+      {
+        "pr": 681,
+        "bpb": 1.4775,
+        "user": "Alfaxad"
       }
     ],
     "best_bpb": 1.0539,
-    "worst_bpb": 1.16230441,
-    "avg_bpb": 1.1081,
-    "count": 2
+    "worst_bpb": 1.4775,
+    "avg_bpb": 1.1654,
+    "count": 8
   },
   "decoupled WD": {
     "name": "decoupled WD",
@@ -16665,12 +20440,17 @@
         "pr": 511,
         "bpb": 1.1417373,
         "user": "AnirudhRahul"
+      },
+      {
+        "pr": 603,
+        "bpb": null,
+        "user": "AnirudhRahul"
       }
     ],
     "best_bpb": 1.1417373,
     "worst_bpb": 1.1417373,
     "avg_bpb": 1.1417,
-    "count": 2
+    "count": 3
   },
   "linear attention": {
     "name": "linear attention",
@@ -16735,12 +20515,17 @@
         "pr": 262,
         "bpb": 1.0539,
         "user": "ibarrajo"
+      },
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
       }
     ],
     "best_bpb": 1.0539,
-    "worst_bpb": 1.0539,
-    "avg_bpb": 1.0539,
-    "count": 1
+    "worst_bpb": 1.1239,
+    "avg_bpb": 1.0889,
+    "count": 2
   },
   "muP": {
     "name": "muP",
@@ -16808,12 +20593,27 @@
         "pr": 506,
         "bpb": 1.23893525,
         "user": "eshansinghal14"
+      },
+      {
+        "pr": 146,
+        "bpb": 1.2987,
+        "user": "swapp1990"
+      },
+      {
+        "pr": 643,
+        "bpb": 1.5672,
+        "user": "frido22"
+      },
+      {
+        "pr": 604,
+        "bpb": null,
+        "user": "whitestone1121-web"
       }
     ],
     "best_bpb": 1.1778717,
-    "worst_bpb": 1.37972416,
-    "avg_bpb": 1.2356,
-    "count": 8
+    "worst_bpb": 1.5672,
+    "avg_bpb": 1.292,
+    "count": 11
   },
   "PTQ": {
     "name": "PTQ",
@@ -16893,12 +20693,22 @@
         "pr": 191,
         "bpb": 1.16469,
         "user": "chris-buckley"
+      },
+      {
+        "pr": 622,
+        "bpb": 1.0941,
+        "user": "Upsalla"
+      },
+      {
+        "pr": 340,
+        "bpb": null,
+        "user": "starfly-web"
       }
     ],
-    "best_bpb": 1.16469,
+    "best_bpb": 1.0941,
     "worst_bpb": 1.2355,
-    "avg_bpb": 1.1938,
-    "count": 4
+    "avg_bpb": 1.1739,
+    "count": 6
   },
   "gradient accumulation": {
     "name": "gradient accumulation",
@@ -17085,12 +20895,27 @@
         "pr": 503,
         "bpb": 1.1195,
         "user": "EthanYangTW"
+      },
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 369,
+        "bpb": 1.1328,
+        "user": "signalrush"
+      },
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
       }
     ],
-    "best_bpb": 1.1195,
+    "best_bpb": 1.1162,
     "worst_bpb": 1.16027254,
-    "avg_bpb": 1.1281,
-    "count": 13
+    "avg_bpb": 1.1273,
+    "count": 16
   },
   "Mixed Bit Quantization": {
     "name": "Mixed Bit Quantization",
@@ -17273,12 +21098,17 @@
         "pr": 130,
         "bpb": null,
         "user": "mohosy"
+      },
+      {
+        "pr": 675,
+        "bpb": 1.2302,
+        "user": "ChideraIbe123"
       }
     ],
     "best_bpb": 1.18926428,
     "worst_bpb": 2.962,
-    "avg_bpb": 2.0666,
-    "count": 4
+    "avg_bpb": 1.8575,
+    "count": 5
   },
   "Causal CTM": {
     "name": "Causal CTM",
@@ -17496,12 +21326,17 @@
         "pr": 540,
         "bpb": null,
         "user": "devferrazZz"
+      },
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
       }
     ],
-    "best_bpb": 1.751,
+    "best_bpb": 1.157,
     "worst_bpb": 1.751,
-    "avg_bpb": 1.751,
-    "count": 2
+    "avg_bpb": 1.454,
+    "count": 3
   },
   "skip connections": {
     "name": "skip connections",
@@ -17746,12 +21581,17 @@
         "pr": 474,
         "bpb": 1.169,
         "user": "joshuaswarren"
+      },
+      {
+        "pr": 601,
+        "bpb": 1.1418,
+        "user": "anantdgoel"
       }
     ],
     "best_bpb": 1.06715285,
     "worst_bpb": 1.169,
-    "avg_bpb": 1.1181,
-    "count": 2
+    "avg_bpb": 1.126,
+    "count": 3
   },
   "Mirrored Recurrence": {
     "name": "Mirrored Recurrence",
@@ -17816,12 +21656,32 @@
         "pr": 593,
         "bpb": 1.1171,
         "user": "abaybektursun"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      },
+      {
+        "pr": 549,
+        "bpb": 1.1194,
+        "user": "abaybektursun"
+      },
+      {
+        "pr": 399,
+        "bpb": 1.1247,
+        "user": "abaybektursun"
       }
     ],
-    "best_bpb": 1.1171,
-    "worst_bpb": 1.1171,
-    "avg_bpb": 1.1171,
-    "count": 1
+    "best_bpb": 1.1154,
+    "worst_bpb": 1.1247,
+    "avg_bpb": 1.1187,
+    "count": 5
   },
   "depth-scaled residual": {
     "name": "depth-scaled residual",
@@ -17958,12 +21818,47 @@
         "pr": 518,
         "bpb": 1.0622,
         "user": "sofiabod"
+      },
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      },
+      {
+        "pr": 344,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 550,
+        "bpb": 1.63,
+        "user": "haimianbaobao007"
+      },
+      {
+        "pr": 662,
+        "bpb": 1.1208232,
+        "user": "simon-marcus"
       }
     ],
     "best_bpb": 1.0622,
-    "worst_bpb": 1.1354,
-    "avg_bpb": 1.0988,
-    "count": 2
+    "worst_bpb": 1.63,
+    "avg_bpb": 1.1737,
+    "count": 9
   },
   "DG Attention": {
     "name": "DG Attention",
@@ -18155,6 +22050,895 @@
     "best_bpb": 3.24862,
     "worst_bpb": 3.24862,
     "avg_bpb": 3.2486,
+    "count": 1
+  },
+  "lzma": {
+    "name": "lzma",
+    "submissions": [
+      {
+        "pr": 657,
+        "bpb": 1.1229,
+        "user": "anthony-maio"
+      },
+      {
+        "pr": 593,
+        "bpb": 1.1163,
+        "user": "abaybektursun"
+      },
+      {
+        "pr": 675,
+        "bpb": 1.2302,
+        "user": "ChideraIbe123"
+      }
+    ],
+    "best_bpb": 1.1163,
+    "worst_bpb": 1.2302,
+    "avg_bpb": 1.1565,
+    "count": 3
+  },
+  "Mish\u00b2": {
+    "name": "Mish\u00b2",
+    "submissions": [
+      {
+        "pr": 653,
+        "bpb": 1.1552,
+        "user": "demirelo"
+      }
+    ],
+    "best_bpb": 1.1552,
+    "worst_bpb": 1.1552,
+    "avg_bpb": 1.1552,
+    "count": 1
+  },
+  "async prefetch": {
+    "name": "async prefetch",
+    "submissions": [
+      {
+        "pr": 648,
+        "bpb": null,
+        "user": "maorinka"
+      }
+    ],
+    "best_bpb": null,
+    "worst_bpb": null,
+    "avg_bpb": null,
+    "count": 1
+  },
+  "pinned memory": {
+    "name": "pinned memory",
+    "submissions": [
+      {
+        "pr": 648,
+        "bpb": null,
+        "user": "maorinka"
+      }
+    ],
+    "best_bpb": null,
+    "worst_bpb": null,
+    "avg_bpb": null,
+    "count": 1
+  },
+  "NCCL tuning": {
+    "name": "NCCL tuning",
+    "submissions": [
+      {
+        "pr": 648,
+        "bpb": null,
+        "user": "maorinka"
+      }
+    ],
+    "best_bpb": null,
+    "worst_bpb": null,
+    "avg_bpb": null,
+    "count": 1
+  },
+  "per-row scales": {
+    "name": "per-row scales",
+    "submissions": [
+      {
+        "pr": 142,
+        "bpb": 1.1925,
+        "user": "ankitmaloo"
+      }
+    ],
+    "best_bpb": 1.1925,
+    "worst_bpb": 1.1925,
+    "avg_bpb": 1.1925,
+    "count": 1
+  },
+  "GDN": {
+    "name": "GDN",
+    "submissions": [
+      {
+        "pr": 651,
+        "bpb": 1.2093,
+        "user": "phulin"
+      }
+    ],
+    "best_bpb": 1.2093,
+    "worst_bpb": 1.2093,
+    "avg_bpb": 1.2093,
+    "count": 1
+  },
+  "VE128": {
+    "name": "VE128",
+    "submissions": [
+      {
+        "pr": 639,
+        "bpb": 1.1158,
+        "user": "Robby955"
+      }
+    ],
+    "best_bpb": 1.1158,
+    "worst_bpb": 1.1158,
+    "avg_bpb": 1.1158,
+    "count": 1
+  },
+  "Hadamard rotation": {
+    "name": "Hadamard rotation",
+    "submissions": [
+      {
+        "pr": 586,
+        "bpb": 1.1365,
+        "user": "EaCognitive"
+      }
+    ],
+    "best_bpb": 1.1365,
+    "worst_bpb": 1.1365,
+    "avg_bpb": 1.1365,
+    "count": 1
+  },
+  "1-bit quantization": {
+    "name": "1-bit quantization",
+    "submissions": [
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      }
+    ],
+    "best_bpb": 1.1239,
+    "worst_bpb": 1.1239,
+    "avg_bpb": 1.1239,
+    "count": 1
+  },
+  "FP8 QAT": {
+    "name": "FP8 QAT",
+    "submissions": [
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
+      }
+    ],
+    "best_bpb": 1.1239,
+    "worst_bpb": 1.157,
+    "avg_bpb": 1.1404,
+    "count": 2
+  },
+  "YaRN": {
+    "name": "YaRN",
+    "submissions": [
+      {
+        "pr": 641,
+        "bpb": 1.1239,
+        "user": "CiprianFlorin-Ifrim"
+      },
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
+      }
+    ],
+    "best_bpb": 1.1239,
+    "worst_bpb": 1.157,
+    "avg_bpb": 1.1404,
+    "count": 2
+  },
+  "weight pruning": {
+    "name": "weight pruning",
+    "submissions": [
+      {
+        "pr": 637,
+        "bpb": 1.14767,
+        "user": "bryjudy"
+      }
+    ],
+    "best_bpb": 1.14767,
+    "worst_bpb": 1.14767,
+    "avg_bpb": 1.1477,
+    "count": 1
+  },
+  "Selective Pruning": {
+    "name": "Selective Pruning",
+    "submissions": [
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      }
+    ],
+    "best_bpb": 1.1154,
+    "worst_bpb": 1.1171,
+    "avg_bpb": 1.1162,
+    "count": 2
+  },
+  "Parallel Muon": {
+    "name": "Parallel Muon",
+    "submissions": [
+      {
+        "pr": 609,
+        "bpb": 1.1154,
+        "user": "saml212"
+      },
+      {
+        "pr": 634,
+        "bpb": 1.1171,
+        "user": "raahilshah"
+      },
+      {
+        "pr": 549,
+        "bpb": 1.1194,
+        "user": "abaybektursun"
+      },
+      {
+        "pr": 631,
+        "bpb": null,
+        "user": "senstar-hsoleimani"
+      },
+      {
+        "pr": 399,
+        "bpb": 1.1247,
+        "user": "abaybektursun"
+      }
+    ],
+    "best_bpb": 1.1154,
+    "worst_bpb": 1.1247,
+    "avg_bpb": 1.1191,
+    "count": 5
+  },
+  "Depth-scaled residuals": {
+    "name": "Depth-scaled residuals",
+    "submissions": [
+      {
+        "pr": 512,
+        "bpb": 0.9512,
+        "user": "MatoTeziTanka"
+      },
+      {
+        "pr": 620,
+        "bpb": 0.9443,
+        "user": "robinojw"
+      }
+    ],
+    "best_bpb": 0.9443,
+    "worst_bpb": 0.9512,
+    "avg_bpb": 0.9478,
+    "count": 2
+  },
+  "ReLU\u00b2": {
+    "name": "ReLU\u00b2",
+    "submissions": [
+      {
+        "pr": 595,
+        "bpb": 1.11,
+        "user": "LoquiAuris"
+      },
+      {
+        "pr": 605,
+        "bpb": 0.7227,
+        "user": "bigbag"
+      },
+      {
+        "pr": 469,
+        "bpb": 1.1418,
+        "user": "cmcdnd"
+      },
+      {
+        "pr": 614,
+        "bpb": 0.6864,
+        "user": "bigbag"
+      },
+      {
+        "pr": 623,
+        "bpb": 1.1507,
+        "user": "SPThole"
+      }
+    ],
+    "best_bpb": 0.6864,
+    "worst_bpb": 1.1507,
+    "avg_bpb": 0.9623,
+    "count": 5
+  },
+  "FlashAttention-3": {
+    "name": "FlashAttention-3",
+    "submissions": [
+      {
+        "pr": 605,
+        "bpb": 0.7227,
+        "user": "bigbag"
+      },
+      {
+        "pr": 469,
+        "bpb": 1.1418,
+        "user": "cmcdnd"
+      },
+      {
+        "pr": 614,
+        "bpb": 0.6864,
+        "user": "bigbag"
+      }
+    ],
+    "best_bpb": 0.6864,
+    "worst_bpb": 1.1418,
+    "avg_bpb": 0.8503,
+    "count": 3
+  },
+  "Cosine scheduling": {
+    "name": "Cosine scheduling",
+    "submissions": [
+      {
+        "pr": 605,
+        "bpb": 0.7227,
+        "user": "bigbag"
+      },
+      {
+        "pr": 614,
+        "bpb": 0.6864,
+        "user": "bigbag"
+      },
+      {
+        "pr": 611,
+        "bpb": 0.5601,
+        "user": "teddyoweh"
+      }
+    ],
+    "best_bpb": 0.5601,
+    "worst_bpb": 0.7227,
+    "avg_bpb": 0.6564,
+    "count": 3
+  },
+  "K-Projection LoRA": {
+    "name": "K-Projection LoRA",
+    "submissions": [
+      {
+        "pr": 611,
+        "bpb": 0.5601,
+        "user": "teddyoweh"
+      }
+    ],
+    "best_bpb": 0.5601,
+    "worst_bpb": 0.5601,
+    "avg_bpb": 0.5601,
+    "count": 1
+  },
+  "Min-NLL epoch selection": {
+    "name": "Min-NLL epoch selection",
+    "submissions": [
+      {
+        "pr": 611,
+        "bpb": 0.5601,
+        "user": "teddyoweh"
+      }
+    ],
+    "best_bpb": 0.5601,
+    "worst_bpb": 0.5601,
+    "avg_bpb": 0.5601,
+    "count": 1
+  },
+  "AWQ": {
+    "name": "AWQ",
+    "submissions": [
+      {
+        "pr": 623,
+        "bpb": 1.1507,
+        "user": "SPThole"
+      }
+    ],
+    "best_bpb": 1.1507,
+    "worst_bpb": 1.1507,
+    "avg_bpb": 1.1507,
+    "count": 1
+  },
+  "Cyclic Muon Momentum": {
+    "name": "Cyclic Muon Momentum",
+    "submissions": [
+      {
+        "pr": 623,
+        "bpb": 1.1507,
+        "user": "SPThole"
+      }
+    ],
+    "best_bpb": 1.1507,
+    "worst_bpb": 1.1507,
+    "avg_bpb": 1.1507,
+    "count": 1
+  },
+  "Weight sharing": {
+    "name": "Weight sharing",
+    "submissions": [
+      {
+        "pr": 623,
+        "bpb": 1.1507,
+        "user": "SPThole"
+      }
+    ],
+    "best_bpb": 1.1507,
+    "worst_bpb": 1.1507,
+    "avg_bpb": 1.1507,
+    "count": 1
+  },
+  "relu\u00b2": {
+    "name": "relu\u00b2",
+    "submissions": [
+      {
+        "pr": 581,
+        "bpb": 1.0698,
+        "user": "teddyoweh"
+      }
+    ],
+    "best_bpb": 1.0698,
+    "worst_bpb": 1.0698,
+    "avg_bpb": 1.0698,
+    "count": 1
+  },
+  "Soft-Round QAT": {
+    "name": "Soft-Round QAT",
+    "submissions": [
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 484,
+        "bpb": 1.1185,
+        "user": "loveless2001"
+      }
+    ],
+    "best_bpb": 1.1162,
+    "worst_bpb": 1.1185,
+    "avg_bpb": 1.1174,
+    "count": 2
+  },
+  "Shared VE": {
+    "name": "Shared VE",
+    "submissions": [
+      {
+        "pr": 606,
+        "bpb": 1.1162,
+        "user": "EthanYangTW"
+      }
+    ],
+    "best_bpb": 1.1162,
+    "worst_bpb": 1.1162,
+    "avg_bpb": 1.1162,
+    "count": 1
+  },
+  "EB-TTT": {
+    "name": "EB-TTT",
+    "submissions": [
+      {
+        "pr": 484,
+        "bpb": 1.1185,
+        "user": "loveless2001"
+      }
+    ],
+    "best_bpb": 1.1185,
+    "worst_bpb": 1.1185,
+    "avg_bpb": 1.1185,
+    "count": 1
+  },
+  "Late STE QAT": {
+    "name": "Late STE QAT",
+    "submissions": [
+      {
+        "pr": 297,
+        "bpb": 1.16292025,
+        "user": "davidpuertolas"
+      }
+    ],
+    "best_bpb": 1.16292025,
+    "worst_bpb": 1.16292025,
+    "avg_bpb": 1.1629,
+    "count": 1
+  },
+  "SGD TTT": {
+    "name": "SGD TTT",
+    "submissions": [
+      {
+        "pr": 297,
+        "bpb": 1.16292025,
+        "user": "davidpuertolas"
+      }
+    ],
+    "best_bpb": 1.16292025,
+    "worst_bpb": 1.16292025,
+    "avg_bpb": 1.1629,
+    "count": 1
+  },
+  "Orthogonal Init": {
+    "name": "Orthogonal Init",
+    "submissions": [
+      {
+        "pr": 600,
+        "bpb": 1.23637747,
+        "user": "humanaiconvention"
+      }
+    ],
+    "best_bpb": 1.23637747,
+    "worst_bpb": 1.23637747,
+    "avg_bpb": 1.2364,
+    "count": 1
+  },
+  "Mamba": {
+    "name": "Mamba",
+    "submissions": [
+      {
+        "pr": 599,
+        "bpb": 1.1828,
+        "user": "mkenney2"
+      }
+    ],
+    "best_bpb": 1.1828,
+    "worst_bpb": 1.1828,
+    "avg_bpb": 1.1828,
+    "count": 1
+  },
+  "mirrored recurrence": {
+    "name": "mirrored recurrence",
+    "submissions": [
+      {
+        "pr": 597,
+        "bpb": 1.9263,
+        "user": "AnirudhaRamesh"
+      }
+    ],
+    "best_bpb": 1.9263,
+    "worst_bpb": 1.9263,
+    "avg_bpb": 1.9263,
+    "count": 1
+  },
+  "LeakyReLU2": {
+    "name": "LeakyReLU2",
+    "submissions": [
+      {
+        "pr": 638,
+        "bpb": 1.1164,
+        "user": "Asukabot0"
+      },
+      {
+        "pr": 700,
+        "bpb": 1.0541,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 635,
+        "bpb": 1.133,
+        "user": "aryanbhosale"
+      },
+      {
+        "pr": 347,
+        "bpb": null,
+        "user": "FlashyFlash3011"
+      },
+      {
+        "pr": 699,
+        "bpb": null,
+        "user": "RohanMulay1"
+      },
+      {
+        "pr": 676,
+        "bpb": null,
+        "user": "they-call-me-god"
+      },
+      {
+        "pr": 675,
+        "bpb": 1.2302,
+        "user": "ChideraIbe123"
+      },
+      {
+        "pr": 672,
+        "bpb": 1.0781,
+        "user": "andrewbaggio1"
+      }
+    ],
+    "best_bpb": 1.0541,
+    "worst_bpb": 1.2302,
+    "avg_bpb": 1.1224,
+    "count": 8
+  },
+  "Hedge Mixer": {
+    "name": "Hedge Mixer",
+    "submissions": [
+      {
+        "pr": 700,
+        "bpb": 1.0541,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 688,
+        "bpb": 1.0745,
+        "user": "RoyiRa"
+      }
+    ],
+    "best_bpb": 1.0541,
+    "worst_bpb": 1.0745,
+    "avg_bpb": 1.0643,
+    "count": 2
+  },
+  "CROWN-Q": {
+    "name": "CROWN-Q",
+    "submissions": [
+      {
+        "pr": 700,
+        "bpb": 1.0541,
+        "user": "RoyiRa"
+      },
+      {
+        "pr": 693,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 692,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      },
+      {
+        "pr": 690,
+        "bpb": 1.1186,
+        "user": "EthanYangTW"
+      }
+    ],
+    "best_bpb": 1.0541,
+    "worst_bpb": 1.1186,
+    "avg_bpb": 1.1025,
+    "count": 4
+  },
+  "Pruning": {
+    "name": "Pruning",
+    "submissions": [
+      {
+        "pr": 700,
+        "bpb": 1.0541,
+        "user": "RoyiRa"
+      }
+    ],
+    "best_bpb": 1.0541,
+    "worst_bpb": 1.0541,
+    "avg_bpb": 1.0541,
+    "count": 1
+  },
+  "LongContext": {
+    "name": "LongContext",
+    "submissions": [
+      {
+        "pr": 347,
+        "bpb": null,
+        "user": "FlashyFlash3011"
+      }
+    ],
+    "best_bpb": null,
+    "worst_bpb": null,
+    "avg_bpb": null,
+    "count": 1
+  },
+  "JEPA": {
+    "name": "JEPA",
+    "submissions": [
+      {
+        "pr": 696,
+        "bpb": 1.2622,
+        "user": "gravelBridge"
+      }
+    ],
+    "best_bpb": 1.2622,
+    "worst_bpb": 1.2622,
+    "avg_bpb": 1.2622,
+    "count": 1
+  },
+  "async data pipeline": {
+    "name": "async data pipeline",
+    "submissions": [
+      {
+        "pr": 684,
+        "bpb": 1.0574,
+        "user": "DeepReinforce"
+      }
+    ],
+    "best_bpb": 1.0574,
+    "worst_bpb": 1.0574,
+    "avg_bpb": 1.0574,
+    "count": 1
+  },
+  "NeoMuon": {
+    "name": "NeoMuon",
+    "submissions": [
+      {
+        "pr": 640,
+        "bpb": 1.157,
+        "user": "CiprianFlorin-Ifrim"
+      }
+    ],
+    "best_bpb": 1.157,
+    "worst_bpb": 1.157,
+    "avg_bpb": 1.157,
+    "count": 1
+  },
+  "Ramping WD": {
+    "name": "Ramping WD",
+    "submissions": [
+      {
+        "pr": 675,
+        "bpb": 1.2302,
+        "user": "ChideraIbe123"
+      }
+    ],
+    "best_bpb": 1.2302,
+    "worst_bpb": 1.2302,
+    "avg_bpb": 1.2302,
+    "count": 1
+  },
+  "zlib": {
+    "name": "zlib",
+    "submissions": [
+      {
+        "pr": 515,
+        "bpb": 1.1807,
+        "user": "keshav55"
+      },
+      {
+        "pr": 671,
+        "bpb": 1.18069496,
+        "user": "keshav55"
+      },
+      {
+        "pr": 550,
+        "bpb": 1.63,
+        "user": "haimianbaobao007"
+      }
+    ],
+    "best_bpb": 1.18069496,
+    "worst_bpb": 1.63,
+    "avg_bpb": 1.3305,
+    "count": 3
+  },
+  "5-gram eval cache": {
+    "name": "5-gram eval cache",
+    "submissions": [
+      {
+        "pr": 659,
+        "bpb": 1.092,
+        "user": "deanbrr"
+      }
+    ],
+    "best_bpb": 1.092,
+    "worst_bpb": 1.092,
+    "avg_bpb": 1.092,
+    "count": 1
+  },
+  "zstd compression": {
+    "name": "zstd compression",
+    "submissions": [
+      {
+        "pr": 668,
+        "bpb": 1.092,
+        "user": "Christopher-Lee-McClendon"
+      },
+      {
+        "pr": 666,
+        "bpb": 1.1932,
+        "user": "chrislovescoding"
+      },
+      {
+        "pr": 665,
+        "bpb": 1.14638,
+        "user": "harborglowvintage-oss"
+      },
+      {
+        "pr": 369,
+        "bpb": 1.1328,
+        "user": "signalrush"
+      }
+    ],
+    "best_bpb": 1.092,
+    "worst_bpb": 1.1932,
+    "avg_bpb": 1.1411,
+    "count": 4
+  },
+  "label smoothing": {
+    "name": "label smoothing",
+    "submissions": [
+      {
+        "pr": 667,
+        "bpb": 1.1352,
+        "user": "suchitj2702"
+      }
+    ],
+    "best_bpb": 1.1352,
+    "worst_bpb": 1.1352,
+    "avg_bpb": 1.1352,
+    "count": 1
+  },
+  "STE": {
+    "name": "STE",
+    "submissions": [
+      {
+        "pr": 666,
+        "bpb": 1.1932,
+        "user": "chrislovescoding"
+      }
+    ],
+    "best_bpb": 1.1932,
+    "worst_bpb": 1.1932,
+    "avg_bpb": 1.1932,
+    "count": 1
+  },
+  "adaptive pruning": {
+    "name": "adaptive pruning",
+    "submissions": [
+      {
+        "pr": 369,
+        "bpb": 1.1328,
+        "user": "signalrush"
+      }
+    ],
+    "best_bpb": 1.1328,
+    "worst_bpb": 1.1328,
+    "avg_bpb": 1.1328,
+    "count": 1
+  },
+  "spiking neural network": {
+    "name": "spiking neural network",
+    "submissions": [
+      {
+        "pr": 664,
+        "bpb": 1.2982,
+        "user": "tsbiosky"
+      }
+    ],
+    "best_bpb": 1.2982,
+    "worst_bpb": 1.2982,
+    "avg_bpb": 1.2982,
+    "count": 1
+  },
+  "LIF MLP": {
+    "name": "LIF MLP",
+    "submissions": [
+      {
+        "pr": 664,
+        "bpb": 1.2982,
+        "user": "tsbiosky"
+      }
+    ],
+    "best_bpb": 1.2982,
+    "worst_bpb": 1.2982,
+    "avg_bpb": 1.2982,
+    "count": 1
+  },
+  "Soft MoE": {
+    "name": "Soft MoE",
+    "submissions": [
+      {
+        "pr": 660,
+        "bpb": 1.1826,
+        "user": "HugoOchoaLP"
+      }
+    ],
+    "best_bpb": 1.1826,
+    "worst_bpb": 1.1826,
+    "avg_bpb": 1.1826,
     "count": 1
   }
 }

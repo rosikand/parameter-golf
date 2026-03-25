@@ -1,0 +1,27 @@
+{
+  "number": 639,
+  "title": "Full GPTQ + XSA-all + SWA/EMA + Score-First TTT (compliant BPB=1.1175, 1-seed)",
+  "state": "closed",
+  "user": "Robby955",
+  "created_at": "2026-03-24T18:39:30Z",
+  "updated_at": "2026-03-25T06:18:44Z",
+  "merged_at": null,
+  "body": "## Results (Compliant)\n\n| Config | Seed | Sliding BPB | Artifact | Train Time | Status |\n|--------|------|-------------|----------|------------|--------|\n| Score-first TTT (3 epochs) | 1337 | **1.1175** | 15.87 MB | 560s train + 40s GPTQ = 600s | Compliant |\n| No TTT | 1337 | 1.1182 | 15.93 MB | 560s train + 40s GPTQ = 600s | Compliant |\n\n**Best compliant score: 1.1175 BPB** (single seed 1337, 3-seed validation in progress)\n\n> **Note:** Previous headline numbers (1.1158, 3-seed mean 1.1163) were from runs where GPTQ calibration ran outside the 10-minute training budget. Those numbers have been retracted per the organizer ruling in Issue #677. All figures above use compliant timing where GPTQ calibration is counted within the training budget.\n\n---\n\n## Compliance\n\n**Training time budget (600s total on 8\u00d7H100 SXM):**\n- 560s: Main training loop (Muon + Adam, ~6,230 steps)\n- 40s: GPTQ int6 quantization (calibration on training data)\n- Total: 600s (within 10-minute budget)\n\n**Test-time training (TTT):**\nScore-first protocol \u2014 the model scores each validation chunk *before* adapting on it. No token is ever re-scored after adaptation. This follows the causal/streaming TTT pattern confirmed legal by organizers (Issue #402, #677). Full-epoch TTT (train on all val data before scoring) is NOT used.\n\n**Artifact:** 15.87 MB (code: ~94KB, compressed weights: ~15.78MB). Under 16,000,000 byte limit.\n\n---\n\n## Key Contributions\n\n### 1. Full GPTQ halves the quantization gap (0.008 \u2192 0.004 BPB)\n\nCholesky-based GPTQ with act-order column permutation and block-wise error compensation (block_size=128). Calibrated on 256 training batches with 1% diagonal damping.\n\n| Method | Quant Gap | Artifact Size |\n|--------|-----------|---------------|\n| Naive int6 (grid search) | +0.0083 BPB | 15.81 MB |\n| **Full GPTQ (Cholesky)** | **+0.0039 BPB** | **15.92 MB** |\n\n### 2. XSA on all 11 layers\n\nCross-Sequence Attention on all transformer layers (vs last 4 in baseline). Provides extended context beyond training sequence length at eval time. Worth ~-0.0013 BPB.\n\n### 3. SWA/EMA weight blending\n\nStochastic Weight Averaging over the final warmdown phase (16 snapshots every 50 steps), blended 50/50 with EMA (decay=0.997). Smooths weight landscape before quantization.\n\n### 4. Score-first TTT (legal)\n\nSequential online adaptation: score chunk, then train on it with AdamW (lr=1e-4, 3 epochs, freeze first 9/11 blocks, 128K token chunks). Improves sliding BPB by -0.0007.\n\n### Architecture & Training\n\n- **Base**: PR #589 (11L GEPA, 8 GQA heads / 4 KV, VE128, Late QAT)\n- **Changed**: XSA all 11 layers, Full GPTQ, SWA+EMA 50/50 blend, warmdown 4000\n- **Training**: ~6,230 steps at 89.9ms/step on 8\u00d7H100 SXM, 27.1M params\n- **Artifact**: 15.87 MB (code + lzma-compressed int6 weights)\n\n### Credits\n\n- @RoyiRa for PR #589 base architecture\n- @thwu1, @unnir, @JoeProAI for components adopted in #589\n- @saml212, @kshitizz36 for GPTQ reference implementations (#609, #626)\n- @CiprianFlorin-Ifrim for int5+Soft-Round QAT reference (#606)\n- @raahilshah for PR #634 (XSA-all, selective pruning insights)\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/639",
+  "draft": false,
+  "comments": [
+    {
+      "user": "Robby955",
+      "body": "## Compliance Update\n\nAfter reviewing the organizer ruling on PR #606 (GPTQ calibration must fit within the training time budget), I've re-run with compliant timing:\n\n**Training ends at 560s, GPTQ calibration runs at 560-600s, within the 600s training budget.**\n\n### Compliant Results (560s training + 40s GPTQ calibration = 600s total)\n\n| Config | Seed | Pre-quant | Sliding BPB | Artifact |\n|--------|------|-----------|-------------|----------|\n| Compliant + TTT | 1337 | 1.1374 | **1.1175** | 15.87 MB |\n| Compliant, no TTT | 1337 | 1.1375 | 1.1182 | 15.93 MB |\n\nTTT config (matching PR #606's recipe): AdamW lr=1e-4, 3 epochs, zero weight decay, freeze first 9/11 blocks, 128K token chunks.\n\nThe original 1.1158 score was from a 600s training run where GPTQ calibration ran outside the training budget \u2014 the same issue that affected PR #606. The compliant score with the same architecture is **1.1175**.\n\n3-seed validation on the compliant config is in progress. Will update the PR title and body once complete.",
+      "created_at": "2026-03-25T03:51:26Z",
+      "updated_at": "2026-03-25T03:51:26Z"
+    },
+    {
+      "user": "valerio-oai",
+      "body": "This submission doesn't have a compliant /records submission (no submission.json or train logs), and it is using GPTQ-training-data calibration at eval time, which is disallowed. Closing for now.",
+      "created_at": "2026-03-25T06:18:44Z",
+      "updated_at": "2026-03-25T06:18:44Z"
+    }
+  ]
+}

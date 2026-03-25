@@ -1,0 +1,14 @@
+{
+  "number": 669,
+  "title": "Add TRN hybrid non-record submission (1.4942 bpb, 1x RTX 5090)",
+  "state": "open",
+  "user": "amabito",
+  "created_at": "2026-03-25T02:15:44Z",
+  "updated_at": "2026-03-25T02:15:44Z",
+  "merged_at": null,
+  "body": "Non-record submission: oscillatory recurrence + attention hybrid under the 16 MB constraint.\n\n## What this is\n\nA 10-layer hybrid model (7 TRN layers + 3 attention layers) with int5 QAT and\nzstd-22 compression. The TRN layers use a Kogge-Stone parallel prefix scan over\ncomplex-valued oscillators -- no Triton, no custom CUDA, pure PyTorch.\n\nScore: 1.4942 bpb (int5 roundtrip, 636 steps / 600s wallclock, 1x RTX 5090).\nArtifact: 15.28 MB.\n\n## What went wrong\n\nThe model reaches 1.26 bpb in fp32 at 20K steps, but int5 quantization degrades\nit to 1.93 bpb. The oscillator projection weights (d_model -> 6K, encoding\nfrequency and phase) accumulate O(t) phase drift from quantization errors.\nAt 1000 steps the error is small (+0.041); at 20K steps it collapses (+0.669).\n\nA parameter-matched 13L Transformer shows only +0.016 int5 degradation at the\nsame step count. The failure is specific to oscillatory recurrence parameters.\n\n## What is included\n\n- records/track_non_record_16mb/2026-03-25_TRN_Hybrid_Int5_1x5090/\n  - README.md (architecture, ablations, quantization analysis, 13L comparison)\n  - submission.json\n  - train.log\n  - train_gpt_trn.py (self-contained, zero external dependencies)\n- README.md root table updated (Non-Record Runs)\n\n## What is not included\n\n- 3-seed runs (single seed only)\n- 8xH100 results (tested on 1x RTX 5090 only)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/669",
+  "draft": false,
+  "comments": []
+}

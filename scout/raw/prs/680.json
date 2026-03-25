@@ -1,0 +1,14 @@
+{
+  "number": 680,
+  "title": "Add non-record 10min/16MB submission: Wavelet-Lite PR549 Parallel Muon (1.1483)",
+  "state": "open",
+  "user": "bro4all",
+  "created_at": "2026-03-25T05:15:58Z",
+  "updated_at": "2026-03-25T05:15:58Z",
+  "merged_at": null,
+  "body": "## Summary\n\nThis PR adds a non-record `track_10min_16mb` submission under:\n\n- `records/track_10min_16mb/2026-03-24_WaveletLite_PR549_ParallelMuon/`\n\nThe submission is a PR #549-derived Parallel Muon stack with one architectural change: a tiny causal wavelet-lite mixer inside each residual block.\n\n## Final result\n\n- Exact saved-artifact roundtrip: `val_bpb=1.14825550`\n- Total submission size: `15,859,711` bytes\n- Margin under 16,000,000-byte cap: `140,289` bytes\n- 8xH100 training pace: `90.24 ms/step`\n- Post-EMA diagnostic at train-time wallclock cap: `val_bpb=1.1400`\n\n## Why submit as non-record\n\nThis does not beat the current SOTA, so this is intentionally submitted as a non-record run under the standard 10min/16MB track.\n\n## Why it is not duplicate work\n\nClosest prior work is PR #549, but this submission adds a new in-block causal wavelet mixer and removes TTT from the final run while trimming the bigram table to fit the byte budget.\n\nAdditional nearby prior work addressed in the README:\n\n- PR #211 `WaveletWeightedWidenet`\n- PR #632 `Attention-Residuals`\n- PR #507 `11L U-Net + Catalytic + SwiGLU + SW64`\n- PR #530 `Basis Block Interpolation`\n\n## Included files\n\nPer the repo submission rules, this PR only adds a new folder with:\n\n- `README.md`\n- `submission.json`\n- `train_gpt.py`\n- `final_model.int6.ptz`\n- training log\n- exact roundtrip eval log\n- local `results.tsv` snapshot\n\n## Notes\n\n- The final artifact and exact roundtrip eval were recovered from a persisted full-precision checkpoint after the training pod exited, and both logs are included in the submission folder.\n- The README documents the full Runpod recipe, nearest prior PRs, exact structural differences, and failed intermediate attempts.\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/680",
+  "draft": false,
+  "comments": []
+}

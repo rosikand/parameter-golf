@@ -1,0 +1,27 @@
+{
+  "number": 634,
+  "title": "Record: 11L XSA-all + Full GPTQ + Parallel Muon + Selective Pruning (val_bpb: 1.1171)",
+  "state": "open",
+  "user": "raahilshah",
+  "created_at": "2026-03-24T17:40:34Z",
+  "updated_at": "2026-03-24T17:45:38Z",
+  "merged_at": null,
+  "body": "# Record: 11L XSA-all + Full GPTQ + Parallel Muon + Selective Pruning\n\n**val_bpb: 1.1171** (3-seed mean, std 0.0006) | **15.92 MB** max artifact | 8xH100 SXM, 600s\n\n## Key Techniques\n\n1. **XSA on all 11 layers** \u2014 forces cross-position mixing from layer 0. -0.0016 BPB vs XSA-last-4.\n2. **Full Hessian GPTQ** \u2014 256-sample calibration, Cholesky error compensation, block_size=128, percdamp=0.01.\n3. **amax-aligned QAT** \u2014 STE matches export quantizer using row-maximum clipping with [-32, 31] range.\n4. **Parallel Muon** with parameter banking \u2014 3-phase overlapped optimizer eliminates DDP overhead. 84.2ms/step \u2192 ~7,100 steps.\n5. **Selective \u00b11 magnitude pruning** \u2014 post-GPTQ, sort \u00b11 values by scale\u00b2, zero least-impactful until target size.\n6. **LZMA compression** \u2014 preset 6, better ratio than zstd on int6 weights.\n7. **LeakyReLU(0.5)\u00b2** \u2014 prevents dead neurons, doubles effective MLP capacity.\n\n## Results (3 seeds, 8xH100 SXM)\n\n| Seed | Sliding BPB (s64) | val_loss | Artifact |\n|------|--------------------|----------|----------|\n| 1337 | **1.1164** | 1.8851 | 15,920,050 bytes |\n| 42 | 1.1171 | 1.8861 | 15,921,954 bytes |\n| 7 | 1.1177 | 1.8871 | 15,914,654 bytes |\n\n**Mean: 1.1171 | Std: 0.0006**\n\n## Architecture\n\n11L, 512d, 8H/4KV (GQA), MLP 3x LeakyReLU(0.5)\u00b2, **XSA-all-11**, Partial RoPE 16/64, LN Scale, VE128, SmearGate, BigramHash(2048), U-Net skips, EMA(0.997), Tight SWA, Late QAT@0.15, Full GPTQ int6 + LZMA, Parallel Muon + Parameter Banking, FA3 Hopper.\n\n## Verification\n\n- [x] 3 seeds, all train \u2264600s on 8xH100 SXM\n- [x] All artifacts \u226416,000,000 bytes (max: 15,921,954)\n- [x] No TTT on validation data\n- [x] No network calls during evaluation\n- [x] Sliding window eval stride=64 (std=0.0006)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/634",
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Clear Muon shard momentum when restoring from warmup**\n\nThese lines restore each optimizer from `state_dict()`, but in distributed mode `Muon` keeps its active momentum in `_bank_meta[*]['shard_mom']` (used in `Muon.step`) rather than in `state_dict`. Because warmup calls `opt.step()`, those buffers are updated and then silently carried into real training, so `warmup_steps>0` changes optimization even after the supposed rollback. Rebuild or zero Muon\u2019s internal bank buffers after warmup to make the reset correct and reproducible.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-24T17:45:37Z",
+      "updated_at": "2026-03-24T17:45:38Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  All-reduce GPTQ Hessians across ranks before averaging**\n\nIn multi-GPU runs, calibration data is split per rank by `DistributedTokenLoader`, but Hessians are only divided by `num_batches` locally with no cross-rank reduction. Since the final artifact is written by rank 0, GPTQ is effectively calibrated from rank 0\u2019s subset instead of the full global calibration set, making quantization quality dependent on rank/world size and underusing most calibration data. Add a distributed sum/average of each Hessian before damping and quantization.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-24T17:45:38Z",
+      "updated_at": "2026-03-24T17:45:38Z"
+    }
+  ]
+}

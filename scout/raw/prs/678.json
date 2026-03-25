@@ -1,0 +1,14 @@
+{
+  "number": 678,
+  "title": "Attention Warm-Start: Initializing Q/K from Bigram Co-occurrence SVD",
+  "state": "open",
+  "user": "SPThole",
+  "created_at": "2026-03-25T04:34:48Z",
+  "updated_at": "2026-03-25T04:36:28Z",
+  "merged_at": null,
+  "body": "## [NON RECORD] Only 1H100 Used: Summary\r\n\r\nInitializes W_Q and W_K in layer 0 from bigram co-occurrence statistics via SVD, so the model's initial attention patterns reflect real token relationships rather than random noise. Zero extra parameters \u2014 only changes initialization.\r\n\r\n## Motivation\r\n\r\nIn a 600-second training window (~1100 steps), the model spends its first hundreds of steps learning basic token co-occurrence patterns that are trivially available from corpus statistics. By encoding this structure into the Q/K matrices at initialization, we give the model a head start on learning \"which tokens should attend to which.\"\r\n\r\n## Method\r\n\r\n1. **Build co-occurrence matrix** C \u2208 R^{1024\u00d71024} from 2M training tokens (<1s)\r\n2. **Log-transform + double-center** to get PMI-like matrix: `C \u2190 log(C+1)`, subtract row/column means\r\n3. **Project into model_dim** via fixed random projection: `C_proj = P^T C P` \u2208 R^{512\u00d7512}\r\n4. **SVD factorize**: `C_proj = U\u03a3V^T`, set `W_Q \u2190 (U \u00b7 \u221a\u03a3)^T`, `W_K \u2190 (V^T \u00b7 \u221a\u03a3)` so that `W_Q^T \u00b7 W_K \u2248 C_proj`\r\n5. **Head diversity**: SVD components 1\u201364 \u2192 head 0, 65\u2013128 \u2192 head 1, etc. Each head captures a different frequency band of co-occurrence\r\n6. **Scale normalize** to match Frobenius norm of default orthogonal init\r\n\r\nTotal overhead: <3 seconds. Applied to layer 0 only (where hidden states \u2248 embeddings).\r\n\r\n## Results\r\n\r\n- **val_bpb: 1.3525** (post int6+zstd, 1\u00d7H100, seed=42) Expect much lower when 8XH100 used\r\n- Pre-quant: 1.3245 | Quant penalty: 0.0280\r\n- 1,099 steps in 600s | 15.55MB artifact\r\n- Run on 1\u00d7H100 due to compute constraints\r\n\r\nBuilt upon [PR #623](https://github.com/openai/parameter-golf/pull/623).\r\n\r\n## Observation\r\n\r\nSlightly worse than the baseline without it (1.3345). The random projection P introduces noise that dilutes the co-occurrence signal. A tighter approach \u2014 using the actual embedding matrix E as the projection basis \u2014 could better preserve the structure. The principle of \"warm-starting attention from corpus statistics\" remains promising for short training regimes.\r\n\r\n## Test plan\r\n- [x] Verified co-occurrence matrix builds in <3s\r\n- [x] Confirmed W_Q/W_K norms match orthogonal init post-scaling\r\n- [x] Full 600s training run completes without divergence\r\n- [x] Artifact fits under 16MB\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/678",
+  "draft": false,
+  "comments": []
+}

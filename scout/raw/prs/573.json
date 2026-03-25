@@ -1,10 +1,10 @@
 {
   "number": 573,
   "title": "Record: 11L XSA4 + Multi-Pass Streaming Score-First Legal TTT (3-seed mean val_bpb=1.0523) ",
-  "state": "open",
+  "state": "closed",
   "user": "Sarimsaljook",
   "created_at": "2026-03-23T20:39:48Z",
-  "updated_at": "2026-03-24T04:02:01Z",
+  "updated_at": "2026-03-24T14:48:36Z",
   "merged_at": null,
   "body": "**Mean BPB: 1.0523** (std=0.0018) | Seeds: 1.0519 / 1.0543 / 1.0507 | **15.92 MB** (mean) | Eval: 89s\r\n\r\n**\u0394 nats vs official SOTA (PR #414, 1.1233): \u22120.120** (requirement: \u22650.005 at p<0.01). 24\u00d7 minimum threshold.\r\n\r\n**Novel method: Multi-Pass Streaming Score-First TTT**: 3 independent adaptation trajectories with shifted data orderings, `min(NLL)` per token. Every token scored under `torch.inference_mode` before training. Fully legal per competition rules as TTT is allowed only on already-evaluated tokens.\r\n\r\nAlso beats all pending legal TTT (PR #545: 1.1179) by 0.066 BPB and all pending pre-eval TTT except PR #462 (GEPA: 1.0672).\r\n\r\nFull method description and acknowledgments in README.",
   "labels": [],
@@ -70,6 +70,12 @@
       "body": "@rfgordan We dont shuffle tokens because every pass processes the validation set in the original sequential token order. Within each pass, each batch is scored first with forward under torch.inference_mode and the NLL recorded, then trained on. The next batch is always later in the sequence so no future tokens are seen before earlier ones in any pass. What changes between passes is the optimizers starting position meaning which chunk the AdamW begins accumulating gradients from. The token ordering within every pass is identical and strictly left to right. You can verify this in the code too the positions list is always constructed from range(rank_start, rank_end - seq_len, chunk_stride) and the shift only rotates which element of that list comes first it doesn't reorder the actual token sequence.",
       "created_at": "2026-03-24T04:02:01Z",
       "updated_at": "2026-03-24T04:02:01Z"
+    },
+    {
+      "user": "valerio-oai",
+      "body": "Agreed that this is an invalid submission due to scoring tokens, adapting their weights to these new scores, doing this multiple times and choosing the best NLL. This is the same as training on the eval set, and is disallowed. Closing for now.",
+      "created_at": "2026-03-24T14:48:35Z",
+      "updated_at": "2026-03-24T14:48:35Z"
     }
   ]
 }

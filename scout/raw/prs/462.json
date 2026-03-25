@@ -1,10 +1,10 @@
 {
   "number": 462,
   "title": "Record: SwiGLU + XSA4 + U-Net + AdamW TTT (3-seed mean val_bpb=1.0672)",
-  "state": "open",
+  "state": "closed",
   "user": "JoeProAI",
   "created_at": "2026-03-22T21:43:53Z",
-  "updated_at": "2026-03-23T09:18:39Z",
+  "updated_at": "2026-03-24T14:06:24Z",
   "merged_at": null,
   "body": "# Record: SwiGLU + XSA4 + U-Net + AdamW TTT (3-seed mean val_bpb=1.0672)\n\n**3-seed mean val_bpb: 1.0672** | Best seed: 1.0658\nVerified on 8xH100 80GB, 10-minute wall-clock budget.\n\n## Approach\n\nNovel architecture discovered through GEPA (Gemini-driven Evolutionary Parameter Architecture search) combined with community-proven techniques. Built over 5 days, 6 waves of experiments, ~$250 total compute on Modal H100s.\n\n### Architecture (discovered by GEPA)\n- **SwiGLU FFN** with Star-ReLU activation\n- **U-Net skip connections** with learned gating\n- **BigramHash embeddings** (8192 buckets, 128 dim)\n- **SmearGate** on embeddings\n- 11 layers, 512 dim, 8 heads, 8 KV heads, MLP hidden=1792, tied embeddings\n\n### Training techniques (adopted + tuned)\n- **XSA4** (cross-sequence attention on last 4 layers) -- credited to @felipe-parodi (#398)\n- **EMA** (decay=0.9985) -- credited to @felipe-parodi (#398), decay tuned by us\n- **AdamW TTT** (lr=0.0005, 10 epochs, wd=0.0) -- credited to @sjp611 (#442)\n- **Partial RoPE** (16 dims) -- credited to @felipe-parodi (#398)\n- **LN Scale** (1/sqrt(layer_idx+1)) -- credited to @felipe-parodi (#398)\n- **Late QAT** (threshold 0.15) -- credited to @fbedev (#410)\n- Muon optimizer (matrix_lr=0.025, wd=0.04, momentum=0.99)\n- Warmdown: 6000 steps\n- Int6 quantization + zstd-22 compression\n\n## 3-Seed Results\n\n| Seed | val_bpb |\n|------|---------|\n| 42 | 1.06733191 |\n| 123 | 1.06833018 |\n| 7 | 1.06579646 |\n| **Mean** | **1.06715285** |\n| **Std** | **0.00104211** |\n\n## Comparison to prior SOTA\n\n| Submission | Mean BPB | Best BPB |\n|-----------|----------|----------|\n| **Ours** | **1.0672** | **1.0658** |\n| @sjp611 (#442) | 1.1027 | 1.0992 |\n| @felipe-parodi (#398) | 1.1221 | 1.1213 |\n| @thwu1 (#180, merged) | 1.1428 | -- |\n\n## Key finding\n\nAdamW TTT produced a 0.053 bpb improvement on our architecture vs 0.019 on the standard architecture (PR #398). This suggests SwiGLU + U-Net skip connections create a loss landscape that AdamW navigates significantly better than SGD during test-time training.\n\n## Credits\n\n- **@felipe-parodi** (#398): EMA, TTT, XSA4, Partial RoPE, LN Scale\n- **@sjp611** (#442): AdamW TTT\n- **@fbedev** (#410): Late QAT\n- **@thwu1** (#180): 11-layer architecture direction\n- Compute provided by **Modal**\n\nBuilt by [@JoePro](https://x.com/JoePro) (GitHub: [@JoeProAI](https://github.com/JoeProAI)) with AI agent assistance: [OpenClaw](https://openclaw.ai) (Claude Opus), Codex (GPT-5.4), Claude Sonnet, Gemini 2.5 Pro, and Paperclip agent coordination.\n\n## Run command\n\n```bash\n# Default seed\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n\n# Specific seed\nSEED=42 torchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\nAll hyperparameters are set as defaults in `train_gpt.py`.\n\n## Disclosure\n\nThis work is **independently funded** with no sponsorship, grants, or funding from OpenAI or any other organization. All compute was self-funded on Modal (personal account).",
   "labels": [],
@@ -28,6 +28,18 @@
       "body": "thats insane ablation data thanks for sharing. so swiglu + unet basically makes the loss landscape way smoother for ttt to exploit, that makes alot of sense. 2.8x more improvement from the same ttt recipe is wild",
       "created_at": "2026-03-23T00:25:24Z",
       "updated_at": "2026-03-23T00:25:24Z"
+    },
+    {
+      "user": "JoeProAI",
+      "body": "Thanks mohosy, and to everyone who's been building on this work. Genuinely grateful to be part of this competition -- seeing the community take the architecture further and run their own ablations has been the best part of the whole thing. Good luck to everyone still in it.",
+      "created_at": "2026-03-24T13:09:07Z",
+      "updated_at": "2026-03-24T13:09:07Z"
+    },
+    {
+      "user": "valerio-oai",
+      "body": "As far as I can tell here, this proposed TTT scheme trains on the validation set by reporting the score on a doc after its weights have adapted to it, rendering this unsound for the purposes of this competition. Specifically, around lines 1417-1428 the code calls ttt_adapt(..., val_tokens, ...) before final evaluation, and ttt_adapt itself (around lines 938-996) iterates over val_tokens and does optimizer.step().\r\n\r\n",
+      "created_at": "2026-03-24T14:05:46Z",
+      "updated_at": "2026-03-24T14:06:24Z"
     }
   ]
 }

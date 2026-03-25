@@ -1,0 +1,14 @@
+{
+  "number": 660,
+  "title": "Non-record: Soft MoE Exploration \u2014 Dense Gating Fixes Sparse Router Collapse Under 16MB (WIP, val_bpb=1.1826)",
+  "state": "open",
+  "user": "HugoOchoaLP",
+  "created_at": "2026-03-25T00:05:32Z",
+  "updated_at": "2026-03-25T00:06:06Z",
+  "merged_at": null,
+  "body": "## Non-record: Soft MoE Under 16MB Parameter Constraint\r\n\r\n**Score:** val_bpb = 1.1826 (11L, 8xH100, 600s \u2014 artifact 17.3MB, 10L version pending to fit under 16MB)\r\n\r\n### Summary\r\nSystematic exploration of Mixture of Experts for parameter golf. Standard sparse MoE fails due to router collapse (98%/2% split), torch.compile incompatibility (3x slower steps), and parameter overhead. A dense \"Soft MoE\" variant fixes all three: learned soft gating over all experts eliminates collapse, enables torch.compile (636ms vs 2309ms/step), and achieves 1.1826 bpb vs 1.2244 baseline.\r\n\r\n### Experiment Results\r\n| Config | Steps | val_bpb | ms/step | Artifact | Expert Balance |\r\n|--------|-------|---------|---------|----------|----------------|\r\n| 11L no MoE | 138 | 3.26 | 794 | 17.5MB | n/a |\r\n| 9L sparse MoE | 52 | 3.86 | 2309 | too big | n/a |\r\n| 9L sparse, aux=0.1 | 89 | 3.31 | 1415 | 13.1MB | 2%/98% collapsed |\r\n| 9L Soft MoE | 189 | 3.25 | 636 | 14.6MB | balanced |\r\n| 11L Soft MoE 8xH100 | 4704 | 1.1826 | 128 | 17.3MB | balanced |\r\n\r\n### Status\r\n- [x] Sparse MoE experiments (negative result)\r\n- [x] Soft MoE implementation and validation\r\n- [x] Full 8xH100 run (11L, over 16MB)\r\n- [ ] 10L run fitting under 16MB\r\n- [ ] 3-seed statistical significance",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/660",
+  "draft": true,
+  "comments": []
+}

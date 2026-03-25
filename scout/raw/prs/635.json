@@ -1,0 +1,14 @@
+{
+  "number": 635,
+  "title": "Non-record: 11L MLP3.5x LeakyReLU(0.5)^2 + Full SOTA Stack (mean val_bpb=1.1330, 8xH100 SXM)",
+  "state": "open",
+  "user": "aryanbhosale",
+  "created_at": "2026-03-24T17:48:12Z",
+  "updated_at": "2026-03-25T10:45:13Z",
+  "merged_at": null,
+  "body": "## Non-record: 11L MLP3.5x LeakyReLU(0.5)^2 + Full SOTA Stack\n\n**3-seed mean val_bpb: 1.1330** (std=0.0007) on 8xH100 SXM\n\n| Seed | val_bpb | val_loss | Steps |\n|------|---------|----------|-------|\n| 1337 | 1.1334 | 1.9136 | 3842 |\n| 42 | 1.1322 | 1.9116 | 3885 |\n| 2024 | 1.1334 | 1.9136 | 3857 |\n\n### Architecture (31.4M params)\n- 11L, 512d, 8H/4KV, **MLP 3.5x (hidden=1792)** with **LeakyReLU(0.5)^2**\n- SmearGate + BigramHash(10240) + TrigramHash(4096) + OrthoInit\n- Value Residual (ResFormer) + Gated Attention + XSA all 11 layers\n- Partial RoPE (16/64 dims), U-Net skip connections\n- Tied FP16 embeddings, logit softcap 30.0\n\n### Training\n- Muon lr=0.03, WD=0.04, momentum 0.92->0.99/1500 steps\n- EMA (decay=0.997), batch 786K, seq_len 2048\n- Warmdown 3500, Late QAT via STE (final 15%), gradient clip 0.3\n\n### Quantization\n- Int6 uniform + GPTQ-lite (5-percentile clip search) + zstd-22\n- FP16 passthrough for tied embeddings\n\n### Evaluation\n- Sliding window stride=64\n\n### Development\n30-experiment autoresearch loop on 1xH100 (~8 hours). Validated on 8xH100 SXM (RunPod).\n\nFeature ablation (1xH100):\n- Value Residual: -0.017 BPB\n- SmearGate: -0.010\n- XSA all 11: -0.005\n- Gated Attention: -0.004\n- Partial RoPE: -0.004\n- TrigramHash: -0.002\n- Late QAT: -0.002",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/635",
+  "draft": false,
+  "comments": []
+}

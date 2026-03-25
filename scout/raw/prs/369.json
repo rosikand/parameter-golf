@@ -1,10 +1,10 @@
 {
   "number": 369,
   "title": "Submission: 11L NTK-RoPE + FA3 + Batch524K + XSA4 + EMA (val_bpb=1.1328)",
-  "state": "open",
+  "state": "closed",
   "user": "signalrush",
   "created_at": "2026-03-21T20:36:35Z",
-  "updated_at": "2026-03-21T20:45:25Z",
+  "updated_at": "2026-03-25T00:57:10Z",
   "merged_at": null,
   "body": "## Submission: 11L NTK-RoPE + FA3 + Batch524K + XSA4 + EMA\n\n**val_bpb: 1.1328** (sliding window stride=64, 3-seed mean) | **15.87 MB** (mean) | 8xH100 SXM, 600s\n\n### Key Techniques\n\n| Change | Impact |\n|--------|--------|\n| **NTK-aware RoPE** | Auto-scales RoPE base when seq_len > train_seq_len=1024, ~4x base scaling at seq=2048 |\n| **FlashAttention 3** (Hopper) | 58ms/step vs 99ms SDPA \u2014 71% more training steps (10,300+ vs 6,030) |\n| **Batch=524K** | More gradient updates per 600s budget |\n| **Adaptive Pruning** | Auto-finds minimal prune % to fit 16MB per seed |\n| **XSA** on last 4 layers | Exclusive Self Attention (arXiv:2603.09078) |\n| **EMA** (decay=0.997) | Smooth weight averaging every step |\n\n### Results (3 seeds, 8xH100 SXM)\n\n| Seed | Steps | Sliding BPB (s64) | Artifact | Prune % |\n|------|-------|-------------------|----------|---------|\n| 42 | 10,368 | 1.1344 | 15.89 MB | 14% |\n| 1337 | 10,346 | 1.1320 | 15.89 MB | 10% |\n| **2024** | **10,358** | **1.1319** | **15.83 MB** | **12%** |\n\n**Mean: 1.1328 | Std: 0.0014** | Submitted: seed 2024 (best)\n\n### Architecture\n\n- 11L, 512d, 8H/4KV, MLP 3x (relu\u00b2), U-Net skips\n- SmearGate + BigramHash(4096, dim=128) + OrthoInit + muP\n- NTK-aware RoPE, logit softcap=30\n- Muon (lr=0.025, mom=0.99) + AdamW (tied_embed_lr=0.035)\n- WD=0.04, warmdown=3000, grad_clip=0.3\n- Int5 MLP / Int6 attn / Int8 embed + zstd-22\n\n### Run Command\n\n```bash\nSEED=2024 bash eval/eval.sh\n```\n\n### FA3 Installation\n\nBuilt from [Dao-AILab/flash-attention](https://github.com/Dao-AILab/flash-attention) hopper/ subdirectory with:\n```bash\nFLASH_ATTENTION_DISABLE_SM80=TRUE FLASH_ATTENTION_DISABLE_FP16=TRUE \\\nFLASH_ATTENTION_DISABLE_FP8=TRUE TORCH_CUDA_ARCH_LIST=\"9.0a\" \\\npython setup.py install\n```\n\n### Test plan\n\n- [x] All 3 seeds under 16MB artifact limit\n- [x] All 3 seeds train in 600s on 8xH100\n- [x] Post-quant roundtrip verified per seed\n- [x] Sliding window eval (stride=64) consistent across seeds\n- [x] train_gpt.py under 1500 lines (1421)\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
   "labels": [],

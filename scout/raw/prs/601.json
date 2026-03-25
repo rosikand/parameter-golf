@@ -1,0 +1,14 @@
+{
+  "number": 601,
+  "title": "Non-record: VR + GA + Late QAT + Full GPTQ \u2014 1.1418 BPB, 15.7 MB",
+  "state": "open",
+  "user": "anantdgoel",
+  "created_at": "2026-03-24T06:32:12Z",
+  "updated_at": "2026-03-24T06:32:12Z",
+  "merged_at": null,
+  "body": "**val_bpb: 1.1418** | **15.7 MB** | 1x NVIDIA RTX A6000, ~14 hours\n\n## Summary\n\n11-layer GPT combining the community meta-stack with novel techniques **Value Residual (VR)** and **Gated Attention (GA)**, plus **Late QAT** during training and a **Full GPTQ + Int5 MLP** post-training quantization pipeline. Achieves 1.1418 BPB (stride=128) in a 15.7 MB artifact that fits under the 16 MB limit.\n\n**Update pending**: BH10240 (bigram hash 10240 buckets) variant currently evaluating \u2014 expect improved results soon.\n\n## Novel Contributions\n\n- **Value Residual (VR)**: Layer-0 V vector shortcut for deep attention signal flow (\u22120.015 BPB). Inspired by [arXiv:2410.17897](https://arxiv.org/abs/2410.17897).\n- **Gated Attention (GA)**: Per-head learned sigmoid gate after SDPA (\u22120.003 BPB). Inspired by [arXiv:2505.06708](https://arxiv.org/abs/2505.06708).\n- **Late QAT**: LR-threshold-based fake-quantize during final ~5% of training.\n- **Full GPTQ + Int5 MLP post-training**: Hessian-aware quantization + int5 MLP re-quantization (\u22120.028 BPB, \u22123.6 MB).\n- **Finding: TTT hurts on GPTQ-quantized models** (+0.030 BPB). Quantized weight space is incompatible with gradient-based test-time adaptation.\n\n## Ablation Results (stride=128)\n\n| Configuration | BPB | Delta |\n|---|---|---|\n| Base int6+zstd (no post-training) | 1.1696 | \u2014 |\n| + Full GPTQ + Int5 + GPTQ-lite | **1.1418** | **\u22120.028** |\n| + VR_V0_FP16 (asymmetric V0 quant) | 1.1418 | +0.000 |\n| + SGD TTT (legal, cosine, per-layer) | 1.1721 | +0.030 |\n\n## Credits\n\nBuilt on top of the excellent community meta-stack. Key techniques originated from:\n- #414 \u2014 EMA + GPTQ-lite baseline\n- #473 \u2014 Legal TTT protocol (score-first backward-looking)\n- #461 \u2014 XSA (cross-sequence attention)\n- #481 \u2014 Int5 MLP quantization\n- #180 \u2014 BigramHash embeddings\n- #315 \u2014 SmearGate\n- #535 \u2014 Full GPTQ post-training quantization\n\n## Files\n\n- `train_gpt.py` \u2014 Full training + eval script with all techniques\n- `submission.json` \u2014 Metadata\n- `README.md` \u2014 Detailed writeup with ablations and reproducibility commands",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/601",
+  "draft": false,
+  "comments": []
+}
