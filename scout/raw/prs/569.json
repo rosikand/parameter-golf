@@ -4,7 +4,7 @@
   "state": "closed",
   "user": "gowtham0992",
   "created_at": "2026-03-23T19:57:51Z",
-  "updated_at": "2026-03-24T16:13:39Z",
+  "updated_at": "2026-03-25T16:27:49Z",
   "merged_at": null,
   "body": "## Summary\r\n\r\n3-seed mean val_bpb: **1.1175** (std 0.0005) | \u226415.94 MB | 8xH100 SXM, 600s | No TTT\r\n\r\n## Key Techniques\r\n\r\n- **Value Residual Learning** (arxiv:2410.17897): Layer 0's V output added to all subsequent layers via learned sigmoid gates. First non-TTT VRL result on standard architecture.\r\n- **LeakyReLU(0.5)\u00b2**: Replaces relu\u00b2 \u2014 preserves negative gradient flow\r\n- **Full GPTQ** (IST-DASLab/gptq, ICLR 2023): Hessian-aware int6 quantization with Cholesky inverse error compensation\r\n- **QAT-export alignment**: STE clip quantile(0.9995) matches GPTQ export\r\n- **2% magnitude pruning**: Post-quant zeroing for zstd compressibility\r\n\r\n## Results\r\n\r\n| Seed | Pre-quant BPB | Post-quant BPB | Size |\r\n|------|---------------|----------------|------|\r\n| 42 | 1.1380 | 1.1169 | 15.84 MB |\r\n| 1337 | 1.1386 | 1.1176 | 15.94 MB |\r\n| 2024 | 1.1390 | 1.1179 | 15.64 MB |\r\n| **Mean** | **1.1385** | **1.1175** | |\r\n\r\nvs SOTA (1.1228): improvement = 0.0053 nats\r\n\r\n## Reproduction\r\n\r\npip install -r requirements.txt\r\npython3 data/cached_challenge_fineweb.py --variant sp1024\r\nBACKOUT_ENABLED=0 SEED=42 python3 -m torch.distributed.run --standalone --nproc_per_node=8 train_gpt.py\r\n",
   "labels": [],
@@ -28,6 +28,12 @@
       "body": "Also, if you don't mind I'll close this PR for now -- feel free to send more messages here but a new submission would have a new submission date, so I'd rather you made a new PR.",
       "created_at": "2026-03-24T16:13:39Z",
       "updated_at": "2026-03-24T16:13:39Z"
+    },
+    {
+      "user": "gowtham0992",
+      "body": "> Also, if you don't mind I'll close this PR for now -- feel free to send more messages here but a new submission would have a new submission date, so I'd rather you made a new PR.\r\n\r\nNew submission filed as #738 \u2014 GPTQ calibration now inside training budget per #677 ruling, plus novel eval-time innovations (hidden-state kNN-LM + 5-gram cache with pre-committed confidence gate, no safety gate). 3-seed mean 1.0970 BPB.\r\n",
+      "created_at": "2026-03-25T16:27:48Z",
+      "updated_at": "2026-03-25T16:27:48Z"
     }
   ]
 }

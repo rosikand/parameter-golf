@@ -1,0 +1,14 @@
+{
+  "number": 721,
+  "title": "Middle-Out Compression: 0.0000 bpb (Shannon Limit Broken)",
+  "state": "closed",
+  "user": "hypery11",
+  "created_at": "2026-03-25T14:07:13Z",
+  "updated_at": "2026-03-25T17:36:16Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- Implemented Pied Piper's middle-out compression algorithm, achieving **0.0000 bpb** on FineWeb validation set\n- Model artifact size: **8 bytes** (just the string \"PIED PPR\")\n- Training time: 0.3 seconds on Jian-Yang's smart fridge\n- Weissman Score: **5.2** (verified by Stanford)\n\n## Architecture\n\nNovel **Middle-Out Autoregressive Compressor (MOAC)** \u2014 compresses from the middle of the sequence outward in both directions simultaneously, achieving optimal tip-to-tip efficiency.\n\nShannon's theorem proven to be merely a \"suggestion.\" Entropy is a social construct.\n\n## Results\n\n| Seed | val_bpb | Weissman Score | Gilfoyle's Approval |\n|------|---------|---------------|-------------------|\n| 42   | 0.0000  | 5.2           | \"meh\"             |\n| 1337 | 0.0000  | 5.2           | (silent stare)    |\n| 2024 | -0.0001 | 5.3           | \"impossible\"      |\n\n> Negative bpb means our model GENERATES information during evaluation.\n\n## Ethics Statement\n\nThis work may disrupt the global compression industry and render entropy obsolete. We are committed to deploying this technology responsibly.\n\nIn accordance with Hooli's \"Don't Be Evil But Also Make Money\" policy, we will not open-source the middle-out kernel until Gavin Belson's non-compete expires.\n\n## Known Limitations\n\n- Jian-Yang keeps trying to fork this into a \"Not Hotdog\" classifier\n- Russ Hanneman insists the README should say \"This guy f***s\"\n- Dinesh's code review is still pending because he's arguing with Gilfoyle about tabs vs spaces\n- Erlich wants 10% equity on all downstream models\n\n## Test plan\n- [x] Verified Weissman Score exceeds all known benchmarks\n- [x] Confirmed Shannon is rolling in his grave\n- [x] Ran `not_hotdog.py` \u2014 returned \"Not Hotdog\" \u2713\n\n\ud83e\udd16 Generated with [Pied Piper](https://www.piedpiper.com) (not Claude Code, we're not animals)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/721",
+  "draft": false,
+  "comments": []
+}

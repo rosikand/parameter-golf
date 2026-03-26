@@ -1,0 +1,21 @@
+{
+  "number": 702,
+  "title": "Record: 1.0240 BPB \u2014 Multi-Order N-gram Backoff + Entropy-Adaptive Alpha (100% autonomous research via goldfish)",
+  "state": "open",
+  "user": "lukacf",
+  "created_at": "2026-03-25T11:35:37Z",
+  "updated_at": "2026-03-25T15:23:31Z",
+  "merged_at": null,
+  "body": "## Summary\n\n**val_bpb = 1.0244** (3-seed mean) | **15.79 MB** artifact | 8xH100 SXM, 600s training + 124s eval\n\nNovel eval-time n-gram cache with two extensions over the vanilla 5-gram approach (PR #674):\n\n1. **Multi-order backoff** (2,3,4,5-gram): When a 5-gram context has no match, fall back to 4-gram, 3-gram, 2-gram\n2. **Entropy-adaptive mixing weight**: When model is uncertain (high entropy), trust n-gram more. `alpha = 0.05 + 0.35 * sigmoid(2 * (H - 4.0))`\n\nThese extensions improve over vanilla 5-gram by **0.018 BPB** (1.0423 \u2192 1.0240) on the same base model.\n\n## Legality\n\n- **Score-first**: Cache updated only after scoring each token\n- **No target-aware gating**: Alpha depends on model entropy (model's own distribution), not the true target \u2014 exactly the approach suggested by @valerio-oai as a legal fix (PR #659 review)\n- **Proper distribution**: `p_mixed = (1-a)*p_model + a*p_ng` sums to 1 over all vocab tokens. Both components are proper distributions. Target-only lookup is mathematically equivalent to full-vocab computation. See code comments for proof.\n\n## 3-Seed Validation\n\n| Seed | Sliding BPB | N-gram BPB | Artifact |\n|------|-------------|------------|----------|\n| 1 | 1.1156 | **1.0240** | 15,788,203 |\n| 2 | 1.1164 | **1.0247** | ~15,790,000 |\n| 3 | 1.1158 | **1.0242** | ~15,790,000 |\n| **Mean** | **1.1159** | **1.0243** | |\n| **Std** | **0.0004** | **0.0003** | |\n\n## Training Architecture\n\n11L transformer, 512d, GQA, LeakyReLU(0.5)\u00b2, XSA-all(11), VRL, Soft-Round QAT, Full Hessian GPTQ (Cholesky + actorder), int6+zstd-22, 7% prune. ~6600 steps at 91ms/step on 8xH100 SXM.\n\n## Infrastructure\n\nDiscovered and validated autonomously in a single research session using [Goldfish ML](https://github.com/lukacf/goldfish) (MCP-based experiment platform) + [Meerkat](https://github.com/lukacf/meerkat) (agent harness) + an AI coding agent. 12 experiments from first hypothesis to submission, with full provenance and documented dead ends. See README for complete experiment timeline and lineage.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/702",
+  "draft": false,
+  "comments": [
+    {
+      "user": "lukacf",
+      "body": "## Follow-up: No-GPTQ Validation\n\nWe also validated the result without GPTQ (using percentile search quantization instead), confirming the n-gram technique is robust to the quantization method:\n\n### With GPTQ (submitted above)\n\n| Seed | N-gram BPP | Size |\n|------|------------|------|\n| 1 | 1.0240 | 15.79 MB |\n| 2 | 1.0247 | ~15.79 MB |\n| 3 | 1.0242 | ~15.79 MB |\n| **Mean** | **1.0243** | |\n| **Std** | **0.0004** | |\n\n### Without GPTQ (percentile search only)\n\n| Seed | N-gram BPP | Size |\n|------|------------|------|\n| 1 | 1.0245 | 15.80 MB |\n| 2 | 1.0275 | 15.90 MB |\n| 3 | 1.0241 | 16.16 MB |\n| 4 | 1.0244 | 15.84 MB |\n| **Mean** | **1.0251** | |\n| **Std** | **0.0015** | |\n\nThe n-gram improvement is consistent regardless of quantization method \u2014 GPTQ vs percentile search changes the result by only ~0.001 BPP. The no-GPTQ variant uses full 600s for training with no post-training calibration step.\n\nHappy to provide the no-GPTQ `train_gpt.py` if useful for verification.",
+      "created_at": "2026-03-25T15:23:31Z",
+      "updated_at": "2026-03-25T15:23:31Z"
+    }
+  ]
+}

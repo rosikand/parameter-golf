@@ -1,0 +1,33 @@
+{
+  "number": 779,
+  "title": "Record: BackoffNgramMixer + Drift-Free TTT (3-seed mean val_bpb=0.6683)",
+  "state": "open",
+  "user": "deanbrr",
+  "created_at": "2026-03-25T22:26:17Z",
+  "updated_at": "2026-03-26T00:35:02Z",
+  "merged_at": null,
+  "body": "Record: BackoffNgramMixer + Drift-Free TTT (3-seed mean val_bpb=0.6683)\r\n\r\n3-seed mean val_bpb: 0.6683 (std 0.0024), all artifacts under 16 MB, 8xH100 SXM, 600s training + 371s eval.\r\n\r\nResults:\r\nSeed 1337: 0.6663 BPB, 15.63 MB artifact\r\nSeed 42: 0.6710 BPB, 15.78 MB artifact\r\nSeed 2024: 0.6675 BPB, 15.48 MB artifact\r\n\r\nBackground:\r\nI introduced the first n-gram eval cache in this competition (PR #659, val_bpb=1.0920, March 22 2026). That approach used a 5-gram cache with an oracle safety gate ruled illegal by organizers. This submission replaces the oracle gate with entropy-adaptive mixing and multi-order backoff, combined with a drift-free TTT configuration.\r\n\r\nTechnique:\r\n\r\n1) Multi-order n-gram backoff (orders 2-7). Try highest order first, cascade down on miss. Each order uses 4M hash buckets. Counts accumulated from already-scored tokens only.\r\n\r\n2) Entropy-adaptive alpha: alpha = 0.05 + 0.55 * sigmoid(2 * (H - 4.0)), where H is model entropy. High entropy trusts n-gram more, low entropy trusts the model. Depends only on the model's own output distribution, never on the true target. Mixed probability always applied, no oracle gate.\r\n\r\n3) Drift-free TTT: Q projections only (QTTT=1), eta=0.02, LR=3e-5, 1M token chunks, 1 epoch, no adaptive LR, no Polyak. Produces monotonic BPB improvement through all 60 chunks with no late-chunk reversal.\r\n\r\nAblation (seed 1337):\r\nBase model (no mixer, no TTT): 1.1363\r\nTTT only (no mixer): 1.1369\r\nMixer only (no TTT): 0.6712\r\nFull system: 0.6663\r\n\r\nThe BackoffNgramMixer contributes 99% of the improvement. It is a pure eval-time technique requiring no architectural changes or retraining.\r\n\r\nCompliance:\r\nScore-first TTT: each chunk scored under inference_mode before training on it. Backward-looking n-gram: counts from already-scored tokens only. No oracle selection. No training data access at eval (naive int5 quantization, no GPTQ). Token count verified: ratio_scored = 1.000000.\r\n\r\nCredits:\r\nPR #700 RoyiRa (base architecture, TTT framework), PR #606 gowtham0992 (int5 + Soft-Round QAT), PR #727 Asukabot0 (backoff concept, entropy-adaptive alpha formula), PR #461 Christopher-Lee-McClendon (TTT recipe), PR #518 sofiabod (LeakyReLU, cosine TTT). Dean Barr (original n-gram eval cache concept first in competition PR #659, drift-free TTT discovery, BackoffNgramMixer implementation).",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/779",
+  "draft": false,
+  "comments": [
+    {
+      "user": "newjordan",
+      "body": "awesome",
+      "created_at": "2026-03-25T23:33:39Z",
+      "updated_at": "2026-03-25T23:33:39Z"
+    },
+    {
+      "user": "deanbrr",
+      "body": "> awesome\r\n\r\nThank you. causing a big stir. some are calling it gaming",
+      "created_at": "2026-03-25T23:49:58Z",
+      "updated_at": "2026-03-25T23:49:58Z"
+    },
+    {
+      "user": "newjordan",
+      "body": "it was definately a gamer move. but I dont think gaming. This is my night studying and testing.... ",
+      "created_at": "2026-03-26T00:06:52Z",
+      "updated_at": "2026-03-26T00:06:52Z"
+    }
+  ]
+}

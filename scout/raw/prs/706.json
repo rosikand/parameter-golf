@@ -1,0 +1,33 @@
+{
+  "number": 706,
+  "title": "Podracing: 1.0461 BPB (3-seed mean) \u2014 5-gram eval + LeakyReLU\u00b2",
+  "state": "open",
+  "user": "newjordan",
+  "created_at": "2026-03-25T12:39:40Z",
+  "updated_at": "2026-03-25T16:29:22Z",
+  "merged_at": null,
+  "body": "## Results\n\n| Seed | Sliding BPB | 5-gram BPB | Artifact |\n|------|-------------|-----------|----------|\n| 1337 | 1.1190 | **1.0451** | 15.63 MB |\n| 42 | 1.1217 | **1.0471** | 15.59 MB |\n| 2045 | 1.1200 | **1.0460** | 15.64 MB |\n| **Mean** | **1.1202** | **1.0461** | \u2014 |\n\n## Progression\n\n| PR | Mean BPB | Notes |\n|----|----------|-------|\n| #190 | \u2014 | The Stinky Frost Recipe |\n| #390, #401 | 1.1295, 1.1243 | Sponge Bath TTT + EMA/SWA/QAT |\n| #445 | 1.1236 | Late Training Replay + EMA + GPTQ-lite |\n| #498, #499 | 1.1478 | The Frugendorff (recursive weight sharing) |\n| #508, #578 | 1.1215 | GPTQ + Early QAT + Legal TTT |\n| #533, #577 | 1.1207 | GPTQ + Short TTT |\n| #587 | 1.1208 | XSA + quantization tuning |\n| #656 | 1.1195 | Three Breadsticks (activation + eval) |\n| **This PR** | **1.0461** | **Podracing (5-gram eval interpolation)** |\n\n## 5-gram Eval (score-first, legal)\n\nFixed-weight hashed n-gram interpolation during sliding window eval. Concept credited to **@deanbrr** (PR #659).\n\n- Cache built from already-scored tokens only (backward-looking)\n- Fixed alpha=0.20: always `p_final = 0.80 * p_model + 0.20 * p_ngram`\n- **No safety gate**, no target-aware selection, no min-NLL comparison\n- Hashed count-min sketch (4M buckets), min_count=2\n- Score-first legality: cache updated only AFTER segment scoring\n\n## Architecture\n\n11L/512d U-Net, 26.93M params. LeakyReLU\u00b2 (slope 0.5), XSA last 4, BigramHash 1536. GPTQ int6+zstd, late QAT. TTT disabled.\n\n## Reproduce\n\n```bash\nSEED=2045 MLP_ACT=leaky_relu_sq MLP_LEAKY_SLOPE=0.5 XSA_LAST_N=4 BIGRAM_VOCAB_SIZE=1536 ROPE_DIMS=24 NGRAM_EVAL_ORDER=5 NGRAM_EVAL_ALPHA=0.20 NGRAM_EVAL_MIN_COUNT=2 NGRAM_EVAL_BUCKETS=4194304 torchrun --nproc_per_node=8 train_gpt.py\n```\n\n8xH100 SXM, 600s training + ~190s eval. Training logs and submission.json included.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/706",
+  "draft": false,
+  "comments": [
+    {
+      "user": "newjordan",
+      "body": "dissapointing I have to make a new PR for this as opponed to a commit to my better timed one. ",
+      "created_at": "2026-03-25T12:42:00Z",
+      "updated_at": "2026-03-25T12:42:00Z"
+    },
+    {
+      "user": "valerio-oai",
+      "body": "Hi @newjordan , thank you for the logs, but as I mentioned in my last comment on your PR, the run is still illegal on account of GPTQ calibration happening after training time (see the training logs logging 600s of training time and then GPTQ calibrating for 3.6s), meaning it is still accessing training data at eval time, which is disallowed.",
+      "created_at": "2026-03-25T16:17:56Z",
+      "updated_at": "2026-03-25T16:23:29Z"
+    },
+    {
+      "user": "newjordan",
+      "body": "crushed... sorry to waste your time. back at it. ",
+      "created_at": "2026-03-25T16:29:22Z",
+      "updated_at": "2026-03-25T16:29:22Z"
+    }
+  ]
+}

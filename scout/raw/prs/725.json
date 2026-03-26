@@ -1,0 +1,51 @@
+{
+  "number": 725,
+  "title": "Submit 1x A100 QAT Fix - 1.5252 BPB (Non-Record) [v5]",
+  "state": "closed",
+  "user": "Shuvam-Banerji-Seal",
+  "created_at": "2026-03-25T14:43:05Z",
+  "updated_at": "2026-03-25T17:45:32Z",
+  "merged_at": null,
+  "body": "Single-device (A100) run tuning hyperparams down from multi-device scales to ensure proper LR scheduling.\n\nReporting clarification for final verification:\n- Attached run is measured on 1x A100 under 600s wallclock cap and stops at step 1186.\n- Train-time checkpoint metric at stop: val_bpb=1.4078.\n- Submission metric (submission.json val_bpb) is the final post-export sliding-window roundtrip metric: 1.52523098.\n- End-to-end runtime in attached log is ~33 minutes including final sliding-window evaluation.\n- H100 completion expectation is not used as a claimed metric in this submission; only measured A100 values are reported.\n\nCode improvements included in this series:\n- Swaps torch.quantile for w.abs().amax(dim=1).clamp_min to evade a large Triton compilation slowdown.\n- Fixes bigram embedding guard for small vocab edge cases.\n- Makes compressor-dependent labels and final-roundtrip labels explicit in training logs.\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/725",
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "The export writes the mixed-int6/int8 quantized artifact to a filename that implies int8-only (final_model.int8.ptz). This is confusing given mixed_quantize_int6 emits int5/int6 for some tensors; consider renaming the file and corresponding log strings to reflect the actual format (e.g., mixed_int6 or int6_8).\n```suggestion\n        with open(\"final_model.mixed_int6.ptz\", \"wb\") as f:\n            f.write(quant_blob)\n        quant_file_bytes = os.path.getsize(\"final_model.mixed_int6.ptz\")\n        code_bytes = len(code.encode(\"utf-8\"))\n        log0(f\"Serialized model int6/8+{_COMPRESSOR}: {quant_file_bytes} bytes\")\n        log0(f\"Total submission size int6/8+{_COMPRESSOR}: {quant_file_bytes + code_bytes} bytes\")\n\n    if distributed:\n        dist.barrier()\n    with open(\"final_model.mixed_int6.ptz\", \"rb\") as f:\n```",
+      "created_at": "2026-03-25T14:47:46Z",
+      "updated_at": "2026-03-25T14:47:48Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Magnitude pruning computes a GPU torch.quantile over large flattened weights. Given the noted Triton compilation/slowdown risks around torch.quantile, this post-training step may add significant overhead. Consider moving this quantile computation to CPU or using a non-quantile alternative (e.g., kthvalue/topk) to pick the pruning threshold without triggering expensive GPU compilation.\n```suggestion\n                # Compute quantile threshold on CPU to avoid expensive GPU Triton compilation\n                abs_flat_cpu = param.detach().abs().float().view(-1).cpu()\n                threshold = torch.quantile(abs_flat_cpu, 0.03)\n```",
+      "created_at": "2026-03-25T14:47:47Z",
+      "updated_at": "2026-03-25T14:47:48Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The blurb claims torch.quantile was refactored to .amax(dim=1), but the script still uses torch.quantile in other places (e.g., post-training magnitude pruning and int8 quantization). Consider rewording this to specify that the refactor applies to the QAT clipping path inside CastedLinear (or remove the claim).\n```suggestion\n  \"blurb\": \"Enabled QAT directly within CastedLinear using straight-through estimators. Refactored the QAT clipping path inside CastedLinear from torch.quantile to .amax(dim=1) to alleviate a 30x compiler performance penalty. Attached A100 run reaches step 1186 under the 10-minute wallclock cap (train-time val_bpb 1.4078), and submission val_bpb reports the final post-export sliding-window roundtrip metric (1.52523).\",\n```",
+      "created_at": "2026-03-25T14:47:47Z",
+      "updated_at": "2026-03-25T14:47:48Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "Several constants/utilities related to INT8_KEEP_FLOAT_* and tensor_nbytes are defined but never used in this script. Consider removing them (or wiring them into the quantization path) to reduce dead code and avoid confusion about which export settings are actually honored.\n```suggestion\nINT8_PER_ROW_SCALE_DTYPE = torch.float16\nINT8_CLIP_PERCENTILE = 99.99984\nINT8_CLIP_Q = INT8_CLIP_PERCENTILE / 100.0\n```",
+      "created_at": "2026-03-25T14:47:48Z",
+      "updated_at": "2026-03-25T14:47:48Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "DistributedTokenLoader.next_batch reshapes local[:-1] into (-1, seq_len) but there is no validation that TRAIN_BATCH_TOKENS (and thus local_tokens) is divisible by seq_len. If TRAIN_BATCH_TOKENS is misconfigured this will raise a runtime error during reshape; consider validating divisibility up front (e.g., in main) or truncating/padding to a multiple of seq_len before reshape.\n```suggestion\n        # Ensure we only reshape a multiple of seq_len tokens to avoid runtime errors\n        total_pairs = local.numel() - 1\n        if total_pairs <= 0:\n            raise ValueError(\n                f\"Not enough tokens to form a sequence: got {local.numel()} tokens for seq_len={seq_len}\"\n            )\n        usable_pairs = (total_pairs // seq_len) * seq_len\n        if usable_pairs != total_pairs and usable_pairs == 0:\n            # Explicitly fail if misconfiguration prevents forming even a single full sequence\n            raise ValueError(\n                f\"Token count ({total_pairs}) per rank is not compatible with seq_len={seq_len}. \"\n                f\"Ensure TRAIN_BATCH_TOKENS is a multiple of seq_len * world_size * grad_accum_steps.\"\n            )\n        if usable_pairs != total_pairs:\n            # Truncate any leftover tokens that don't fit into full sequences\n            total_pairs = usable_pairs\n        x = local[:total_pairs].reshape(-1, seq_len)\n        y = local[1 : total_pairs + 1].reshape(-1, seq_len)\n```",
+      "created_at": "2026-03-25T14:47:48Z",
+      "updated_at": "2026-03-25T14:47:48Z"
+    },
+    {
+      "user": "Shuvam-Banerji-Seal",
+      "body": "Superseded by #751 to trigger a clean Copilot review on the latest head commit.",
+      "created_at": "2026-03-25T17:45:31Z",
+      "updated_at": "2026-03-25T17:45:31Z"
+    }
+  ]
+}

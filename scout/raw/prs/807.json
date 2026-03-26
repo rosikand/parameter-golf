@@ -1,0 +1,14 @@
+{
+  "number": 807,
+  "title": "Non-record: Sequential Momentum TTT (val_bpb=1.0116, 3-seed mean, 4xA10G)",
+  "state": "open",
+  "user": "connectwithprakash",
+  "created_at": "2026-03-26T03:47:36Z",
+  "updated_at": "2026-03-26T03:47:36Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **val_bpb = 1.0116** (3-seed mean, std 0.0041)\n- **Technique**: Sequential Momentum TTT -- cross-document LoRA EMA during test-time training\n- **Architecture**: 10L GQA + XSA4 + EMA + SmearGate + BigramHash + mixed int5/int6 + LZMA\n- **Artifact**: 10.85 MB (max seed, well under 16MB)\n- **Hardware**: 4x NVIDIA A10G (development); 8xH100 SXM validation pending\n\n### Key Idea\n\nStandard LoRA TTT resets adapter weights between documents. Sequential Momentum TTT maintains an EMA of LoRA weights across document batches, giving similar documents a warm start from accumulated adaptation context. Momentum=0.3 (swept over {0.0, 0.1, 0.3, 0.5, 0.7}).\n\n### Results (4x A10G, 10K iters uncapped)\n\n| Seed | val_bpb | Artifact |\n|------|---------|----------|\n| 1337 | 1.0147 | 10,810,924 bytes |\n| 42 | 1.0069 | 10,841,556 bytes |\n| 2025 | 1.0132 | 10,853,748 bytes |\n| **Mean** | **1.0116** | **std=0.0041** |\n\nNote: On 8xH100 with MAX_WALLCLOCK_SECONDS=600, training completes ~7200 iterations (vs 10K uncapped on A10G). Final numbers will be updated after H100 validation.\n\n## Test plan\n\n- [ ] Validate on 8xH100 SXM within 10-min training + 10-min eval budget\n- [ ] Update val_bpb numbers with H100 results\n- [ ] Confirm artifact fits under 16,000,000 bytes on H100",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/807",
+  "draft": false,
+  "comments": []
+}

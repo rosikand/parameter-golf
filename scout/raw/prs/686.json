@@ -1,14 +1,27 @@
 {
   "number": 686,
   "title": "Record:  Depth Recurrence (layers 4 and 5 repeated): val_bpb 1.1182",
-  "state": "open",
+  "state": "closed",
   "user": "msisovic",
   "created_at": "2026-03-25T05:58:51Z",
-  "updated_at": "2026-03-25T06:05:12Z",
+  "updated_at": "2026-03-25T17:36:35Z",
   "merged_at": null,
-  "body": "  ## Summary\r\n\r\n\r\n  Building on PR #549, I explored two directions for improving val_bpb: width scaling (MODEL_DIM=576) and depth scaling (adding layers). Width scaling to dim=576 provided a regression in performance. Depth scaling to 12 independent layers at dim=512 reached 1.1126 post-TTT - significantly better - so I decided to go in that direction.\r\n\r\n  This led me to depth recurrence: re-executing mid-network layers with independent learnable block scalars, getting the depth benefit without the parameter/size cost. Layers 4 and 5 are each executed twice in sequence (pattern: 0,1,2,3,4,5,4,5,6,7,8,9,10), producing 13 virtual layers from 11 physical. Only ~2K block scalar params are added. Dual recurrence recovers ~70% of the independent 12-layer gain while keeping the artifact well under budget at ~15.9MB.\r\n\r\n  I also confirmed that tied TTT (no weight untying for recurrent layers) performs equivalently to untied, and that the TTT gain (~0.0025 BPB) is consistent regardless of ecurrence config. Everything else (TTT, int6 quantization, SWA, bigram embeddings, value embeddings, Muon optimizer) is inherited from #549.\r\n\r\n  | Config | Params | Artifact | Post-TTT val_bpb |\r\n  |--------|--------|----------|-----------------|\r\n  | PR #549 baseline (11L) | ~24M | ~19.5MB | 1.1194 |\r\n  | Full 12L (over budget) | ~29M | ~17.3MB | 1.1126 |\r\n  | Recur L5 (11\u219212 virtual) | ~27M | ~15.9MB | 1.1180 |\r\n  | **Recur L4,5 (11\u219213 virtual)** | **~27M** | **~15.9MB** | **1.1182** |\r\n\r\n  ## Reproducibility\r\n\r\n  | Seed | val_bpb |\r\n  |------|---------|\r\n  | 1337 | 1.11788 |\r\n  | 2025 | 1.11906 |\r\n  | 2024 | 1.11763 |\r\n  | **Mean** | **1.11819** |",
+  "body": "  ## Summary\r\n\r\n\r\n  Building on PR #549, I explored two directions for improving val_bpb: width scaling (MODEL_DIM=576) and depth scaling (adding layers). Width scaling to dim=576 provided a regression in performance. Depth scaling to 12 independent layers at dim=512 reached 1.1126 post-TTT - significantly better - so I decided to go in that direction.\r\n\r\n  This led me to depth recurrence: re-executing mid-network layers with independent learnable block scalars, getting the depth benefit without the parameter/size cost. Layers 4 and 5 are each executed twice in sequence (pattern: 0,1,2,3,4,5,4,5,6,7,8,9,10), producing 13 virtual layers from 11 physical. Only ~2K block scalar params are added. Dual recurrence recovers ~70% of the independent 12-layer gain while keeping the artifact well under budget at ~15.9MB.\r\n\r\n  I also confirmed that tied TTT (no weight untying for recurrent layers) performs equivalently to untied, and that the TTT gain (~0.0025 BPB) is consistent regardless of ecurrence config. Everything else (TTT, int6 quantization, SWA, bigram embeddings, value embeddings, Muon optimizer) is inherited from #549.\r\n\r\n  | Config | Params | Artifact | Post-TTT val_bpb |\r\n  |--------|--------|----------|-----------------|\r\n  | PR #549 baseline (11L) | ~24M | ~19.5MB | 1.1194 |\r\n  | Full 12L (over budget) | ~29M | ~17.3MB | 1.1126 |\r\n  | Recur L5 (11\u219212 virtual) | ~27M | ~15.9MB | 1.1180 |\r\n  | **Recur L4,5 (11\u219213 virtual)** | **~27M** | **~15.9MB** | **1.1182** |\r\n\r\n  ## Reproducibility\r\n\r\n| Seed | val_loss | val_bpb |\r\n|------|----------|---------|\r\n| 1337 | 1.88749538 | 1.11788404 |\r\n| 2025 | 1.88948575 | 1.11906285 |\r\n| 2024 | 1.88811812 | 1.11825287 |\r\n| **Mean** | **1.88836642** | **1.11839992** |\r\n| **Std** | **0.00083132** | **0.00049235** |\r\n\r\n## Run Commands\r\n\r\n```bash\r\n# Seed 1337 (default)\r\nITERATIONS=9000 RECUR_LAYERS=4,5 TTT_ENABLED=1 TTT_UNTIE=0 \\\r\n  torchrun --nproc_per_node=8 train_gpt.py\r\n\r\n# Seed 2025\r\nITERATIONS=9000 RECUR_LAYERS=4,5 TTT_ENABLED=1 TTT_UNTIE=0 SEED=2025 \\\r\n  torchrun --nproc_per_node=8 train_gpt.py\r\n\r\n# Seed 2024\r\nITERATIONS=9000 RECUR_LAYERS=4,5 TTT_ENABLED=1 TTT_UNTIE=0 SEED=2024 \\\r\n  torchrun --nproc_per_node=8 train_gpt.py",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/686",
   "draft": false,
-  "comments": []
+  "comments": [
+    {
+      "user": "msisovic",
+      "body": "Note: One of the 3 runs was ran with `ITERATIONS=8000`, instead of 9000, reran and fixed now, no actual changes were done since the submission.",
+      "created_at": "2026-03-25T11:59:52Z",
+      "updated_at": "2026-03-25T11:59:52Z"
+    },
+    {
+      "user": "msisovic",
+      "body": "I realized this doesn't clear the 0.005 nat treshold, closing.",
+      "created_at": "2026-03-25T17:36:34Z",
+      "updated_at": "2026-03-25T17:36:34Z"
+    }
+  ]
 }

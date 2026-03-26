@@ -1,0 +1,14 @@
+{
+  "number": 752,
+  "title": "Record: Depth Recurrence + SGD TTT : 1.1182 BPB",
+  "state": "open",
+  "user": "Naazimsnh02",
+  "created_at": "2026-03-25T17:51:33Z",
+  "updated_at": "2026-03-25T17:51:33Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\n- **val_bpb: 1.1182** on 8\u00d7H100 SXM, seed 1337  \r\n- **Key innovation: Depth Recurrence** \u2014 repeat layers 4,5 for 13 virtual layers from 11 physical at zero parameter cost. First successful use on the leaderboard.  \r\n- Legal score-first SGD TTT (3ep, all blocks unfrozen) provides -0.0026 BPB on top  \r\n\r\n## Architecture\r\n\r\nBuilt on PR #549 (LeakyReLU\u00b2 + Legal TTT + Parallel Muon, 1.1194 BPB) with:\r\n- Depth Recurrence on layers 4,5 (13 virtual layers from 11 physical)  \r\n- SGD TTT (lr=0.002, momentum=0.9, 3 epochs, 32K chunks)  \r\n- BigramHash(2048), XSA4, Partial RoPE, LN Scale, VE128, EMA+SWA  \r\n- Int6 GPTQ-lite + lzma compression (15.93 MB artifact)  \r\n- SDPA fallback for non-FA3 environments  \r\n\r\n## Results\r\n\r\n| Metric | Value |\r\n|--------|-------|\r\n| Pre-TTT int6 sliding window BPB | 1.1208 |\r\n| **Post-TTT BPB** | **1.1182** |\r\n| TTT gain | -0.0026 |\r\n| step_avg | 98.23ms |\r\n| Steps | 6,109 |\r\n| Artifact | 15,930,486 bytes | ",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/752",
+  "draft": false,
+  "comments": []
+}

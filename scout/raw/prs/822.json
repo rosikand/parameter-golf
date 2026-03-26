@@ -1,0 +1,14 @@
+{
+  "number": 822,
+  "title": "Add baseline and depth recurrence submissions (1xH100 20min runs)",
+  "state": "open",
+  "user": "henrycashe26",
+  "created_at": "2026-03-26T07:00:54Z",
+  "updated_at": "2026-03-26T07:02:32Z",
+  "merged_at": null,
+  "body": "Two submissions, both trained on 1xH100 for 20 minutes (competition standard is 8xH100 for 10 min, so these are underpowered runs).\r\n\r\nBaseline 10L Int5-MLP hit 1.2604 val_bpb. This was the #1 leaderboard config (as of a few days ago) reproduced on less compute. 10 layers, mixed int5/int6 QAT, BigramHash 10240, SWA, Muon optimizer. 25.5M params, 15.8MB artifact. Got through ~1700 steps at 695ms/step.\r\n\r\nDepth Recurrence 4Lx3Loop hit 1.3752 val_bpb. 4 unique transformer layers shared across 3 loop iterations, with LoRA rank-32 per loop and learned level signals. 11.6M params, 8.3MB artifact (7.7MB headroom left under the 16MB cap). ~1417 steps at 847ms/step. Quantization roundtrip cost 0.047 bpb because shared weights serve different input distributions at each loop, which doesn't quantize cleanly.\r\n\r\nNotes\r\nTrained on 1xH100 SXM, not 8xH100, so step counts are well below a standard run. Single seed (42) for both, no multi-seed significance claims. Loss was still dropping for both models when we cut them off.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/822",
+  "draft": false,
+  "comments": []
+}

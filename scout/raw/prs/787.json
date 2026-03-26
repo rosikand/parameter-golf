@@ -1,0 +1,14 @@
+{
+  "number": 787,
+  "title": "Non-record: Depth Recurrence + TTT + Gradient Checkpointing",
+  "state": "closed",
+  "user": "ab2891",
+  "created_at": "2026-03-26T00:16:10Z",
+  "updated_at": "2026-03-26T00:20:24Z",
+  "merged_at": null,
+  "body": "## Summary\n\nNon-record submission exploring **depth-recurrent transformers** for parameter-efficient language modeling:\n\n- **Architecture:** 3 unique transformer blocks \u00d7 4 loops = 12 effective layers with U-Net skip connections, per-iteration RMSNorm, and low-rank level signals\n- **Features:** BigramHash embeddings, SmearGate, test-time training (TTT), Stochastic Weight Averaging (SWA), sliding window evaluation\n- **DDP Solution:** Gradient checkpointing replaces torch.compile for multi-GPU training (torch.compile + DDP produces NaN with recurrent loop architectures); torch.compile re-enabled post-training for fast evaluation\n\n### Results\n\n| Run | Steps | train_loss | val_bpb | GPU | Notes |\n|-----|-------|-----------|---------|-----|-------|\n| 8xH100 benchmark | 300+ | 2.4452 | \u2014 | 8xH100 SXM | Interrupted by spend limit before eval |\n| 1xH100 test (progressive loops) | 52 | 5.7383 | 3.4016 (pre-quant) | 1xH100 SXM | Complete run, 90s |\n| 8xH100 sanity (30s) | 33 | 7.6756 | 4.5392 | 8xH100 SXM | Quick validation |\n\n### Status\n\n\u26a0\ufe0f **Partial results** \u2014 the 8xH100 benchmark was interrupted by RunPod spend limits before final evaluation completed. Training was converging well (loss 26 \u2192 2.45 over 300 steps). Applying for compute credits to complete the 3-run statistical significance requirement.\n\n### Key Technical Findings\n\n1. `torch.compile(fullgraph=True)` + DDP produces NaN from step 1 with depth-recurrent architectures \u2014 the compiled unrolled loops interact incorrectly with DDP gradient hooks\n2. Gradient checkpointing is a viable workaround: ~2x slower per step but enables DDP training with 18GB peak memory per GPU\n3. Sliding window eval (stride=64) should only run at final evaluation, not mid-training \u2014 969k windows per GPU takes 20+ minutes\n\n## Test plan\n\n- [ ] Complete 3 full 8xH100 runs with seeds 1337, 42, 7 (pending compute credits)\n- [ ] Verify post-quantization val_bpb scores\n- [ ] Verify artifact size under 16MB\n- [ ] Confirm eval completes under 10 minutes on 8xH100\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/787",
+  "draft": false,
+  "comments": []
+}

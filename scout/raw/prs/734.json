@@ -1,0 +1,14 @@
+{
+  "number": 734,
+  "title": "Non-record: Full GPTQ + XSA-4 + Score-First TTT (3-seed mean 1.1198)",
+  "state": "open",
+  "user": "Robby955",
+  "created_at": "2026-03-25T15:24:50Z",
+  "updated_at": "2026-03-25T15:24:50Z",
+  "merged_at": null,
+  "body": "## Results (8xH100 SXM, PyTorch 2.9.1+cu128)\n\n| Seed | Steps | ms/step | Post-TTT BPB | Artifact |\n|------|-------|---------|--------------|----------|\n| 1337 | 6,461 | 86.67 | **1.1193** | 15,899,061 |\n| 42 | 6,457 | 86.73 | **1.1196** | 15,954,941 |\n| 2025 | 6,457 | 86.74 | **1.1205** | 15,907,769 |\n\n**Mean: 1.1198 | Std: 0.0006**\n\n## Compliance\n\n- **Training**: 560s training + 40s GPTQ calibration = 600s total (within 10-min budget)\n- **GPTQ calibration**: Uses training data, runs within training time budget (NOT during eval)\n- **Eval**: ~82s sliding window + ~236s score-first TTT = ~318s (within 10-min eval limit)\n- **No training data accessed during evaluation**\n- **TTT**: Score-first protocol \u2014 score chunk under `inference_mode()`, then adapt. Never re-score.\n- **Artifact**: All seeds under 16,000,000 bytes\n- **Script**: 1,499 lines\n\n## Key Techniques\n\n1. **Full Hessian GPTQ** \u2014 256-batch calibration, Cholesky error compensation, act-order, block_size=128\n2. **XSA on last 4 layers** \u2014 cross-sequence attention for extended context\n3. **SWA/EMA 50/50 blend** \u2014 EMA(0.997) + tight SWA (every 50 steps during warmdown)\n4. **Score-first TTT** \u2014 AdamW(lr=1e-4), 3 epochs, freeze first 9/11 blocks, 128K-token chunks\n5. **LZMA compression** \u2014 better ratio than zstd for int6 weights\n\n## Architecture\n\n11L, 512d, 8H/4KV GQA, LeakyReLU(0.5)\u00b2 MLP 3x, BigramHash(3072\u00d7128), VE128, Partial RoPE 16/64, LN Scale, U-Net skips, SmearGate.\n\n## Credits\n\n- **Base architecture**: PR #589 by @RoyiRa\n- **GPTQ reference**: PR #609 by @saml212, PR #626 by @kshitizz36\n- **Score-first TTT**: PR #461 by @Christopher-Lee-McClendon\n- **XSA, BigramHash, SmearGate**: Various community contributors\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/734",
+  "draft": false,
+  "comments": []
+}

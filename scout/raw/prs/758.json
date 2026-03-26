@@ -1,0 +1,14 @@
+{
+  "number": 758,
+  "title": "Record: 11L XSA-all + 7-gram cache (mean val_bpb=1.0465)",
+  "state": "open",
+  "user": "hypery11",
+  "created_at": "2026-03-25T19:22:26Z",
+  "updated_at": "2026-03-25T19:22:27Z",
+  "merged_at": null,
+  "body": "## Results\n\n| Seed | val_bpb |\n|------|---------|\n| 42   | 1.0467  |\n| 1337 | 1.0470  |\n| 2024 | 1.0457  |\n| **Mean** | **1.0465** |\n| Std  | 0.0007  |\n\n- Artifact: 13.99 MB\n- Train: 600s on 8xH100 SXM\n- Eval: ~116s\n\n## Method\n\n11-layer transformer with XSA-all (Exclusive Self-Attention on all layers), LeakyReLU(0.5)^2, Value Residual, Gated Attention, BigramHash(10240), SmearGate. GPTQ-lite int6 + zstd-22. EMA(0.997) + Tight SWA + Late QAT.\n\n7-gram backward-looking eval cache (alpha=0.40, 4M buckets). Score-first, deterministic, no TTT.\n\nArchitecture builds on community techniques from PRs #609, #549.\n\n- [x] 8xH100 SXM, train \u2264600s\n- [x] Eval \u2264600s (116s)\n- [x] Artifact \u226416MB (13.99MB)\n- [x] 3-seed validation (std 0.0007)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/758",
+  "draft": false,
+  "comments": []
+}

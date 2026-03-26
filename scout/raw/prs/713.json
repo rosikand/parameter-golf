@@ -1,0 +1,14 @@
+{
+  "number": 713,
+  "title": "Record: 10L + Batched LoRA TTT (mean val_bpb=1.1180, 3 seeds)",
+  "state": "open",
+  "user": "hypery11",
+  "created_at": "2026-03-25T13:10:04Z",
+  "updated_at": "2026-03-25T13:10:04Z",
+  "merged_at": null,
+  "body": "## Results\n\n| Seed | Base val_bpb | TTT val_bpb |\n|------|-------------|-------------|\n| 42   | 1.1476      | 1.1160      |\n| 1337 | 1.1540      | 1.1210      |\n| 2024 | 1.1504      | 1.1170      |\n| **Mean** | **1.1507** | **1.1180** |\n| Std  | 0.0032      | 0.0026      |\n\n- Artifact: 15.75 MB\n- Train: 600s on 8xH100 SXM\n- TTT eval: ~496s\n\n## Method\n\n10-layer transformer (512d, 8/4 GQA, 3x MLP LeakyReLU(0.5)^2) with per-document batched LoRA test-time training.\n\nLoRA rank-8 on Q/V projections + LM head. 64 documents batched in parallel. Per-doc reset, Adam lr=0.01, 256-token chunks, 3 epochs, score on final epoch. Mixed int5/int6 quantization + zstd-22.\n\nSee README.md for full details.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/713",
+  "draft": false,
+  "comments": []
+}

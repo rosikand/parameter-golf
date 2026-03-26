@@ -1,0 +1,14 @@
+{
+  "number": 830,
+  "title": "Non-record: LeakyMixer: 11L leaky_relu(0.5)^2 + backoff n-gram mixer",
+  "state": "open",
+  "user": "zlxi02",
+  "created_at": "2026-03-26T07:55:54Z",
+  "updated_at": "2026-03-26T08:22:30Z",
+  "merged_at": null,
+  "body": "- swapped relu^2 for leaky_relu(0.5)^2, bumped to 11 layers, and added a warmdown of 3500 steps. also wrote a backoff n-gram mixer in C that runs at eval time; builds a token cache as it scores the val set and mixes with the neural logits using entropy-adaptive alpha.                                                                                                                                      \r\n-   ran on 4xA100 SXM (was low on credits) so only got 849 steps. val_bpb came out to 1.4096 neural-only. on 8xH100 this should get ~1700 steps and around 1.20 BPB, with the n-gram mixer dropping it further.                                                                               \r\n-   artifact size: 13.49 MB ",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/830",
+  "draft": false,
+  "comments": []
+}

@@ -1,0 +1,14 @@
+{
+  "number": 714,
+  "title": "Add 11L RotaryFix + LegalTTT + BIGRAM3072 \u2014 val_bpb 1.11869 (3-seed m\u2026",
+  "state": "open",
+  "user": "Upsalla",
+  "created_at": "2026-03-25T13:10:39Z",
+  "updated_at": "2026-03-25T13:10:39Z",
+  "merged_at": null,
+  "body": "\u2026ean)\r\n\r\nKey changes vs. existing entries:\r\n- Rotary NTK-Scaling bug fix: train_seq_len=2048 now correctly propagated to both base_model and eval_model (previously hardcoded to 1024)\r\n- BIGRAM vocabulary size 3072 (vs 1536)\r\n- Late QAT threshold 0.57 for ~1700 QAT steps (vs ~525 steps at 0.15)\r\n- torch.no_grad() instead of torch.inference_mode() in TTT scoring phase to prevent Autograd graph corruption when RoPE caches cross phase boundary\r\n\r\nResults (8xH100 SXM, 600s training + ~425s TTT):\r\n  Seed 1337: legal_ttt_bpb = 1.11877\r\n  Seed 42:   legal_ttt_bpb = 1.11836\r\n  Seed 2025: legal_ttt_bpb = 1.11893\r\n  Mean: 1.11869 \u00b1 0.00024",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/714",
+  "draft": false,
+  "comments": []
+}

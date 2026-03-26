@@ -1,0 +1,14 @@
+{
+  "number": 738,
+  "title": "Record: VRL + Full GPTQ + 5-gram Cache + Hidden-State kNN-LM (3-seed mean val_bpb=1.0970)",
+  "state": "open",
+  "user": "gowtham0992",
+  "created_at": "2026-03-25T16:25:31Z",
+  "updated_at": "2026-03-25T16:34:48Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\n3-seed mean val_bpb: 1.0970 (std 0.0006) | \u226415.74 MB | 8\u00d7H100 SXM, 598s training | No TTT\r\n\r\n## Key Innovations\r\n\r\n**Hidden-State kNN-LM (novel \u2014 first in competition):** Stores 512-dim hidden states from already-scored tokens in a GPU ring buffer. For uncertain tokens, finds k=32 nearest neighbors by L2 distance and builds a non-parametric distribution via RBF kernel. Based on Khandelwal et al. 2019 (ICLR 2020). Captures semantic repetition that n-grams miss. Additive -0.007 BPB on top of n-gram cache.\r\n\r\n**Online 5-gram cache with adaptive lambda:** Backward-looking n-gram cache with backoff. Pre-committed confidence gate (no safety gate / oracle selection per #677 ruling). Adaptive lambda scales mixing weight by model uncertainty.\r\n\r\n## Results\r\n\r\n| Seed | Post-cache bpb | Artifact |\r\n|------|---------------|----------|\r\n| 42 | 1.0976 | 15.68 MB |\r\n| 1337 | 1.0965 | 15.74 MB |\r\n| 2024 | 1.0970 | 15.55 MB |\r\n| **Mean** | **1.0970** | |\r\n\r\nvs SOTA (1.1194): improvement = 0.0224 nats\r\n\r\n## Compliance (per #677)\r\n\r\n- GPTQ calibration inside 600s training budget (total_train_time ~598s in all logs)\r\n- No safety gate / oracle selection \u2014 pre-committed confidence gate\r\n- No training data accessed at eval time\r\n- N-gram + kNN caches strictly backward-looking\r\n- All artifacts under 16MB, all eval under 600s\r\n\r\n## Reproduction\r\n\r\n```\r\npip install sentencepiece zstandard \r\npip install flash_attn_3 --find-links https://windreamer.github.io/flash-attention3-wheels/cu128_torch291 --no-deps \r\npython3 data/cached_challenge_fineweb.py --variant sp1024 \r\nSEED=42 python3 -m torch.distributed.run --nproc_per_node=8 train_gpt.py\r\n\r\n\r\n\r\n## Credits\r\n\r\n- kNN-LM: Khandelwal et al. 2019 (ICLR 2020)\r\n- 5-gram cache concept: PR #659 by @deanbrr (our implementation uses pre-committed gate)\r\n- VRL: arxiv:2410.17897, PR #569 by @gowtham0992\r\n- Full GPTQ: IST-DASLab/gptq (ICLR 2023)\r\n- LeakyReLU\u00b2: PR #493 by @parinzee\r\n- Base stack: PR #414 by @signalrush",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/738",
+  "draft": false,
+  "comments": []
+}

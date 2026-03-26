@@ -1,0 +1,14 @@
+{
+  "number": 805,
+  "title": "Int6 GPTQ-lite + LeakyReLU(0.5)^2 + EMA + 11L MLP3x",
+  "state": "open",
+  "user": "zeytx",
+  "created_at": "2026-03-26T03:40:02Z",
+  "updated_at": "2026-03-26T03:40:03Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- 11 transformer layers (vs 9 baseline) with 3x MLP expansion\n- LeakyReLU(0.5)^2 activation (~0.003 BPB improvement over ReLU^2)\n- Int6 per-row GPTQ-lite quantization with clip search + zstd-22 compression\n- Late QAT via STE (activates when LR scale < 0.15)\n- EMA weight averaging (decay 0.997)\n- GQA: 8 query heads, 4 KV heads\n\n## Results\n\n- **val_bpb: 1.1807** (pre-quantization, 8xH100 SXM, 9881 steps in 10 min)\n- Compressed model size: ~3.9 MB (well under 16MB limit)\n- 26.5M parameters\n\n## Run command\n\n```bash\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\nRequires `zstandard` package (`pip install zstandard`).",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/805",
+  "draft": false,
+  "comments": []
+}

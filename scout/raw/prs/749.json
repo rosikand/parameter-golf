@@ -1,0 +1,27 @@
+{
+  "number": 749,
+  "title": "Add 11L 448x2 PairHash int8+zstd 10-minute submission record",
+  "state": "open",
+  "user": "FyeJordy",
+  "created_at": "2026-03-25T17:27:43Z",
+  "updated_at": "2026-03-25T17:34:52Z",
+  "merged_at": null,
+  "body": "## Summary\n- add a new 10-minute / 16MB-track submission record for an 11-layer 448-dim GQA model with MLP multiplier 2 and PairHash embeddings\n- include the exact `train_gpt.py` snapshot, `train.log`, `submission.json`, and README for the winning run\n- keep the exported artifact under the 16,000,000-byte cap while materially improving on the older valid reference path\n\n## Key Result\n- `final_export_roundtrip_exact val_bpb: 1.36843871`\n- `Total submission size export: 15149719 bytes`\n\n## Test Plan\n- `python3 -m json.tool records/track_10min_16mb/2026-03-25_11L448x2_PairHash_Int8Zstd/submission.json`\n- `grep 'final_export_roundtrip_exact' records/track_10min_16mb/2026-03-25_11L448x2_PairHash_Int8Zstd/train.log`\n- `grep 'Total submission size export' records/track_10min_16mb/2026-03-25_11L448x2_PairHash_Int8Zstd/train.log`\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/749",
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "README says the record uses a \"current repository train_gpt.py snapshot\", but this folder\u2019s `train_gpt.py` includes PairHash + zstd export logic that is not present in the repository root `train_gpt.py` (no `pairhash` references). To avoid confusion for reproducibility, reword this bullet to say the script is a modified copy / forked snapshot used for the run (optionally include the source commit/hash).",
+      "created_at": "2026-03-25T17:31:50Z",
+      "updated_at": "2026-03-25T17:31:50Z"
+    },
+    {
+      "user": "FyeJordy",
+      "body": "Updated the README wording. It now describes `train_gpt.py` as the modified run-specific snapshot copied into the record folder, rather than the current repository root script.",
+      "created_at": "2026-03-25T17:34:48Z",
+      "updated_at": "2026-03-25T17:34:48Z"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "number": 804,
+  "title": "[Non-record] CAGE5 Colab T4 smoke: strictly causal 5-gram mixer",
+  "state": "open",
+  "user": "Devchandrasen",
+  "created_at": "2026-03-26T03:39:35Z",
+  "updated_at": "2026-03-26T03:39:35Z",
+  "merged_at": null,
+  "body": "This PR adds a non-record 16MB smoke submission under `records/track_non_record_16mb/2026-03-26_CAGE5_ColabT4_Smoke/`.\r\n\r\nSummary:\r\n- hardware: 1x Tesla T4 on Colab\r\n- track: non-record-16mb\r\n- idea: strictly causal hashed 5-gram interpolation during sliding-window evaluation\r\n- key metric from `train.log`: `final_int8_zlib_roundtrip_exact val_bpb=2.69806373`\r\n- total artifact size: `656896` bytes\r\n\r\nIncluded files:\r\n- `train_gpt.py`\r\n- `flash_attn_interface.py`\r\n- `train.log`\r\n- `submission.json`\r\n- `README.md`\r\n- `requirements.txt`",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/804",
+  "draft": false,
+  "comments": []
+}

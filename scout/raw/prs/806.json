@@ -1,0 +1,14 @@
+{
+  "number": 806,
+  "title": "Record: Backoff N-gram Cache + LeakyReLU(0.9)\u00b2 (val_bpb=0.6678)",
+  "state": "open",
+  "user": "ibarrajo",
+  "created_at": "2026-03-26T03:47:28Z",
+  "updated_at": "2026-03-26T03:47:28Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **val_bpb: 0.6678** (seed 1337, additional seeds pending)\n- Multi-order backoff n-gram eval cache (orders 2-7) with entropy-adaptive alpha mixing\n- Distributed cache pre-fill for multi-GPU coherence (rank 7 pre-fills 54M tokens in 68s)\n- LeakyReLU(0.9)\u00b2 activation (~0.013 BPB improvement over relu\u00b2)\n- Neural base: 1.1371 BPB (sliding window), n-gram cache: 0.6678 BPB\n- Artifact: 8.6MB (well under 16MB limit)\n- 8xH100 SXM, 7189 steps in 600s, eval in 200s\n\n### Key implementation details\n\n- **Score-first legality**: Every token scored under `inference_mode()` BEFORE cache update\n- **Entropy-adaptive alpha**: `0.05 + 0.55 * sigmoid(2*(H-4))` \u2014 no oracle/hindsight selection\n- **Pre-fill**: Each GPU rank pre-populates cache with all preceding tokens (pure numpy, no NCCL)\n- **No pre-eval TTT** \u2014 removed illegal pre-eval adaptation entirely\n\n### Results\n\n| Eval Method | val_bpb |\n|-------------|---------|\n| Non-overlapping (post-quant) | 1.1594 |\n| Sliding window (stride=64) | 1.1371 |\n| **N-gram cache (orders 2-7)** | **0.6678** |\n\n## Test plan\n\n- [x] Validated on 1xH100 (0.8556 BPB with undertrained model)\n- [x] Full run on 8xH100 SXM (0.6678 BPB)\n- [ ] 2 additional seeds for statistical significance\n- [ ] Verify reproducibility from records/ folder\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/806",
+  "draft": false,
+  "comments": []
+}

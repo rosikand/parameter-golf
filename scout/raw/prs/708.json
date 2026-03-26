@@ -1,0 +1,21 @@
+{
+  "number": 708,
+  "title": "[non-record] byte jepa-lw naive experimental baseline 2.125 bpb @ 2000 cc @0hq",
+  "state": "open",
+  "user": "juvi21",
+  "created_at": "2026-03-25T12:49:17Z",
+  "updated_at": "2026-03-26T03:39:01Z",
+  "merged_at": null,
+  "body": "adds a byte-level jepa naive baseline no tokenizer based on [le-wm](https://le-wm.github.io/)\r\n\r\nin its current state this serves as a starting point encouraging experimentation and exploration, as mentioned in this [x thread](https://x.com/gum1h0x/status/2036558291451412560). there may still be small mistakes but it should be solid enough to build on. i may have some time and capacity on the weekend to continue working on this but would love to see what the oss community can build on it in meatime :) gl to anyone going for the swag! [ref](https://x.com/willdepue/status/2036440026863771682)\r\n\r\n\r\ncc @0hq\r\n\r\n### overview\r\n\r\nit's basically it's le-wm with some small adaptations specific for this chall:\r\n\r\n- byte-level input/output, no tokenizer byte 260\r\n- exact next-byte compression objective added on top of the jepa loss.\r\n- byte transformer encoder in place of the paper's pixel encoder\r\n- action-conditioned prediction replaced with strictly causal chunk-context conditioning cuz byte compression has no external action stream\r\n- predicted chunk latents injected into the byte scorer so jepa affects exact likelihood\r\n- same core leworldmodel ingredients kept in the main path so latent prediction, batchnorm projector mlps, adaln predictor, and sigreg...\r\n- EMA path kept only as a control\r\n\r\n### current non-record run on rtx 5090\r\n\r\n2.12515832 bpb @ 2000 steps\r\n\r\n### how to replicate the logs:\r\n\r\n```bash\r\nuv venv\r\nsource .venv/bin/activate\r\nuv pip install -r requirements.txt\r\nuv run python data/cached_challenge_fineweb.py --variant byte260 --train-shards 1\r\n\r\nRUN_ID=byte_jepa_896d14l_2000 \\\r\nDATA_PATH=./data/datasets/fineweb10B_byte260 \\\r\nMODEL_MODE=byte_jepa \\\r\nJEPA_ARCH=lewm_chunk \\\r\nJEPA_ENABLED=1 \\\r\nCHUNK_SIZE=32 \\\r\nTRAIN_BATCH_TOKENS=24576 \\\r\nVAL_BATCH_TOKENS=24576 \\\r\nTRAIN_SEQ_LEN=256 \\\r\nITERATIONS=2000 \\\r\nVAL_MAX_BYTES=2000000 \\\r\nMODEL_DIM=896 \\\r\nNUM_LAYERS=14 \\\r\nNUM_HEADS=14 \\\r\nNUM_KV_HEADS=14 \\\r\nMLP_MULT=4 \\\r\nJEPA_LATENT_DIM=256 \\\r\nJEPA_PRED_HIDDEN=384 \\\r\nJEPA_PRED_DEPTH=2 \\\r\nJEPA_PRED_HEADS=4 \\\r\nJEPA_PROJECTOR_HIDDEN=2048 \\\r\nJEPA_CONTEXT_HIDDEN=2048 \\\r\nJEPA_PRED_DIM_HEAD=64 \\\r\nLATENT_WEIGHT=0.2 \\\r\nREG_WEIGHT=1.0 \\\r\nPRED_LOSS_MODE=mse \\\r\nLATENT_REG_MODE=sigreg_cf \\\r\nREG_SLICES=1024 \\\r\nSIGREG_KNOTS=17 \\\r\nSIGREG_MAX_T=3.0 \\\r\nuv run python train_gpt.py\r\n```\r\n\r\n**log:** `records/track_non_record_16mb/2026-03-25_ByteJEPA/byte_jepa_896d14l_2000.txt`\r\n\r\n### additional experiments\r\n\r\nalso did some runs which imo could be interesting based on chebyshev-KANs in addition to my non-nn experiments [x](https://x.com/gum1h0x/status/2036362719129919968). if  there is expressed interest in those i can share them as well.\r\n\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/708",
+  "draft": false,
+  "comments": [
+    {
+      "user": "andrew-medrano",
+      "body": "How much of the gain here is actually coming from the JEPA path versus just the underlying byte Transformer? Do you have an ablation for the same architecture and training budget with the latent path removed or bypassed, so we can measure the marginal contribution from JEPA itself rather than the upgraded byte-LM stack? My concern is that in fusion-style setups the main exact-prediction path can dominate, and the JEPA branch often ends up contributing little.\r\n\r\nI have been working on a more pure version of JEPA, where I do build a latent with a small conv, use an ema for the decoder and train a transformer backbone to predict only future latents from previous ones. Then I freeze those weights and train a decoder to get exact bytes. But with this I am only able to get down to 2.38 bpb or so. Very far from 1.12.",
+      "created_at": "2026-03-26T03:39:00Z",
+      "updated_at": "2026-03-26T03:39:00Z"
+    }
+  ]
+}

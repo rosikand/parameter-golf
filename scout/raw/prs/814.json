@@ -1,0 +1,21 @@
+{
+  "number": 814,
+  "title": "Record: X-WING 3D Cubric + Complementary Training (val_bpb=0.4820)",
+  "state": "open",
+  "user": "newjordan",
+  "created_at": "2026-03-26T05:24:29Z",
+  "updated_at": "2026-03-26T06:52:11Z",
+  "merged_at": null,
+  "body": "![another_dimension](https://github.com/user-attachments/assets/d5cc0616-10ac-4947-be1d-8cd5cc7447fa)\r\n\r\n\r\n## Summary\r\n\r\n- **val_bpb = 0.4820** (3-seed mean, std 0.0002)\r\n- Seeds: 1337 (0.4818), 300 (0.4821), 58 (0.4821)\r\n- 11L transformer (26.9M params) with LeakyReLU(0.5)\u00b2, XSA-4, SWA, EMA\r\n- Artifact: 15,581,439 bytes (under 16MB)\r\n- Training: ~6820 steps in 600s on 8xH100 SXM\r\n- Eval: ~203s / 600s budget\r\n\r\n## Key Innovation: 3D Cubric Pattern Recognizer + Complementary Training\r\n\r\nTwo novel techniques stacked on chunk-based shared n-gram tables:\r\n\r\n### 1. 3D Cubric (original)\r\n\r\n54 adaptive multipliers across **(order \u00d7 entropy_bin \u00d7 count_bin)**. Each cell independently tracks n-gram beat rates and adjusts its alpha multiplier. Captures patterns invisible to 1D scaling \u2014 e.g. \"order 7 at mid-entropy with high count \u2192 trust fully (2.0x)\" vs \"order 3 at any entropy \u2192 suppress (0.30x)\".\r\n\r\n**Warm-start**: multipliers initialize at proven converged values instead of 1.0. Full cubric power from chunk 1 instead of wasting ~30 of 60 chunks converging.\r\n\r\n### 2. Complementary Training (adapted from PR #803)\r\n\r\nDuring training, tokens predictable by bigram statistics receive lower loss weight (`COMPLEMENT_ALPHA=0.5`). The model specializes on tokens n-grams can't predict. This enables higher eval-time alpha (20-75% vs 5-70%) because the model is deliberately weak where n-grams are strong.\r\n\r\n### 3. Shared N-gram Tables\r\n\r\nAll 8 GPU ranks update tables with the same chunk tokens \u2192 every rank sees the full 62M-token picture (vs 1/8 with rank-local). Insight from @deanbrr (PR #779).\r\n\r\n## Ablation\r\n\r\n| Variant | BPB | Delta | Key change |\r\n|---------|----:|------:|------------|\r\n| Podracer III (#782) | 0.9362 | \u2014 | rank-local tables |\r\n| X-WING v1 (#800) | 0.5644 | -0.372 | shared tables + 1D cubric |\r\n| + 3D cubric + complementary | 0.4896 | -0.075 | 54 multipliers + CT |\r\n| **+ warm-start (this)** | **0.4820** | **-0.008** | converged init values |\r\n\r\n## Legality\r\n\r\n1. **Score-first**: entire chunk scored BEFORE its tokens update tables\r\n2. **Complementary training**: uses only training-data bigram statistics \u2014 no validation data during training\r\n3. **Alpha formula**: `(1-\u03b1)\u00b7P_neural + \u03b1\u00b7P_ngram` where \u03b1 is a fixed function of model entropy \u00d7 cubric multipliers \u2014 target-independent, committed before scoring\r\n4. **Cubric multipliers**: adapt using beat-rate statistics from already-scored tokens (backward-looking only)\r\n5. **Warm-start values**: derived from prior run's convergence, not from validation data \u2014 equivalent to a hyperparameter choice\r\n6. **No oracle selection**: single committed mixture, no min-NLL comparison\r\n7. **GPTQ calibration**: runs inside training wallclock\r\n8. **Committed distribution**: proper mixture, all tokens have nonzero probability\r\n\r\n## Credits\r\n\r\n- Complementary training concept: @travispchen (PR #803)\r\n- Shared n-gram table insight: @deanbrr (PR #779)\r\n- N-gram eval cache: @deanbrr (PR #659)\r\n- Multi-order backoff + adaptive alpha: @Asukabot0 (PR #727)\r\n- 3D Cubric pattern recognizer + warm-start: @newjordan (original)\r\n- Base architecture: @signalrush (PR #414)\r\n\r\n## Reproduce\r\n\r\n```bash\r\nSEED=1337 NPROC_PER_NODE=8 bash concepts/xwing_yellow_III/run.sh\r\n```\r\n\r\n8xH100 SXM, 600s training + ~203s eval.\r\n\r\n## Test plan\r\n\r\n- [x] Seed 1337: 0.4818 BPB\r\n- [x] Seed 300: 0.4821 BPB\r\n- [x] Seed 58: 0.4821 BPB\r\n- [x] 3-seed mean: 0.4820 BPB (std 0.0002)\r\n- [x] All seeds under 16MB artifact limit\r\n- [x] All seeds complete within 10 min training + 10 min eval",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/814",
+  "draft": false,
+  "comments": [
+    {
+      "user": "garindean",
+      "body": "are you calibrating gptq after the wallclock cap fires?",
+      "created_at": "2026-03-26T06:50:08Z",
+      "updated_at": "2026-03-26T06:52:11Z"
+    }
+  ]
+}

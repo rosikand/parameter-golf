@@ -1,0 +1,33 @@
+{
+  "number": 757,
+  "title": "Record: Aggressive SGD TTT (3-seed mean val_bpb=1.1124)",
+  "state": "open",
+  "user": "fielding",
+  "created_at": "2026-03-25T19:01:53Z",
+  "updated_at": "2026-03-25T22:14:41Z",
+  "merged_at": null,
+  "body": "# Aggressive SGD TTT (val_bpb: 1.1124)\n\n**3-seed mean val_bpb: 1.1124** (std=0.0008) | **15.4 MB artifact** | 8xH100 SXM, 600s training + 591s eval\n\n## Results\n\n| Seed | val_bpb (sliding, s64) | Artifact |\n|------|------------------------|----------|\n| 1337 | 1.1129 | 15,405,733 |\n| 42 | 1.1128 | ~15.4M |\n| 2024 | 1.1114 | ~15.4M |\n| **Mean \u00b1 Std** | **1.1124 \u00b1 0.0008** | |\n\n## Approach\n\nStandard 11L architecture, nothing exotic on the model side. The interesting part is the TTT. The base model trains for 600s, then TTT adapts all weights via SGD for 30 epochs on the validation data (score-first protocol).\n\nThe conventional wisdom is TTT at LR=0.002 for 3 epochs. We ran 20+ configurations on 4xH200 and found that cranking the LR to 1.0 and unfreezing every block turns a -0.0025 BPB technique into a -0.041 BPB technique. That's a 16x improvement from the same underlying method. It's like finding out your car has a sport mode you never tried.\n\n## TTT Configuration\n\nI swept this on 4xH200 before validating on 8xH100. The sweep told the whole story.\n\n| Parameter | Our Value | PR #549 (merged SOTA) |\n|-----------|-----------|----------------------|\n| LR | 1.0 | 0.002 |\n| Epochs | 30 | 3 |\n| Freeze blocks | 0 (all unfrozen) | 0 |\n| Momentum | 0.9 | 0.9 |\n| TTT gain | -0.041 BPB | -0.0025 BPB |\n\n### TTT LR Sweep (4xH200, 20 epochs, freeze=2)\n| LR | Sliding BPB |\n|----|------------|\n| 0.01 | 1.1489 |\n| 0.02 | 1.1471 |\n| 0.05 | 1.1444 |\n| 0.1 | 1.1422 |\n| 0.2 | 1.1400 |\n| 0.5 | 1.1351 |\n| **0.7** | **1.1327** |\n| 0.8 | 1.1355 |\n| 1.0 | 1.1585 (diverged) |\n\nBPB just keeps getting better as LR goes up... until it doesn't. Peak at 0.7 with 2 frozen blocks.\n\n### Unfreezing all blocks (4xH200, 20 epochs)\n| LR | freeze=2 | freeze=0 | Delta |\n|----|----------|----------|-------|\n| 0.7 | 1.1327 | 1.1255 | -0.007 |\n| 1.0 | diverged | 1.1183 | \u2014 |\n| **1.5** | **diverged** | **1.1110** | \u2014 |\n\nThis was the breakthrough. With 2 frozen blocks, LR=1.0 diverges. Unfreeze everything and it converges fine. The extra capacity from unfreezing absorbs the aggressive learning rate. It also shifts the optimal LR from 0.7 all the way up to 1.5.\n\n### Epoch scaling (4xH200, LR=1.0, freeze=0)\n| Epochs | Sliding BPB | TTT time |\n|--------|------------|----------|\n| 20 | 1.1183 | 569s |\n| **30** | **1.1076** | **854s** |\n\nOn 8xH100, each TTT epoch runs in ~16.6s (vs 28.5s on 4xH200), so 30 epochs fits within the 10-minute eval budget.\n\n## Architecture\n\n| Component | Detail |\n|-----------|--------|\n| Layers | 11 |\n| Dim | 512 |\n| Heads | 8 (4 KV, GQA) |\n| MLP | 3x, relu-squared |\n| XSA | Last 4 layers |\n| EMA | 0.997 |\n| Late QAT | Int6 STE when lr_scale < 0.1 |\n| Value Embeddings | 128-dim, 5 sets |\n| BigramHash | 6144 buckets |\n| SmearGate | Learned token blending |\n| Warmdown | 1600 iterations |\n| Seq length | 2048 (train), 1024 (eval) |\n| Sliding window | stride=64 |\n| Quantization | Int6 per-row + zstd-22 |\n\n## Training\n\n- Muon optimizer (matrix_lr=0.025, momentum=0.99 with warmup from 0.85)\n- AdamW for embeddings/scalars (WD=0.04)\n- Flash Attention v3 (Hopper) where available, SDPA fallback\n- 6039 steps in 600s on 8xH100 (~99ms/step)\n\n## Evaluation\n\nThree phases, all within the 10-minute eval budget:\n\n1. Int6+zstd quantization roundtrip\n2. TTT: SGD(lr=1.0, momentum=0.9), 30 epochs, all blocks unfrozen, score-first\n3. Sliding window eval (stride=64, seq_len=1024)\n\nTotal eval time: ~591s (TTT 497s + sliding window 92s + roundtrip 2s)\n\n## Run Command\n\n```bash\nTTT_ENABLED=1 TTT_LR=1.0 TTT_EPOCHS=30 TTT_FREEZE_BLOCKS=0 TTT_MOMENTUM=0.9 \\\nVE_ENABLED=1 WARMDOWN_ITERS=1600 NUM_LAYERS=11 XSA_LAST_N=4 \\\nEMA_ENABLED=1 LATE_QAT=1 BIGRAM_VOCAB_SIZE=6144 \\\nSEED=1337 \\\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\n## How I Got Here\n\n~20 hours on 4xH200, 54 experiments. Started from the 9L baseline and worked forward:\n\n1. Baseline (9L, no extras): 1.1808\n2. +11L, XSA, EMA, QAT: 1.1619\n3. +Flash Attention v3: 1.1527\n4. +Value Embeddings, warmdown tuning: 1.1521\n5. +TTT (LR=0.01, 10ep, freeze=2): 1.1489\n6. TTT LR sweep to 0.7: 1.1327\n7. Unfreeze all blocks: 1.1255\n8. LR=1.5, 20ep: 1.1110\n9. 30ep, LR=1.0: 1.1076\n10. 8xH100 (more training steps): **1.1124**\n\nStep 7 was where it got fun. Everything before that was incremental hill climbing. Unfreezing all blocks during TTT changed the optimization landscape enough that learning rates that previously diverged started converging, and the whole curve shifted.\n\n## Schr\u00f6dinger's SOTA\n\nThis beats the merged leaderboard (1.1194) by 0.007 BPB. I haven't checked the pending PRs. Until they're merged, this is simultaneously a record and not a record, and I'm choosing to live in that superposition for a bit.\n\n## Credits\n\nBuilt on the community's collective work, especially PR #414 (signalrush), PR #461 (Christopher-Lee-McClendon), and PR #549 (abaybektursun).",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/757",
+  "draft": true,
+  "comments": [
+    {
+      "user": "fielding",
+      "body": "**Heads up**: Sooo, the downside to not checking the PRs/issues while experimenting is that you miss important things. After seeing Issue #677, I'm reviewing my TTT implementation against the score-first requirement. The current version runs 30 epochs of TTT then re-scores with sliding window, which I believe violates the intent of the rules. Working on a legal single-pass score-first version now and will push updated logs once validated. **Apologies for the oversight.**",
+      "created_at": "2026-03-25T21:20:08Z",
+      "updated_at": "2026-03-25T21:20:51Z"
+    },
+    {
+      "user": "fielding",
+      "body": "**Update**: Looking at PR [#549](https://github.com/fielding/parameter-golf/issues/549)'s score-first implementation as the reference. Plan is to restructure TTT to score each chunk before training on it (same pattern as the merged SOTA). Currently validating on 4xH200, will push updated code and logs once confirmed (applied for a Runpod credit grant).",
+      "created_at": "2026-03-25T21:27:41Z",
+      "updated_at": "2026-03-25T21:27:41Z"
+    },
+    {
+      "user": "fielding",
+      "body": "Converted to a draft while I figure out my compute situation. Sorry for the troubles.",
+      "created_at": "2026-03-25T22:14:41Z",
+      "updated_at": "2026-03-25T22:14:41Z"
+    }
+  ]
+}

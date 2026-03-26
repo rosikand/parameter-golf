@@ -1,0 +1,14 @@
+{
+  "number": 753,
+  "title": "Podracing II: Electric Bugaloo \u2014 0.9625 BPB (3-seed mean, all sub-0.964)",
+  "state": "open",
+  "user": "newjordan",
+  "created_at": "2026-03-25T17:53:09Z",
+  "updated_at": "2026-03-25T19:43:44Z",
+  "merged_at": null,
+  "body": "![podracing](https://github.com/user-attachments/assets/d285d4c9-6559-4412-be29-db3e2682e71a)\r\n\r\n\r\n## Results\r\n\r\n| Seed | Sliding BPB | 7-gram Backoff BPB | Artifact |\r\n|------|-------------|-------------------|----------|\r\n| 42 | 1.1210 | **0.9631** | 15.59 MB |\r\n| 2045 | 1.1196 | **0.9620** | 15.71 MB |\r\n| 7 | 1.1202 | **0.9624** | 15.59 MB |\r\n| **Mean** | **1.1203** | **0.9625** | \u2014 |\r\n\r\n## Progression\r\n\r\n| PR | Mean BPB | Notes |\r\n|----|----------|-------|\r\n| #190 | \u2014 | The Stinky Frost Recipe |\r\n| #390, #401 | 1.1295, 1.1243 | Sponge Bath TTT + EMA/SWA/QAT |\r\n| #445 | 1.1236 | Late Training Replay + GPTQ-lite |\r\n| #498, #499 | 1.1378 | The Frugendorff |\r\n| #508, #578 | 1.1215 | GPTQ + Early QAT + Legal TTT |\r\n| #533, #577 | 1.1207 | GPTQ + Short TTT |\r\n| #587 | 1.1208 | XSA + quantization tuning |\r\n| #656 | 1.1195 | Three Breadsticks |\r\n| #706 | 1.0461 | Podracing I (fixed 5-gram) |\r\n| **#753** | **0.9625** | **Podracing II (backoff + adaptive)** |\r\n\r\n## What Changed vs Podracing I\r\n\r\nTwo eval-time improvements, no training changes:\r\n\r\n1. **Multi-order backoff (2-7)**: longest context first, cascade on miss\r\n2. **Entropy-adaptive alpha**: trust n-gram more when model is uncertain\r\n\r\n## Compliance\r\n\r\n- Score-first, backward-looking cache\r\n- Alpha from model entropy only \u2014 no target access\r\n- GPTQ calibration inside training phase\r\n- Training logs + submission.json included\r\n\r\n## Credits\r\n\r\n- N-gram eval cache: @deanbrr (#659)\r\n- Backoff + adaptive alpha: @Asukabot0 (#727)\r\n- Base architecture: @signalrush (#414)\r\n\r\n## Reproduce\r\n\r\n```bash\r\nSEED=2045 MLP_ACT=leaky_relu_sq MLP_LEAKY_SLOPE=0.5 XSA_LAST_N=4 BIGRAM_VOCAB_SIZE=1536 ROPE_DIMS=24 NGRAM_EVAL_ORDER=7 NGRAM_EVAL_ADAPTIVE=1 TTT_EVAL_ENABLED=0 torchrun --nproc_per_node=8 train_gpt.py\r\n```\r\n\r\n8xH100 SXM, 600s training + ~140s eval.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/753",
+  "draft": false,
+  "comments": []
+}

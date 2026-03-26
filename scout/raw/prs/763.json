@@ -1,0 +1,14 @@
+{
+  "number": 763,
+  "title": "Record: 11L XSA-all + backoff 7-gram (mean val_bpb=0.9917)",
+  "state": "open",
+  "user": "hypery11",
+  "created_at": "2026-03-25T20:24:49Z",
+  "updated_at": "2026-03-25T20:24:49Z",
+  "merged_at": null,
+  "body": "## Results\n\n| Seed | val_bpb |\n|------|---------|\n| 42   | 0.9920  |\n| 1337 | 0.9912  |\n| 2024 | 0.9920  |\n| **Mean** | **0.9917** |\n| Std  | 0.0005  |\n\n- Artifact: 13.99 MB\n- Train: 600s on 8xH100 SXM\n- Eval: ~150s\n\n## Method\n\n11-layer transformer with XSA-all, LeakyReLU(0.5)^2, Value Residual, Gated Attention, BigramHash(10240), SmearGate. GPTQ-lite int6 + zstd-22. EMA(0.997) + Tight SWA + Late QAT.\n\nMulti-order backoff n-gram eval cache: orders 2-7, highest-order-first fallback, fixed alpha=0.40, 4M buckets per order. Score-first, deterministic, no TTT.\n\n- [x] 8xH100 SXM, train <=600s\n- [x] Eval <=600s (150s)\n- [x] Artifact <=16MB (13.99MB)\n- [x] 3-seed validation (std 0.0005)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/763",
+  "draft": false,
+  "comments": []
+}

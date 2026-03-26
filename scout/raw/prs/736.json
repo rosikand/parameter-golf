@@ -1,0 +1,21 @@
+{
+  "number": 736,
+  "title": "[Non-Record] 9L 2xMLP optimized parameter run with val_bpb 1.2168",
+  "state": "open",
+  "user": "Git-Aarya",
+  "created_at": "2026-03-25T15:50:53Z",
+  "updated_at": "2026-03-25T16:19:58Z",
+  "merged_at": null,
+  "body": "### Optimization Summary\r\nSubmitting a hyperparameter-optimized model for `track_10min_16mb`. \r\n\r\n**Key parameter changes:**\r\n- Maintained 9 Layers and 2x MLP\r\n- Increased Sequence Length to 2048\r\n- Tuned Matrix Learning Rate to 0.055\r\n- Extended Warmdown Iterations to 3600\r\n\r\nThis fits comfortably inside the limit at **15.8 MB** and achieves a validation BPB of **1.2168**. Full reproducible log and configuration details are located in the [README.md](cci:7://file:///c:/Users/aarya/Documents/Projects/parameter-golf/README.md:0:0-0:0) inside my submission folder!\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/736",
+  "draft": false,
+  "comments": [
+    {
+      "user": "Git-Aarya",
+      "body": "*Note for reviewers: I'm officially submitting this for consideration under the **Notable Non-Record Runs** category for the `track_10min_16mb` track. While it doesn't currently beat the absolute SOTA, it cleanly demonstrates how far the hyperparameter limits (specifically 2048 sequence length and corresponding learning schedules) can be stretched using strictly standard PyTorch int8 quantization, serving as a clean architectural baseline without custom kernels.*\r\n",
+      "created_at": "2026-03-25T16:07:43Z",
+      "updated_at": "2026-03-25T16:07:43Z"
+    }
+  ]
+}

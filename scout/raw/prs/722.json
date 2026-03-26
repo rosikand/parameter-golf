@@ -1,0 +1,14 @@
+{
+  "number": 722,
+  "title": "parameter golf submission - Julius",
+  "state": "open",
+  "user": "magicjulio",
+  "created_at": "2026-03-25T14:19:58Z",
+  "updated_at": "2026-03-25T14:19:58Z",
+  "merged_at": null,
+  "body": "Chimera + LeakyReLU(0.5)\u00b2 + 2048 Context + Extended Warmdown\r\n\r\nas noted in the readme there were issues with my runpod wich was very frustrating (i did had a few dollar left).\r\ni hope i can get more sponsored credits to fully verify my run.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/722",
+  "draft": false,
+  "comments": []
+}

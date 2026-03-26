@@ -1,14 +1,21 @@
 {
   "number": 694,
   "title": "10L Int5-MLP + BigramHash(4096) + SWA (1.1507 BPB)",
-  "state": "open",
+  "state": "closed",
   "user": "Bortlesboat",
   "created_at": "2026-03-25T08:16:17Z",
-  "updated_at": "2026-03-25T08:16:17Z",
+  "updated_at": "2026-03-26T03:43:24Z",
   "merged_at": null,
   "body": "## Non-record submission\n\n**val_bpb: 1.1507** (mean of 3 seeds, sliding window stride=64, post int5/int6+zstd quantization roundtrip)\n\n| Seed | val_bpb | artifact_bytes |\n|------|---------|----------------|\n| 42   | 1.1508  | 15,620,994     |\n| 1337 | 1.1499  | 15,290,882     |\n| 2024 | 1.1514  | 15,327,813     |\n\n### Architecture\n- 10 layers, d=512, GQA 8H/4KV, relu^2\n- BigramHash(4096, dim=128), SmearGate, U-Net skips\n- Mixed int5 MLP / int6 attention + zstd-22\n- SWA(frac=0.4), Muon WD=0.04, warmdown=3000\n\n### Based on\nthwu1's 10L Int5-MLP submission with reduced BigramHash for reliable size margin across seeds.\n\n### Timing (8xH100 SXM)\n- Training: ~600s (6200 steps)\n- Eval: ~258s (sliding window stride=64)",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/694",
   "draft": false,
-  "comments": []
+  "comments": [
+    {
+      "user": "Bortlesboat",
+      "body": "Superseded by PR #802 (0.9123 BPB with multi-order n-gram backoff).",
+      "created_at": "2026-03-26T03:43:23Z",
+      "updated_at": "2026-03-26T03:43:23Z"
+    }
+  ]
 }

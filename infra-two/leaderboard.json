@@ -26,5 +26,10 @@
     "total_bytes": 8974614,
     "steps_completed": 346,
     "exit_code": 0
+  },
+  {
+    "run_id": "baseline_full_0326_0608",
+    "status": "running",
+    "val_bpb_int8": null
   }
 ]

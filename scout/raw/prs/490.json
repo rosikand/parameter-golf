@@ -4,18 +4,11 @@
   "state": "open",
   "user": "amaljithkuttamath",
   "created_at": "2026-03-23T01:48:57Z",
-  "updated_at": "2026-03-24T03:31:38Z",
+  "updated_at": "2026-03-25T21:46:40Z",
   "merged_at": null,
   "body": "## Summary\n\n**val_bpb = pending rerun** | 8xH100 SXM | Legal score-first TTT\n\nArchitecture improvements on the standard 11L stack: Value Residual + Gated Attention + LeakyReLU(0.5)\u00b2, with legal score-first TTT.\n\n## Update (Mar 23)\n\nInitial submission used pre-eval TTT (non-compliant per #402). This update switches to **legal score-first TTT**: score each validation chunk before training on it. Score pending rerun with compute credits.\n\n## Architecture\n\n- **Value Residual** (arXiv:2410.17897): Learned lambda blends first-block V into subsequent blocks. +2 params/layer.\n- **Gated Attention** (arXiv:2505.06708): Per-head sigmoid gate on attention output. +4104 params/layer.\n- **LeakyReLU(0.5)\u00b2**: Replaces relu\u00b2 in MLP. Preserves negative gradient flow.\n- **Legal score-first TTT**: AdamW lr=1e-4, 3 epochs, cosine LR across 131K-token chunks, last 2 blocks + norms unfrozen. Every token scored BEFORE model trains on it.\n\nVR+GA ablated in PR #413 (-0.017 bpb combined). LeakyReLU\u00b2 proven by PR #569 and #535.\n\n## Run command\n\n```bash\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\nAll hyperparameters set as defaults.\n\n## Credits\n\n- PR #576 (cmcdnd): Legal score-first TTT, temperature calibration\n- PR #569 (gowtham0992): VRL + LeakyReLU\u00b2 + Full GPTQ\n- PR #413: VR + GA ablation\n- PR #315 (jfprincz): Foundation architecture",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/490",
-  "draft": false,
-  "comments": [
-    {
-      "user": "amaljithkuttamath",
-      "body": "### Code review\n\nFound 3 issues:\n\n1. **Reported val_bpb (1.0891) was produced by illegal pre-eval TTT, not the submitted code.** The README acknowledges \"val_bpb = pending rerun\" and states the old result is invalid per issue #402, but `submission.json` still reports `val_bpb: 1.0891` and `seeds: {\"1337\": 1.08909943}`. The log confirms the score came from epoch-based pre-eval TTT (train all val tokens, then score), not the score-first implementation now in `train_gpt.py`.\n\nhttps://github.com/openai/parameter-golf/blob/05075423dddbc7d5055b77c8dec4435d772e35f3/records/track_10min_16mb/2026-03-23_11L_VR_GA_AdamWTTT_1.0891/submission.json#L3-L7\n\n2. **`train_seed1337.log` was produced by different code than the submitted `train_gpt.py`.** The log shows `ttt:start lr=0.0005 epochs=10 optimizer=adamw` followed by `ttt_epoch:1/10` through `ttt_epoch:10/10` -- an epoch-based format. The submitted `train_gpt.py` implements chunk-based score-first TTT that would produce `ttt:start chunks=N chunk_tokens=...` and `ttt_chunk [X/Y]` log lines instead. The log does not match the code.\n\nhttps://github.com/openai/parameter-golf/blob/05075423dddbc7d5055b77c8dec4435d772e35f3/records/track_10min_16mb/2026-03-23_11L_VR_GA_AdamWTTT_1.0891/train_seed1337.log#L95-L108\n\n3. **TTT hyperparameter defaults are inconsistent across files.** `submission.json` reports `ttt_epochs: 10, ttt_lr: 0.0005` (lines 14-16). The `Hyperparameters` class in `train_gpt.py` defaults to the same (lines 122-123). But `main()` re-reads these env vars with different fallbacks: `TTT_EPOCHS` defaults to `\"3\"` and `TTT_LR` defaults to `\"0.0001\"` (lines 1926-1927). The README config block also shows `TTT_EPOCHS=3 TTT_LR=0.0001`. A fresh `torchrun` without env overrides would use 3 epochs at 0.0001 -- not reproducible against the claimed score.\n\nhttps://github.com/openai/parameter-golf/blob/05075423dddbc7d5055b77c8dec4435d772e35f3/records/track_10min_16mb/2026-03-23_11L_VR_GA_AdamWTTT_1.0891/train_gpt.py#L1925-L1928\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.ai/code)\n\n<sub>- If this code review was useful, please react with \ud83d\udc4d. Otherwise, react with \ud83d\udc4e.</sub>",
-      "created_at": "2026-03-24T01:59:03Z",
-      "updated_at": "2026-03-24T01:59:03Z"
-    }
-  ]
+  "draft": true,
+  "comments": []
 }

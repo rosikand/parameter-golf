@@ -4,7 +4,7 @@
   "state": "open",
   "user": "stpcoder",
   "created_at": "2026-03-19T14:51:29Z",
-  "updated_at": "2026-03-22T06:01:05Z",
+  "updated_at": "2026-03-26T07:23:02Z",
   "body": "**Built a live unofficial leaderboard** for Parameter Golf that auto-updates every 30 minutes. \nYou can check rankings, scores, and linked PRs/records here. \nIf there\u2019s a feature you\u2019d want, leave a comment.\n\nhttps://parameter-golf.github.io/\n\n<img width=\"2988\" height=\"2036\" alt=\"Image\" src=\"https://github.com/user-attachments/assets/3548062c-3655-4b7a-ab85-8dc455a78525\" />\n\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/issues/87",
@@ -44,6 +44,12 @@
       "body": "@signalrush Thanks for flagging this. I checked the latest deployed data and the source submission.json for that entry has val_loss = 1.14276 but no val_bpb field, so I think the score is missing from the submitted data rather than being changed by the leaderboard.",
       "created_at": "2026-03-22T06:01:05Z",
       "updated_at": "2026-03-22T06:01:05Z"
+    },
+    {
+      "user": "sahiee-dev",
+      "body": "@stpcoder Would it be possible to exclude closed PRs from the leaderboard as a filter option? They're no longer competitive submissions so they add noise when trying to see the real standings.\n\nthanks!!",
+      "created_at": "2026-03-26T07:22:44Z",
+      "updated_at": "2026-03-26T07:23:02Z"
     }
   ]
 }

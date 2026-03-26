@@ -4,7 +4,7 @@
   "state": "open",
   "user": "AtomChen0425",
   "created_at": "2026-03-24T16:35:21Z",
-  "updated_at": "2026-03-24T16:38:38Z",
+  "updated_at": "2026-03-25T20:18:15Z",
   "merged_at": null,
   "body": "Mixed Int5/Int6 Quantization: I compressed the MLP weights to 5-bit (Int5). I used this extra space to add a 10th transformer layer. I kept the attention weights at 6-bit (Int6) to maintain precision.\r\n\r\nExpanded BigramHash: I increased the BigramHash to 10,240 buckets. This reduces hash collisions for consecutive token pairs. \r\n\r\nHigh-Quality SWA: I used a highly selective Stochastic Weight Averaging (SWA) strategy.\r\n\r\nAttention-Residuals:  I removed standard layer-by-layer residuals. Instead, the model keeps a rolling history of previous layer outputs. It uses a learned query to calculate a Softmax-weighted score over this history.\r\n\r\n## Result\r\nSeed|val_bpb | Size\r\n--|--|--\r\n1337|1.2767|15858193 bytes\r\n",
   "labels": [],

@@ -1,0 +1,14 @@
+{
+  "number": 709,
+  "title": "Results of 2026-03-23_MixedQAT_Int5MLP_Int6Attn",
+  "state": "open",
+  "user": "StolbaJ",
+  "created_at": "2026-03-25T13:00:26Z",
+  "updated_at": "2026-03-25T16:15:15Z",
+  "merged_at": null,
+  "body": "Mixed-precision QAT (int5 STE for MLP, int6 STE for attn/bigram-proj) from step 0\r\non full SOTA stack. 1 run seed=42: val_bpb=1.14778 vs SOTA 1.14280. QAT gain\r\nsmaller than expected; PTQ gap not fully closed.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/709",
+  "draft": false,
+  "comments": []
+}

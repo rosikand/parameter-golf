@@ -1,0 +1,14 @@
+{
+  "number": 784,
+  "title": "Non-record: Depth Recurrence + XSA + LeakyReLU\u00b2 (val_bpb 1.2065)",
+  "state": "open",
+  "user": "iverbovoy",
+  "created_at": "2026-03-25T23:42:26Z",
+  "updated_at": "2026-03-25T23:48:01Z",
+  "merged_at": null,
+  "body": "## Summary\n\nDepth recurrence with **Cross-Repeat Skip** \u2014 turns stateless weight sharing into stateful depth recurrence. Each block retains and mixes its output from the previous repeat via learned per-repeat scales. This is the core novel contribution from our previous submission (#148), now improved by -0.013 bpb with three zero-parameter additions.\n\n- 3 blocks \u00d7 4 repeats (12 effective layers), dim=832, Cross-Repeat Skip, Value Embeddings\n- **XSA** (Exclusive Self-Attention) on last 4 effective layers: -0.010 bpb\n- **LeakyReLU(0.5)\u00b2** instead of relu\u00b2: -0.004 bpb\n- GPTQ-lite (best-of-5 clip percentiles) for post-training quantization\n- zstd-22 compression, SWA, Muon WD=0.04\n- 17.14M params, 15.87MB artifact, 4300 steps @ 140ms/step on 8xH100\n\n## Results\n\n| Metric | Previous submission (#148) | This submission |\n|--------|---------------------------|-----------------|\n| val_bpb (sliding) | 1.2196 | **1.2065** |\n| roundtrip_val_bpb | 1.2533 | **1.2398** |\n\n## Ablations (8xH100, 80 shards, sliding window bpb)\n\n| Change | Sliding bpb | Delta |\n|--------|-------------|-------|\n| Baseline (previous submission repro) | 1.2213 | \u2014 |\n| + XSA last 4 layers | 1.2110 | -0.0103 |\n| + LeakyReLU(0.5)\u00b2 | 1.2065 | -0.0045 |\n\nGPTQ-lite and zstd-22 are post-training optimizations that reduce roundtrip quant degradation (+0.003 bpb) but do not affect pre-quant sliding window eval.\n\n## Command\n\n```\nXSA_LAST_N=4 QUANT_LEVELS=127 EVAL_SEQ_LEN=1024 EVAL_STRIDE=256 \\\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/784",
+  "draft": false,
+  "comments": []
+}

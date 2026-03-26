@@ -1,0 +1,14 @@
+{
+  "number": 720,
+  "title": "Record Submission: 1.1078 BPB \u2014 XSA6 + BigramHash4K on Hedge Mixer Stack",
+  "state": "open",
+  "user": "agalimova",
+  "created_at": "2026-03-25T13:47:10Z",
+  "updated_at": "2026-03-25T13:47:10Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **val_bpb: 1.1078** (3-seed mean, std 0.0045)\n- Seeds: 42=1.1045, 1337=1.1061, 2025=1.1129\n- Built on PR #700 (@RoyiRa) with two hyperparameter changes found via systematic combinatorial search\n\n## Changes from PR #700\n\n| Parameter | Default | Ours |\n|-----------|---------|------|\n| `XSA_LAST_N` | 4 | **6** |\n| `BIGRAM_VOCAB_SIZE` | 2048 | **4096** |\n\n## Test plan\n\n- [x] 3 seeds run on 8xH100 SXM (torch 2.9+cu126, FA3)\n- [x] Mean improvement over merged SOTA (1.1194): -0.0116 BPB\n- [x] All runs under 16MB artifact limit (15.3MB)\n- [x] All runs under 600s training wallclock\n- [ ] Full training logs available (summaries included, full logs on request)\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/720",
+  "draft": false,
+  "comments": []
+}

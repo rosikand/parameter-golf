@@ -1,0 +1,14 @@
+{
+  "number": 767,
+  "title": "Non-record 1xH100 backoff7gram zlib-fallback sign-of-life (val_bpb 0.9209)",
+  "state": "open",
+  "user": "RichiiiTV",
+  "created_at": "2026-03-25T21:07:13Z",
+  "updated_at": "2026-03-25T21:15:43Z",
+  "merged_at": null,
+  "body": "This PR adds a non-record 16MB submission for a 1xH100 signs-of-life run of the compacted `#753`-style root lane.\r\n\r\nKey points:\r\n- hardware: 1xH100\r\n- flash-attn: present\r\n- zstandard: missing\r\n- export path: int6+zlib fallback\r\n- steps reached in 600s: 899\r\n- total artifact size: 7,772,644 bytes\r\n- final base sliding exact: 2.10939936\r\n- final legal score-first ngram7 exact: 0.92092798\r\n\r\nThis is not a leaderboard-valid record submission:\r\n- it uses 1 GPU rather than 8xH100\r\n- the final n-gram eval takes about 970s\r\n- it is not an exact donor repro because zstd was unavailable on the pod\r\n\r\nI am submitting it as a non-record sign-of-life because it demonstrates how strong the legal score-first `#753`-style backoff evaluator remains even when the underlying dense model is far from the intended 8xH100 training regime.\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/767",
+  "draft": false,
+  "comments": []
+}

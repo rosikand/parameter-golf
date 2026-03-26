@@ -1,0 +1,14 @@
+{
+  "number": 786,
+  "title": "0.8128 BPB: Classical Compression Eval + N-gram Backoff on PR #549 Base",
+  "state": "open",
+  "user": "shinegami-2002",
+  "created_at": "2026-03-26T00:15:00Z",
+  "updated_at": "2026-03-26T00:54:05Z",
+  "merged_at": null,
+  "body": "## Summary\n- **val_bpb: 0.8128** (1-seed, seed=1337) on 8xH100 SXM\n- Base model (PR #549 stack): 1.1218 BPB standard sliding window\n- **N-gram backoff (orders 2-7) + entropy-adaptive alpha mixing** drops it to 0.8128 BPB\n- Artifact: 15.88 MB (under 16 MB limit)\n- Training: 7135 steps in 600s. Eval: 383s.\n\n## Approach\nEval-time augmentation inspired by classical data compression (cmix/PAQ). Multi-order n-gram backoff with entropy-adaptive alpha, vectorized numpy implementation. All backward-looking, zero artifact cost.\n\n## Key Numbers\n| Eval Method | val_bpb |\n|-------------|---------|\n| Standard sliding window (stride=64) | 1.1218 |\n| **+ N-gram backoff + entropy-adaptive alpha** | **0.8128** |\n\n## Test plan\n- [x] Full training run on 8xH100 (600s, 7135 steps)\n- [x] Compressed eval completes within eval budget (383s)\n- [x] Artifact under 16 MB (15.88 MB)\n- [ ] 2 more seeds for statistical significance (pending compute grant)\n- [ ] Ablation: per-order contribution\n\n## Credits\nBuilt on PR #549 base. N-gram technique inspired by PR #727. Classical compression research from cmix/PAQ.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/786",
+  "draft": true,
+  "comments": []
+}

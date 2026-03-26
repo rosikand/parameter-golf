@@ -1,0 +1,14 @@
+{
+  "number": 802,
+  "title": "10L + Multi-Order N-gram Backoff (0.9123 BPB)",
+  "state": "open",
+  "user": "Bortlesboat",
+  "created_at": "2026-03-26T03:25:40Z",
+  "updated_at": "2026-03-26T03:49:03Z",
+  "merged_at": null,
+  "body": "## Record submission\n\n**val_bpb: 0.9123** (mean of 3 seeds, post int5/int6+zstd quantization roundtrip)\n\n| Seed | val_bpb | artifact_bytes |\n|------|---------|----------------|\n| 42   | 0.9128  | 15,320,000     |\n| 1337 | 0.9121  | 15,630,000     |\n| 2024 | 0.9121  | 15,330,000     |\n\n### Architecture\n- 10 layers, d=512, GQA 8H/4KV, LeakyReLU(0.5)^2\n- Partial RoPE (16/64), LN Scale, XSA last 4, Value Residual\n- BigramHash(4096, dim=128), SmearGate, U-Net skips\n- Mixed int5 MLP / int6 attention + zstd-22\n- EMA(0.997), Muon WD=0.04, warmdown=3500\n\n### Eval: Multi-Order N-gram Backoff + Entropy-Adaptive Alpha\n- Hashed n-gram cache, orders 2 through 7 with backoff\n- Highest matching order wins (7-gram preferred, falls back to lower)\n- Entropy-adaptive alpha: `alpha = 0.05 + 0.55 * sigmoid(2 * (H - 4.0))`\n- Score-first: cache updated only AFTER scoring each segment\n- 4M hash buckets per order, min_count=2\n\n### Timing (8xH100 SXM)\n- Training: 600s (~6020 steps at 99ms/step)\n- Eval: ~163s (sliding window stride=64, batch_seqs=64)\n\n### Based on\n- thwu1's 10L Int5-MLP base architecture\n- PR #727 (multi-order n-gram backoff concept)\n- PR #549 (LeakyReLU^2)\n- PR #287 (XSA, Partial RoPE, LN Scale)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/802",
+  "draft": false,
+  "comments": []
+}

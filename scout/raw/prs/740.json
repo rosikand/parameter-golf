@@ -1,0 +1,14 @@
+{
+  "number": 740,
+  "title": "Record: 9L XSA-all + LeakyReLU\u00b2 + 5-gram eval cache \u2014 val_bpb 1.0909 (3-seed mean)",
+  "state": "open",
+  "user": "resouer",
+  "created_at": "2026-03-25T16:34:18Z",
+  "updated_at": "2026-03-25T18:24:56Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\n**3-seed mean val_bpb: 1.0909** (std=0.0011) | **14.7 MB** | 8xH100 SXM\r\n\r\n## Results\r\n\r\n| Seed | Pre-ngram BPB | Post-ngram BPB | Artifact |\r\n|------|---------------|----------------|----------|\r\n| 1337 | 1.1700 | **1.0898** | 14.68 MB |\r\n| 42 | 1.1701 | **1.0909** | 14.69 MB |\r\n| 7 | 1.1700 | **1.0920** | 14.68 MB |\r\n| **Mean** | **1.1700** | **1.0909 (std 0.0011)** | |\r\n\r\n## Key Techniques\r\n\r\n**Training (9L/512d, 17.6M params)**\r\n- 9L transformer, 512d, 8H/4KV GQA, MLP 2x, LeakyReLU(0.5)\u00b2\r\n- XSA (Exclusive Self-Attention) on all 9 layers\r\n- SmearGate, BigramHash(4096), OrthoInit, LN Scale, Partial RoPE (25%)\r\n- Muon optimizer, seq2048, batch 786K, warmdown 3500\r\n- Int8 per-row quantization + zstd-22 (near-zero quant degradation)\r\n\r\n**Eval: Online 5-gram Cache (-0.079 BPB)**\r\n- Hashed 5-gram frequency table (4M buckets) from scored tokens\r\n- Fixed-weight linear mixing: `mixed = 0.8 * p_model + 0.2 * p_ngram`\r\n- Score-first, backward-looking, no target-aware gating\r\n- 132s eval time (well within 600s budget)\r\n\r\n## Reproduce\r\n\r\n```bash\r\nSEED=1337 NUM_LAYERS=9 MLP_MULT=2 QUANT_BITS=8 GPTQ_ENABLED=0 PRUNE_PCT=0 NGRAM_ENABLED=1 \\\r\n  torchrun --nproc_per_node=8 train_gpt.py\r\n```\r\n\r\n## Credits\r\n\r\nN-gram eval cache concept: @deanbrr (PR #659), @newjordan (PR #674)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/740",
+  "draft": false,
+  "comments": []
+}

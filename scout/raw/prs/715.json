@@ -1,0 +1,14 @@
+{
+  "number": 715,
+  "title": "Record: XSA-all + LeakyReLU\u00b2 + VR + GA + 7-gram cache (val_bpb=1.0337)",
+  "state": "open",
+  "user": "Asukabot0",
+  "created_at": "2026-03-25T13:10:46Z",
+  "updated_at": "2026-03-25T13:10:46Z",
+  "merged_at": null,
+  "body": "## Summary\n\nNon-TTT submission: 11L XSA-all + LeakyReLU(0.5)\u00b2 + Value Residual + Gated Attention + 7-gram backward-looking eval cache.\n\n**3-seed mean val_bpb = 1.0337** (std=0.0010) on 8xH100 SXM, 600s wallclock. Artifact ~15.99MB (int6+zstd).\n\n## 3-Seed Results\n\n| Seed | Quant | Size (bytes) | Sliding BPB (s=64) |\n|------|-------|-------------|---------------------|\n| 1337 | int6 zstd-16 | 15,990,221 | 1.0329 |\n| 42 | int6 zstd-17 | 15,982,903 | 1.0334 |\n| 7 | int6 zstd-16 | 15,992,378 | 1.0349 |\n| **Mean** | | | **1.0337** |\n\n## Key Techniques\n\n| Technique | Description |\n|-----------|-------------|\n| XSA-all (11 layers) | Exclusive Self-Attention on all layers |\n| LeakyReLU(0.5)\u00b2 | `leaky_relu(x, 0.5).square()` preserves negative gradient flow |\n| Value Residual | Layer 0 V output mixed into subsequent layers via sigmoid gates |\n| Gated Attention | Per-head sigmoid gates on attention output |\n| **7-gram eval cache** | Backward-looking n-gram cache (alpha=0.40, order=7, fixed mixing) |\n\n## N-gram Cache Compliance\n\nThe 7-gram cache is a deterministic, eval-time-only statistical post-processing step:\n\n- **Score-first**: Each token is scored by the model *before* entering the n-gram table\n- **Fixed alpha**: alpha=0.40 is baked into the code, not tuned per-sample\n- **No oracle selection**: Same alpha and order for every token\n- **Zero learned parameters**: Purely statistical, built from the eval data stream\n- **Deterministic**: Identical results regardless of hardware or random seeds\n\n## Training Config\n\n```\n8xH100 SXM, 600s wallclock (~5589 steps at 107ms/step)\nWARMDOWN_ITERS=3000, MATRIX_LR=0.025, SCALAR_LR=0.025\nXSA_LAST_N=11, LEAKY_RELU=1, EMA=0.997\nNGRAM_CACHE=1, NGRAM_ALPHA=0.40, NGRAM_ORDER=7 (eval-time only)\n```\n\n## Test plan\n\n- [x] 3-seed validation (seeds 1337, 42, 7) on 8xH100 SXM\n- [x] All artifacts under 16MB\n- [x] Sliding window eval (stride=64) with n-gram cache\n- [x] Logs included in `logs/` directory",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/715",
+  "draft": false,
+  "comments": []
+}

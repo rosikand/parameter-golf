@@ -1,10 +1,10 @@
 {
   "number": 527,
   "title": "Submit 1x A100 QAT Fix - 1.4078 BPB (Non-Record)",
-  "state": "open",
+  "state": "closed",
   "user": "Shuvam-Banerji-Seal",
   "created_at": "2026-03-23T12:44:11Z",
-  "updated_at": "2026-03-23T15:57:15Z",
+  "updated_at": "2026-03-25T12:42:02Z",
   "merged_at": null,
   "body": "Single-device (A100) run tuning hyperparams down from multi-device scales to ensure proper LR scheduling. Also swaps torch.quantile for w.amax().clamp_min to evade a 30x compiler performance penalty in Triton.",
   "labels": [],

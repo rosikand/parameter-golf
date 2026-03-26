@@ -1,0 +1,21 @@
+{
+  "number": 809,
+  "title": "Record: Chunk-Based N-gram Backoff + Score-First TTT (0.295 BPB)",
+  "state": "open",
+  "user": "AayushBaniya2006",
+  "created_at": "2026-03-26T04:20:24Z",
+  "updated_at": "2026-03-26T05:24:48Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **val_bpb: 0.29519** (mean of 3 seeds, std 0.00013)\n- Artifact: 13.4MB (code 181KB + model 13.2MB)\n- Training: 525s on 8xH100 SXM (~6,091 steps at 86ms/step)\n- Eval: 340s (TTT 53s + N-gram 287s)\n\n## Approach\n\nEval-time **order-9 N-gram backoff cache** is the primary technique. The cache is built incrementally from already-scored validation tokens (score-first, legal per competition rules). Processing in **1M-token sequential chunks** with all GPU ranks sharing cache state ensures maximum cache utilization.\n\nKey innovations:\n- **Entropy-adaptive mixing**: alpha varies by model confidence and N-gram order\n- **Per-order multipliers**: high-order matches (5-9) boosted 2x, low-order (2-3) suppressed 0.3x\n- **Chunk-synchronized multi-GPU**: all ranks update cache with full chunk data after scoring\n\nAlso includes score-first TTT (LoRA rank 8, AdamW) contributing ~0.015 BPB.\n\n## 3-Seed Results\n\n| Seed | Steps | Pre-Quant BPB | N-gram BPB |\n|------|-------|---------------|------------|\n| 1337 | 6,084 | 1.1408 | **0.2953** |\n| 42   | 6,094 | 1.1483 | **0.2950** |\n| 2024 | 6,096 | 1.1490 | **0.2952** |\n\n## Timing\n\n| Phase | Time | Budget |\n|---|---|---|\n| Training + GPTQ + export | 592s | 600s |\n| Eval (roundtrip + TTT + N-gram) | 424s | 600s |\n\n## Architecture\n\n11L 512d GQA 8/4, MLP 3.0x, XSA-4, LeakyReLU(0.9)^2, BigramHash(4096), GPTQ int5, 27.3M params.\n\n## Compliance\n\n- N-gram cache: score-first (cache updated AFTER scoring each chunk)\n- TTT: score-first with hard enforcement (raises if disabled)\n- No hindsight/oracle selection\n- GPTQ calibration fits within training budget (525s + 75s post-train < 600s)\n- No training data accessed during eval phase",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/809",
+  "draft": false,
+  "comments": [
+    {
+      "user": "newjordan",
+      "body": "HGNGNGNGHGNGNGN bro.... my brain",
+      "created_at": "2026-03-26T05:24:48Z",
+      "updated_at": "2026-03-26T05:24:48Z"
+    }
+  ]
+}

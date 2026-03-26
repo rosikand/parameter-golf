@@ -1,0 +1,69 @@
+{
+  "number": 739,
+  "title": "T5: Phase-Based Depth Recurrence + MLA + Graduated Precision (Non-Record)",
+  "state": "open",
+  "user": "Jonas-T5",
+  "created_at": "2026-03-25T16:29:15Z",
+  "updated_at": "2026-03-25T17:17:54Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **Phase-based depth recurrence**: 8 unique transformer blocks \u00d7 4 specialized phases \u00d7 5 repetitions = 40 effective depth at full d=512 width, with only 24M unique parameters (~13MB artifact)\n- **MLA (Multi-Head Latent Attention)**: Low-rank KV compression replacing GQA, ~20% fewer attention params per layer\n- **Graduated precision**: FP4 for early-phase layers (coarse features), Int6 for late-phase layers (fine prediction)\n- **FP8 training with stochastic rounding**: All persistent state (master weights, optimizer momentum) in FP8 on H100\n\n### Variants\n\n| Variant | Depth | Width | Unique Params | Artifact |\n|---|---|---|---|---|\n| looped40 | 40 effective | d=512, MLP3x | 24M | ~13 MB |\n| deep20 | 20 unique | d=384, MLP3x | 34M | ~15.5 MB |\n\n### Why phase-based sharing (not uniform cycling)?\n\nTransformer layers exhibit clear phase differentiation: early layers handle lexical features, middle layers syntax, late layers prediction. Uniform cycling (ALBERT-style ABCDE\u00d74) forces each block to be a generalist. Our phase-based pattern lets each pair specialize while using recurrence within phases for iterative refinement.\n\n### Local validation\n\n13L baseline trained on Mac MPS for 6h (25K steps, 1 FineWeb shard): val_bpb=1.50 at ~1% of full compute. Quantization roundtrip verified (gap: 0.002 BPB).\n\n## Test plan\n\n- [ ] Run `VARIANT=looped40` on 8xH100 (pending compute grant)\n- [ ] Run `VARIANT=deep20` on 8xH100 for comparison\n- [ ] Compare looped40 vs deep20 to measure recurrence benefit\n- [ ] Verify artifact size < 16MB on actual H100 run",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/739",
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Shard per-rank batch size by world size**\n\nIn distributed runs this computes `batch_size` directly from `TRAIN_BATCH_TOKENS` on every rank, so each worker processes the full global token budget instead of a shard. With the default settings (`524288` tokens, `seq_len=1024`), each rank gets `B=512`, which multiplies the effective global batch by `world_size` and can blow up memory/optimization behavior on 8-GPU launches. The per-rank batch should be derived from `batch_tokens // world_size` (and grad-accum if used).\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-25T16:34:25Z",
+      "updated_at": "2026-03-25T16:34:25Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Remove full T\u00d7T logits materialization in QK-Clip**\n\nThis line allocates the full attention score tensor just to collect max logits, which defeats Flash Attention's memory savings. For typical settings (`B=512`, `nh=8`, `T=1024`) the temporary is billions of elements, so CUDA training can OOM or become dramatically slower before useful training progress. QK-Clip needs a streaming/sampled statistic instead of explicitly building `B\u00d7H\u00d7T\u00d7T` scores.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-25T16:34:25Z",
+      "updated_at": "2026-03-25T16:34:25Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Preserve fp weights when applying STE fake quantization**\n\nThe QAT pre-hook writes quantized values back into `module.weight.data`, which permanently mutates the parameter and bypasses the intended straight-through path from `fake_quantize`. After enabling QAT, training no longer uses a preserved full-precision master weight for forward simulation; it repeatedly hard-quantizes the actual parameter, which is materially different from STE fake quantization and can hurt convergence.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-25T16:34:25Z",
+      "updated_at": "2026-03-25T16:34:25Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Derive BPB denominator from evaluated validation bytes**\n\nThis computes `bytes_per_token` from decoding a synthetic vocabulary sample (`0..N`) rather than from the validation tokens actually scored. Because token byte lengths are distribution-dependent, this can systematically misreport `val_bpb` and make results non-comparable across runs/tokenizers, even when cross-entropy is unchanged. BPB should be based on true bytes consumed in the evaluated validation stream.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-25T16:34:25Z",
+      "updated_at": "2026-03-25T16:34:25Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Save FP8 master weights after applying QK-Clip**\n\nIn CUDA training, `qk_clip_step` runs after `fp8.save_weights`, so the clipped parameters are never persisted to the FP8 master copy that gets reloaded at the next step (`fp8.load_weights`), effectively undoing clipping each iteration (except possibly the last). This also means EMA is updated from weights that are not the ones used for subsequent optimization, which can corrupt final EMA evaluation.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-25T16:42:41Z",
+      "updated_at": "2026-03-25T16:42:42Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Accumulate BPB bytes across all evaluated shards**\n\nThe BPB denominator pass stops after the first shard with any decoded bytes, but `total_loss`/`total_tokens` were accumulated over all evaluated validation shards. When `val_files` expands to multiple `fineweb_val_*.bin` shards, this divides full-loss by partial bytes and misreports `val_bpb`, which can mis-rank checkpoints and submissions.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-25T16:42:41Z",
+      "updated_at": "2026-03-25T16:42:42Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Synchronize QK-Clip scaling across DDP ranks**\n\nThis uses rank-local `max_logits` to compute `gamma` and immediately rescales weights, but in DDP each rank sees different batches (and different sampled query indices), so clipping factors diverge across workers whenever clipping is triggered. That causes parameter replicas to drift apart after `optimizer.step()`, and subsequent all-reduced gradients are computed from inconsistent model states, which can destabilize or corrupt multi-GPU training. Reduce/broadcast a shared clipping statistic before applying weight mutations.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-25T16:57:38Z",
+      "updated_at": "2026-03-25T16:57:38Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P1 Badge](https://img.shields.io/badge/P1-orange?style=flat)</sub></sub>  Count BPB bytes only for scored tokens**\n\nBPB denominator accounting uses `len(data)` here, but loss accumulation only scores `n_tokens = floor((len(data)-1)/(B*seq_len))*(B*seq_len)` tokens per shard. If a shard has an unscored tail (common when shard length is not a multiple of batch window), this decodes extra bytes that were never evaluated, inflating `total_bytes` and systematically underreporting `val_bpb`. Use the per-shard scored token count as the cap when computing `n_from_shard`.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-25T16:57:38Z",
+      "updated_at": "2026-03-25T16:57:38Z"
+    },
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Validate unknown VARIANT values instead of defaulting to test**\n\nThe catch-all `else` branch silently maps any unrecognized `VARIANT` to the 4-layer smoke-test config, so a typo (including the `VARIANT=ultra40` example in this file header) can run an unintended tiny model without any warning and produce misleading experiment/submission metrics. This should fail fast with an explicit error for unknown variants so production runs cannot accidentally execute the test configuration.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-25T17:15:43Z",
+      "updated_at": "2026-03-25T17:15:44Z"
+    }
+  ]
+}

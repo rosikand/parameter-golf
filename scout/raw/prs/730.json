@@ -1,0 +1,14 @@
+{
+  "number": 730,
+  "title": "Fix: move Ternary UNet submission folder from track_10min_16mb to track_non_record_16mb",
+  "state": "open",
+  "user": "janwww",
+  "created_at": "2026-03-25T15:10:00Z",
+  "updated_at": "2026-03-25T20:57:56Z",
+  "merged_at": null,
+  "body": "Fixes #729\r\n\r\n## Summary\r\n\r\nPR #640 placed the 73.7M Ternary UNet submission under `records/track_10min_16mb/`, \r\nbut it was accepted into the README as a **Notable Non-Record Run** \u2014 not the main \r\nleaderboard. This puts the folder in the wrong track directory.\r\n\r\n## Changes\r\n\r\n- Moved `records/track_10min_16mb/2026-03-24_74M_Ternary_UNet_FP8_10L_8192BPE_YaRN_NeoMuon/` \r\n  \u2192 `records/track_non_record_16mb/2026-03-24_74M_Ternary_UNet_FP8_10L_8192BPE_YaRN_NeoMuon/`\r\n- Updated the info link in the Notable Non-Record Runs table in README.md to match",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/730",
+  "draft": false,
+  "comments": []
+}

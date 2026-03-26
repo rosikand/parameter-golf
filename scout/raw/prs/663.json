@@ -1,14 +1,51 @@
 {
   "number": 663,
   "title": "V18 Manifold-Guided Architecture \u2014 val_bpb 0.434",
-  "state": "open",
+  "state": "closed",
   "user": "raahilg",
   "created_at": "2026-03-25T00:23:35Z",
-  "updated_at": "2026-03-25T00:23:35Z",
+  "updated_at": "2026-03-25T22:12:30Z",
   "merged_at": null,
-  "body": "",
+  "body": "Standard language models must simultaneously **construct** an internal representation of token relationships **and** learn to **navigate** that representation to make predictions. We separate these two jobs.\r\n\r\nBy precomputing a physics-simulated token manifold from corpus co-occurrence statistics, we freeze the geometric structure directly into the architecture. The model's job changes from construction + navigation to **just navigation** \u2014 a much easier task that lets the weights specialize entirely on exploiting the geometric prior rather than building it from scratch.\r\n\r\nThe result is essentially a **GNN operating on a precomputed token interaction graph** \u2014 the manifold defines graph topology, sparsemax produces edge weights, and hop cells perform node updates with message passing. Every architecture decision is chosen to exploit this geometric prior: sparsemax routing along manifold geodesics, spectral-coordinate-conditioned attention, entropy-guided message passing, and parallel transport across the token manifold.\r\n\r\nWith only 1024 tokens, the full pairwise statistics are trivially computable \u2014 the manifold captures essentially the complete statistical structure of the language. Normally, a model would need to rediscover these patterns through gradient descent. We hand them to a 20M parameter model on initialization.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/663",
   "draft": false,
-  "comments": []
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "`load_validation_tokens` can return a too-short tensor when the validation split has fewer than `seq_len + 1` tokens (or when `seq_len` is set too large). That leads to `total_seqs == 0` in `eval_val` and a divide-by-zero when computing `val_loss`/`val_bpb`. Add the same `usable <= 0` guard the baseline scripts use and raise a clear `ValueError` when the validation set is too short for the configured sequence length.\n```suggestion\n    usable = ((tokens.numel() - 1) // seq_len) * seq_len\n    if usable <= 0:\n        raise ValueError(\n            f\"Validation set too short for seq_len={seq_len}: \"\n            f\"only {tokens.numel()} tokens available.\"\n        )\n```",
+      "created_at": "2026-03-25T17:48:54Z",
+      "updated_at": "2026-03-25T17:48:56Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`build_manifold_distributed` says the physics simulation \u201cruns on rank 0's GPU, broadcast result\u201d, but the code currently runs the physics simulation + Hessian eigendecomposition on every rank. In multi-GPU runs this duplicates the most expensive work and can blow the wallclock budget. Consider gating the physics/Hessian section with `if rank == 0`, then broadcasting the resulting `combined` manifold coordinates (e.g., via `dist.broadcast` on a tensor) to other ranks.",
+      "created_at": "2026-03-25T17:48:54Z",
+      "updated_at": "2026-03-25T17:48:56Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "There are unused imports (`subprocess`, `sys`) in this file. Removing them reduces lint noise and avoids implying there are subprocess/system side effects.\n```suggestion\n\n```",
+      "created_at": "2026-03-25T17:48:55Z",
+      "updated_at": "2026-03-25T17:48:56Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`DistributedDataParallel as DDP` is imported but not used (the script implements manual reduce/broadcast instead). Dropping the unused import will avoid confusion about whether DDP is expected here.\n```suggestion\n\n```",
+      "created_at": "2026-03-25T17:48:55Z",
+      "updated_at": "2026-03-25T17:48:56Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "`os` is imported twice (near the top and again here). Removing the duplicate import keeps the module header tidy.\n```suggestion\n\n```",
+      "created_at": "2026-03-25T17:48:55Z",
+      "updated_at": "2026-03-25T17:48:56Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The README title reports `val_bpb: 0.438`, while `submission.json` reports `val_bpb: 0.4343`. If 0.438 is meant to be the mean across seeds, consider updating the title to say \u201cmean val_bpb\u201d (or update it to the best/official score) to avoid ambiguity.\n```suggestion\n# V18 Manifold-Guided Architecture \u2014 mean val_bpb: 0.438\n```",
+      "created_at": "2026-03-25T17:48:55Z",
+      "updated_at": "2026-03-25T17:48:56Z"
+    }
+  ]
 }

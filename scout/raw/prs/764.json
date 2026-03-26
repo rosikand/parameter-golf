@@ -1,0 +1,14 @@
+{
+  "number": 764,
+  "title": "Record: Curriculum Learning + LeakyReLU(0.9)\u00b2 + 7-gram Backoff (val_bpb=0.9633)",
+  "state": "open",
+  "user": "ndokutovich",
+  "created_at": "2026-03-25T20:26:04Z",
+  "updated_at": "2026-03-25T20:26:04Z",
+  "merged_at": null,
+  "body": "## Summary\n\n**val_bpb = 0.9633** (seed 42, additional seeds pending compute grant) | **15.56 MB** | 8xH100 SXM, 600s\n\nBuilt on PR #753 (Podracing II) with two novel additions:\n\n### 1. Curriculum Learning (Shard Reordering)\nTraining shards reordered by model perplexity \u2014 hardest shards first. Based on PR #650 (-0.003 BPB). Zero code change, environment variable only.\n\n### 2. LeakyReLU(0.9)\u00b2 Slope Optimization  \nFollowing @MatoTeziTanka's controlled sweep (issue #140): slope 0.9 gives -0.013 BPB vs standard 0.5. One parameter change.\n\n## Results\n\n| Eval Method | BPB |\n|------------|-----|\n| Sliding window (stride=64) | 1.1216 |\n| **Sliding + 7-gram backoff** | **0.9633** |\n| Legal TTT (score-first, 3ep) | 1.1216 |\n\n**Artifact: 15,560,351 bytes** (< 16MB)  \n**Steps: 6,647** at 90.3ms/step  \n**GPTQ calibration within training budget** (issue #677 compliant)\n\n## Reproduction\n\n```bash\nSEED=42 bash run.sh\n```\n\n## Acknowledgments\n\n@newjordan (PR #753), @abaybektursun (PR #650), @MatoTeziTanka (slope sweep), @Asukabot0 (n-gram backoff)\n\n## Status\n\n1 seed submitted. 2 additional seeds pending OpenAI compute grant.  \nPreviously PR #486 (formerly #2 on leaderboard, TrigramHash originator). $339 personal compute spent.\n\n## Test plan\n- [x] 1 seed (42) validated on 8xH100 SXM\n- [ ] Seed 1337 (pending compute)\n- [ ] Seed 2024 (pending compute)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/764",
+  "draft": false,
+  "comments": []
+}

@@ -1,0 +1,14 @@
+{
+  "number": 813,
+  "title": "Record: BackoffNgramMixer (mean val_bpb=0.6671)",
+  "state": "open",
+  "user": "hypery11",
+  "created_at": "2026-03-26T05:18:05Z",
+  "updated_at": "2026-03-26T05:18:05Z",
+  "merged_at": null,
+  "body": "## Results\n\n| Seed | val_bpb | Eval time |\n|------|---------|-----------|\n| 42   | 0.6672  | 512s      |\n| 1337 | 0.6673  | ~512s     |\n| 2024 | 0.6667  | ~512s     |\n| **Mean** | **0.6671** |           |\n| Std  | 0.0003  |           |\n\n- Artifact: ~16.0 MB\n- Train: 600s on 8xH100 SXM\n- Eval: ~512s (under 600s limit)\n\n## Method\n\n11-layer transformer (512d, 8/8 full MHA, XSA-all, LeakyReLU(0.5)^2, 3.5x MLP). BackoffNgramMixer with entropy-adaptive alpha, orders 2-7. Score-first, backward-looking.\n\n- [x] 8xH100 SXM, train <=600s\n- [x] Eval <=600s (512s)\n- [x] Artifact <=16MB\n- [x] 3-seed validation (std 0.0003)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/813",
+  "draft": false,
+  "comments": []
+}

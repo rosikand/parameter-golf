@@ -4,7 +4,7 @@
   "state": "open",
   "user": "ksang123",
   "created_at": "2026-03-19T23:09:26Z",
-  "updated_at": "2026-03-19T23:14:31Z",
+  "updated_at": "2026-03-25T17:49:16Z",
   "merged_at": null,
   "body": "## BitNet b1.58: 64.5M Ternary Parameters in 15.1MB\r\n\r\nval_bpb: 1.2029 (post-roundtrip) | 15.11 MB | 8\u00d7H100, 10 minutes\r\n\r\n### The idea\r\n\r\nThe baseline's 17.1M params are saturated long before the wallclock runs out (T/N \u2248 \r\n424\u00d7). Chinchilla says: fit more parameters. BitNet b1.58 lets me pack 64.5M ternary \r\n{-1, 0, 1} parameters into 15.1MB via base-3 encoding at 1.6 bits/param \u2014 3.8\u00d7 more \r\nparams than the baseline in the same artifact size.\r\n\r\n### What's different\r\n\r\n- **BitLinear layers** throughout: ternary weight quantization with STE in every \r\nforward pass\r\n- **Near-Zero quantization gap** (0.002 BPB): model trains quantized, so the roundtrip is\r\nlossless. No post-training quantization fight.\r\n- **fp16 scale simulation** during training (.half().float()) ensures the stored \r\nscales match what the model saw\r\n- **Base-3 packing**: 5 trits per byte, lossless, near the theoretical 1.585 bits/\r\ntrit minimum\r\n- No sliding window, no eval tricks\r\n\r\n### Results\r\n\r\n| Model | Params | Artifact | val_bpb | Quant gap | Time |\r\n|-------|--------|----------|---------|-----------|------|\r\n| Current SOTA (INT6+SW) | ~20M | ~15.4MB | 1.1748 | ~0.01 | 10 min |\r\n| Naive Baseline | 17.1M | 15.9MB | 1.2244 | 0.007 | 10 min |\r\n| 4-Hour Baseline | 17.1M | 15.9MB | 1.2074 | 0.033 | 4 hours |\r\n| BitNet b1.58 | 64.5M | 15.1MB | 1.2029 | 0.002 | 10 min |\r\n\r\nA 10-minute ternary model beats 4 hours of full-precision training. The full write-\r\nup with scaling law analysis is in the README.\r\n\r\n<img width=\"1482\" height=\"880\" alt=\"scaling_laws\" src=\"https://github.com/user-attachments/assets/163718b9-3b14-4cb4-b8b9-f3a43668b464\" />\r\n",
   "labels": [],
@@ -46,6 +46,30 @@
       "body": "`quantize_state_dict_ternary()` eagerly creates a full `cpu().float()` copy (`t = tensor.detach().cpu().float()...`) before checking `if name in cache`. For cached BitLinear weights this does unnecessary host copies of the largest tensors, slowing export and increasing peak memory. Check the cache first and only materialize `t` for the non-cached paths.\n```suggestion\n        if name in cache:\n            q, scale, shape = cache[name]\n            q = q.detach().cpu()\n            scale = scale.detach().cpu()\n            packed_bytes, pack_meta = pack_ternary(q)\n            quantized[name] = {\"type\": \"ternary\", \"packed\": packed_bytes,\n                               \"scale\": scale, \"shape\": list(shape),\n                               \"padded_cols\": shape[1], \"group_size\": group_size,\n                               \"n_trits\": pack_meta[0]}\n            stats[\"ternary_bytes\"] += len(packed_bytes) + scale.numel() * 2\n        else:\n            t = tensor.detach().cpu().float().contiguous()\n            if t.ndim == 2 and t.numel() > 65_536 and \"tok_emb\" not in name:\n                pad = (group_size - t.shape[1] % group_size) % group_size\n                t_padded = F.pad(t, (0, pad)) if pad > 0 else t\n                t_grouped = t_padded.reshape(-1, group_size)\n                scale = t_grouped.abs().mean(-1, keepdim=True).clamp(min=1e-8).half().float()\n                q = (t_grouped / scale).round().clamp(-1, 1).to(torch.int8)\n                packed_bytes, pack_meta = pack_ternary(q)\n                quantized[name] = {\"type\": \"ternary\", \"packed\": packed_bytes,\n                                   \"scale\": scale.to(torch.float16).squeeze(-1),\n                                   \"shape\": list(t.shape), \"padded_cols\": t_padded.shape[1],\n                                   \"group_size\": group_size, \"n_trits\": pack_meta[0]}\n                stats[\"ternary_bytes\"] += len(packed_bytes) + scale.numel() * 2\n            else:\n                quantized[name] = {\"type\": \"fp16\", \"data\": t.to(torch.float16)}\n                stats[\"fp16_bytes\"] += t.numel() * 2\n```",
       "created_at": "2026-03-19T23:14:31Z",
       "updated_at": "2026-03-19T23:14:31Z"
+    },
+    {
+      "user": "ksang123",
+      "body": "@0hq Looks like #139 and #367 may have been missed in the queue, neither got reviewed. #139 was the first competitive\r\nternary/BitNet submission (1.2029 BPB, day 1) and predates #640. Would appreciate a look when you get a chance.",
+      "created_at": "2026-03-25T16:16:45Z",
+      "updated_at": "2026-03-25T16:16:45Z"
+    },
+    {
+      "user": "CiprianFlorin-Ifrim",
+      "body": "@ksang123 I feel like tagging my PR in this and also leaving a kind-of snarky comment on my own PR as \"exactly what I hoped would happen when I submitted 139\" is a bit disingenous, almost as if my work extends or builds upon yours. My work started as soon as the challenge was announced, and as I am the creator of the [Bitnet Rust library](https://github.com/CiprianFlorin-Ifrim/bitnet-llm-rs)/[bitnet-llm](https://crates.io/crates/bitnet-llm), with a lot of private work and research done on Bitnets (and general int8 transformers) and their application on low power MCUs, it made sense to work on that for this challenge given the constraints. I simply did not want to submit something to \"hold a place in the queue that I could update later\" until it was complete, otherwise within 3h on the day of the challenge I could've been under 1.20 and mention how I was first. You can find a proper research document on the circa 250 runs I did here [Results Document](https://github.com/CiprianFlorin-Ifrim/openai-parameter-golf-lab/blob/main/documents/RESULTS.pdf) (formatted by Claude from my [RESULTS.md](https://github.com/CiprianFlorin-Ifrim/openai-parameter-golf-lab/blob/main/RESULTS.md) file). Do not collate the two submissions.",
+      "created_at": "2026-03-25T17:04:31Z",
+      "updated_at": "2026-03-25T17:04:31Z"
+    },
+    {
+      "user": "ksang123",
+      "body": "@CiprianFlorin-Ifrim I didn't mean to imply your work built on mine, I know it wasn't. It was extremely good and I'm genuinely glad the ternary approach was pushed this far. Separately, I do wish my submissions had gotten reviewed.",
+      "created_at": "2026-03-25T17:22:19Z",
+      "updated_at": "2026-03-25T17:22:19Z"
+    },
+    {
+      "user": "CiprianFlorin-Ifrim",
+      "body": "> @CiprianFlorin-Ifrim I didn't mean to imply your work built on mine, I know it wasn't. It was extremely good and I'm genuinely glad the ternary approach was pushed this far. Separately, I do wish my submissions had gotten reviewed.\r\n\r\nAll love, it could be that the title gave the wrong idea? I see people using Record for the main leaderboard and non-record for the \"I am uploading something now to have a PR here, but will update it later\", which imo even adds pressure on the organisers to manager the hundreds of them. Mine had the specific leaderboard name, \"notable non record runs\". Also the time too, as it looks like they want the notable non record leaderboard to be just for weird stuff with unlimited compute.",
+      "created_at": "2026-03-25T17:49:15Z",
+      "updated_at": "2026-03-25T17:49:15Z"
     }
   ]
 }

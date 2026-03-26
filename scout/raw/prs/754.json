@@ -1,0 +1,14 @@
+{
+  "number": 754,
+  "title": "Non-Record: 11L Parallel Muon + LeakyReLU\u00b2 MLP3x + Legal TTT (val_bpb 1.1253)",
+  "state": "open",
+  "user": "aryanbhosale",
+  "created_at": "2026-03-25T18:13:34Z",
+  "updated_at": "2026-03-26T08:26:25Z",
+  "merged_at": null,
+  "body": "## Record: 11L Parallel Muon + LeakyReLU\u00b2 MLP3x + Legal Score-First TTT\n\n**val_bpb = 1.1253** (3-seed mean, std 0.0002) | **~15 MB** | 8\u00d7H100 SXM\n\n### 3-Seed Results (8\u00d7H100 80GB SXM, PyTorch 2.9.1+cu128)\n\n| Seed | step_avg | steps | EMA bpb | Quantized bpb | **TTT bpb** |\n|------|----------|-------|---------|---------------|-------------|\n| 1337 | 91.5ms | 6,556 | 1.1194 | 1.1291 | **1.1255** |\n| 42 | 89.2ms | 6,726 | 1.1195 | 1.1278 | **1.1253** |\n| 2024 | 89.3ms | 6,722 | 1.1193 | 1.1280 | **1.1251** |\n| **Mean** | **90.0ms** | **6,668** | **1.1194** | **1.1283** | **1.1253** |\n\n### Key Techniques\n\n1. **Parallel Muon** with parameter banking \u2014 4 contiguous 3D banks, batched Newton-Schulz via torch.bmm, 3-phase async reduce-scatter/all-gather. ~90ms/step, ~6700 steps.\n2. **LeakyReLU(0.5)\u00b2** MLP 3\u00d7 \u2014 preserves negative gradient flow.\n3. **Legal Score-First TTT** (PR #461/#549 recipe) \u2014 score each 32K-token chunk with sliding windows under inference_mode, then SGD(lr=0.002, momentum=0.9) for 3 epochs, all blocks unfrozen, cosine LR decay.\n4. **EMA(0.997) + SWA** \u2014 EMA selected as best pre-quant weights (1.1194 BPB, matches merged SOTA pre-TTT).\n5. **GPTQ-lite int6 + zstd-22** \u2014 per-row 5-percentile clip search, FP16 embedding passthrough.\n6. Flash Attention 3, torch.compile(fullgraph=True), no DDP.\n\n### Architecture (29.8M params)\n\n11L, 512d, 8H/4KV (GQA), MLP 3\u00d7, SmearGate, BigramHash(1536), Value Residual, Gated Attention, XSA4, Partial RoPE(16/64), U-Net skips, OrthoInit, tied embeddings, logit softcap 30.0.\n\n### Training\n\n- Parallel Muon: lr=0.025, momentum 0.92\u21920.99/1500 steps, WD=0.04, Newton-Schulz 5 steps\n- Adam for embeddings (lr=0.035) and scalars (lr=0.025)\n- Batch 786,432 tokens, seq_len 2048, warmdown 3500 iters\n- Late QAT via STE (final 15% wallclock), symmetric [-31, 31]\n- Gradient clipping 0.3\n\n### TTT Compliance\n\nLegal score-first per PR #461/#549 framework:\n- Every token scored BEFORE any weight update (enforced by torch.inference_mode)\n- No training data access during evaluation\n- No multi-epoch scoring \u2014 each chunk scored exactly once\n- Total eval time: ~530s (within 10 min limit)\n\n### Credits\n\n- Parallel Muon / Parameter Banking: PR #399 by @abaybektursun\n- LeakyReLU\u00b2: PR #493 by @parinzee, PR #518 by @sofiabod\n- TTT recipe: PR #461 by @Christopher-Lee-McClendon (adapted: freeze=0)\n- Base model stack: PR #414 by @signalrush",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/754",
+  "draft": false,
+  "comments": []
+}

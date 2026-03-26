@@ -1,12 +1,12 @@
 {
   "number": 95,
-  "title": "PROTEUS EMA \u2014 val_bpb: 1.2253",
+  "title": "PROTEUS EMA \u2014 val_bpb: 1.1836 (3-seed mean, Notable Non-Record)",
   "state": "open",
   "user": "MatoTeziTanka",
   "created_at": "2026-03-19T15:46:22Z",
-  "updated_at": "2026-03-21T18:50:40Z",
+  "updated_at": "2026-03-25T20:53:44Z",
   "merged_at": null,
-  "body": "## Summary\n\n- Baseline architecture + **EMA weight averaging** (26 lines added, zero architectural changes)\n- EMA smooths weight distributions, reducing INT8 quantization loss from 0.0072 to 0.0048 BPB\n- `final_int8_zlib_roundtrip val_bpb: 1.22534607`\n- Total artifact: 15,893,533 bytes (99.3% of 16MB budget)\n\n## Details\n\n| Metric | Baseline | PROTEUS EMA |\n|--------|----------|-------------|\n| val_bpb (roundtrip) | 1.2244 | **1.2253** |\n| INT8 quant loss | 0.0072 | 0.0048 |\n| Steps | 13,780 | 12,881 |\n| Step avg | 43.54ms | 46.58ms |\n\nRun on Modal 8\u00d7H100 SXM. Step time difference is platform overhead (Modal vs RunPod), not algorithmic. On matched hardware, score is expected to improve.\n\n## Test plan\n\n- [x] Artifact size < 16MB (15.89MB)\n- [x] Wallclock < 600s (599.97s)\n- [x] INT8 roundtrip validation passes\n- [x] Script runs with `torchrun --standalone --nproc_per_node=8`\n\nBuilt with [PROTEUS](https://lightspeedup.com) by LightSpeedUp\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "body": "## Summary\n\n- Baseline architecture + **EMA weight averaging** (26 lines added, zero architectural changes)\n- EMA smooths weight distributions, reducing INT8 quantization loss from 0.0072 to 0.0048 BPB\n- **val_bpb: 1.1836** (3-seed mean, std 0.0005) on 8\u00d7H100 SXM\n- Total artifact: 15.88 MB (99.3% of 16MB budget)\n\n## 3-Seed Results\n\n| Seed | val_bpb | Steps | Artifact |\n|------|---------|-------|----------|\n| 42   | 1.1836  | 11,876 | 15.88 MB |\n| 1337 | 1.1841  | 11,871 | 15.87 MB |\n| 2024 | 1.1831  | 11,875 | 15.88 MB |\n| **Mean** | **1.1836** | \u2014 | **std: 0.0005** |\n\n## Notable Non-Record \u2014 Documented Negative Results\n\nThis submission does not beat SOTA. Its value is the documented negative results:\n\n1. **INT4 post-training quantization fails catastrophically** \u2014 roundtrip BPB goes from 1.44 to 3.73. Per-row, per-group (gs=64), and QAT with STE all fail. Root cause: quantization error compounds through layers (cosine similarity drops to 0.90 at 18 layers).\n\n2. **Shared-weight depth recurrence (LoopFormer) loses to more tokens** at this training budget \u2014 1-pass (9 effective layers, 6.5B tokens) beats 2-pass (18 effective layers, 3.6B tokens) by 0.019 BPB.\n\n3. **EMA reduces quantization gap** from 0.0072 to 0.0048 BPB by smoothing weight distributions, but training loss improvement is marginal.\n\n## Details\n\n| Metric | Baseline | PROTEUS EMA |\n|--------|----------|-------------|\n| val_bpb (roundtrip) | 1.2244 | **1.1836** |\n| INT8 quant loss | 0.0072 | 0.0048 |\n\nFull logs, submission.json, and train_gpt.py in `/records/track_10min_16mb/2026-03-25_PROTEUS_EMA_Notable/`\n\nBuilt with [PROTEUS](https://lightspeedup.com) by LightSpeedUp",
   "labels": [
     "does not beat SOTA"
   ],
@@ -30,6 +30,12 @@
       "body": "Acknowledged \u2014 this doesn't beat SOTA. Reframing as a non-record submission.\n\nThe value here is the documented negative results:\n- **INT4 post-training quantization fails catastrophically** \u2014 roundtrip BPB goes from 1.44 to 3.73. Per-row, per-group (gs=64), and QAT with STE all fail. Root cause: quantization error compounds through layers (cosine similarity drops to 0.90 at 18 layers).\n- **Shared-weight depth recurrence (LoopFormer) loses to more tokens** at this training budget \u2014 1-pass beats 2-pass by 0.0185 BPB on 8\u00d7H100.\n- **EMA reduces INT8 quantization loss** from 0.0072 to 0.0048 BPB, but the per-step overhead costs ~600 training steps, partially offsetting the gain.\n\nWe have a v4 in progress that addresses the size/score issues. Will submit separately when ready.",
       "created_at": "2026-03-21T18:50:40Z",
       "updated_at": "2026-03-21T18:50:40Z"
+    },
+    {
+      "user": "MatoTeziTanka",
+      "body": "## 3-Seed Results Now Available\n\nUpdated with proper `/records` folder and 3-seed validation on 8\u00d7H100 SXM:\n\n| Seed | val_bpb | Steps | Artifact |\n|------|---------|-------|----------|\n| 42   | 1.1836  | 11,876 | 15.88 MB |\n| 1337 | 1.1841  | 11,871 | 15.87 MB |\n| 2024 | 1.1831  | 11,875 | 15.88 MB |\n| **Mean** | **1.1836** | \u2014 | **std: 0.0005** |\n\nThis is a notable non-record submission. The primary value is the documented negative results:\n\n1. **INT4 quantization fails catastrophically** \u2014 BPB goes from 1.44 to 3.73 due to compounding layer error\n2. **Depth recurrence loses to more tokens** at this budget \u2014 more data beats more compute depth\n3. **EMA reduces quantization gap** (0.0072 \u2192 0.0048) but doesn't move the needle on training loss\n\nRecords folder with full logs, submission.json, and train_gpt.py added in latest commit.",
+      "created_at": "2026-03-25T20:48:49Z",
+      "updated_at": "2026-03-25T20:48:49Z"
     }
   ]
 }

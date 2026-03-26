@@ -1,0 +1,14 @@
+{
+  "number": 831,
+  "title": "Research: Why Novel Architectures Fail at 16MB \u2014 Throughput-Quantization Co-optimization",
+  "state": "open",
+  "user": "sseanliu",
+  "created_at": "2026-03-26T08:02:01Z",
+  "updated_at": "2026-03-26T08:02:01Z",
+  "merged_at": null,
+  "body": "## Non-record research submission\n\nWe systematically evaluated 6 architectural innovations from March 2026 papers on the PR #549 SOTA stack. All failed. The unified finding: **at 16MB/600s, throughput-quantization co-optimization is the binding constraint, not model quality.**\n\n### Experiments\n\n| Technique | Paper | Step Time | BPB | Why It Failed |\n|---|---|---|---|---|\n| MUD Optimizer | 2603.17970 | 88ms (+5%) | 1.1581 | solve_triangular can't use tensor cores |\n| Info-Max (XSA-all + LeakyReLU(0.9)) | \u2014 | 89ms (+7%) | 1.1261 | XSA-all overhead eats its own gain |\n| Hourglass FFN | 2602.06471 | 92ms (+11%) | 1.4519 | Split weights catastrophic for int6 (+0.33 quant gap) |\n| nGPT Hypersphere | 2410.01131 | 122ms (+47%) | 1.6915 | Unit-norm weights incompatible with int6 (+0.35 quant gap) |\n| TrigramHash | Competition | 98ms (+18%) | 1.1298 | Hash overhead costs more steps than trigram saves |\n| SSM Hybrid (GatedDeltaNet) | 2412.06464 | 282ms (+240%) | 1.2516 | Breaks torch.compile, memory-bound on H100 |\n\n### Key Insight\n\nThe SOTA stack is a co-optimized system: Parallel Muon (batched banks) + torch.compile (fused kernels) + int6 per-row quantization + H100 tensor cores. Breaking any one pillar cascades into the others. To beat SOTA, you must co-optimize all four simultaneously (as the ternary PR #640 did).\n\n### The Throughput Tax\n\nAt 83ms/step, each 1ms of overhead costs ~7 steps. Each step improves BPB by ~0.001. Therefore: **any technique must improve BPB by 0.007 per millisecond of overhead.** No tested technique clears this bar.\n\n### Novel Findings\n\n1. **MLP shape affects quantizability** \u2014 Hourglass sub-block weights produce distributions int6 can't handle\n2. **Hypersphere normalization is incompatible with per-row quantization** \u2014 normalized weights need angular-aware quantization\n3. **GatedDeltaNet matches per-step quality** but is 3.4x slower without torch.compile support\n4. **The throughput tax formula** generalizes to any constrained-compute training setting\n\nSee README for full details, all 6 experiments with analysis.\n\n## Test plan\n- [x] All experiments run on 8xH100 SXM (RunPod)\n- [x] Results verified against PR #549 baseline\n- [x] Quantization gaps measured for all architectures",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/831",
+  "draft": false,
+  "comments": []
+}

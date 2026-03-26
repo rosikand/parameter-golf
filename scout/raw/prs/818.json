@@ -1,0 +1,14 @@
+{
+  "number": 818,
+  "title": "[record] add HWNODE record - 0.5527",
+  "state": "open",
+  "user": "lucamignatti",
+  "created_at": "2026-03-26T06:28:59Z",
+  "updated_at": "2026-03-26T06:28:59Z",
+  "merged_at": null,
+  "body": "In this submission I improve upon the baseline of PR #800 5654 by introducing Hammersetein-Wiener Neural ODEs (HWNODEs). \r\n\r\nThis is a novel architecture that uses a linear Neural ODE wrapped between two non-linear projections, mirroring Hammerstein-Wiener models from classic control theory, to dynamically generate functionally deeper layers from a single set of shared weights. We take the Taylor series approximation for the matrix exponential exp(A), which is differentiable, to generate theoretically N continuous layers of diminishing scale. Practically, we truncate the Taylor expansion at order 2 to maximize computational speed, compiling the entire ODE trajectory into a single dense matrix pass. This allows the network to model deep continuous trajectories completely linearly inside the bottleneck, while the Hammerstein/Wiener boundaries handle the non-linear mappings. This effectively outperforms identically parameterized MLPs natively, with significant room for scope expansion.\r\n\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/818",
+  "draft": false,
+  "comments": []
+}

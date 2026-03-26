@@ -1,0 +1,14 @@
+{
+  "number": 825,
+  "title": "Record: Order-Adaptive BackoffMixer (mean val_bpb=0.5440)",
+  "state": "open",
+  "user": "hypery11",
+  "created_at": "2026-03-26T07:07:51Z",
+  "updated_at": "2026-03-26T07:07:51Z",
+  "merged_at": null,
+  "body": "## Results\n\n| Seed | val_bpb | Eval time |\n|------|---------|-----------|\n| 42   | 0.5437  | ~391s     |\n| 1337 | 0.5450  | ~391s     |\n| 2024 | 0.5434  | ~391s     |\n| **Mean** | **0.5440** |           |\n| Std  | 0.0008  |           |\n\n- Artifact: ~16.0 MB\n- Train: 600s on 8xH100 SXM\n- Eval: ~391s (well under 600s)\n\n## Method\n\n11-layer transformer (512d, 8/8 full MHA, XSA-all, LeakyReLU(0.5)^2, 3.5x MLP). Order-adaptive entropy-gated BackoffNgramMixer with per-order entropy thresholds. Score-first, backward-looking, deterministic.\n\n## Acknowledgments\n\nHuge thanks to the incredible community that made this possible:\n\n- @abaybektursun (PR #549) \u2014 base architecture + Legal TTT + Parallel Muon\n- @deanbrr (PR #659, #779) \u2014 invented the n-gram eval cache for this competition, BackoffNgramMixer\n- @Asukabot0 (PR #715, #727) \u2014 XSA-all concept, entropy-adaptive alpha formula\n- @gowtham0992 (PR #606) \u2014 int5 + Soft-Round QAT\n- @signalrush (PR #414) \u2014 EMA training recipe\n- @sofiabod (PR #518) \u2014 LeakyReLU activation\n- @thwu1 (PR #180) \u2014 mixed quantization, BigramHash, SmearGate\n- @RoyiRa (PR #700) \u2014 TTT framework\n- @Christopher-Lee-McClendon (PR #461) \u2014 TTT recipe\n- @raahilshah (PR #162) \u2014 int6 quantization\n\nThis competition has been an amazing collaborative experience. Every improvement here builds on ideas shared openly.\n\n- [x] 8xH100 SXM, train <=600s\n- [x] Eval <=600s (391s)\n- [x] Artifact <=16MB\n- [x] 3-seed validation (std 0.0008)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/825",
+  "draft": false,
+  "comments": []
+}

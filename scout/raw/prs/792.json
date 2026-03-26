@@ -1,0 +1,14 @@
+{
+  "number": 792,
+  "title": "11L LeakyReLU\u00b2 + XSA-all + Full GPTQ + 5-gram Backoff (1.0340 BPB)",
+  "state": "open",
+  "user": "xexyz",
+  "created_at": "2026-03-26T01:03:13Z",
+  "updated_at": "2026-03-26T01:05:47Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **val_bpb: 1.0340** (3-seed mean)\n- 11L/512d transformer with LeakyReLU(0.5)\u00b2, XSA on all layers, Hessian-based GPTQ, and 5-gram multi-order backoff with entropy-adaptive alpha\n- Artifact: 15,903,061 bytes\n- Training: ~600s on 8xH100\n\n## 3-Seed Validation\n\n| Seed | Sliding BPB | N-gram BPB |\n|------|-------------|------------|\n| 1337 | 1.1273 | 1.0342 |\n| 42 | 1.1272 | 1.0340 |\n| 7 | 1.1269 | 1.0338 |\n| **Mean** | **1.1271** | **1.0340** |\n\n## Key Techniques\n\n1. **LeakyReLU(0.5)\u00b2**: Replaces relu\u00b2 with leaky variant (negative slope 0.5), better gradient flow\n2. **XSA-all**: Cross-sequence attention extended from last 4 layers to all 11\n3. **Full GPTQ**: Hessian-based int6 quantization with actorder + Cholesky error compensation, calibrated on training data (32 batches on EMA model, within training budget)\n4. **5-gram multi-order backoff**: Score-first cascade 5\u21924\u21923\u21922-gram with separate hash tables per order (4M buckets each)\n5. **Entropy-adaptive alpha**: `alpha = 0.05 + 0.35 * sigmoid(2*(H-4.0))` \u2014 trusts n-gram more when model is uncertain\n\n## Reproduction\n\n```bash\nSEED=1337 GPTQ_CALIB_BATCHES=32 \\\nNGRAM_EVAL_ORDER=5 NGRAM_BACKOFF=1 NGRAM_ENTROPY_ADAPTIVE=1 \\\nNGRAM_ALPHA_LOW=0.05 NGRAM_ALPHA_HIGH=0.40 NGRAM_ENTROPY_THRESH=4.0 \\\ntorchrun --nproc_per_node=8 train_gpt.py\n```\n\nSupersedes #691.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/792",
+  "draft": false,
+  "comments": []
+}

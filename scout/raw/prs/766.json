@@ -1,0 +1,14 @@
+{
+  "number": 766,
+  "title": "[Non-Record] Depth Recurrence + SwiGLU + Mixed Quantization",
+  "state": "open",
+  "user": "Shakil281",
+  "created_at": "2026-03-25T20:47:20Z",
+  "updated_at": "2026-03-25T20:47:20Z",
+  "merged_at": null,
+  "body": "## Summary\n\nNon-record experimental submission exploring three novel architectural modifications on top of the PR #549 stack (LeakyReLU + Legal TTT + Parallel Muon):\n\n- **Depth Recurrence (K=2)**: Loop 11 unique layers twice for 22 effective layers with shared weights. U-Net skip connections activate only on the final pass. Trades compute for parameters \u2014 the freed budget can widen the model.\n- **SwiGLU Activation**: Replaces LeakyReLU(0.5)\u00b2 with gated linear units using SiLU. The up projection is 2x wider (split into gate + value). Standard in modern LLMs (LLaMA, Mistral, Gemma).\n- **Mixed int5/int6 Quantization**: Per-layer quantization sensitivity \u2014 int6 for critical layers, int5 for middle MLP layers. Saves ~5-8% artifact space.\n\n### Expected Impact\n| Modification | Expected BPB Delta |\n|-------------|-------------------|\n| Depth Recurrence (K=2) | -0.002 to -0.005 |\n| SwiGLU replacing LeakyReLU\u00b2 | -0.001 to -0.003 |\n| Mixed int5/int6 quant | -0.000 to -0.001 |\n\n### Status\n- Untested on 8\u00d7H100 (pending compute grant approval)\n- Code modifications are complete and structurally verified\n- Submitted as architectural proposal for community exploration\n\n## Test plan\n- [ ] Validate on 8\u00d7H100 SXM with 3 seeds (1337, 42, 2025)\n- [ ] Confirm artifact fits under 16MB\n- [ ] Measure throughput impact of depth recurrence (2x layer passes)\n- [ ] Compare SwiGLU vs LeakyReLU\u00b2 BPB in isolation\n- [ ] Test mixed quant vs uniform int6\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/766",
+  "draft": false,
+  "comments": []
+}

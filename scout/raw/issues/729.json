@@ -1,0 +1,12 @@
+{
+  "number": 729,
+  "title": "Ternary UNet submission (PR #640) folder is in track_10min_16mb instead of track_non_record_16mb",
+  "state": "open",
+  "user": "janwww",
+  "created_at": "2026-03-25T15:07:55Z",
+  "updated_at": "2026-03-25T15:07:55Z",
+  "body": "PR #640 placed the 73.7M Ternary UNet folder under `records/track_10min_16mb/`, \nbut the README accepted it as a Notable Non-Record Run (not in the main leaderboard). \nNon-record submissions should live in `records/track_non_record_16mb/`.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/issues/729",
+  "comments": []
+}

@@ -1,0 +1,14 @@
+{
+  "number": 776,
+  "title": "Record Submission: 0.9258 BPB \u2014 Kitchen Sink (7-gram + XSA6 + BigramHash4K + Cosine TTT)",
+  "state": "open",
+  "user": "agalimova",
+  "created_at": "2026-03-25T21:58:22Z",
+  "updated_at": "2026-03-25T21:58:22Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **val_bpb: 0.9258** (2-seed mean, 3rd seed running)\n- Seeds: 1337=0.9249, 42=0.9266\n- Built on PR #741 with hyperparameter improvements found via autoresearch-multi\n- Eval time: ~520s (under 10-min budget)\n\n## Changes from PR #741\n\n| Parameter | Default | Ours |\n|-----------|---------|------|\n| `XSA_LAST_N` | 4 | **6** |\n| `BIGRAM_VOCAB_SIZE` | 2048 | **4096** |\n| `NGRAM_ORDER` | 5 | **7** |\n| `NGRAM_ALPHA_HIGH` | 0.40 | **0.50** |\n\n## Test plan\n\n- [x] 2 seeds on 8xH100 SXM (torch 2.9+cu126, FA3)\n- [x] Eval time under 10-min budget (~520s)\n- [x] All runs under 16MB artifact limit\n- [ ] 3rd seed running (will update)\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/776",
+  "draft": false,
+  "comments": []
+}

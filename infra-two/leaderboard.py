@@ -32,7 +32,7 @@ def sync():
     """Pull all results from Modal Volume into local leaderboard.json."""
     print("Syncing results from Modal Volume...")
 
-    from modal_train_frozen import app, sync_results
+    from modal_train import app, sync_results
 
     with app.run():
         remote_results = sync_results.remote()
@@ -59,7 +59,7 @@ def sync():
 def fetch_log(run_id: str):
     """Fetch and print the full training log for a run."""
     try:
-        from modal_train_frozen import app, get_run_log
+        from modal_train import app, get_run_log
         with app.run():
             log = get_run_log.remote(run_id)
         print(log)
@@ -143,16 +143,70 @@ def compare(entries, run_a, run_b):
         print(f"  {key:>20}  {str(va):>14}  {str(vb):>14}  {delta:>10}")
 
 
+def status():
+    """Sync and show status of all runs."""
+    print("Syncing...")
+    from modal_train import app, sync_results
+    with app.run():
+        remote_results = sync_results.remote()
+
+    # Also merge into leaderboard
+    local_entries = load()
+    local_by_id = {e["run_id"]: e for e in local_entries}
+    for r in remote_results:
+        local_by_id[r["run_id"]] = {**local_by_id.get(r["run_id"], {}), **r}
+    save(list(local_by_id.values()))
+
+    done = [e for e in remote_results if e.get("status") == "done" and e.get("val_bpb_int8") is not None]
+    running = [e for e in remote_results if e.get("status") == "running"]
+    failed = [e for e in remote_results if e.get("status") == "done" and e.get("val_bpb_int8") is None]
+    unknown = [e for e in remote_results if e.get("status") not in ("done", "running")]
+
+    done.sort(key=lambda x: x["val_bpb_int8"])
+
+    print()
+    if done:
+        print(f"  Completed ({len(done)}):")
+        for e in done:
+            size = f"{e['total_bytes']/1e6:.1f}MB" if e.get("total_bytes") else "?"
+            time_s = f"{e['elapsed_seconds']:.0f}s" if e.get("elapsed_seconds") else "?"
+            print(f"    ✓ {e['run_id']:<40} bpb={e['val_bpb_int8']:.4f}  {size}  {time_s}")
+
+    if running:
+        print(f"  Running ({len(running)}):")
+        for e in running:
+            print(f"    ⟳ {e['run_id']}")
+
+    if failed:
+        print(f"  Failed ({len(failed)}):")
+        for e in failed:
+            exit_code = e.get("exit_code", "?")
+            print(f"    ✗ {e['run_id']:<40} exit_code={exit_code}")
+
+    if unknown:
+        print(f"  Unknown ({len(unknown)}):")
+        for e in unknown:
+            print(f"    ? {e['run_id']:<40} status={e.get('status', 'none')}")
+
+    if not any([done, running, failed, unknown]):
+        print("  No runs found.")
+
+    print()
+
+
 def main():
     parser = argparse.ArgumentParser(description="Parameter Golf leaderboard")
     parser.add_argument("--sync", action="store_true", help="Pull results from Modal Volume")
+    parser.add_argument("--status", action="store_true", help="Sync and show status of all runs")
     parser.add_argument("--full", action="store_true", help="Show all columns")
     parser.add_argument("--log", metavar="RUN_ID", help="Fetch training log for a run")
     parser.add_argument("--delete", metavar="RUN_ID", help="Delete a run")
     parser.add_argument("--compare", nargs=2, metavar=("A", "B"), help="Compare two runs")
     args = parser.parse_args()
 
-    if args.sync:
+    if args.status:
+        status()
+    elif args.sync:
         sync()
         show(load())
     elif args.log:

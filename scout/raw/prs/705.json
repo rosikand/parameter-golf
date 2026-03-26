@@ -1,0 +1,33 @@
+{
+  "number": 705,
+  "title": "Byte-Level Tokenizer-Free Transformer: 1.2151 BPB (beats baseline 1.2244)",
+  "state": "open",
+  "user": "seanward",
+  "created_at": "2026-03-25T12:15:21Z",
+  "updated_at": "2026-03-25T13:25:12Z",
+  "merged_at": null,
+  "body": "## Byte-Level Tokenizer-Free Transformer\n\n**First tokenizer-free byte-level model to beat the sp1024 baseline in Parameter Golf.**\n\n### Architecture\n- 13-layer pure self-attention transformer operating directly on raw UTF-8 bytes (vocab=256)\n- No tokenizer, no BPE, no SentencePiece \u2014 raw byte input\n- LeakyReLU\u00b2 activation, SmearGate, hashed byte-bigram embeddings (4096 buckets, 32 dim)\n- U-Net style skip connections, tied embeddings, logit softcap\n- 27.6M parameters, trained for 10 min on 8\u00d7H100\n- Sliding window evaluation (stride=512, seq_len=4096)\n- Quantized with int6 + zstd-22\n\n### Results (4-seed significance test)\n\n| Seed | Sliding BPB | Artifact | Under 16 MiB |\n|------|------------|----------|---------------|\n| 1337 | **1.2146** | 15.53 MB | Yes |\n| 42   | **1.2120** | 15.80 MB | Yes |\n| 2025 | **1.2174** | 16.45 MB | Yes |\n| 7    | **1.2166** | 15.46 MB | Yes |\n\n**Mean sliding BPB: 1.2151** vs baseline 1.2244\n\n| Comparison | \u0394 nats | p (one-sided) |\n|-----------|--------|---------------|\n| vs Official baseline (1.2244) | **0.0064** | **0.0024** |\n| vs Post-quant baseline (1.2269) | **0.0081** | **0.0012** |\n\n99% CI: [1.2080, 1.2223] \u2014 baseline 1.2244 is outside the CI.\n\n### JEPA Auxiliary Loss Study\nWe also tested JEPA-style latent prediction as an auxiliary training objective. At both weight=0.1 and weight=0.01, the auxiliary loss hurt BPB due to gradient competition at this model scale.\n\n### Included Files\n- `train_byte_model.py` \u2014 Complete training script\n- `convert_to_bytes.py` \u2014 Data conversion (sp1024 \u2192 raw bytes)\n- `requirements.txt` \u2014 Python dependencies\n- `submission.json` \u2014 Leaderboard metadata\n- `README.md` \u2014 Full documentation\n- `research_log.md` \u2014 Comprehensive research log documenting all experiments\n- `train_seed{1337,42,2025,7}.txt` \u2014 Training logs for all 4 seeds\n- `train_jepa_k4_w{01,001}.txt` \u2014 JEPA experiment logs\n\n---\n\n---\n\n**Created by Maestro on behalf of Sean Ward**\n\n[View Session](https://dev.igent.ai/thread/67935304-4b21-405c-bcd4-582c39fa7df0)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/705",
+  "draft": false,
+  "comments": [
+    {
+      "user": "CiprianFlorin-Ifrim",
+      "body": "Great experiment! Was it based on Meta's BLT paper? Have you tried the more complex stuff like the patches that the BLT paper presents?",
+      "created_at": "2026-03-25T12:35:34Z",
+      "updated_at": "2026-03-25T12:35:34Z"
+    },
+    {
+      "user": "seanward",
+      "body": "@CiprianFlorin-Ifrim Thanks! Yes, BLT (Byte Latent Transformer) was one of the architectural directions investigated in depth.\r\n\r\nShort answer on BLT-style patching: We tried it extensively and it doesn't work at this scale. Here's the progression:\r\n\r\nWe tested four approaches:\r\n\r\nNaive byte-level autoregressive (no patching) \u2014 each position predicts the next byte. This is what the submission uses.\r\nByte Patch K=4 (independent) \u2014 stride-4 conv encodes 4 bytes into one patch vector, predict all 4 bytes independently \u2192 2.3945 BPB\r\nByte Patch K=4 (causal conv decoder) \u2014 depthwise conv within each 4-byte window for autoregressive intra-patch prediction \u2192 2.1533 BPB\r\nByte Patch K=2 (causal conv) \u2014 smaller patches \u2192 1.3832 BPB\r\nNo patching (this submission) \u2014 full autoregressive at seq_len=4096 \u2192 1.2776 BPB pre-quant\r\nWhy patching fails at 16MB: The patch encoder compresses K bytes into 1 position. The decoder must reconstruct K bytes using only the patch latent + local context. Cross-patch byte dependencies are lost. At BLT's 8B params, the encoder learns rich enough representations. At ~25M params under a 16MB artifact constraint, the compression is too lossy.\r\n\r\nThe throughput paradox: Patching should help (fewer positions = cheaper attention). But FlashAttention 3 on H100 makes quadratic attention at 4096 positions fast enough (83ms/step). SSM layers (linear complexity) are 2-7\u00d7 slower per layer than FA3 on H100 due to kernel optimization gaps. The architecture that benefits most from optimized hardware kernels wins, not the one with the best theoretical complexity.\r\n\r\nWe also explored Mamba2 SSM + attention hybrids (31 versions), GLA (Gated Linear Attention), and JEPA-style latent prediction \u2014 all documented in the README.",
+      "created_at": "2026-03-25T12:41:17Z",
+      "updated_at": "2026-03-25T12:41:17Z"
+    },
+    {
+      "user": "CiprianFlorin-Ifrim",
+      "body": "@seanward Thanks for the reply! Will give the README a proper look as I was worked a lot on researching small BLTs and whether they were doable at very small scales (25k to 2mil params). So always interested in anything that adds to that.",
+      "created_at": "2026-03-25T13:25:11Z",
+      "updated_at": "2026-03-25T13:25:11Z"
+    }
+  ]
+}

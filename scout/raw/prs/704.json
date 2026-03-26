@@ -1,0 +1,14 @@
+{
+  "number": 704,
+  "title": "Add int8 shared-block bigram+cache prototype",
+  "state": "open",
+  "user": "sauravtom",
+  "created_at": "2026-03-25T12:05:57Z",
+  "updated_at": "2026-03-25T12:05:57Z",
+  "merged_at": null,
+  "body": "## Summary\n- add shared-block transformer support (12 logical layers from a 2-block bank) plus LSQ-lite QAT hooks in train_gpt.py\n- add bigram + short cache logit fusion, label smoothing, EMA/SWA options, and int8 export extras for priors/config\n- add submission folder records/track_10min_16mb/2026-03-25_Int8_Bigram_Cache_Proto with README, submission.json, train.log placeholder, and runnable train script copy\n\n## Testing\n- python3 -m py_compile train_gpt.py\n\n## Notes\n- This PR is a prototype submission package while compute-backed full 8xH100 run logs are pending.\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/704",
+  "draft": false,
+  "comments": []
+}

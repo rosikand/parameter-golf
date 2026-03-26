@@ -4,7 +4,7 @@
   "state": "closed",
   "user": "newjordan",
   "created_at": "2026-03-24T23:17:18Z",
-  "updated_at": "2026-03-25T06:20:18Z",
+  "updated_at": "2026-03-25T16:35:10Z",
   "merged_at": null,
   "body": "## Results\n\n| Seed | Pre-TTT BPB | TTT BPB | Artifact |\n|------|-------------|---------|----------|\n| 1337 | 1.1196 | **1.1195** | 15.90 MB |\n| 42 | 1.1199 | **1.1200** | 15.61 MB |\n| 2045 | 1.1191 | **1.1190** | 15.81 MB |\n| **Mean** | **1.1195** | **1.1195** | \u2014 |\n\n## Progression\n\n| PR | Mean BPB | Notes |\n|----|----------|-------|\n| #577, #533 | 1.1207* | Initial GPTQ submission |\n| #578, #508 | 1.1215 | QAT + TTT refinement |\n| #587 | 1.1208 | XSA + quantization tuning |\n| **#656** | **1.1195** | **Activation + eval improvements** |\n\n*single seed\n\n## Architecture\n\n11L/512d U-Net, 26.93M params. GPTQ int6+zstd, legal score-first TTT.\n\n## Reproduce\n\n```bash\nSEED=2045 torchrun --nproc_per_node=8 train_gpt.py\n```\n\n8xH100 SXM, 600s wallclock, ~6,900 steps.",
   "labels": [],
@@ -16,6 +16,24 @@
       "body": "This submission dos not include a submission.json or train logs, so I can't verify it enough to score it. Additionally, from the training code it looks like it applies GPTQ with training data calibration at eval time, which is disallowed. Closing for now.",
       "created_at": "2026-03-25T06:20:17Z",
       "updated_at": "2026-03-25T06:20:17Z"
+    },
+    {
+      "user": "newjordan",
+      "body": "The GPTQ concern is wrong \u2014 GPTQ runs during training, not eval. But we need to address it clearly. - you really went pretty hard on PR closing as opposing to let us siubmit the logs Valerio. I would appreciate a bit more nuance as you operate as a judge before closing a PR you assume with no log. its a very easy commit to add a log to a PR. We should be allowed to show proof before you close these. ",
+      "created_at": "2026-03-25T12:51:37Z",
+      "updated_at": "2026-03-25T12:51:37Z"
+    },
+    {
+      "user": "valerio-oai",
+      "body": "Hi @newjordan , I will be less heavy-handed with directly closing PRs in future (I thought you could re-open them, my apologies). However, the script you were using looks like it first used up all the 600s of train time, _then_ did GPTQ calibration, given the logs of your most recent \"Podracing\" run. \r\n\r\nDefinitionally, since you only have 600s of training time, the calibration must therefor be happening during eval time, which is disallowed, hence my closure.",
+      "created_at": "2026-03-25T16:21:27Z",
+      "updated_at": "2026-03-25T16:21:27Z"
+    },
+    {
+      "user": "newjordan",
+      "body": "apologies for intensity. This competition is very important to me right now and I am being dramatic. ty (I accidently made my first Pr private and it pulled all my early wins.. so im jsut sore right now) Ty very much. ",
+      "created_at": "2026-03-25T16:35:10Z",
+      "updated_at": "2026-03-25T16:35:10Z"
     }
   ]
 }

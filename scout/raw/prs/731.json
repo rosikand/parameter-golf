@@ -1,0 +1,14 @@
+{
+  "number": 731,
+  "title": "Record: 1.0400 BPB -- Hedge Mixer + VRL + AdamW TTT + Polyak EMA",
+  "state": "open",
+  "user": "pentxayc",
+  "created_at": "2026-03-25T15:15:24Z",
+  "updated_at": "2026-03-25T15:15:24Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **1.0400 BPB** (seed 42, 2 additional seeds pending)\n- 11L transformer (26.99M params) with **Value Residual Learning (VRL)**, LeakyReLU(0.5)\u00b2, XSA-4\n- **5-expert Hedge Mixer** during eval: neural model + unigram + bigram + trigram (64K hashed) + entropy\n- Hedge algorithm (eta=0.1) with **deferred between-chunk weight updates** (legal score-first)\n- **AdamW TTT** (lr=0.0005) + **Polyak EMA** (decay=0.998) + byte-weighted loss + adaptive cosine LR\n- Freeze first 9/11 blocks during TTT, unfreeze last 2 + norms/scales\n- Int6 mixed quantization + lzma compression\n- Artifact: 15,999,919 bytes (under 16MB limit)\n- Training: 6104 steps in 600s on 8xH100 SXM\n- Eval (TTT + Hedge): 404s / 600s budget\n\n## Legality\n\nAll eval-time adaptations are strictly **score-first**:\n1. Hedge weights for chunk N computed from chunks 0..N-1 only (deferred update after all windows scored)\n2. N-gram tables updated after chunk scoring completes\n3. Polyak EMA uses fixed decay, no snapshot selection\n4. TTT trains only on already-scored chunks\n5. No validation data during training; no training data during evaluation\n\n## Test plan\n\n- [x] Seed 42: 1.0400 BPB\n- [ ] Seed 1337: pending\n- [ ] Seed 2024: pending\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/731",
+  "draft": false,
+  "comments": []
+}

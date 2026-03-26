@@ -1,0 +1,21 @@
+{
+  "number": 717,
+  "title": "Grant nonrecord tied blocks",
+  "state": "open",
+  "user": "Jaksenc",
+  "created_at": "2026-03-25T13:27:29Z",
+  "updated_at": "2026-03-25T13:28:31Z",
+  "merged_at": null,
+  "body": "",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/717",
+  "draft": true,
+  "comments": [
+    {
+      "user": "Jaksenc",
+      "body": "I'm optimizing Parameter Golf on final_int8_zlib_roundtrip_exact val_bpb (lower better), int8+zlib artifact \u226416MB. On Runpod I use run_experiment.py so each GPU run appends autoresearch/results.tsv.\r\n\r\n1x H100 baseline-1gpu: low-rank / factorization sweeps over embedding, MLP (FC and projection), and attention-query paths; int8 export clip-percentile brackets, LeakyReLU-squared MLP, validation experiments (sliding stride vs full val with caps). Strongest harness row so far: val_bpb 1.3297, int8+zlib \u224814.35MB (results.tsv 2026-03-25, 070-equivalent SEED12345). I no longer have that run's full train.log locally\u2014later jobs overwrote current_submission/train.log. Reproduced internal baseline val_bpb \u22481.351 (Gate B, 2026-03-21 1\u00d7H100). Three seeds on one anchored recipe span ~0.007 bpb.\r\n\r\nThe draft PR pairs train_gpt.py + train.log for the same run as my latest logged row: val_bpb 1.35151831, int8+zlib 12,622,882 bytes (600s wall, seed 12345, late-window int8 fake-quant + partial-graph torch.compile)\u2014see submission.json in the PR folder.\r\n\r\nI do not claim README ~1.12 parity\u2014different val semantics, codecs, eval cost; I compare on the contest metric when eval knobs match.\r\n\r\nStarter $25 Runpod credits exhausted; ~$47 self-funded. I need 8\u00d7 H100 timed train+eval and multi-seed checks. First funded block: one hypothesis on final-8gpu with kill rules (byte cap, eval wall, no gain vs fixed RUN_ID). Then one-axis compression work (fake-quant vs export clip) with RUN_IDs.",
+      "created_at": "2026-03-25T13:28:31Z",
+      "updated_at": "2026-03-25T13:28:31Z"
+    }
+  ]
+}

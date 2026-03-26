@@ -1,0 +1,14 @@
+{
+  "number": 788,
+  "title": "Record: 11L + order-adaptive 9-gram backoff (mean val_bpb=0.9059)",
+  "state": "open",
+  "user": "hypery11",
+  "created_at": "2026-03-26T00:16:37Z",
+  "updated_at": "2026-03-26T00:16:37Z",
+  "merged_at": null,
+  "body": "## Results\n\n| Seed | val_bpb |\n|------|---------|\n| 42   | 0.9067  |\n| 1337 | 0.9059  |\n| 2024 | 0.9050  |\n| **Mean** | **0.9059** |\n| Std  | 0.0009  |\n\n- Artifact: 13.99 MB\n- Train: 600s on 8xH100 SXM\n- Eval: ~150s\n\n## Method\n\n11-layer transformer with XSA-all, LeakyReLU(0.5)^2, Value Residual, Gated Attention. GPTQ-lite int6 + zstd-22.\n\nOrder-adaptive entropy-gated n-gram backoff cache (orders 2-9). Higher-order matches use lower entropy threshold for mixing. Score-first, deterministic, no TTT.\n\n- [x] 8xH100 SXM, train <=600s\n- [x] Eval <=600s (~150s)\n- [x] Artifact <=16MB (13.99MB)\n- [x] 3-seed validation (std 0.0009)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/788",
+  "draft": false,
+  "comments": []
+}

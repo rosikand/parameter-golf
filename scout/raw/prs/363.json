@@ -1,14 +1,27 @@
 {
   "number": 363,
   "title": "Non-record: Depth Recurrence in Parameter-Constrained Transformers \u2014 What Works, What Doesn't, and Why",
-  "state": "open",
+  "state": "closed",
   "user": "evangelinehelsinki",
   "created_at": "2026-03-21T20:02:36Z",
-  "updated_at": "2026-03-25T00:07:25Z",
-  "merged_at": null,
+  "updated_at": "2026-03-25T23:07:53Z",
+  "merged_at": "2026-03-25T23:07:53Z",
   "body": "## Summary\n\n**Depth recurrence saves parameters but doesn't improve bpb under competition constraints.** 4 days of controlled experiments across 8xH100, 2xH100, and consumer GPUs, ~35 runs total.\n\n- **Flat 11L 512d:** 1.1648 bpb (sliding window) | 15.3 MB | 5375 steps @ 112ms\n- **Looped 3x3 640d:** 1.1894 bpb (sliding window) | 14.5 MB | 4175 steps @ 144ms\n- **Gap: +0.025 bpb** (looped worse) \u2014 same hardware, same tricks, same seed\n\n## Key Findings\n\n**Noisy QAT** (our contribution): Differentiable uniform noise matching int8 quantization error on loop core blocks. Collapses recurrence quantization gap from **0.37 bpb to 0.002 bpb**. This interaction between recurrence and quantization has not been documented in the competition or (to my knowledge) in published literature.\n\n**3x3 > 2x5 loops:** More unique blocks with fewer repeats beats fewer blocks with more repeats \u2014 faster per step, better bpb, smaller artifact. Useful for anyone working on looped transformers.\n\n**Why recurrence fails here \u2014 the two taxes:**\n1. **Quantization compounding:** Shared weights quantized once, but error propagates through N repeats superlinearly\n2. **Step time overhead:** +32ms/step = 1200 fewer training steps in 600s budget. The smaller artifact can't compensate.\n\n## 12 Negative Results (with numbers)\n\nXSA all layers (+0.001 worse), cyclic momentum (catastrophic), QuadgramHash (unclear), factored embeddings 192d (+0.053), factored embeddings 256d (+0.063), Value Residual (+0.14 catastrophic), progressive unrolling (DDP crash), sawtooth LR (4x slowdown from recompilation), full-weight TTT (overfitting), LeakyReLU (didn't transfer to 8xH100), late QAT + int5 (redundant, +0.006), BigramHash 10240 (no improvement on looped arch)\n\n## Full Writeup\n\n**See [README.md](https://github.com/evangelinehelsinki/parameter-golf/blob/submission/depth-recurrence/README.md) for the complete 460-line research document** including architecture details, hyperparameter sweep tables, reproduction instructions, and honest speculation about what might work with more compute.\n\n## Architecture\n\nBased on PR #325 (Aum08Desai, Middle-Cycle looped transformer):\n- **Stem** (1-3 unique blocks) \u2192 **Core** (2-3 shared blocks \u00d7 2-5 repeats) \u2192 **Tail** (1-3 unique blocks)\n- 640d, 10 heads, GQA or full MHA, 3x MLP, BigramHash, SmearGate, XSA, partial RoPE\n- Loop-specific: per-repeat embeddings, LoRA adapters, refinement blocks on non-attention repeats\n\n## Test Plan\n\n- [x] 3-seed validation on 8xH100 SXM (seeds 1337, 42, 7)\n- [x] Controlled flat vs looped A/B comparison (same hardware, same config)\n- [x] Quantization error amplification measured and documented\n- [x] Full pipeline: train \u2192 EMA \u2192 quantize \u2192 compress \u2192 decompress \u2192 dequantize \u2192 eval\n- [x] Hyperparameter sweeps (EMA, warmdown, MTP, WD, grad clip) on 2xH100\n- [x] 12 negative results documented with specific bpb numbers",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/363",
   "draft": false,
-  "comments": []
+  "comments": [
+    {
+      "user": "0hq",
+      "body": "I liked the writeup! Can you remove the README and the extra train gpt file and I can merge?",
+      "created_at": "2026-03-25T17:49:59Z",
+      "updated_at": "2026-03-25T17:49:59Z"
+    },
+    {
+      "user": "0hq",
+      "body": "Thanks!",
+      "created_at": "2026-03-25T23:07:46Z",
+      "updated_at": "2026-03-25T23:07:46Z"
+    }
+  ]
 }

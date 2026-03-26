@@ -1,0 +1,14 @@
+{
+  "number": 755,
+  "title": "Gravity Tokenizer: 1.0321 BPB via ablation leverage vocabulary optimization",
+  "state": "open",
+  "user": "dcrow85",
+  "created_at": "2026-03-25T18:44:05Z",
+  "updated_at": "2026-03-25T18:44:05Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **val_bpb: 1.0321** (3-seed mean, std 0.0011) \u2014 beats current SOTA (1.1194) by 0.0873 BPB\n- Replaces 659/765 merge tokens by ablation leverage scoring (\u03b2=1.0)\n- Vanilla 12L 384d transformer \u2014 no SmearGate, no BigramHash, no XSA, no EMA, no TTT, no sliding window eval\n- The vocabulary alone accounts for the entire improvement\n- 15.6 MB artifact, ~591s training time, all constraints met with margin\n\n## 3-Seed Results\n\n| Seed | val_bpb | artifact_bytes | training_time |\n|------|---------|---------------|---------------|\n| 42 | 1.0310 | 15,629,267 | 590,898 ms |\n| 137 | 1.0321 | 15,625,195 | 590,980 ms |\n| 3 | 1.0331 | 15,625,147 | 591,082 ms |\n| **Mean** | **1.0321** | | |\n| **Std** | **0.0011** | | |\n\n## Approach\n\nAt 1024 vocabulary tokens, every merge slot matters. Standard BPE allocates by frequency. The Gravity Tokenizer allocates by **ablation leverage** \u2014 the downstream loss increase when a token is shattered back to bytes. This is a measurement of structural importance, not frequency.\n\nThe scoring pipeline uses a frozen GPT-2 reference model to measure each candidate token's leverage across 100 FineWeb contexts. The top 765 candidates by gravity score replace the BPE merge tokens. The vocabulary size stays exactly 1024.\n\n## Tokenizer Correctness\n\nThe val_bpb calculation uses the competition's own `build_sentencepiece_luts()` and `eval_val()` functions with zero modifications. The gravity tokenizer's lower compression ratio (1.05 vs 2.45 bytes/token) results in a higher `tokens_per_byte` multiplier, which **penalizes** the gravity tokenizer. The improvement is entirely in per-token prediction quality. Detailed correctness documentation included in `tokenizer_scrutiny_doc.md`.\n\n## Setup\n\n```bash\nbash setup.sh   # Downloads stock FineWeb + retokenizes with gravity vocabulary\n```\n\nThe `train_gpt.py` is the unmodified competition baseline. All config via env vars.\n\n## Test plan\n\n- [x] 3 seeds with p << 0.01 statistical significance\n- [x] All artifacts under 16,000,000 bytes\n- [x] All runs under 600 seconds on 8\u00d7H100 SXM\n- [x] Tokenizer correctness documented and defended\n- [x] Retokenization is deterministic and reproducible from stock FineWeb\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/755",
+  "draft": false,
+  "comments": []
+}

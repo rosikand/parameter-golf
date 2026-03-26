@@ -1,0 +1,14 @@
+{
+  "number": 737,
+  "title": "[Non Record] Online Curriculum Learning ",
+  "state": "open",
+  "user": "SPThole",
+  "created_at": "2026-03-25T15:58:54Z",
+  "updated_at": "2026-03-25T15:58:54Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\nImplements online sequence-level curriculum learning that scores and filters sequences within each batch by unigram entropy, following a V-shaped difficulty schedule aligned with LR warmdown and SWA phases. Zero extra parameters. Built upon PR #623.\r\n\r\n## Motivation\r\n\r\nStandard training feeds random batches regardless of training phase. In a 600-second window (~1100 steps), the model benefits from different data at different stages:\r\n- **Early training** (high LR): easy sequences \u2192 stable gradients, fast initial convergence\r\n- **Mid training**: hard sequences \u2192 push the model's frontier while LR is still meaningful\r\n- **Late training** (SWA region): easy sequences \u2192 coherent checkpoint averaging\r\n\r\n\r\n## Method\r\n\r\n**Per-sequence difficulty score** \u2014 unigram entropy:\r\n\r\nH(s) = -\u03a3 p_s(t) \u00b7 log\u2082(p_s(t)) for each sequence s of length 2048\r\n\r\n\r\n**V-shaped target** \u2014 maps training progress to difficulty percentile d \u2208 [0,1]:\r\n\r\nd(step) = step / (0.45 \u00b7 T) if step \u2264 0.45\u00b7T\r\nd(step) = 1 - (step/T - 0.45) / (1 - 0.45) otherwise\r\n\r\n\r\n**Selection**: Load 2\u00d7 sequences per batch, sort by entropy, select the half centered around percentile d(step). The V-shape completes within each batch \u2014 no dependence on shard ordering.\r\n\r\n## Results\r\n\r\n- **val_bpb: 1.3557** (post int6+zstd, 1\u00d7H100, seed=42)\r\n- Pre-quant: 1.3280 | Quant penalty: 0.0277\r\n- 1,021 steps in 600s (588 ms/step) | 15.25MB artifact\r\n- Run on 1\u00d7H100 due to compute constraints\r\n\r\n## Observation\r\n\r\nWorse than baseline (1.3345). The 2\u00d7 oversampling adds ~50ms/step overhead (588ms vs 540ms), costing ~80 training steps. The curriculum signal doesn't compensate for lost steps. Implication: curriculum at this scale must be zero-overhead (precomputed ordering, not runtime filtering).",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/737",
+  "draft": false,
+  "comments": []
+}

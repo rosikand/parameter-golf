@@ -1,10 +1,10 @@
 {
   "number": 158,
   "title": "Community Tool: Parameter Golf Leaderboard Monitor (CLI + Claude Code Skill)",
-  "state": "open",
+  "state": "closed",
   "user": "dexhunter",
   "created_at": "2026-03-20T02:35:53Z",
-  "updated_at": "2026-03-20T12:04:15Z",
+  "updated_at": "2026-03-26T06:27:46Z",
   "body": "  Hey everyone! Built a small tool to track the competition leaderboard from your terminal.\n\n  ## What it does\n\n  Fetches open/merged PRs from this repo, extracts `val_bpb` scores from titles/bodies, and displays a ranked leaderboard. Zero dependencies (Python 3 stdlib only), no GitHub auth needed.\n\n  ## Quick start\n\n  ```bash\n  git clone https://github.com/dexhunter/parameter-golf-monitor.git\n  cd parameter-golf-monitor\n\n  # Full leaderboard\n  python3 scripts/monitor.py\n\n  # Highlight your PRs + show rank/gap\n  python3 scripts/monitor.py --me <your-github-username>\n\n  # Top 10 record attempts\n  python3 scripts/monitor.py --top 10 --records-only\n\n  # Live polling every 5 min\n  python3 scripts/monitor.py --watch 5 --me <your-github-username>\n```\n\n## Also a Claude Code skill\n\nDrop the folder into your project or ~/.claude/skills/ and Claude will automatically use it when you ask about the competition standings.\n\n## Example output\n\nRank | val_bpb | PR | Status | Author | Date | Title\n-- | -- | -- | -- | -- | -- | --\n1 | 1.15390 | #135 | open | unnir | 2026-03-19 | OrthoInit + Int6 MLP3x + BigramHash + SmearGate\n2 | 1.15800 | #106 | open | krammnic | 2026-03-19 | record: 1.158\n3 | 1.15850 | #122 | open | mtybadger | 2026-03-19 | Sliding Window Eval, 2048 Vocab Size\n4 | 1.16019 | #156 | open | dexhunter | 2026-03-20 | Int6 STE + NorMuon + SWA + Sliding Window \u2b05\ufe0f\n\n\n  You (dexhunter): rank #4, val_bpb=1.16019, gap to #1: +0.00629\n\n---\n\nRepo Link: https://github.com/dexhunter/parameter-golf-monitor\n\nHappy to take PRs if anyone wants to add features.",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/issues/158",

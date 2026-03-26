@@ -1,0 +1,14 @@
+{
+  "number": 783,
+  "title": "Non-record: PR703 + shard-order curriculum + GPTQ cache-backout (1.1171)",
+  "state": "open",
+  "user": "petergpt",
+  "created_at": "2026-03-25T23:26:35Z",
+  "updated_at": "2026-03-25T23:26:35Z",
+  "merged_at": null,
+  "body": "## Summary\n\nThis PR adds a non-record 16MB submission built on the PR703-style quant/cache-backout branch with a score-ranked shard curriculum.\n\nSubmitted as non-record because:\n- it is a single-seed package\n- it does not clear the `0.005`-nat record threshold required for leaderboard record promotion\n\n## Result\n\n- `final_int6_sliding_window_exact = 1.11709895`\n- `final_int6_roundtrip_exact = 1.14068680`\n- `post_ema = 1.1368`\n- `step_stop = 6918`\n- `step_avg = 86.75ms`\n- `total submission size = 15,909,560`\n- `bytes under cap = 90,440`\n\n## What changed relative to the forked PR703 base\n\nThe base PR703 local package was `1.11748714` at `15,963,300` bytes. This submission keeps the same general object class and mainly changes:\n\n1. score-ranked shard curriculum\n2. tighter final int6+lzma packing\n\nThis is an incremental optimization package, not a new frontier architecture claim.\n\n## Included files\n\n- `README.md`\n- `submission.json`\n- `train.log`\n- `train_gpt.py`\n- `score_shards.py`\n\nSubmission folder:\n- `records/track_non_record_16mb/2026-03-25_PR703_Curriculum_Carryover_1.1171`\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/783",
+  "draft": false,
+  "comments": []
+}

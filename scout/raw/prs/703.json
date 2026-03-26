@@ -1,0 +1,14 @@
+{
+  "number": 703,
+  "title": "Record: PR549 + MiLe decay + 8-bit Muon + 1.04x LR + Cache+Backout \u2014 val_bpb 1.1176",
+  "state": "open",
+  "user": "Gusanidas",
+  "created_at": "2026-03-25T11:36:58Z",
+  "updated_at": "2026-03-26T06:56:16Z",
+  "merged_at": null,
+  "body": "## Summary\n\nFour orthogonal improvements on PR #549 (LeakyReLU\u00b2 + Legal TTT + Parallel Muon):\n\n- **MiLe loss** \u2014 Entropy-weighted token loss `((1-exp(-entropy))^\u03b3)` with \u03b3=1.1 decaying to 0 during warmdown. Focuses training on harder tokens early, then reverts to standard CE.\n- **8-bit Muon momentum** \u2014 Blockwise symmetric int8 quantization (block_size=256) of Muon first-moment buffers. ~62% memory reduction, lossless.\n- **1.04x LR boost** \u2014 All learning rates scaled by 1.04x.\n- **Cache+Backout** \u2014 After layer 7, cache hidden states. Layers 8-10 attention reads from cached (clean) context. Post-decoder: `x = x - \u03bb\u00b7x_cache` where \u03bb is a learned scalar (init 0.1).\n\nTested on 4xB200 with wall clock 903s to match equivalent 8xH100 compute.\nPending to be tested on 8xH100 SXM.\n\n## Test plan\n- [ ] Verify on 8xH100 SXM with 600s wall clock\n- [ ] Confirm 3-seed mean BPB\n- [ ] Check artifact size < 16MB\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/703",
+  "draft": false,
+  "comments": []
+}

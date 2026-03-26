@@ -1,0 +1,14 @@
+{
+  "number": 816,
+  "title": "Record submission: Poly5 Softcap + BigramHash(3072) + Wider GPTQ-lite\u2026",
+  "state": "open",
+  "user": "jimliu741523",
+  "created_at": "2026-03-26T05:43:00Z",
+  "updated_at": "2026-03-26T05:44:06Z",
+  "merged_at": null,
+  "body": "\u2026 + TempScale + Z-Loss\r\n\r\nBuilds on current SOTA (1.1194 BPB) with 6 targeted improvements:\r\n1. Poly-5 softcap (better compile fusion than tanh, proven in ternary submission)\r\n2. BigramHash(3072) (SOTA ablation: -0.0009 BPB from 2048\u21923072)\r\n3. Wider GPTQ-lite percentile search (9 candidates vs 5, lower quant error)\r\n4. Temperature scaling T=0.95 at eval (conservative sharpening)\r\n5. Z-loss regularization 1e-4 (training stability, from PaLM/Gemini)\r\n6. LZMA preset 9 compression (better ratio)\r\n\r\nAll SOTA techniques preserved: 11L 512d, LeakyReLU(0.5)\u00b2, XSA4, Partial RoPE 16/64, LN Scale, EMA(0.997)+SWA, Legal TTT, Parallel Muon, GPTQ-lite int6.\r\n\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/816",
+  "draft": false,
+  "comments": []
+}

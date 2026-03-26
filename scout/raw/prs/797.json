@@ -1,0 +1,14 @@
+{
+  "number": 797,
+  "title": "Record: 7-gram N-gram Cache (0.8960 bpb)",
+  "state": "open",
+  "user": "armantsaturian",
+  "created_at": "2026-03-26T01:42:15Z",
+  "updated_at": "2026-03-26T01:46:28Z",
+  "merged_at": null,
+  "body": "## 7-gram N-gram Cache + XSA-All + LeakyReLU\u00b2 + Parallel Muon\r\n\r\n**val_bpb: 0.8960** (3-seed mean, std 0.0004) | **~15.92 MB** | 8\u00d7H100 SXM\r\n\r\n### Results\r\n\r\n| Seed | Pre-cache bpb | **Post-cache bpb** | Cache gain | Eval time | Artifact |\r\n|------|---------------|-------------------|------------|-----------|----------|\r\n| 1337 | 1.1488 | **0.8956** | -0.2532 | 136s | 15,917,799 |\r\n| 42 | 1.1488 | **0.8959** | -0.2529 | 136s | 15,921,427 |\r\n| 2025 | 1.1500 | **0.8966** | -0.2534 | 138s | 15,911,611 |\r\n| **Mean** | **1.1492** | **0.8960** | **-0.2532** | **~137s** | |\r\n\r\n### Approach: Streaming 7-gram N-gram Cache at Eval\r\n\r\nA single-pass streaming n-gram cache built during sliding window evaluation. For each scored token:\r\n\r\n1. **Score** neural model NLL under `torch.inference_mode()`\r\n2. **Cache lookup** across n-gram orders 2-7, with near-zero backoff beta (1e-6) \u2014 longest match dominates\r\n3. **Blend** with fixed 80/20 cache/neural mix (alpha=0.20)\r\n4. **Update** cache with scored token's n-grams (score-before-update, single-pass)\r\n\r\nNo TTT, no online mixer \u2014 the cache alone delivers **-0.2532 bpb** over the base model.\r\n\r\n### Legality\r\n\r\n- \u2705 Single-pass, score-before-update (cache updated only after scoring)\r\n- \u2705 All eval under `torch.inference_mode()` (no gradients, no weight mutation)\r\n- \u2705 No training on validation data\r\n- \u2705 No multi-pass replay or phase-2 re-scoring\r\n- \u2705 No external downloads \u2014 fully self-contained\r\n\r\n### Timing\r\n\r\n| Phase | Time |\r\n|-------|------|\r\n| Training | 600s (10 min cap) |\r\n| Eval (sliding window + 7-gram cache) | ~137s |\r\n| **Total** | **~737s** |\r\n\r\n### Built on\r\n\r\n- [PR #549](https://github.com/openai/parameter-golf/pull/549) \u2014 LeakyReLU\u00b2 + Legal TTT + Parallel Muon (base model)\r\n- [PR #741](https://github.com/openai/parameter-golf/pull/741) \u2014 N-gram cache inspiration\r\n- [PR #745](https://github.com/openai/parameter-golf/pull/745) \u2014 XSA-all, Hedge mixer concepts\r\n- PAQ/cmix compression literature \u2014 backoff and blending techniques\r\n\r\nSee [full README](records/track_10min_16mb/2026-03-26_7gram_NgramCache_0.8960/README.md) for ablation, architecture details, and what we tried and discarded.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/797",
+  "draft": false,
+  "comments": []
+}

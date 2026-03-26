@@ -1,0 +1,21 @@
+{
+  "number": 712,
+  "title": "Submit 1x A100 QAT Fix - 1.4078 BPB (Non-Record) [v3]",
+  "state": "closed",
+  "user": "Shuvam-Banerji-Seal",
+  "created_at": "2026-03-25T13:07:48Z",
+  "updated_at": "2026-03-25T13:43:07Z",
+  "merged_at": null,
+  "body": "Single-device (A100) run tuning hyperparams down from multi-device scales to ensure proper LR scheduling.\n\n- Swaps `torch.quantile` for `w.amax().clamp_min` to evade a 30x compiler performance penalty in Triton.\n- Fully addresses all previous review feedback on unused dependencies and imports.\n- Fixes bigram embeddings missing validations when size < 2.\n- Log message properly tracks compressor variable strings.\n\nCloses #707",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/712",
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "The final evaluation log labels are hard-coded to `final_int8_zlib_roundtrip...` even though the export supports multiple compressors via `_COMPRESSOR` (and the quantization is mixed int6/int8). This makes the logs misleading when `_COMPRESSOR` is `zstd`/`lz4`. Consider including `_COMPRESSOR` (and/or the quant scheme) in these log prefixes so the printed metrics unambiguously match the artifact that was round-tripped.\n```suggestion\n        f\"final_mixed_int6_roundtrip_{_COMPRESSOR} \"\n        f\"val_loss:{q_val_loss:.4f} val_bpb:{q_val_bpb:.4f} \"\n        f\"eval_time:{1000.0 * (time.perf_counter() - t_qeval):.0f}ms\"\n    )\n    log0(\n        f\"final_mixed_int6_roundtrip_{_COMPRESSOR}_exact \"\n        f\"val_loss:{q_val_loss:.8f} val_bpb:{q_val_bpb:.8f}\"\n    )\n```",
+      "created_at": "2026-03-25T13:14:45Z",
+      "updated_at": "2026-03-25T13:14:45Z"
+    }
+  ]
+}

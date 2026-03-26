@@ -1,0 +1,14 @@
+{
+  "number": 799,
+  "title": "Non-record Submission: SwiGLU 3x + Dynamic Wallclock Cosine",
+  "state": "open",
+  "user": "yuvraajbains",
+  "created_at": "2026-03-26T02:30:44Z",
+  "updated_at": "2026-03-26T02:30:44Z",
+  "merged_at": null,
+  "body": "Non-record Submission: Testing a perfectly optimized SwiGLU 3x architecture hitting 1.200 bpb simply using a hardware-bounded Dynamic Wallclock Cosine schedule.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/799",
+  "draft": false,
+  "comments": []
+}

@@ -4,7 +4,7 @@
   "state": "open",
   "user": "iverbovoy",
   "created_at": "2026-03-20T01:41:57Z",
-  "updated_at": "2026-03-20T01:41:57Z",
+  "updated_at": "2026-03-25T23:41:57Z",
   "merged_at": null,
   "body": "## Summary\n\nBeats naive baseline (1.2244) by 0.005 bpb using 3.1x fewer training steps through stateful depth recurrence.\n\n- val_bpb = 1.2196 (sliding window eval on int8+zlib roundtrip model, stride=256)\n- val_bpb = 1.2533 (standard int8+zlib roundtrip)\n- 4494 steps in 600s on 8xH100, 133ms/step, 12.83MB artifact\n\nArchitecture: 3 shared blocks x 4 repeats (12 effective layers), dim=832, with Cross-Repeat Skip (original \u2014 stateful recurrence via per-repeat learned residuals), 2 Value Embedding tables, LR x0.3, sliding window eval.\n\nAll experiments done on RTX 3060 12GB. Cloud GPUs used only for validation and final run.\n\nSee [README](records/track_10min_16mb/2026-03-20_DepthRecurrence_CrossRepeatSkip/README.md) for full details and ablations.",
   "labels": [],

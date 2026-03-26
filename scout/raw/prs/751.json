@@ -1,0 +1,57 @@
+{
+  "number": 751,
+  "title": "Single A100 QAT Performance Fix (fresh review cycle)",
+  "state": "open",
+  "user": "Shuvam-Banerji-Seal",
+  "created_at": "2026-03-25T17:45:18Z",
+  "updated_at": "2026-03-25T17:56:58Z",
+  "merged_at": null,
+  "body": "This PR mirrors the latest submission fixes from #725 on a fresh branch to force a clean Copilot review against the current head commit.\\n\\nWhy new PR:\\n- Existing Copilot review on #725 is attached to an older commit (9bf5a51).\\n- Latest head commit changes were not re-reviewed.\\n\\nContents:\\n- QAT/loader robustness and compressor safety updates in train_gpt.py\\n- Reporting and runtime wording alignment in README.md and submission.json\\n\\nSupersedes: #725",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/751",
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "This line cites `final_mixed_int6_roundtrip_zstd_exact` as the source of the submission BPB, but the attached `train.log` currently ends with `final_int8_zlib_roundtrip_exact`. Please align the README with the actual log output (or replace the log with one produced by this script/config) so reviewers can unambiguously verify the reported metric.\n```suggestion\n* **Submission Validation BPB (final sliding-window / roundtrip):** `1.52523098` (per attached `train.log`, `final_int8_zlib_roundtrip_exact`)\n* **Artifact Size:** `15.77 MB` (int8 + zlib)\n```",
+      "created_at": "2026-03-25T17:50:00Z",
+      "updated_at": "2026-03-25T17:50:01Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "This README describes the attached run as \"for this record\", but the folder/track is `track_non_record_16mb` and the Summary calls it a non-record submission. Consider rewording to avoid confusion during review/verification.\n```suggestion\nWe also constrained the gradient accum sizing from multi-GPU scales down to 131K tokens, ensuring the model can make rapid progress under the 10-minute wallclock cap on a single A100; in the attached `train.log` for this run, training reaches step 1186 before terminating into SWA and evaluation, instead of starving the LR decay schedule.\n```",
+      "created_at": "2026-03-25T17:50:00Z",
+      "updated_at": "2026-03-25T17:50:01Z"
+    },
+    {
+      "user": "Shuvam-Banerji-Seal",
+      "body": "Reviewer quick-run instructions for infra validation:\\n\\n1) Setup\\n- Install dependencies from requirements.txt\\n- Ensure CUDA GPU and Python environment are active\\n\\n2) Run (from submission folder)\\n- cd records/track_non_record_16mb/2026-03-23_Single_A100_QAT_FastFix\\n- python train_gpt.py | tee train.log\\n\\n3) Verify key outputs in train.log\\n- train-time checkpoint metric around wallclock stop (step ~1186)\\n- final_mixed_int6_roundtrip_zstd_exact val_bpb for submission metric\\n\\n4) Verify artifact size\\n- final_model.mixed_int6.ptz should remain within the size budget\\n\\nNotes\\n- 10-minute cap is for training loop wallclock; final sliding-window eval is reported separately as end-to-end runtime.\\n- submission.json reports the final post-export roundtrip metric, not the intermediate train-time metric.",
+      "created_at": "2026-03-25T17:46:11Z",
+      "updated_at": "2026-03-25T17:46:11Z"
+    },
+    {
+      "user": "Shuvam-Banerji-Seal",
+      "body": "@copilot review\\n\\nPlease re-review this PR against the latest head commit (). I have applied the two suggested fixes and pushed follow-up commits.",
+      "created_at": "2026-03-25T17:54:52Z",
+      "updated_at": "2026-03-25T17:54:52Z"
+    },
+    {
+      "user": "Shuvam-Banerji-Seal",
+      "body": "Copilot re-review request: please review this PR on the latest head commit SHA ef96f8aaa476a87a9c4577ad57b8e1660742c728. The two suggested fixes were applied in follow-up commits.",
+      "created_at": "2026-03-25T17:55:03Z",
+      "updated_at": "2026-03-25T17:55:03Z"
+    },
+    {
+      "user": "Shuvam-Banerji-Seal",
+      "body": "Maintainer request: the two Copilot suggestions have been addressed in the latest commits (head: ef96f8aaa476a87a9c4577ad57b8e1660742c728).\\n\\nCould a reviewer with write access please re-check and approve so the REVIEW_REQUIRED gate can pass?\\n\\nAlso requesting OpenAI infra validation run for this submission using the runbook in this PR thread (training-wallclock metric + final mixed-int6 roundtrip metric + artifact size check). Happy to adjust immediately if your infra results differ.",
+      "created_at": "2026-03-25T17:56:48Z",
+      "updated_at": "2026-03-25T17:56:48Z"
+    },
+    {
+      "user": "Shuvam-Banerji-Seal",
+      "body": "Maintainer request: the two Copilot suggestions have been addressed in the latest commits (head: ef96f8aaa476a87a9c4577ad57b8e1660742c728).\n\nCould a reviewer with write access please re-check and approve so the REVIEW_REQUIRED gate can pass?\n\nAlso requesting OpenAI infra validation run for this submission using the runbook in this PR thread (training-wallclock metric + final mixed-int6 roundtrip metric + artifact size check). Happy to adjust immediately if your infra results differ.",
+      "created_at": "2026-03-25T17:56:58Z",
+      "updated_at": "2026-03-25T17:56:58Z"
+    }
+  ]
+}

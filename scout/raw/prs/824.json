@@ -1,0 +1,27 @@
+{
+  "number": 824,
+  "title": "GatedAttn + ValueResid + XSA6 + HedgeMixer + Legal TTT \u2014 val_bpb: 1.08965 (3-seed mean)",
+  "state": "open",
+  "user": "sahiee-dev",
+  "created_at": "2026-03-26T07:05:12Z",
+  "updated_at": "2026-03-26T07:17:35Z",
+  "merged_at": null,
+  "body": "# XSA6 + BigramHash4K + GatedAttn + ValueResidual on HedgeMixer Stack\r\n\r\n## Summary\r\n\r\nForked from [@agalimova's PR #720](https://github.com/openai/parameter-golf/pull/720) (XSA6 + BigramHash4K + HedgeMixer baseline at 1.1078).\r\nAdded two lightweight architectural modifications that improved performance by ~0.018 bpb.\r\n\r\n## Architectural Changes\r\n\r\n1. **Gated Attention** (`attn_gate`): A per head learned FP32 scalar (init=1.0) multiplied against the attention output, allowing the model to learn head specific contribution magnitudes.\r\n2. **Value Residual** (`lambda_v`): A per block learned FP32 scalar (init=0.0) that injects a fraction of the initial token embedding `x0` directly into the residual stream.\r\n\r\nBoth initialize as strict no ops and are registered in `CONTROL_TENSOR_NAME_PATTERNS` to remain in FP32 and bypass GPTQ quantization.\r\n\r\n## Results\r\n\r\n| Seed | val_bpb | val_loss | eval_time |\r\n|------|---------|----------|-----------|\r\n| 42 | 1.08778131 | 1.83666831 | 504s |\r\n| 1337 | 1.09024766 | 1.84083264 | 503s |\r\n| 2025 | 1.09090710 | 1.84194607 | 506s |\r\n| **mean** | **1.08964536** | **1.83981567** | \u2014 |\r\n\r\nArtifact: 14,917,177 bytes (14.9MB). All seeds evaluated under 600s.\r\n\r\n## Evaluation\r\n\r\n- `EVAL_STRIDE=64` (matches official baseline default)\r\n- All runs completed in ~503\u2013506s (under the 600s hard limit)\r\n- Hardware: 8\u00d7H100 SXM 80GB\r\n- Compression: zstd level-22\r\n\r\n## TTT Legality\r\n\r\nTTT follows Case 3 (legal) per issue #402: tokens are scored before any adaptation, documents are evaluated independently with no cross document leakage. The dependency graph is identical to standard autoregressive eval.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/824",
+  "draft": false,
+  "comments": [
+    {
+      "user": "sahiee-dev",
+      "body": "TTT implementation note for reviewers: this follows Case 3 as defined in issue #402. Each document is evaluated independently, tokens are scored before any adaptation occurs on them, and adaptation on document J never affects scoring of document K. This is not the token stream TTT pattern that was flagged in #548. Happy to walk through the specific code if helpful",
+      "created_at": "2026-03-26T07:13:40Z",
+      "updated_at": "2026-03-26T07:13:40Z"
+    },
+    {
+      "user": "sahiee-dev",
+      "body": "TTT implementation follows the score first pattern from issue #402. For each chunk: (1) score tokens with torch.no_grad(), accumulate loss, (2) adapt on that chunk only, (3) advance to next chunk. No token is ever scored after the model has trained on it. Documents are evaluated independently across DDP ranks with no cross-document leakage. This matches the legal pattern discussed in #402.",
+      "created_at": "2026-03-26T07:17:35Z",
+      "updated_at": "2026-03-26T07:17:35Z"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "number": 748,
+  "title": "Add local-first MLX search workflow",
+  "state": "open",
+  "user": "sueun-dev",
+  "created_at": "2026-03-25T17:23:52Z",
+  "updated_at": "2026-03-25T17:37:40Z",
+  "merged_at": null,
+  "body": "## Summary\n- add runtime shard and validation-sequence limits for local proxy iteration without changing the default challenge path\n- add a local MLX sweep harness with proxy/full-val modes and budget-aware architecture filtering\n- document the Apple Silicon local search workflow in the README and a dedicated playbook\n\n## Why\nLocal Apple Silicon iteration was bottlenecked by full validation on every run and by fully manual hyperparameter sweeps. This patch keeps the default challenge behavior intact while making local search substantially faster and easier to compare.\n\n## Validation\n- python3 -m py_compile train_gpt.py train_gpt_mlx.py tools/local_search.py\n- exercised tools/local_search.py on Apple Silicon with proxy-search sessions\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/748",
+  "draft": false,
+  "comments": [
+    {
+      "user": "chatgpt-codex-connector[bot]",
+      "body": "**<sub><sub>![P2 Badge](https://img.shields.io/badge/P2-yellow?style=flat)</sub></sub>  Guard against absent keys in promotion candidates**\n\nWhen `--space` introduces a key that is not present in the baseline candidate (for example, adding an architecture knob without also setting it via `--set`), hybrid mode can crash in promotion: `base[key]` raises `KeyError` for the baseline/top result and aborts the whole search session. This makes advertised `--space` customization brittle and can terminate experiments before promotion/full-val stages.\n\nUseful? React with \ud83d\udc4d\u00a0/ \ud83d\udc4e.",
+      "created_at": "2026-03-25T17:37:40Z",
+      "updated_at": "2026-03-25T17:37:40Z"
+    }
+  ]
+}

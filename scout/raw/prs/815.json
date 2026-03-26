@@ -1,0 +1,21 @@
+{
+  "number": 815,
+  "title": "large models",
+  "state": "closed",
+  "user": "hguan6",
+  "created_at": "2026-03-26T05:27:35Z",
+  "updated_at": "2026-03-26T05:29:16Z",
+  "merged_at": null,
+  "body": "",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/815",
+  "draft": false,
+  "comments": [
+    {
+      "user": "hguan6",
+      "body": "add Qwen models training",
+      "created_at": "2026-03-26T05:28:45Z",
+      "updated_at": "2026-03-26T05:28:45Z"
+    }
+  ]
+}

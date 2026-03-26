@@ -1,14 +1,21 @@
 {
   "number": 691,
-  "title": "PR #414 + 30-Epoch Cosine TTT (1.0988 BPB)",
-  "state": "open",
+  "title": "11L EMA + GPTQ-lite + Legal Score-First TTT (1.1408 BPB)",
+  "state": "closed",
   "user": "xexyz",
   "created_at": "2026-03-25T07:06:05Z",
-  "updated_at": "2026-03-25T08:44:00Z",
+  "updated_at": "2026-03-26T01:03:23Z",
   "merged_at": null,
-  "body": "## Summary\n\n- **val_bpb: 1.0988** (post-TTT, stride-64 sliding window eval)\n- **Artifact size: 15,900,191 bytes** (under 16MB)\n- 8xH100 SXM, seed=1337\n\n## Technique\n\n30-epoch cosine pre-eval Test-Time Training (TTT) on the PR #414 consensus stack. After int6 quantization, the model is fine-tuned on validation data with cosine LR decay before the final sliding-window eval.\n\n### TTT Details\n- AdamW, base LR=0.0005, weight_decay=0.0\n- Per-layer LR groups: `mlp.proj` 3x, `mlp.fc` 0.5x, others 1x\n- Cosine LR schedule, grad clip 1.0\n- DDP gradient sync (all_reduce AVG)\n- 30 epochs, 3570 steps, ~836s on 8xH100\n\n### Architecture (PR #414 stack)\n- 11 layers, 512d, 8H, 4KV (GQA), relu\u00b2\n- SmearGate + BigramHash, XSA on last 4 layers\n- EMA(0.997) + Tight SWA, GPTQ-lite int6+zstd-22\n- Sliding window eval (stride=64)\n\n## Results\n\n| Stage | val_loss | val_bpb |\n|-------|----------|---------|\n| Post-EMA (float) | 1.9433 | 1.1509 |\n| Post-int6 roundtrip | 1.9577 | 1.1594 |\n| **Post-TTT sliding (stride=64)** | **1.8553** | **1.0988** |\n\n## Credits\n\n- Base model and training: PR #414 by @signalrush\n- TTT technique: PR #518 by @sofiabod, PR #672 by @andrewbaggio1\n- SDPA fallback for non-FA3 environments",
+  "body": "## Summary\n\n- **val_bpb: 1.1408** (legal score-first TTT, stride-64)\n- **Artifact size: 15,758,590 bytes** (under 16MB)\n- 8xH100 SXM, seed=1337\n\n## Technique\n\nLegal chunk-based score-first TTT on the PR #414 consensus stack. Each validation chunk is scored first (under `inference_mode`), then the model trains on the already-scored tokens. Never trains on tokens before scoring them.\n\n### Legal TTT Protocol\n1. Split validation data into 32K-token chunks (1893 chunks)\n2. For each chunk: **score** with sliding-window eval, then **train** for 3 epochs\n3. SGD optimizer, base LR=0.002, momentum=0.9\n4. Cosine LR decay across chunks\n5. DDP gradient sync (all_reduce AVG), grad clip 1.0\n\n### Architecture (PR #414 stack)\n- 11 layers, 512d, 8H, 4KV (GQA), relu\u00b2\n- SmearGate + BigramHash, XSA on last 4 layers\n- EMA(0.997) + Tight SWA, GPTQ-lite int6+zstd-22\n\n## Results\n\n| Stage | val_loss | val_bpb |\n|-------|----------|---------|\n| Post-EMA (float) | 1.9433 | 1.1509 |\n| Post-int6 roundtrip | 1.9570 | 1.1590 |\n| **Legal TTT (score-first)** | **1.9262** | **1.1408** |\n\n## Credits\n\n- Base model and training: PR #414 by @signalrush\n- Legal TTT protocol: PR #549\n- TTT technique: PR #518 by @sofiabod\n- SDPA fallback for non-FA3 environments",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/691",
   "draft": false,
-  "comments": []
+  "comments": [
+    {
+      "user": "xexyz",
+      "body": "Superseded by #792 (1.0340 BPB with LeakyReLU\u00b2 + XSA-all + Full GPTQ + 5-gram backoff). Closing this older TTT-based submission.",
+      "created_at": "2026-03-26T01:03:22Z",
+      "updated_at": "2026-03-26T01:03:22Z"
+    }
+  ]
 }

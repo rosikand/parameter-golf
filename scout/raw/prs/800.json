@@ -1,0 +1,39 @@
+{
+  "number": 800,
+  "title": "Record: X-WING \u2014 Shared N-gram Tables + Cubric (val_bpb=0.5644)",
+  "state": "open",
+  "user": "newjordan",
+  "created_at": "2026-03-26T02:31:02Z",
+  "updated_at": "2026-03-26T05:22:35Z",
+  "merged_at": null,
+  "body": "![target](https://github.com/user-attachments/assets/e4a3f0c3-223e-4739-b0ce-58588e50ac0a)\r\n\r\n\r\n## Summary\r\n\r\n- **val_bpb = 0.5644** (3-seed mean: 1337=0.5640, 42=0.5642, 300=0.5651)\r\n- **Single structural change**: chunk-based shared n-gram tables \u2014 all 8 GPU ranks update tables with the same tokens, giving every rank the full 62M-token picture (vs 1/8 with rank-local tables)\r\n- **Cubric per-order adaptive alpha**: suppresses noisy orders 2-3 (0.30-0.45x), boosts reliable orders 5-7 (1.88-2.0x)\r\n- Artifact size: **15.63 MB** (under 16MB)\r\n\r\n## Compliance\r\n\r\n- Score-first: entire chunk scored BEFORE its tokens update the tables\r\n- No oracle selection, no min-NLL comparison\r\n- Alpha depends solely on model entropy \u2014 no target/label access\r\n- GPTQ calibration runs inside training wallclock\r\n\r\n## Credits\r\n\r\n- Shared n-gram table insight: @deanbrr (PR #779)\r\n- N-gram eval cache: @deanbrr (PR #659)\r\n- Multi-order backoff + adaptive alpha: @Asukabot0 (PR #727)\r\n- Per-order adaptive alpha scaling (Cubric): @newjordan (original) (another version of this exists, submitted at same time)\r\n- Base architecture: @signalrush (PR #414)\r\n\r\n## Reproduce\r\n\r\n```bash\r\nSEED=1337 NPROC_PER_NODE=8 bash concepts/xwing/run.sh\r\n```\r\n\r\n8xH100 SXM, 600s training + ~225s eval.\r\n\r\n## Test plan\r\n\r\n- [x] Seed 1337: 0.5640 BPB\r\n- [x] Seed 42: 0.5642 BPB\r\n- [x] Seed 300: 0.5651 BPB\r\n- [x] 3-seed mean: 0.5644 BPB",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/800",
+  "draft": false,
+  "comments": [
+    {
+      "user": "deanbrr",
+      "body": "Nice work. I'm stopping for a while. Probably going to pivot toward novel approaches. Good luck",
+      "created_at": "2026-03-26T02:50:10Z",
+      "updated_at": "2026-03-26T02:50:10Z"
+    },
+    {
+      "user": "newjordan",
+      "body": "Let me Come!!! you da man!",
+      "created_at": "2026-03-26T02:57:16Z",
+      "updated_at": "2026-03-26T02:57:16Z"
+    },
+    {
+      "user": "andrew-medrano",
+      "body": "We're going to have to make new rules or something, otherwise seems like online n-gram approaches are going to dominate everything else",
+      "created_at": "2026-03-26T03:18:47Z",
+      "updated_at": "2026-03-26T03:18:47Z"
+    },
+    {
+      "user": "newjordan",
+      "body": "there is so much to explore here... its untapped. we are still using non-configured models for the discovery. Im trying to keep mine comptetitive while finding out what the heck that is. most liley something with alot of cycles... need more cycles. must go faster -- this cubric mechanism is most likely non optimal, i pulled it from a different focus entirely. ",
+      "created_at": "2026-03-26T03:23:50Z",
+      "updated_at": "2026-03-26T03:26:10Z"
+    }
+  ]
+}

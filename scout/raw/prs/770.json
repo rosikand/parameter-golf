@@ -1,0 +1,14 @@
+{
+  "number": 770,
+  "title": "Record: 11L + Multi-Order N-gram Backoff + Entropy-Adaptive Alpha (val_bpb=0.6672)",
+  "state": "open",
+  "user": "minh-stakc",
+  "created_at": "2026-03-25T21:30:28Z",
+  "updated_at": "2026-03-25T21:30:28Z",
+  "merged_at": null,
+  "body": "## Summary\n\n**val_bpb: 0.6672** (seed 42) | **15.0 MB** artifact | 1xB200 (HiPerGator)\n\n## Technique\n\nBase 11L SOTA architecture with eval-time multi-order n-gram cache interpolation.\n\n### Key innovations\n\n1. **Multi-order backoff (orders 2-7)**: Highest order first, cascade down on miss. Captures repeated document patterns outside the transformer's context window.\n\n2. **Entropy-adaptive alpha**: `alpha = 0.05 + 0.55 * sigmoid(2 * (H - 4.0))`. When the model is uncertain (high entropy), trust n-gram statistics more; when confident, trust the LM.\n\n### Compliance\n\n- Score-first, backward-looking: n-gram counts built from previously scored tokens only\n- No oracle selection: alpha depends on model entropy, never on ground-truth labels\n- Single blended prediction per token, no min(NLL)\n\n## Results\n\n| Metric | Value |\n|--------|-------|\n| Pre-quant val_bpb | 1.1927 |\n| Post-quant roundtrip | 1.1577 |\n| **Post n-gram sliding (s64)** | **0.6672** |\n| Artifact size | 15,025,238 bytes |\n\n## Architecture\n\n11L, 512d, 8H/4KV GQA, MLP 3x, XSA4, Partial RoPE, LN Scale, VE128, SmearGate, BigramHash(2048), EMA(0.997), Late QAT, OrthoInit. Int6+GPTQ-lite+3% pruning+zstd-22.\n\n## Reproduction\n\n```bash\nSEED=42 NGRAM_CACHE=1 NGRAM_ORDER=7 NGRAM_MIN_ORDER=2 \\\nNGRAM_ENTROPY=1 EVAL_STRIDE=64 PRUNE_PCT=0.03 \\\ntorchrun --standalone --nproc_per_node=1 train_gpt.py\n```\n\n## Credits\n\nPR #414 (signalrush), PR #315 (jfprincz), PR #702/#727 (lukacf)\n\n## Test plan\n\n- [x] Artifact under 16MB (15.0 MB)\n- [x] Score-first n-gram cache (backward-looking)\n- [x] No min(NLL), no target-aware gating\n- [x] Single seed included (additional seeds pending)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/770",
+  "draft": false,
+  "comments": []
+}

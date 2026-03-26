@@ -1,0 +1,14 @@
+{
+  "number": 793,
+  "title": "Blackwell local nonrecord",
+  "state": "open",
+  "user": "pall23-mech",
+  "created_at": "2026-03-26T01:20:50Z",
+  "updated_at": "2026-03-26T01:20:50Z",
+  "merged_at": null,
+  "body": "\r\n\r\nAdds a non-record submission folder for a local 8 GB Blackwell-class GPU run using `train_merged_gpt_flagged.py`.\r\n20000 step run, around 19hours runtime.\r\n\r\n\r\nunpruned packed model: about ~1.21 BPB\r\nfinal pruned under-cap model: about ~1.25 BPB\r\n\r\nHighlights:\r\n- local constrained-hardware run\r\n- original packed artifact was slightly over the exact size cap\r\n- final pruned/repacked artifact fits under the cap\r\n- includes README and training script\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/793",
+  "draft": false,
+  "comments": []
+}

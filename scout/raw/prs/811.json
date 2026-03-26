@@ -1,0 +1,14 @@
+{
+  "number": 811,
+  "title": "Record: Complementary Training + Backoff N-gram Mixer \u2014 0.4377 BPB",
+  "state": "closed",
+  "user": "quietsmile",
+  "created_at": "2026-03-26T04:53:38Z",
+  "updated_at": "2026-03-26T05:31:44Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **0.4377 BPB** (2-seed mean 0.4379, std 0.0002)\n- Reproduction of PR #803's complementary training approach on 8x NVIDIA L20Z (H100 equivalent)\n- Seeds: 1337 \u2192 0.4377, 42 \u2192 0.4380\n- Training: 7,003 steps in 600s, eval: 450s (within 10-min budget)\n- Artifact: ~15.9MB (under 16MB limit)\n\n## Key Techniques\n\n1. **Complementary Training** (COMPLEMENT_ALPHA=0.5): bigram-weighted loss reweighting\n2. **BackoffNgramMixer**: orders 2-10, entropy-adaptive alpha mixing\n3. **Legal score-first AdamW TTT**: 4 epochs, lr=5e-4, freeze first 2 blocks\n4. **Stride=128**: negligible BPB impact, halves eval time\n\n## Acknowledgment\n\nBased on PR #803 by @pentxayc. Core innovation of complementary training is their contribution.\n\n## Test plan\n\n- [x] Verified on 2 seeds (1337, 42) with consistent results\n- [x] Training completes within 10-min wallclock\n- [x] Eval completes within 10-min budget (450s)\n- [x] Artifact under 16MB\n- [x] All TTT is legal score-first (tokens scored before any update)\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/811",
+  "draft": false,
+  "comments": []
+}

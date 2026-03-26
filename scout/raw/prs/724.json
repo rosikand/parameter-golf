@@ -1,0 +1,14 @@
+{
+  "number": 724,
+  "title": "Record: 10L + 7-gram eval cache (mean val_bpb=1.0717)",
+  "state": "open",
+  "user": "hypery11",
+  "created_at": "2026-03-25T14:29:00Z",
+  "updated_at": "2026-03-25T14:29:00Z",
+  "merged_at": null,
+  "body": "## Results\n\n| Seed | val_bpb |\n|------|---------|\n| 42   | 1.0531  |\n| 1337 | 1.0814  |\n| 2024 | 1.0805  |\n| **Mean** | **1.0717** |\n| Std  | 0.0160  |\n\n- Artifact: 15.75 MB\n- Train: 600s on 8xH100 SXM\n- Eval: ~195s (well under 600s)\n\n## Method\n\n10-layer transformer with backward-looking 7-gram eval cache.\n\nBase model: 512d, 8/4 GQA, 3x MLP LeakyReLU(0.5)^2, BigramHash 10240, SmearGate, value residual, gated attention, U-Net skip, tied embeddings. Mixed int5/int6 quantization + zstd-22, 5% pruning, EMA 0.995.\n\n7-gram cache: fixed alpha=0.40, 4M XOR-hash buckets, min_count=2. Score-first (cache updated after scoring). Deterministic, no TTT, no gradient updates.\n\n- [x] 8xH100 SXM, train \u2264600s\n- [x] Eval \u2264600s\n- [x] Artifact \u226416MB\n- [x] 3-seed validation",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/724",
+  "draft": false,
+  "comments": []
+}

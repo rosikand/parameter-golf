@@ -1,0 +1,14 @@
+{
+  "number": 808,
+  "title": "Record: 0.6364 BPB - Depth Recurrence + Multi-Order N-gram Backoff",
+  "state": "open",
+  "user": "Naazimsnh02",
+  "created_at": "2026-03-26T04:18:04Z",
+  "updated_at": "2026-03-26T04:18:04Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\n**val_bpb: 0.6364** (seed 1337) | **~15.95 MB** | 8\u00d7H100 SXM | 2 seeds\r\n\r\nAdds multi-order n-gram backoff (orders 2-7) with entropy-adaptive alpha to the depth recurrence stack, achieving a new record.\r\n\r\n### Key contributions\r\n\r\n- **Multi-order n-gram backoff (orders 2-7)**: Hash-table n-gram counting at eval time. Highest-order match first, cascade down on miss. Zero training cost \u2014 purely eval-time.\r\n- **Entropy-adaptive alpha**: `alpha = 0.05 + 0.55 * sigmoid(2 * (H \u2212 4.0))` \u2014 trusts n-gram more when the neural model is uncertain, model when confident.\r\n- **Multi-GPU n-gram prefill**: Each rank pre-populates its hash tables with all tokens scored by earlier ranks, fixing the table fragmentation problem on multi-GPU setups (without this, 8-GPU gets 0.87 BPB instead of 0.64).\r\n- **Depth Recurrence**: Repeating layers 4,5 for 13 virtual layers from 11 physical at zero parameter cost (carried over from previous submission).\r\n\r\n### Results\r\n\r\n| Seed | BPB |\r\n|------|-----|\r\n| 1337 | 0.6364 |\r\n| 42   | 0.6382 |\r\n| **Mean** | **0.6373** |\r\n\r\nBuilt on PR #549 stack (LeakyReLU(0.5)\u00b2, BigramHash(2048), XSA4, Partial RoPE, LN Scale, VE128, EMA+SWA, Parameter Banking + Parallel Muon, int6 GPTQ-lite + lzma).\r\n\r\n### Credits\r\n\r\n- N-gram backoff technique inspired by PR #770 (@minh-stakc) and PR #779 (@deanbrr)\r\n- Base model stack: PR #549 (@abaybektursun), PR #414 (@signalrush)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/808",
+  "draft": false,
+  "comments": []
+}

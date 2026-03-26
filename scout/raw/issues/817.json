@@ -1,0 +1,12 @@
+{
+  "number": 817,
+  "title": "Leaderboard adjustment",
+  "state": "open",
+  "user": "snapo",
+  "created_at": "2026-03-26T06:23:49Z",
+  "updated_at": "2026-03-26T06:23:49Z",
+  "body": "Could you please add the compression ratio size to the leaderboard?\n\n(Artifactsize * val_bpb / 16_000_000) - 1 = compression ratio",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/issues/817",
+  "comments": []
+}

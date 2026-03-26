@@ -1,0 +1,14 @@
+{
+  "number": 701,
+  "title": "Add classical 4-gram non-record submission",
+  "state": "open",
+  "user": "Muhtasham",
+  "created_at": "2026-03-25T11:33:13Z",
+  "updated_at": "2026-03-25T11:33:13Z",
+  "merged_at": null,
+  "body": "## Summary\n\nThis PR adds a non-record classical submission under `records/track_non_record_16mb/2026-03-25_classical_4gram_10m_eval`.\n\nThe submission is fully non-neural:\n- discounted hashed 4-gram model with unigram/bigram backoff\n- artifact built from the official `fineweb10B_sp1024` train export\n- exact evaluation on the official `fineweb_val_*` split\n- no training-data access during evaluation; final eval uses the saved artifact via `--load-state` only\n\n## Exact Results\n\n- `val_bpb`: `1.91070694`\n- validation tokens: `62,021,846`\n- evaluation wallclock: `571.97s`\n- model artifact bytes: `14,310,783`\n- code bytes: `57,801`\n- total bytes: `14,368,584`\n\n## Included Files\n\n- `README.md`\n- `submission.json`\n- `train.log`\n- `eval.log`\n- `train_gpt.py`\n\n## Notes\n\nThis is a non-record submission, not a SOTA claim.\n\nThe final packaged line is the faster classical path:\n- first `10,000,000` train tokens used to build the artifact\n- `--absolute-discount 0.75`\n- `--ngram-contexts 3`\n- `--mix-backoff-experts 0`\n- no cache experts\n- no copy experts\n\nI verified locally that:\n- the artifact is under the decimal `16,000,000` byte cap\n- the final full-validation run is performed on the official `fineweb_val_*` split\n- the final evaluation does not read training shards\n- the records folder compiles and runs from within the folder\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/701",
+  "draft": false,
+  "comments": []
+}

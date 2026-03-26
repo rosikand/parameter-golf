@@ -1,0 +1,14 @@
+{
+  "number": 827,
+  "title": "Record: LeakyReLU\u00b2 + XSA4 + LN Scale + Partial RoPE \u2014 val_bpb 1.3999",
+  "state": "open",
+  "user": "Programmerryoki",
+  "created_at": "2026-03-26T07:17:54Z",
+  "updated_at": "2026-03-26T07:39:25Z",
+  "merged_at": null,
+  "body": "# LeakyReLU\u00b2 + XSA4 + LN Scale + Partial RoPE\r\n\r\n**val_bpb: 1.3999** | **~13.5 MB** | 8\u00d7H100 SXM\r\n\r\n## Results (8\u00d7H100 80GB SXM, PyTorch 2.8.0+cu128)\r\n\r\n| Seed | step_avg | steps | val_bpb | Artifact |\r\n|------|----------|-------|---------|----------|\r\n| 1337 | 65.0ms | 9,231 | **1.3999** | 13,502,602 |\r\n\r\n## Architecture\r\n\r\n| Component | Setting |\r\n|-----------|---------|\r\n| Layers | 10 (512d, 8H, 4KV GQA) |\r\n| MLP | 2\u00d7 with **LeakyReLU(0.5)\u00b2** |\r\n| BigramHash | 1536 |\r\n| SmearGate | Enabled |\r\n| U-Net Skips | Enabled |\r\n| XSA | Last 4 layers |\r\n| Partial RoPE | 16/64 dims |\r\n| LN Scale | 1/\u221a(layer+1) |\r\n| Weight avg | EMA(0.997) |\r\n| Quantization | Int6 QAT + GPTQ-lite clip search + zstd-22 |\r\n\r\n## Key Techniques\r\n\r\n### LeakyReLU(0.5)\u00b2\r\nOne-line activation change: `F.leaky_relu(x, negative_slope=0.5).square()` replacing `relu(x).square()`. Preserves negative gradient flow, eliminates dead neurons while maintaining relu\u00b2 inductive bias.\r\n\r\n### GPTQ-lite Clip Search\r\nPost-training quantization improvement: tests 5 clip percentiles per weight row (0.9999, 0.99995, 0.99999, 0.999995, 1.0) and selects the one minimizing per-row reconstruction MSE. Zero training cost.\r\n\r\n### Exclusive Self-Attention (XSA)\r\nApplied to last 4 layers. Subtracts self-value from attention output, forcing each token to attend more to context tokens rather than itself.\r\n\r\n### LN Scale + Partial RoPE\r\n- LN Scale: RMSNorm outputs scaled by 1/\u221a(layer+1) in deeper layers for training stability\r\n- Partial RoPE: Only first 16/64 head dims get rotary encoding; remaining dims learn position-invariant patterns\r\n\r\n## Run Command\r\n\r\n```bash\r\nexport BIGRAMHASH_BUCKETS=1536 NUM_LAYERS=10 MLP_MULT=2 \\\r\n    ROPE_PARTIAL_DIMS=16 LN_SCALE=1 XSA_LAYERS=4 \\\r\n    WARMDOWN_ITERS=3500 SEED=1337\r\n\r\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\r\n```\r\n\r\n## Notes\r\n\r\nFirst submission. Reduced to 10 layers and MLP 2\u00d7 to fit within 16MB artifact constraint. Future work: parameter banking to fit 11L/3\u00d7 MLP, sliding window evaluation, and test-time training.\r\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/827",
+  "draft": false,
+  "comments": []
+}

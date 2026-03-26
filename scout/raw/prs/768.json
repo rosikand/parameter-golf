@@ -1,0 +1,14 @@
+{
+  "number": 768,
+  "title": "Non-record: 1.1201 BPB - Shared ValueEmbedding (tok_emb reuse, layers 5-10) + Legal TTT",
+  "state": "open",
+  "user": "mradassaad",
+  "created_at": "2026-03-25T21:19:18Z",
+  "updated_at": "2026-03-25T21:19:48Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- Reuses tied `tok_emb` for ValueEmbedding instead of training a separate embedding table, with learned projection + per-layer scales\n- Freed parameter budget allows expanding VE from 2 layers (9-10) to 6 layers (5-10)\n- Built on PR #549 stack (LeakyReLU(0.5)\u00b2 + Parameter Banking + Legal TTT)\n- **3-seed mean: 1.1201 bpb (std 0.0002)**\n\n## Results (8xH100 80GB SXM)\n\n| Seed | Steps | Pre-TTT bpb | Post-TTT bpb | Artifact |\n|------|-------|-------------|-------------|----------|\n| 1337 | 7,065 | 1.1221 | **1.1199** | 16,024,522 |\n| 42 | 7,066 | 1.1224 | **1.1202** | 15,827,158 |\n| 2025 | 7,067 | 1.1225 | **1.1203** | 15,839,486 |\n| **Mean** | **7,066** | **1.1223** | **1.1201** | |\n\n## Key Change\n\n```python\n# Before (PR #549): separate VE embedding, layers 9-10\nself.ve_shared = ValueEmbedding(vocab_size, ve_dim=128, model_dim=kv_dim)\n\n# After: reuse tok_emb, layers 5-10\nself.ve_shared = ValueEmbedding(vocab_size, ve_dim=128, model_dim=kv_dim, tok_emb=self.tok_emb)\n```\n\ntok_emb already encodes rich token identity from full gradient signal. A separate VE table initialized from scratch can't match that in limited training steps.\n\n## Test plan\n- [x] 3-seed validation (1337, 42, 2025) \u2014 all under 16MB, consistent results\n- [x] Legal TTT protocol verified (score-first, inference_mode)\n- [x] Logs included for all seeds",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/768",
+  "draft": false,
+  "comments": []
+}

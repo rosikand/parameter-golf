@@ -1,0 +1,14 @@
+{
+  "number": 823,
+  "title": "Add non-record 16MB submission: MOEA outer-loop proxy F2 on 1xRTX 3090",
+  "state": "open",
+  "user": "ai-wes",
+  "created_at": "2026-03-26T07:05:04Z",
+  "updated_at": "2026-03-26T07:05:04Z",
+  "merged_at": null,
+  "body": "\r\n  ## Summary\r\n\r\n  This PR adds a non-record 16MB submission documenting the first artifact handoff from an offline MOEA outer-loop search workflow\r\n  into a runnable `parameter-golf` submission folder.\r\n\r\n  This is not a leaderboard attempt. It is a single-GPU proxy run intended to validate the search-to-artifact workflow and provide\r\n  a concrete non-record reference point for future 8xH100 campaigns.\r\n\r\n  ## What is included\r\n\r\n  - `README.md`\r\n  - `submission.json`\r\n  - `train.log`\r\n  - `train_gpt.py`\r\n\r\n  ## Notes\r\n\r\n  - Offline MOEA was used to search over architecture, training, and systems choices.\r\n  - The optimizer itself is not part of the final artifact.\r\n  - This run uses a reduced validation window (`VAL_TOKEN_LIMIT=1048576`) and `ENABLE_COMPILE=0`, so the reported metric is\r\n  explicitly a proxy-tier non-record result.\r\n  - No test-time training is used in this submission.\r\n  \r\n  ",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/823",
+  "draft": false,
+  "comments": []
+}

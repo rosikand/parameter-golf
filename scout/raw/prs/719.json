@@ -1,0 +1,45 @@
+{
+  "number": 719,
+  "title": "Submit 1x A100 QAT Fix - 1.5252 BPB (Non-Record) [v4]",
+  "state": "closed",
+  "user": "Shuvam-Banerji-Seal",
+  "created_at": "2026-03-25T13:43:03Z",
+  "updated_at": "2026-03-25T14:43:25Z",
+  "merged_at": null,
+  "body": "Single-device (A100) run tuning hyperparams down from multi-device scales to ensure proper LR scheduling.\n\nReporting clarification for final verification:\n- Attached run is measured on 1x A100 under 600s wallclock cap and stops at step 1186.\n- Train-time checkpoint metric at stop: val_bpb=1.4078.\n- Submission metric (submission.json val_bpb) is the final post-export sliding-window roundtrip metric: 1.52523098.\n- End-to-end runtime in attached log is ~33 minutes including final sliding-window evaluation.\n- H100 completion expectation is not used as a claimed metric in this submission; only measured A100 values are reported.\n\nCode improvements included in this series:\n- Swaps torch.quantile for w.abs().amax(dim=1).clamp_min to evade a large Triton compilation slowdown.\n- Fixes bigram embedding guard for small vocab edge cases.\n- Makes compressor-dependent labels and final-roundtrip labels explicit in training logs.\n",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/719",
+  "draft": false,
+  "comments": [
+    {
+      "user": "Copilot",
+      "body": "submission.json lists val_bpb=1.4078, but the provided train.log\u2019s final roundtrip evaluation reports val_bpb\u22481.52523. For the submission metadata to be verifiable, val_bpb should match the final evaluated artifact/roundtrip metric reported in the log (or the log/README should clearly indicate which metric is being reported and why).",
+      "created_at": "2026-03-25T13:49:25Z",
+      "updated_at": "2026-03-25T13:49:26Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "The blurb claims the run \"fits ... using 2600 steps\", but the provided train.log shows an early stop at step 1186 due to the wallclock cap. Please update the blurb (or the log) so that the documented iteration count and runtime behavior match what actually ran.\n```suggestion\n  \"blurb\": \"Enabled QAT directly within CastedLinear using straight-through estimators. Refactored torch.quantile to .amax(dim=1) to alleviate a 30x compiler performance penalty. Training loop fits within a Single A100 10-minute constraint, reaching 1186 steps before the wallclock cap (excludes final sliding-window evaluation which takes ~22 mins).\",\n```",
+      "created_at": "2026-03-25T13:49:25Z",
+      "updated_at": "2026-03-25T13:49:26Z"
+    },
+    {
+      "user": "Copilot",
+      "body": "README claims the training loop clears 2600 iterations in 10 minutes and reports Validation BPB=1.4078, but the included train.log shows the run stopping at step 1186 due to the wallclock cap and a much higher final roundtrip/sliding-window BPB (~1.5252). Please reconcile the README with the actual log outputs (or provide the correct log for the run being described).\n```suggestion\nWe also constrained the gradient accum sizing from multi-GPU scales down to 131K tokens, ensuring the model can make rapid progress under the 10-minute wallclock cap on a single A100; in the attached `train.log` for this record, training reaches step 1186 before terminating into SWA and evaluation, instead of starving the LR decay schedule.\n\n## Results\n* **Hardware:** 1x A100 (80GB)\n* **Training Loop Length:** 10 Minutes (Wallclock Cap \u2014 run terminates around step 1186 in the attached `train.log`; excludes final sliding-window evaluation)\n* **End-to-End Runtime (Training + Final Sliding-Window Eval):** ~33 Minutes (per attached `train.log`)\n* **Validation BPB (final sliding-window / roundtrip):** `~1.5252` (per attached `train.log`)\n```",
+      "created_at": "2026-03-25T13:49:26Z",
+      "updated_at": "2026-03-25T13:49:26Z"
+    },
+    {
+      "user": "Shuvam-Banerji-Seal",
+      "body": "Addressed the reporting consistency comments in this branch update (9bf5a51):\n\n- submission.json keeps val_bpb=1.52523 (final post-export sliding-window roundtrip metric from attached train.log).\n- submission.json blurb now explicitly distinguishes train-time wallclock-stop metric (step 1186, val_bpb=1.4078) vs final submission roundtrip metric (val_bpb=1.52523).\n- README.md now reports both metrics clearly and labels which one is used for submission metadata.\n- README.md includes explicit measured-runtime provenance and avoids using H100 expectation as a claimed metric.\n\nThis should fully reconcile metadata/reporting with the attached log for unambiguous verification.",
+      "created_at": "2026-03-25T14:33:08Z",
+      "updated_at": "2026-03-25T14:33:08Z"
+    },
+    {
+      "user": "Shuvam-Banerji-Seal",
+      "body": "Superseded by #725 (v5) with clean reporting/provenance wording.",
+      "created_at": "2026-03-25T14:43:24Z",
+      "updated_at": "2026-03-25T14:43:24Z"
+    }
+  ]
+}

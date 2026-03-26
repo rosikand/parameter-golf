@@ -1,0 +1,21 @@
+{
+  "number": 727,
+  "title": "Record: First Legal Sub-1.0 BPB \u2014 Multi-order N-gram Backoff + Entropy-Adaptive Alpha (val_bpb=0.9674, 3-seed)",
+  "state": "open",
+  "user": "Asukabot0",
+  "created_at": "2026-03-25T14:58:23Z",
+  "updated_at": "2026-03-25T15:17:52Z",
+  "merged_at": null,
+  "body": "## Results (3-seed validation)\n\n| Seed | val_bpb | val_loss | Size | Quantization |\n|------|---------|----------|------|--------------|\n| 1337 | 0.96679 | 1.63238 | 15,994,366 B | int6+zstd-16 |\n| 42 | 0.96703 | 1.63278 | 15,996,585 B | int6+zstd-16 |\n| 7 | 0.96825 | 1.63485 | 15,988,201 B | int6+zstd-16 |\n| **Mean** | **0.96736** | **1.63334** | \u2014 | \u2014 |\n| **Std** | **0.00063** | \u2014 | \u2014 | \u2014 |\n\n## Technique\n\n**Architecture**: 11L, 512d, GQA 8H/4KV, MLP 3x, LeakyReLU(0.5)\u00b2, XSA-all(11), Value Residual, Gated Attention, SmearGate, BigramHash(4096), Partial RoPE(16/64), LN Scale, EMA(0.997). Tied embeddings. Muon optimizer.\n\n**N-gram eval cache** \u2014 two key improvements over prior work:\n\n1. **Multi-order backoff (orders 2\u20137)**: Instead of a single fixed order, we attempt the highest order first and cascade down on miss. This dramatically improves coverage vs a fixed 7-gram.\n\n2. **Entropy-adaptive alpha**: `alpha = 0.05 + 0.55 * sigmoid(2 * (H - 4.0))`. When the model is uncertain (high entropy), we trust n-gram statistics more; when confident (low entropy), we trust the LM. This replaces the fixed alpha=0.40 used in prior approaches.\n\n## Compliance\n\n- **Score-first, backward-looking**: n-gram counts are built from previously scored tokens only\n- **No oracle selection**: alpha depends solely on the model's own output distribution (entropy), never on ground-truth labels\n- **No cross-GPU sync**: each GPU maintains its own independent cache\n\n## Ablation\n\n| Configuration | val_bpb | Delta |\n|---------------|---------|-------|\n| No n-gram (neural only) | 1.1271 | baseline |\n| Fixed alpha=0.40, order=7, no backoff | 1.0336 | \u22120.0935 |\n| Multi-order backoff (2-7) + fixed alpha=0.40 | 0.9825 | \u22120.1446 |\n| **Multi-order backoff (2-7) + entropy-adaptive** | **0.9674** | **\u22120.1597** |\n\n## Comparison with prior submissions\n\n| Submission | val_bpb | Delta vs this |\n|------------|---------|---------------|\n| PR #549 SOTA | 1.1194 | \u22120.152 |\n| PR #702 (n-gram backoff) | 1.0240 | \u22120.057 |\n| **This PR** | **0.9674** | \u2014 |\n\n## Training\n\n- 8\u00d7 H100 SXM (RunPod), 600s wallclock, ~5580 steps per seed\n- No TTT, no SWA, no canonical attention\n- int6 per-row + zstd-16 quantization (no int5 fallback needed)\n\nBuilt on [modded-nanogpt](https://github.com/KellerJordan/modded-nanogpt). Credits: PR #315, #609, #493, #518, #413, #674, #702.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/727",
+  "draft": false,
+  "comments": [
+    {
+      "user": "deanbrr",
+      "body": "Congrats Asukbot0, nice work.\r\n\r\nI believe I was the first to contribute the N-gram eval cache technique PR #659 to the contest",
+      "created_at": "2026-03-25T15:17:51Z",
+      "updated_at": "2026-03-25T15:17:51Z"
+    }
+  ]
+}

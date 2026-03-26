@@ -1,0 +1,14 @@
+{
+  "number": 780,
+  "title": "Non-record WIP: Systematic Eval-Time Prediction Mixing | Requesting compute credits for full 8xH100 evaluation.",
+  "state": "open",
+  "user": "sargonxg",
+  "created_at": "2026-03-25T22:40:00Z",
+  "updated_at": "2026-03-26T01:40:32Z",
+  "merged_at": null,
+  "body": "## Non-record: Concordia Discors \u2014 Systematic Eval-Time Prediction Mixing\r\n\r\nFirst systematic ablation study of eval-time prediction mixing for Parameter Golf. Four complementary predictors benchmarked across 10 configurations on a trained model.\r\n\r\n### Key Finding\r\n\r\nThe LZ77 match model provides the largest single eval-time improvement (+0.040 BPB), outperforming the n-gram cache (+0.011 BPB) that dominates the current leaderboard frontier.\r\n\r\n### Ablation Results (1xH100, 1143 steps, 20K val tokens)\r\n\r\n| Config | BPB | Delta |\r\n|--------|-----|-------|\r\n| Neural only | 5.0826 | baseline |\r\n| **+ Match model (w=0.05)** | **5.0425** | **+0.0400** |\r\n| + Cache+Match (0.05, 0.05) | 5.0466 | +0.0360 |\r\n| + ALL three (0.05, 0.03, 0.02) | 5.0575 | +0.0251 |\r\n| + N-gram cache (w=0.05) | 5.0714 | +0.0112 |\r\n| + FST only (w=0.05) | 5.0826 | +0.0000 |\r\n\r\n### Predictors (all zero artifact cost, eval-time only)\r\n\r\n- **LZ77 Match Model** \u2014 Longest exact substring match in scored tokens. Predicts continuation. The historian.\r\n- **N-gram Cache (order 8)** \u2014 Backward-looking, entropy-adaptive. Legal per Mar 25 ruling. The pattern recognizer.\r\n- **FST Grammar** \u2014 67 HTML tags, 73 boilerplate phrases, URL/JSON. The rules expert. (Minimal on Trafilatura-cleaned text.)\r\n\r\n### Additional Explorations\r\n\r\n- **S4D State-Space Layer** \u2014 O(n) attention replacement, 50% param savings per block (OpenAI wishlist item)\r\n- **Product Key Memory** \u2014 4,096-slot associative memory, needs 8xH100\r\n- **Custom 1536 tokenizer** \u2014 30% fewer tokens, BPB verified\r\n\r\n### Projected 8xH100\r\n\r\nWith SOTA neural base (1.12 BPB) + match model + cache: estimated 0.92-1.00 BPB\r\n\r\n### Files\r\n\r\nmatch_model.py, ngram_cache.py, fst_predictor.py, hybrid_eval.py, ssm_layer.py, pkm_layer.py\r\n\r\nRequesting compute credits for full 8xH100 evaluation.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/780",
+  "draft": false,
+  "comments": []
+}

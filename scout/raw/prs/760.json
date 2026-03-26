@@ -1,0 +1,14 @@
+{
+  "number": 760,
+  "title": "Add BitNet b1.58 Ternary Quantization (non-record submission)",
+  "state": "closed",
+  "user": "erikqu",
+  "created_at": "2026-03-25T19:52:58Z",
+  "updated_at": "2026-03-25T19:54:23Z",
+  "merged_at": null,
+  "body": "val_bpb: 1.2185 (3-seed mean, std 0.0018)\r\n\r\nFirst submission using BitNet-style ternary quantization {-1, 0, +1} instead of int6. Ternary uses ~1.58 bits/weight vs 6 bits/weight, allowing 2x more parameters (67.5M vs ~33M) in the same size budget.\r\n\r\nKey findings:\r\n- EMA is incompatible with ternary (causes +0.52 bpb degradation)\r\n- Ternary QAT overhead results in 214ms/step vs SOTA's 84ms/step\r\n- Despite 2x more parameters, fewer training steps limits performance",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/760",
+  "draft": false,
+  "comments": []
+}

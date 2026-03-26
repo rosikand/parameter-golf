@@ -1,0 +1,14 @@
+{
+  "number": 835,
+  "title": "Progressive Depth Training \u2014 val_bpb 1.1980",
+  "state": "open",
+  "user": "iverbovoy",
+  "created_at": "2026-03-26T08:26:21Z",
+  "updated_at": "2026-03-26T08:26:21Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- **Progressive Depth Training**: dynamically increases recurrence depth (2\u21923\u21924 repeats) during training. Only possible with shared-weight recurrence \u2014 flat architectures cannot adjust depth mid-training. 5861 steps in 600s vs ~4300 at constant depth (+36%).\n- **Fix DDP race condition** in phase switching via `all_reduce` sync across ranks.\n- Builds on PR #148 (Cross-Repeat Skip, novel stateful recurrence).\n\n## Progressive Depth Schedule\n\n| Phase | Time | Repeats | Eff. depth | ms/step | Steps | val_bpb |\n|-------|------|---------|------------|---------|-------|---------|\n| 1 | 0\u201340% | 2 | 6 | ~75 | ~3200 | 1.319 |\n| 2 | 40\u201365% | 3 | 9 | ~86 | ~1200 | 1.298 |\n| 3 | 65\u2013100% | 4 | 12 | ~96 | ~1800 | 1.229 |\n\n## Ablation Trajectory\n\n| Change | val_bpb | \u0394 |\n|--------|---------|---|\n| OpenAI Naive Baseline (9\u00d7512, unique layers) | 1.2244 | \u2014 |\n| Depth Recurrence 3\u00d74 + Cross-Repeat Skip (#148) | 1.2213 | -0.003 |\n| + XSA (Exclusive Self-Attention, last 4 layers) | 1.2110 | -0.010 |\n| + LeakyReLU(0.5)\u00b2 MLP | 1.2069 | -0.004 |\n| + Progressive Depth (2\u21923\u21924 schedule) | 1.1980 | -0.009 |\n| **Total** | **1.1980** | **-0.026** |\n\n## Test plan\n\n- [x] Full 8xH100 run, 600s wallclock, verified phase transitions\n- [x] DDP sync fix confirmed \u2014 all ranks switch phases simultaneously\n- [x] int8+zstd22 roundtrip: 15.88MB < 16MB limit\n- [x] SWA collected only at full depth (Phase 3)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/835",
+  "draft": false,
+  "comments": []
+}

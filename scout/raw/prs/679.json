@@ -1,14 +1,21 @@
 {
   "number": 679,
-  "title": "Non-record: ASQU activation, Mixture of Convolutions, BankedLinear",
-  "state": "open",
+  "title": "Non-record: ASQU activation, Mixture of Convolutions, BankLinear",
+  "state": "closed",
   "user": "andrewmouldon",
   "created_at": "2026-03-25T04:54:36Z",
-  "updated_at": "2026-03-25T04:57:12Z",
+  "updated_at": "2026-03-25T19:25:43Z",
   "merged_at": null,
-  "body": "Explores architectural changes aimed at improving capacity per parameter, even if slower than typical leaderboard approaches:\r\n\r\n- ASQU (Asymmetric Squared Unit): learned per-channel generalization of ReLU^2\r\n- MoC (Mixture of Convolutions): token-conditioned mixture of short convolutions (dynamic per-token kernels)\r\n- BankedLinear: shared weight bank across layers (small learned + large fixed random set) with learned per-layer mixing \r\n\r\nAblations use the base train_gpt.py script for a fixed 10k steps. MLP expansion is adjusted to match size.\r\n\r\n- ASQU replaces ReLU^2  \r\n- Short conv / MoC is applied to QKV \r\n- BankedLinear replaces QKV projections  \r\n\r\n## Results\r\n\r\n| Model Variant | Pre-quant BPB | Post-quant BPB | Size (bytes) | MLP Mult |\r\n|--------------|--------------:|---------------:|-------------:|---------:|\r\n| Baseline | 1.2262 | 1.2328 | 15861272 | 2.00 |\r\n| + ASQU | 1.2232 | 1.2301 | 15898146 | 2.00 |\r\n| + Short Conv (k=1) | 1.2157 | 1.2217 | 15973462 | 1.99 |\r\n| + MoC (k=8) | 1.2121 | 1.2182 | 15911167 | 1.93 |\r\n| + BankedLinear | 1.2098 | 1.2164 | 15852659 | 2.6 |\r\n\r\nResults are currently single-seed (1337); additional runs in progress.\r\n\r\nASQU: per-channel parameterization gives ~0.001 bpb improvement over scalar, where the scalar form converges to behavior similar to leaky ReLU^2 with slope 0.5\r\n\r\nAlso explored learning the exponent instead of fixing the square. While it did not consistently improve final performance (and was more expensive), it revealed a consistent depth-dependent pattern:\r\n- early layers ~1.4\r\n- middle layers ~1.8\r\n- late layers ~2.2\r\n\r\nWith MoC, experiments of generating the dynamic kernel via learned projection performed poorly, suggesting the use of a more constrained mechanism (e.g. basis interpolation) is necessary for stable optimization.\r\n\r\nFor BankedLinear, one scalar weight is used per bank entry to construct the mixture. Experiments with per head weights worsened performance.\r\n\r\nExperiments were done with a layer specific LoRA, but this worsened performance compared to just investing capacity in the MLP.\r\n",
+  "body": "Explores architectural changes aimed at improving capacity per parameter, even if slower than typical leaderboard approaches:\r\n\r\n- ASQU (Asymmetric Squared Unit): learned per-channel generalization of ReLU^2\r\n- MoC (Mixture of Convolutions): token-conditioned mixture of short convolutions (dynamic per-token kernels)\r\n- BankLinear: shared weight bank across layers (small learned + large fixed random set) with learned per-layer mixing \r\n\r\nAblations use the base train_gpt.py script for a fixed 10k steps. MLP expansion is adjusted to match size.\r\n\r\n- ASQU replaces ReLU^2  \r\n- Short conv / MoC is applied to QKV \r\n- BankLinear replaces QKV projections  \r\n\r\n## Results\r\n\r\n| Model Variant | Pre-quant BPB | Post-quant BPB | Size (bytes) | MLP Mult |\r\n|--------------|--------------:|---------------:|-------------:|---------:|\r\n| Baseline | 1.2262 | 1.2328 | 15861272 | 2.00 |\r\n| + ASQU | 1.2232 | 1.2301 | 15898146 | 2.00 |\r\n| + Short Conv (k=1) | 1.2157 | 1.2217 | 15973462 | 1.99 |\r\n| + MoC (k=8) | 1.2121 | 1.2182 | 15911167 | 1.93 |\r\n| + BankLinear | 1.2098 | 1.2164 | 15852659 | 2.6 |\r\n\r\nResults are currently single-seed (1337); additional runs in progress.\r\n\r\nASQU: per-channel parameterization gives ~0.001 bpb improvement over scalar, where the scalar form converges to behavior similar to leaky ReLU^2 with slope 0.5\r\n\r\nAlso explored learning the exponent instead of fixing the square. While it did not consistently improve final performance (and was more expensive), it revealed a consistent depth-dependent pattern:\r\n- early layers ~1.4\r\n- middle layers ~1.8\r\n- late layers ~2.2\r\n\r\nWith MoC, experiments of generating the dynamic kernel via learned projection performed poorly, suggesting the use of a more constrained mechanism (e.g. basis interpolation) is necessary for stable optimization.\r\n\r\nFor BankLinear, one scalar weight is used per bank entry to construct the mixture. Experiments with per head weights worsened performance.\r\n\r\nExperiments were done with a layer specific LoRA, but this worsened performance compared to just investing capacity in the MLP.\r\n",
   "labels": [],
   "url": "https://github.com/openai/parameter-golf/pull/679",
   "draft": false,
-  "comments": []
+  "comments": [
+    {
+      "user": "andrewmouldon",
+      "body": "closing to submit separate prs for separate techniques",
+      "created_at": "2026-03-25T19:25:43Z",
+      "updated_at": "2026-03-25T19:25:43Z"
+    }
+  ]
 }

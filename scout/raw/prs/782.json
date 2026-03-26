@@ -1,0 +1,14 @@
+{
+  "number": 782,
+  "title": "Podracing III: Cubric Lite \u2014 0.9362 BPB",
+  "state": "open",
+  "user": "newjordan",
+  "created_at": "2026-03-25T23:22:45Z",
+  "updated_at": "2026-03-25T23:23:33Z",
+  "merged_at": null,
+  "body": "## Summary\r\n\r\n- **3-seed mean val_bpb = 0.9362** (seeds 2045=0.9357, 43=0.9362, 300=0.9365)\r\n- 11L/512d U-Net with legal score-first 7-gram backoff (orders 2-7) + entropy-adaptive alpha + **per-order adaptive alpha scaling (Cubric Lite)**\r\n- 0.026 BPB improvement over Podracing II (#753, 0.9625 mean)\r\n- Artifact: 15.59 MB (int6+zstd), under 16 MB budget\r\n- **Original contribution: per-order adaptive alpha scaling**\r\n\r\n## What Changed vs Podracing II (#753)\r\n\r\nOne eval-time addition, no training changes:\r\n\r\n**Per-order adaptive alpha scaling (\"Cubric Lite\"):** During n-gram eval, track how often each order's n-gram probability beats the model's probability on already-scored tokens. Every 32 batches, adjust per-order alpha multipliers. Converged multipliers:  **UNDEREXPLORED\r\n\r\n```\r\no2:0.300  o3:0.300  o4:0.970  o5:2.000  o6:2.000  o7:2.000\r\n```\r\n\r\nKey finding: bigrams and trigrams (orders 2-3) were actively harming BPB by injecting noisy predictions at the same alpha as high-order matches. Suppressing them to 30% of base alpha and boosting orders 5-7 to 200% = 0.026 BPB gain.\r\n\r\n## Compliance\r\n\r\n- Score-first, backward-looking: n-gram cache built from already-scored tokens only\r\n- Alpha depends solely on model's own softmax entropy \u2014 no target/label access\r\n- Per-order multipliers use beat-rate statistics from already-scored tokens \u2014 same legality as the score-first table update\r\n- No oracle selection, no min-NLL comparison\r\n- GPTQ calibration runs inside training phase (before wallclock stop) using training data only\r\n- Cubric adaptation runs during eval using only already-scored token statistics\r\n\r\n## Credits\r\n\r\n- N-gram eval cache concept: @deanbrr (PR #659)\r\n- Multi-order backoff + adaptive alpha: @Asukabot0 (PR #727)\r\n- Per-order adaptive alpha scaling (Cubric Lite): @newjordan (original)\r\n- Base architecture: @signalrush (PR #414)\r\n\r\n## Test plan\r\n\r\n- [x] 3-seed verification (2045, 43, 300)\r\n- [x] All seeds under 16 MB\r\n- [x] GPTQ uses training data only\r\n- [x] N-gram eval is score-first\r\n- [x] Cubric uses only already-scored data\r\n- [x] Training logs included for all seeds\r\n\r\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/782",
+  "draft": false,
+  "comments": []
+}

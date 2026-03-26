@@ -1,0 +1,14 @@
+{
+  "number": 819,
+  "title": "Add PES RosehipV1: Precision Error Signal + frontier stack",
+  "state": "open",
+  "user": "Tetrahedroned",
+  "created_at": "2026-03-26T06:38:05Z",
+  "updated_at": "2026-03-26T07:17:42Z",
+  "merged_at": null,
+  "body": "Novel architecture submission. Introduces PES (Precision Error Signal) \u2014 lightweight inter-layer correction module inspired by the biological Rosehip neuron. Full frontier stack: XSA, VRL, EMA, LeakyReLU\u00b2. val_bpb pending scored run. Smoke test passes on CPU. README includes full training dynamics documentation.",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/819",
+  "draft": false,
+  "comments": []
+}

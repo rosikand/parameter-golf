@@ -1,0 +1,14 @@
+{
+  "number": 791,
+  "title": "submission/2026-03-25_WSD_CosineDecay_Schedule",
+  "state": "open",
+  "user": "ShihChunHao",
+  "created_at": "2026-03-26T00:59:59Z",
+  "updated_at": "2026-03-26T00:59:59Z",
+  "merged_at": null,
+  "body": "## Summary\n\n- Replace linear warmdown LR schedule with **Warmup-Stable-Decay (WSD)** cosine schedule\n  - 5% warmup \u2192 75% stable at peak LR \u2192 20% cosine decay\n  - Prevents premature LR decay, especially critical under step-limited training budgets\n- Built on SOTA base (10L, MLP3x, SmearGate, BigramHash 10240, int5/int6, SWA 0.4, zstd-22)\n- No existing submission uses cosine decay or WSD schedule\n\n## Preliminary Results (1 GPU, seed=42)\n\n| Config | val_bpb | artifact_bytes |\n|--------|---------|---------------|\n| 1 GPU, 600s, ~877 steps | 1.2824 | 15,767,236 |\n\n8xH100 3-seed results pending.\n\n## Run Command\n\n```bash\ntorchrun --standalone --nproc_per_node=8 train_gpt.py\n```",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/791",
+  "draft": false,
+  "comments": []
+}

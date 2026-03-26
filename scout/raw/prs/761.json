@@ -1,0 +1,14 @@
+{
+  "number": 761,
+  "title": "Record: Score-First TTT + N-gram Backoff (3-seed mean val_bpb=0.9581)",
+  "state": "open",
+  "user": "Asukabot0",
+  "created_at": "2026-03-25T20:13:31Z",
+  "updated_at": "2026-03-25T20:13:31Z",
+  "merged_at": null,
+  "body": "# Record: Score-First TTT + Multi-Order N-gram Backoff (val_bpb=0.9581)\n\n**3-seed mean val_bpb: 0.9581** (std=0.0005) | ~15.7 MB artifact | 8xH100 SXM\n\n## Results\n\n| Seed | Sliding BPB (s64) | Artifact | Steps | ms/step | TTT time | Total eval |\n|------|-------------------|----------|-------|---------|----------|------------|\n| 1337 | 0.9576 | 15,721,728 | 6409 | 93.63 | 107.0s | ~303s |\n| 42 | 0.9581 | 15,702,393 | 6403 | 93.73 | 107.9s | ~255s |\n| 7 | 0.9585 | 15,768,158 | 6407 | 93.65 | 105.2s | ~251s |\n| **Mean** | **0.9581** | | ~6406 | ~93.67 | ~106.7s | ~270s |\n\n## Architecture\n\n- 11L, 512d, GQA (8H/4KV), MLP 3x, U-Net skip connections\n- LeakyReLU(0.5)^2: preserves negative gradient flow\n- XSA on all 11 layers: removes self-position bias\n- Value Residual (VR): layer 0 V output mixed via sigmoid gates\n- Gated Attention (GA): per-head sigmoid gates\n- SmearGate + OrthoInit, BigramHash(4096), Partial RoPE (16/64), LN Scale\n- EMA(0.997), warmdown=3000, int6 per-row + zstd-16\n\n## Eval-Time Techniques\n\n### Score-First TTT (compliant with Issue #677)\n- Process val data in sequential 131K-token chunks\n- Phase 1: Score chunk under inference_mode (forward only)\n- Phase 2: Train on scored tokens with AdamW (lr=0.0001, 4 epochs)\n- Freeze first 2 blocks, grad clip 1.0\n- Each token scored BEFORE model trains on it\n\n### Multi-Order N-gram Backoff + Entropy-Adaptive Alpha\n- Orders 2-7: highest order first, cascade on miss\n- Entropy-adaptive: alpha = 0.05 + 0.55 * sigmoid(2 * (H - 4.0))\n- Fixed formula, no oracle selection, no target-aware gating\n- Backward-looking: cache built from already-scored tokens only\n\n## Compliance\n\n- Score-first TTT: tokens scored under inference_mode before training\n- N-gram cache: backward-looking, entropy-based mixing (not target-aware)\n- GPTQ: not used (naive int6 per-row quantization)\n- All training within 600s, all eval within 600s\n- No training data accessed at eval time\n\n## Reproduction\n\n```bash\npython3 data/cached_challenge_fineweb.py --variant sp1024\nSEED=1337 TTT_ENABLED=1 NGRAM_CACHE=1 \\\n  torchrun --standalone --nproc_per_node=8 train_gpt.py\n```\n\n## Credits\n\n- Base: modded-nanogpt, PR #315, #609\n- LeakyReLU^2: PR #493, #518\n- Value Residual: PR #413 (arXiv:2410.17897)\n- Gated Attention: NeurIPS 2025 (arXiv:2505.06708)\n- N-gram cache concept: PR #659, #702\n- Score-first TTT: PR #549",
+  "labels": [],
+  "url": "https://github.com/openai/parameter-golf/pull/761",
+  "draft": false,
+  "comments": []
+}
