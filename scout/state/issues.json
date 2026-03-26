@@ -1,32 +1,30 @@
 [
   {
     "number": 140,
-    "title": "Parameter Golf Live AI Commentary + Analysis / Ideas | every 10 minutes",
+    "title": "\u26f3 Parameter Golf Live AI Commentary \u26f3 + Analysis / Ideas | every 10 minutes",
     "user": "notapplica",
     "category": "analysis",
     "techniques_mentioned": [
-      "LeakyReLU squared",
-      "Test-Time Training (TTT)",
-      "backward-looking TTT",
-      "sliding window evaluation",
-      "GPTQ",
-      "EMA",
+      "n-gram eval cache",
+      "BackoffNgramMixer",
+      "Frozen N-gram Oracle",
+      "learned expert gate",
+      "TTT (Test-Time Training)",
       "Int6 quantization",
-      "MLP 3x width",
+      "MLP3x",
       "SmearGate",
       "BigramHash",
       "OrthoInit",
-      "Muon optimizer",
-      "weight decay",
-      "SWA (Stochastic Weight Averaging)",
-      "FlashAttention 3",
-      "Parallel Muon",
-      "sequence curriculum",
+      "Muon WD",
+      "SWA",
+      "FA3 (Flash Attention 3)",
+      "sliding window eval",
+      "QAT",
       "Partial RoPE",
-      "Late QAT",
-      "full-weight SGD TTT"
+      "EMA",
+      "seq curriculum"
     ],
-    "key_insights": "Auto-updated leaderboard commentary tracking BPB progress from 1.2244 baseline down to ~1.1154 over ~6 days. A Mar 24 enforcement sweep closed 15+ PRs for illegal pre-eval TTT and GPTQ calibration at eval time; only backward-looking TTT (adapting on already-evaluated tokens) is permitted. Key technical findings include: seq curriculum breaks SWA, EMA causes 0.14 BPB quant gap on SWA stacks, and MLP 2.75x width is optimal at 11L+SmearGate.",
+    "key_insights": "The n-gram eval cache (BackoffNgramMixer) is the dominant technique, providing up to ~0.97 BPB improvement over neural-only models. The latest Frozen N-gram Oracle + learned expert gate approach reached 0.1663 BPB pending. Key blockers identified include seq curriculum breaking SWA and EMA causing a 0.14 BPB quantization gap on SWA-stacks.",
     "relevance": "high"
   },
   {
@@ -88,10 +86,9 @@
     "techniques_mentioned": [
       "Flash Attention 3 (FA3)",
       "Flash Attention 2 (FA2)",
-      "scaled_dot_product_attention (SDPA)",
-      "GQA (Grouped Query Attention)"
+      "scaled dot product attention (SDPA)"
     ],
-    "key_insights": "The official RunPod evaluation environment is missing both flash_attn_interface (FA3) and flash_attn (FA2), yet multiple top submissions depend on FA3 with no fallback, meaning they would crash on the official template. A workaround using PyTorch SDPA is ~10% slower than FA3 on H100s, and prebuilt FA3 wheels for the correct Torch version (2.9.1) are not readily available.",
+    "key_insights": "The official RunPod template is missing flash_attn_interface (FA3) and flash_attn (FA2), causing top submissions that use FA3 without fallbacks to crash on the evaluation environment. A try/except fallback to PyTorch SDPA is recommended as a workaround, though it is ~10% slower than FA3 on H100.",
     "relevance": "medium"
   },
   {
@@ -100,7 +97,7 @@
     "user": "stpcoder",
     "category": "competition_meta",
     "techniques_mentioned": [],
-    "key_insights": "Community-built unofficial leaderboard at parameter-golf.github.io auto-updating every 30 minutes with rankings, scores, and PR links. Val-only submissions are excluded by default to surface legitimate competitive entries.",
+    "key_insights": "A community-built live leaderboard at parameter-golf.github.io auto-updates every 30 minutes, showing rankings, scores, and linked PRs. Val-only submissions are excluded by default, and filtering for closed PRs was requested to reduce noise.",
     "relevance": "low"
   },
   {
@@ -174,17 +171,17 @@
     "number": 158,
     "title": "Community Tool: Parameter Golf Leaderboard Monitor (CLI + Claude Code Skill)",
     "user": "dexhunter",
-    "category": "other",
+    "category": "competition_meta",
     "techniques_mentioned": [
       "OrthoInit",
-      "Int6 quantization",
+      "Int6 MLP3x",
       "BigramHash",
       "SmearGate",
       "NorMuon",
       "SWA",
-      "Sliding Window Attention"
+      "sliding window eval"
     ],
-    "key_insights": "A community-built CLI tool that fetches PRs and extracts val_bpb scores to display a ranked leaderboard with no dependencies. Provides a useful snapshot of competitive scores (top scores around 1.154 BPB at time of posting). Added heuristics to flag suspect submissions training on the validation set.",
+    "key_insights": "A CLI tool and Claude Code skill for monitoring the leaderboard with zero dependencies. It includes heuristics to flag suspect submissions (score < 1.10 or val-only keywords) and can poll for live updates.",
     "relevance": "low"
   },
   {
@@ -313,12 +310,17 @@
     "number": 520,
     "title": "Run & track experiments on Hugging Face infra",
     "user": "lewtun",
-    "category": "other",
+    "category": "technique_discussion",
     "techniques_mentioned": [
-      "autoresearch"
+      "HF Jobs",
+      "Trackio",
+      "experiment tracking",
+      "distributed training",
+      "uv scripts",
+      "agentic research automation"
     ],
-    "key_insights": "Provides an end-to-end example for launching and tracking parameter-golf experiments on Hugging Face infrastructure using HF Jobs, Buckets, and Trackio for live metrics. Includes agent skills integration for autoresearch-style automated experiment launching.",
-    "relevance": "low"
+    "key_insights": "Provides an end-to-end reproducible setup for launching and tracking parameter-golf experiments on HF infrastructure using HF Jobs, Buckets, and Trackio for live metrics. The two-file setup (launch_job.py + train_job.py) simplifies experiment management and supports agentic/autoresearch workflows via HF skills. Could accelerate iteration speed for competition participants.",
+    "relevance": "medium"
   },
   {
     "number": 519,
@@ -337,23 +339,87 @@
     "number": 627,
     "title": "ROCm Support PR Proposal",
     "user": "reimorster",
-    "category": "other",
+    "category": "competition_meta",
     "techniques_mentioned": [
-      "ROCm"
+      "ROCm",
+      "MLX"
     ],
-    "key_insights": "Proposes minor changes to the main training script to allow local iteration on AMD ROCm hardware, while final submissions still run on the official H100 cluster. No novel modeling techniques discussed.",
-    "relevance": "low"
+    "key_insights": "Proposes adding ROCm support to the training script to allow participants with AMD hardware to iterate locally or on cheaper cloud instances, even though final submissions must run on 8xH100. This would lower the barrier for local development and testing.",
+    "relevance": "medium"
   },
   {
     "number": 677,
     "title": "Illegal submissions megathread",
     "user": "0hq",
     "category": "competition_meta",
+    "techniques_mentioned": [],
+    "key_insights": "A megathread clarifying rules around invalid submissions, particularly those generated by autoresearch tools or involving rules confusion. Important for understanding what evaluation methods and training procedures are permitted.",
+    "relevance": "medium"
+  },
+  {
+    "number": 829,
+    "title": "WEER FWE",
+    "user": "kaledleongonzalez230-wq",
+    "category": "other",
+    "techniques_mentioned": [],
+    "key_insights": "Spam/gibberish issue with no relevant content.",
+    "relevance": "low"
+  },
+  {
+    "number": 821,
+    "title": "RunPod infrastructure costs: charged $8.65 for pods that never ran training",
+    "user": "oleksiivinogradov",
+    "category": "bug_report",
+    "techniques_mentioned": [],
+    "key_insights": "Participants using RunPod are being charged for GPU provisioning time even when pods never boot, exhausting limited budgets before any training runs. Suggestions include a shared evaluation endpoint, compute credits for active participants, and a local single-GPU approximation mode.",
+    "relevance": "medium"
+  },
+  {
+    "number": 817,
+    "title": "Leaderboard adjustment",
+    "user": "snapo",
+    "category": "competition_meta",
+    "techniques_mentioned": [],
+    "key_insights": "Proposes adding a compression ratio metric (artifact_size * val_bpb / 16_000_000 - 1) to the leaderboard to better reflect the joint optimization of model size and prediction quality.",
+    "relevance": "low"
+  },
+  {
+    "number": 775,
+    "title": "Int6 per-row scale clamp: quantization resolution vs. artifact compressibility tradeoff",
+    "user": "fielding",
+    "category": "technique_discussion",
     "techniques_mentioned": [
-      "Test-Time Training (TTT)",
-      "GPTQ calibration at eval"
+      "Int6 quantization",
+      "per-row scale quantization",
+      "QAT",
+      "STE fake-quantization",
+      "weight decay (Muon WD)",
+      "zstd compression",
+      "quantized scales (uint8)",
+      "grouped scales",
+      "EMA"
     ],
-    "key_insights": "Official megathread clarifying rules around invalid submissions, prompted by a wave of illegal solutions from autoresearch tools and rules confusion. Pre-eval TTT and GPTQ calibration during evaluation are explicitly disallowed.",
+    "key_insights": "The clamp_min(1/31) in Int6 per-row quantization wastes levels for small-weight rows and becomes destructive at higher weight decay values, where the quantization gap can reach 0.114 BPB at WD=0.30. Removing the clamp improves quantization fidelity but dramatically increases artifact size due to wider scale entropy, suggesting quantized or grouped scale encodings as a promising research direction.",
     "relevance": "high"
+  },
+  {
+    "number": 732,
+    "title": "Why claude code ??",
+    "user": "imthegoodboy",
+    "category": "question",
+    "techniques_mentioned": [],
+    "key_insights": "Brief unexplained question about Claude Code with no additional context or follow-up. No actionable information provided.",
+    "relevance": "low"
+  },
+  {
+    "number": 729,
+    "title": "Ternary UNet submission (PR #640) folder is in track_10min_16mb instead of track_non_record_16mb",
+    "user": "janwww",
+    "category": "bug_report",
+    "techniques_mentioned": [
+      "Ternary UNet"
+    ],
+    "key_insights": "A 73.7M Ternary UNet submission was placed in the wrong directory (track_10min_16mb instead of track_non_record_16mb), despite being accepted only as a Notable Non-Record Run in the README. This is a repository organization/housekeeping issue that could cause leaderboard confusion.",
+    "relevance": "low"
   }
 ]

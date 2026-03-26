@@ -350,5 +350,167 @@
         ]
       }
     ]
+  },
+  {
+    "date": "2026-03-26",
+    "total_submissions": 796,
+    "submissions_with_score": 592,
+    "best_bpb": 0.1663,
+    "top10": [
+      {
+        "number": 834,
+        "user": "AnirudhRahul",
+        "bpb": 0.1663,
+        "techniques": [
+          "N-gram backoff",
+          "TTT",
+          "Learned routing head",
+          "Frozen N-gram oracle",
+          "N-gram-aware training"
+        ]
+      },
+      {
+        "number": 796,
+        "user": "Robby955",
+        "bpb": 0.288,
+        "techniques": [
+          "N-gram backoff",
+          "Complementary training",
+          "Per-order multipliers",
+          "Distributed cache prefill",
+          "EBLS",
+          "LoRA",
+          "XSA",
+          "Value Residual",
+          "LeakyReLU\u00b2",
+          "MLP expansion",
+          "Int6",
+          "GPTQ",
+          "GQA",
+          "sliding window eval"
+        ]
+      },
+      {
+        "number": 826,
+        "user": "himanshudongre",
+        "bpb": 0.29509,
+        "techniques": [
+          "N-gram Backoff",
+          "TTT",
+          "GPTQ",
+          "Int5",
+          "LeakyReLU\u00b2",
+          "BigramHash",
+          "SmearGate",
+          "XSA",
+          "Partial RoPE",
+          "LN Scale",
+          "U-Net Skips",
+          "Value Residual",
+          "Muon",
+          "EMA",
+          "SWA",
+          "LZMA",
+          "sliding window eval",
+          "GQA"
+        ]
+      },
+      {
+        "number": 809,
+        "user": "AayushBaniya2006",
+        "bpb": 0.29519,
+        "techniques": [
+          "N-gram eval cache",
+          "TTT",
+          "LoRA",
+          "XSA",
+          "BigramHash",
+          "GPTQ",
+          "LeakyReLU",
+          "GQA",
+          "entropy-adaptive mixing",
+          "shared N-gram Tables"
+        ]
+      },
+      {
+        "number": 810,
+        "user": "Idan3011",
+        "bpb": 0.2995,
+        "techniques": [
+          "N-gram backoff",
+          "Per-order adaptive alpha",
+          "XSA",
+          "SmearGate",
+          "BigramHash",
+          "EMA",
+          "Int6",
+          "QAT",
+          "GELU pre-enrichment",
+          "sliding window eval",
+          "GQA",
+          "Muon"
+        ]
+      },
+      {
+        "number": 663,
+        "user": "raahilg",
+        "bpb": 0.434,
+        "techniques": [
+          "manifold routing",
+          "GNN",
+          "sparsemax",
+          "spectral attention"
+        ]
+      },
+      {
+        "number": 811,
+        "user": "quietsmile",
+        "bpb": 0.4377,
+        "techniques": [
+          "Complementary Training",
+          "N-gram eval cache",
+          "TTT",
+          "LoRA"
+        ]
+      },
+      {
+        "number": 803,
+        "user": "pentxayc",
+        "bpb": 0.4416,
+        "techniques": [
+          "Complementary Training",
+          "BackoffNgramMixer",
+          "XSA",
+          "VRL",
+          "LeakyReLU\u00b2",
+          "AdamW TTT",
+          "EMA",
+          "Sliding Window Eval",
+          "Entropy-Adaptive Alpha"
+        ]
+      },
+      {
+        "number": 814,
+        "user": "newjordan",
+        "bpb": 0.482,
+        "techniques": [
+          "XSA",
+          "SWA",
+          "EMA",
+          "BigramHash",
+          "Complementary Training",
+          "GPTQ",
+          "Int6 quantization",
+          "Shared N-gram Tables",
+          "Cubric"
+        ]
+      },
+      {
+        "number": 475,
+        "user": "abrahaw123-cell",
+        "bpb": 0.5,
+        "techniques": []
+      }
+    ]
   }
 ]

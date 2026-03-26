@@ -28,8 +28,9 @@ import modal
 
 APP_NAME = "parameter-golf"
 VOLUME_NAME = "parameter-golf-data"
-GPU = "H100"
-TIMEOUT_SECONDS = 30 * 60  # 30 min hard cap (train + eval + overhead)
+GPU_COUNT = int(os.environ.get("PGOLF_GPU_COUNT", "1"))
+GPU = f"H100:{GPU_COUNT}" if GPU_COUNT > 1 else "H100"
+TIMEOUT_SECONDS = 60 * 60  # 1 hour hard cap
 
 image = (
     modal.Image.debian_slim(python_version="3.11")
@@ -133,8 +134,9 @@ def train(
     vocab_size: int = 1024,
     seq_len: int = 1024,
     tie_embeddings: int = 1,
+    gpu_count: int = 1,
 ):
-    """Run a training job on 1xH100. Results saved to Volume."""
+    """Run a training job. Results saved to Volume."""
     import wandb
 
     # Create run output directory on the Volume
@@ -199,13 +201,13 @@ def train(
     # Launch training
     cmd = [
         sys.executable, "-m", "torch.distributed.run",
-        "--standalone", "--nproc_per_node=1",
+        "--standalone", f"--nproc_per_node={gpu_count}",
         str(script_path),
     ]
 
     print(f"[parameter-golf] Starting training: {run_id}")
     print(f"[parameter-golf] Data: {data_path}")
-    print(f"[parameter-golf] Config: {num_layers}L x {model_dim}D, vocab={vocab_size}")
+    print(f"[parameter-golf] Config: {num_layers}L x {model_dim}D, vocab={vocab_size}, {gpu_count}xH100")
     print("=" * 80)
 
     t_start = time.time()
@@ -390,6 +392,7 @@ def main(
     num_kv_heads: int = 4,
     iterations: int = 20000,
     skip_data_check: bool = False,
+    gpu_count: int = 1,
 ):
     """Launch a Parameter Golf training run on Modal (fire-and-forget)."""
     from datetime import datetime
@@ -414,7 +417,7 @@ def main(
     # Fire and forget — .spawn() returns immediately
     print(f"[local] Spawning run: {run_id}")
     print(f"[local] Script: {script_path} ({len(train_script_code)} bytes)")
-    print(f"[local] Config: {num_layers}L x {model_dim}D, vocab={vocab_size}, wallclock={max_wallclock}s")
+    print(f"[local] Config: {num_layers}L x {model_dim}D, vocab={vocab_size}, {gpu_count}xH100, wallclock={max_wallclock}s")
     if wandb_key:
         print(f"[local] W&B logging enabled (project: {wandb_project})")
 
@@ -432,6 +435,7 @@ def main(
         num_heads=num_heads,
         num_kv_heads=num_kv_heads,
         iterations=iterations,
+        gpu_count=gpu_count,
     )
 
     print(f"[local] Run spawned! Function call ID: {fc.object_id}")

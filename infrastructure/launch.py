@@ -10,6 +10,7 @@ Launch Parameter Golf experiments (fire-and-forget).
 """
 
 import argparse
+import os
 import subprocess
 import sys
 from datetime import datetime
@@ -26,6 +27,7 @@ def main():
     # Presets
     parser.add_argument("--smoke", action="store_true", help="Quick 2-min test")
     parser.add_argument("--fast", action="store_true", help="Skip data cache check")
+    parser.add_argument("--8gpu", dest="eight_gpu", action="store_true", help="Run on 8xH100 (~$10/run)")
 
     # Architecture
     parser.add_argument("--vocab-size", type=int, default=1024)
@@ -60,7 +62,7 @@ def main():
 
     # Build modal run command
     cmd = [
-        "modal", "run", "--detach", "modal_train_frozen.py",
+        "modal", "run", "--detach", "runner.py",
         "--train-script", str(script),
         "--run-id", run_id,
         "--variant", args.variant,
@@ -78,13 +80,25 @@ def main():
     if args.fast:
         cmd.append("--skip-data-check")
 
+    gpu_count = 8 if args.eight_gpu else 1
+    cmd.extend(["--gpu-count", str(gpu_count)])
+
+    cost = "~$10" if args.eight_gpu else "~$1.30"
+    if args.smoke:
+        cost = "~$2" if args.eight_gpu else "~$0.25"
+
     print(f"  Launching: {run_id}")
     print(f"  Script:    {script}")
+    print(f"  GPU:       {gpu_count}xH100 ({cost})")
     print(f"  Config:    {args.num_layers}L x {args.model_dim}D, vocab={args.vocab_size}")
     print(f"  Wallclock: {args.max_wallclock}s")
     print()
 
-    result = subprocess.run(cmd, cwd=str(Path(__file__).parent))
+    # Set env var so runner.py picks up GPU count at import time
+    env = os.environ.copy()
+    env["PGOLF_GPU_COUNT"] = str(gpu_count)
+
+    result = subprocess.run(cmd, cwd=str(Path(__file__).parent), env=env)
     if result.returncode != 0:
         print(f"\n  Error: modal run failed (exit code {result.returncode})")
         sys.exit(result.returncode)

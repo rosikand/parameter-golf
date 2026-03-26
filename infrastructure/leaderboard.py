@@ -32,7 +32,7 @@ def sync():
     """Pull all results from Modal Volume into local leaderboard.json."""
     print("Syncing results from Modal Volume...")
 
-    from modal_train import app, sync_results
+    from runner import app, sync_results
 
     with app.run():
         remote_results = sync_results.remote()
@@ -59,7 +59,7 @@ def sync():
 def fetch_log(run_id: str):
     """Fetch and print the full training log for a run."""
     try:
-        from modal_train import app, get_run_log
+        from runner import app, get_run_log
         with app.run():
             log = get_run_log.remote(run_id)
         print(log)
@@ -146,7 +146,7 @@ def compare(entries, run_a, run_b):
 def status():
     """Sync and show status of all runs."""
     print("Syncing...")
-    from modal_train import app, sync_results
+    from runner import app, sync_results
     with app.run():
         remote_results = sync_results.remote()
 
